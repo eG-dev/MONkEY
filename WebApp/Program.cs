@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Azure.Data.Tables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
@@ -14,12 +14,27 @@ builder.Services.AddControllersWithViews(options =>
     var policy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
+
     options.Filters.Add(new AuthorizeFilter(policy));
 }).AddMicrosoftIdentityUI();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var tableStorageConnectionString = builder.Configuration.GetValue<string>("TABLE_STORAGE_CONNECTION_STRING");
+
+if (!string.IsNullOrEmpty(tableStorageConnectionString))
+{
+    TableServiceClient tableServiceClient = new TableServiceClient(tableStorageConnectionString);
+    TableClient tableClient = tableServiceClient.GetTableClient(
+        tableName: "accounts"
+    );
+
+    await tableClient.CreateIfNotExistsAsync();
+
+    builder.Services.AddTransient(sp => tableClient);
+}
 
 var app = builder.Build();
 
