@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="BuildWebCompiler2022" Version="1.14.10" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.2.1" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.1" />
   </ItemGroup>
 
 </Project>
