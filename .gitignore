@@ -398,4 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # WebCompiler in Blazor
-Kindergeld/wwwroot/*.css
+WebApp/wwwroot/*.css
+# WebApp/Components/**/*.css
