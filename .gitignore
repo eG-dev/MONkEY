@@ -399,4 +399,4 @@ FodyWeavers.xsd
 
 # WebCompiler in Blazor
 WebApp/wwwroot/*.css
-# WebApp/Components/**/*.css
+WebApp/Components/**/*.css
