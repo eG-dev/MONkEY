@@ -1,0 +1,41 @@
+﻿@using System.Security.Principal
+@using WebApp.Models
+@using WebApp.Services
+
+@inject AccountService AccountService
+
+@if (accounts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var account in accounts)
+        {
+            <div class="col">
+                <div class="card">
+                    <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top" alt="Image @account.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@account.Name</h5>
+                        <p class="card-text">Aktuelles Guthaben: @account.Balance€</p>
+                        <a href="#" class="btn btn-primary">Auswählen</a>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Letzte Transaktion am @account.Timestamp.GetValueOrDefault().ToString("D")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Account>? accounts;
+
+    protected override void OnInitialized()
+    {
+        accounts = AccountService.GetAll()
+            .ToList();
+    }
+}

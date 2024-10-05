@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using WebApp.Components;
+using WebApp.Models;
+using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +33,20 @@ if (!string.IsNullOrEmpty(tableStorageConnectionString))
         tableName: "accounts"
     );
 
-    await tableClient.CreateIfNotExistsAsync();
+    var response = await tableClient.CreateIfNotExistsAsync();
+
+    if (response.GetRawResponse().Status != 409)
+    {
+        var accountService = new AccountService(tableClient);
+
+        await accountService.Insert(new Account() { Name = "Luis", Balance = 0 });
+        await accountService.Insert(new Account() { Name = "Jonas", Balance = 0 });
+        await accountService.Insert(new Account() { Name = "Charlotte", Balance = 0 });
+    }
 
     builder.Services.AddTransient(sp => tableClient);
+
+    builder.Services.AddTransient<AccountService>();
 }
 
 var app = builder.Build();

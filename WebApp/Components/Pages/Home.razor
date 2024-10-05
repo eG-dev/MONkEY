@@ -1,25 +1,5 @@
 ﻿@page "/"
 
-<PageTitle>MONkEY</PageTitle>
+<PageTitle>MONkEY App</PageTitle>
 
-<!-- Add @using Microsoft.AspNetCore.Components.Authorization at the top-->
-<CascadingAuthenticationState>
-    <AuthorizeView>
-        <Authorized>
-            <h1>Hallo @context.User.Identity?.Name!</h1>
-
-            <h3>
-                Willkommen in der MONkEY App
-            </h3>
-            
-            <p>
-                <img width="64" height="64" src="images/monkey.png" alt="monkey" />
-            </p>
-
-            <a href="MicrosoftIdentity/Account/SignOut">Abmelden</a>
-        </Authorized>
-        <NotAuthorized>
-            <a href="MicrosoftIdentity/Account/SignIn">Anmelden</a>
-        </NotAuthorized>
-    </AuthorizeView>
-</CascadingAuthenticationState>
+<AccountsOverview></AccountsOverview>

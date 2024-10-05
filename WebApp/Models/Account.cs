@@ -3,7 +3,7 @@ using Azure.Data.Tables;
 
 namespace WebApp.Models
 {
-    public class PocketMoneyAccount : ITableEntity
+    public class Account : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;
 
@@ -11,7 +11,7 @@ namespace WebApp.Models
 
         public string Name { get; init; } = default!;
 
-        public decimal Balance { get; init; }
+        public int Balance { get; init; }
 
         public ETag ETag { get; set; } = default!;
 
