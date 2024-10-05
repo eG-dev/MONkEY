@@ -1,6 +1,7 @@
 using Azure.Data.Tables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using WebApp.Components;
@@ -24,7 +25,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-var tableStorageConnectionString = builder.Configuration.GetValue<string>("TABLE_STORAGE_CONNECTION_STRING");
+var tableStorageConnectionString = builder.Configuration.GetConnectionString("TABLE_STORAGE_CONNECTION_STRING");
 
 if (!string.IsNullOrEmpty(tableStorageConnectionString))
 {
