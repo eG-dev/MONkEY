@@ -1,10 +1,6 @@
 ﻿[
   {
     "outputFile": "wwwroot/app.css",
-    "inputFile": "wwwroot/app.scss"
-  },
-  {
-    "outputFile": "Components/Layout/MainLayout.razor.css",
-    "inputFile": "Components/Layout/MainLayout.razor.scss"
+    "inputFile": "Styles/Main.scss"
   }
 ]
