@@ -7,34 +7,50 @@ namespace WebApp.Services
     {
         private readonly TableClient _tableClient;
 
-        public AccountService(TableClient tableClient)
+        public AccountService(TableServiceClient tableServiceClient)
         {
-            _tableClient = tableClient ?? throw new ArgumentNullException(nameof(tableClient));
+            if (tableServiceClient == null) throw new ArgumentNullException(nameof(tableServiceClient));
+
+            _tableClient = tableServiceClient.GetTableClient(
+                tableName: "accounts"
+            );
+        }
+
+        public async Task InitAsync()
+        {
+            var response = await _tableClient.CreateIfNotExistsAsync();
+
+            if (response.GetRawResponse().Status != 409)
+            {
+                await InsertAsync(new Account() { Name = "Luis", Balance = 0 });
+                await InsertAsync(new Account() { Name = "Jonas", Balance = 0 });
+                await InsertAsync(new Account() { Name = "Charlotte", Balance = 0 });
+            }
         }
 
         public IQueryable<Account> GetAll()
         {
-            var accounts = _tableClient.Query<Account>();
+            var model = _tableClient.Query<Account>();
 
-            return accounts
+            return model
                 .AsQueryable();
         }
 
-        public async Task Insert(Account account)
+        public async Task InsertAsync(Account model)
         {
-            if (account == null) throw new ArgumentNullException(nameof(account));
+            if (model == null) throw new ArgumentNullException(nameof(model));
 
-            account.PartitionKey = account.Name;
-            account.RowKey = Guid.NewGuid().ToString();
+            model.PartitionKey = model.Name;
+            model.RowKey = Guid.NewGuid().ToString();
 
-            await _tableClient.AddEntityAsync(account);
+            await _tableClient.AddEntityAsync(model);
         }
 
-        public async Task Update(Account account)
+        public async Task UpdateAsync(Account model)
         {
-            if (account == null) throw new ArgumentNullException(nameof(account));
+            if (model == null) throw new ArgumentNullException(nameof(model));
 
-            await _tableClient.UpdateEntityAsync(account, account.ETag);
+            await _tableClient.UpdateEntityAsync(model, model.ETag);
         }
     }
 }
