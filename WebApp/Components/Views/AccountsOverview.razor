@@ -14,17 +14,17 @@ else
         @foreach (var account in accounts)
         {
             <div class="col">
-                <div class="card">
+                <Card>
                     <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top" alt="Image @account.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@account.Name</h5>
-                        <p class="card-text">Aktuelles Guthaben: @account.Balance€</p>
-                        <a href="#" class="btn btn-primary">Auswählen</a>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Letzte Transaktion am @account.Timestamp.GetValueOrDefault().ToString("D")</small>
-                    </div>
-                </div>
+                    <CardBody>
+                        <CardTitle>@account.Name</CardTitle>
+                        <CardText>Aktuelles Guthaben: @account.Balance€</CardText>
+                        <Button Color="ButtonColor.Primary" To="#" Type="ButtonType.Link">Auswählen</Button>
+                    </CardBody>
+                    <CardFooter>
+                        <small class="text-muted">Letzte Transaktion am @account.Timestamp.GetValueOrDefault().ToString("F")</small>
+                    </CardFooter>
+                </Card>
             </div>
         }
     </div>
