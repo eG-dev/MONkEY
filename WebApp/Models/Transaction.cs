@@ -13,7 +13,7 @@ namespace WebApp.Models
 
         public string Sponsor { get; init; } = default!;
 
-        public int Amount { get; init; }
+        public double Amount { get; init; }
 
         public ETag ETag { get; set; } = default!;
 

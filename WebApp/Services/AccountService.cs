@@ -22,18 +22,35 @@ namespace WebApp.Services
 
             if (response.GetRawResponse().Status != 409)
             {
-                await InsertAsync(new Account() { Name = "Luis", Balance = 0 });
-                await InsertAsync(new Account() { Name = "Jonas", Balance = 0 });
-                await InsertAsync(new Account() { Name = "Charlotte", Balance = 0 });
+                await InsertAsync(new Account() { Name = "Luis", Balance = 0.0 });
+                await InsertAsync(new Account() { Name = "Jonas", Balance = 0.0 });
+                await InsertAsync(new Account() { Name = "Charlotte", Balance = 0.0 });
             }
         }
 
-        public IQueryable<Account> GetAll()
+        public async Task<List<Account>> GetAllAsync()
         {
-            var model = _tableClient.Query<Account>();
+            List<Account> result = new();
 
-            return model
-                .AsQueryable();
+            await foreach (Account model in _tableClient.QueryAsync<Account>(e => true))
+            {
+                result.Add(model);
+            }
+
+            return result;
+        }
+
+        public async Task<Account?> GetAsync(string name)
+        {
+            var query = _tableClient.QueryAsync<Account>(e => e.PartitionKey == name);
+
+            Account? model = null;
+            await foreach (Account entry in query)
+            {
+                model = entry;
+            }
+
+            return model;
         }
 
         public async Task InsertAsync(Account model)

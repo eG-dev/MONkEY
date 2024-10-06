@@ -1,5 +1,44 @@
 ﻿@page "/"
 
+@using System.Security.Principal
+@using WebApp.Models
+@using WebApp.Services
+
+@inject AccountService Accounts
+
 <PageTitle>MONkEY App</PageTitle>
 
-<AccountsOverview />
+@if (accounts == null)
+{
+    <PageLoader />
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var account in accounts)
+        {
+            <div class="col">
+                <Card>
+                    <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top" alt="Image @account.Name">
+                    <CardBody>
+                        <CardTitle>@account.Name</CardTitle>
+                        <CardText>Aktuelles Guthaben: @account.Balance€</CardText>
+                        <Button Color="ButtonColor.Primary" To="@($"/accountDetails/{account.Name}")" Type="ButtonType.Link">Auswählen</Button>
+                    </CardBody>
+                    <CardFooter>
+                        <small class="text-muted">Letzte Transaktion am @account.Timestamp.GetValueOrDefault().ToString("F")</small>
+                    </CardFooter>
+                </Card>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Account>? accounts;
+
+    protected async override Task OnInitializedAsync()
+    {
+        accounts = await Accounts.GetAllAsync();
+    }
+}

@@ -21,12 +21,16 @@ namespace WebApp.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public IQueryable<Transaction> GetAll(string recipient)
+        public async Task<List<Transaction>> GetAllAsync(string recipient, int? pageSize = null)
         {
-            var model = _tableClient.Query<Transaction>($"PartitionKey eq {recipient}");
+            List<Transaction> result = new();
 
-            return model
-                .AsQueryable();
+            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient, pageSize))
+            {
+                result.Add(model);
+            }
+
+            return result;
         }
 
         public async Task InsertAsync(Transaction model)

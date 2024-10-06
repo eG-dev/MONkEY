@@ -1,0 +1,45 @@
+﻿@page "/accountDetails/{Name:alpha}"
+@rendermode InteractiveServer
+
+@using WebApp.Models
+@using WebApp.Services
+
+@inject AccountService Accounts
+@inject TransactionService Transactions
+
+<PageTitle>MONkEY App - Kontodetails</PageTitle>
+
+<div>
+    <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="Breadcrumbs"></Breadcrumb>
+</div>
+
+@if (account == null)
+{
+    <PageLoader />
+}
+else
+{
+    <h3>@account.Name</h3>
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = default!;
+
+    private List<BreadcrumbItem> Breadcrumbs { get; set; } = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem { Text = "Übersicht", Href ="/" }
+    };
+
+    private Account? account = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            Breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
+
+            account = await Accounts.GetAsync(Name);
+        }
+    }
+}
