@@ -1,0 +1,60 @@
+﻿@using WebApp.Models
+@using WebApp.Services
+
+@inject TransactionService Transactions
+
+@if (_isLoading)
+{
+    <PageLoader />
+}
+else
+{
+    <Grid @ref="_grid"
+          TItem="Transaction"
+          Class="table table-hover table-bordered table-striped"
+          EmptyText="Keine Transaktionen vorhanden.."
+          DataProvider="TransactionsDataProvider"
+          AllowFiltering="true"
+          Responsive="true">
+
+        <GridColumns>
+            <GridColumn TItem="Transaction" HeaderText="RowKey" PropertyName="RowKey" hidden>
+                @context.RowKey
+            </GridColumn>
+            <GridColumn TItem="Transaction" HeaderText="Betrag" PropertyName="Amount">
+                @context.Amount
+            </GridColumn>
+            <GridColumn TItem="Transaction" HeaderText="Datum" PropertyName="Timestamp">
+                @context.Timestamp
+            </GridColumn>
+            <GridColumn TItem="Transaction" HeaderText="Ausgelöst durch" PropertyName="TriggedBy">
+                @context.TriggedBy
+            </GridColumn>
+        </GridColumns>
+    </Grid>
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = default!;
+
+    private bool _isLoading = true;
+
+    private Grid<Transaction> _grid = default!;
+    private List<Transaction> _transactions = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            _transactions = await Transactions.GetAllAsync(Name, 25);
+        }
+
+        _isLoading = false;
+    }
+
+    private async Task<GridDataProviderResult<Transaction>> TransactionsDataProvider(GridDataProviderRequest<Transaction> request)
+    {
+        return await Task.FromResult(request.ApplyTo(_transactions));
+    }
+}

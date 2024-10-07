@@ -15,7 +15,7 @@
     <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="_breadcrumbs"></Breadcrumb>
 </div>
 
-@if (isLoading)
+@if (_isLoading)
 {
     <PageLoader />
 }
@@ -27,6 +27,10 @@ else if (_account != null)
 
     <Button Color="ButtonColor.Success" Type="ButtonType.Button" @onclick="() => UpdateBalance(50.0)">+50€</Button>
     <Button Color="ButtonColor.Danger" Type="ButtonType.Button" @onclick="() => UpdateBalance(-10.0)">-10€</Button>
+
+    <br />
+    <br />
+    <TransactionsOverview Name="@_account.Name" />
 }
 else
 {
@@ -44,7 +48,7 @@ else
 
     private List<ToastMessage> _messages = new ();
 
-    private bool isLoading = true;
+    private bool _isLoading = true;
     private Account? _account = null;
 
 
@@ -57,7 +61,7 @@ else
             _account = await Accounts.GetAsync(Name);
         }
 
-        isLoading = false;
+        _isLoading = false;
     }
 
     public async Task UpdateBalance(double amount)
