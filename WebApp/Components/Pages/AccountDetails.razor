@@ -12,7 +12,7 @@
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
 <div>
-    <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="Breadcrumbs"></Breadcrumb>
+    <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="_breadcrumbs"></Breadcrumb>
 </div>
 
 @if (isLoading)
@@ -21,6 +21,8 @@
 }
 else if (_account != null)
 {
+    <Toasts class="p-3" Messages="_messages" AutoHide="true" StackLength="3" Placement="ToastsPlacement.TopRight" />
+
     <h3>@_account.Name</h3>
 
     <Button Color="ButtonColor.Success" Type="ButtonType.Button" @onclick="() => UpdateBalance(50.0)">+50€</Button>
@@ -35,19 +37,22 @@ else
     [Parameter]
     public string Name { get; set; } = default!;
 
-    private List<BreadcrumbItem> Breadcrumbs { get; set; } = new List<BreadcrumbItem>
+    private List<BreadcrumbItem> _breadcrumbs { get; set; } = new()
     {
         new BreadcrumbItem { Text = "Übersicht", Href ="/" }
     };
 
+    private List<ToastMessage> _messages = new ();
+
     private bool isLoading = true;
     private Account? _account = null;
+
 
     protected async override Task OnInitializedAsync()
     {
         if (!string.IsNullOrWhiteSpace(Name))
         {
-            Breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
+            _breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
 
             _account = await Accounts.GetAsync(Name);
         }
@@ -63,15 +68,21 @@ else
         if (account != null && authState?.User?.Identity != null)
         {
             await Transactions.InsertAsync(new Transaction()
-            {
-                Recipient = account!.Name,
-                Sponsor = authState.User!.Identity!.Name!,
-                Amount = amount,
-            });
+                {
+                    Recipient = account!.Name,
+                    TriggedBy = authState.User!.Identity!.Name!,
+                    Amount = amount,
+                });
 
             account.Balance += amount;
 
             await Accounts.UpdateAsync(account);
+
+            _messages.Add(new ToastMessage()
+                {
+                    Type = amount < 0 ? ToastType.Danger : ToastType.Success,
+                    Message = amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen..." : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt...",
+                });
         }
     }
 }

@@ -11,7 +11,7 @@ namespace WebApp.Models
 
         public string Recipient { get; init; } = default!;
 
-        public string Sponsor { get; init; } = default!;
+        public string TriggedBy { get; init; } = default!;
 
         public double Amount { get; init; }
 
