@@ -1,11 +1,13 @@
 ﻿@page "/accountDetails/{Name:alpha}"
 @rendermode InteractiveServer
 
+@using Microsoft.AspNetCore.Components.Authorization
 @using WebApp.Models
 @using WebApp.Services
 
 @inject AccountService Accounts
 @inject TransactionService Transactions
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
@@ -13,13 +15,20 @@
     <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="Breadcrumbs"></Breadcrumb>
 </div>
 
-@if (account == null)
+@if (isLoading)
 {
     <PageLoader />
 }
+else if (_account != null)
+{
+    <h3>@_account.Name</h3>
+
+    <Button Color="ButtonColor.Success" Type="ButtonType.Button" @onclick="() => UpdateBalance(50.0)">+50€</Button>
+    <Button Color="ButtonColor.Danger" Type="ButtonType.Button" @onclick="() => UpdateBalance(-10.0)">-10€</Button>
+}
 else
 {
-    <h3>@account.Name</h3>
+    <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>Das Konto ist nicht bekannt! </Alert>
 }
 
 @code {
@@ -31,7 +40,8 @@ else
         new BreadcrumbItem { Text = "Übersicht", Href ="/" }
     };
 
-    private Account? account = null;
+    private bool isLoading = true;
+    private Account? _account = null;
 
     protected async override Task OnInitializedAsync()
     {
@@ -39,7 +49,29 @@ else
         {
             Breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
 
-            account = await Accounts.GetAsync(Name);
+            _account = await Accounts.GetAsync(Name);
+        }
+
+        isLoading = false;
+    }
+
+    public async Task UpdateBalance(double amount)
+    {
+        var account = await Accounts.GetAsync(Name);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (account != null && authState?.User?.Identity != null)
+        {
+            await Transactions.InsertAsync(new Transaction()
+            {
+                Recipient = account!.Name,
+                Sponsor = authState.User!.Identity!.Name!,
+                Amount = amount,
+            });
+
+            account.Balance += amount;
+
+            await Accounts.UpdateAsync(account);
         }
     }
 }

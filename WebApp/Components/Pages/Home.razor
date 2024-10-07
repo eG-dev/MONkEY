@@ -1,22 +1,26 @@
 ﻿@page "/"
 
 @using System.Security.Principal
+@using System.Globalization
 @using WebApp.Models
 @using WebApp.Services
 
 @inject AccountService Accounts
+@inject TransactionService Transactions
 
 <PageTitle>MONkEY App</PageTitle>
 
-@if (accounts == null)
+@if (_accounts == null)
 {
     <PageLoader />
 }
 else
 {
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var account in accounts)
+        @foreach (var account in _accounts)
         {
+            var transaction = _lastTransactions[account.Name];
+
             <div class="col">
                 <Card>
                     <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top" alt="Image @account.Name">
@@ -26,7 +30,18 @@ else
                         <Button Color="ButtonColor.Primary" To="@($"/accountDetails/{account.Name}")" Type="ButtonType.Link">Auswählen</Button>
                     </CardBody>
                     <CardFooter>
-                        <small class="text-muted">Letzte Transaktion am @account.Timestamp.GetValueOrDefault().ToString("F")</small>
+                        @if (transaction != null)
+                        {
+                            var text = @transaction.Timestamp.GetValueOrDefault().ToString("F", new CultureInfo("de-DE"));
+
+                            <small class="text-muted">Letzte Transaktion am @text</small>
+                        }
+                        else
+                        {
+                            var text = @account.Timestamp.GetValueOrDefault().ToString("F", new CultureInfo("de-DE"));
+
+                            <small class="text-muted">Letzte Aktualisierung am @text</small>
+                        }
                     </CardFooter>
                 </Card>
             </div>
@@ -35,10 +50,16 @@ else
 }
 
 @code {
-    private List<Account>? accounts;
+    private List<Account>? _accounts;
+    private Dictionary<string, Transaction?> _lastTransactions = new();
 
     protected async override Task OnInitializedAsync()
     {
-        accounts = await Accounts.GetAllAsync();
+        _accounts = await Accounts.GetAllAsync();
+
+        foreach (var account in _accounts)
+        {
+            _lastTransactions[account.Name] = await Transactions.GetLatestAsync(account.Name);
+        }
     }
 }

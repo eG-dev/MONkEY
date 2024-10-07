@@ -33,6 +33,13 @@ namespace WebApp.Services
             return result;
         }
 
+        public async Task<Transaction?> GetLatestAsync(string recipient)
+        {
+            var transactions = await GetAllAsync(recipient, 1);
+
+            return transactions.Count > 0 ? transactions[0] : null;
+        }
+
         public async Task InsertAsync(Transaction model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));

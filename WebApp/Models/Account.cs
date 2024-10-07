@@ -11,7 +11,7 @@ namespace WebApp.Models
 
         public string Name { get; init; } = default!;
 
-        public double Balance { get; init; }
+        public double Balance { get; set; }
 
         public ETag ETag { get; set; } = default!;
 
