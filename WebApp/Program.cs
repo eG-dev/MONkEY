@@ -25,6 +25,8 @@ builder.Services.AddBlazorBootstrap();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddApplicationInsightsTelemetry();
+
 var tableStorageConnectionString = builder.Configuration.GetConnectionString("TABLE_STORAGE_CONNECTION_STRING");
 
 TableServiceClient tableServiceClient = new TableServiceClient(tableStorageConnectionString);

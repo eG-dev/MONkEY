@@ -19,6 +19,7 @@
     <PackageReference Include="Azure.Data.Tables" Version="12.9.1" />
     <PackageReference Include="Blazor.Bootstrap" Version="3.0.0" />
     <PackageReference Include="BuildWebCompiler2022" Version="1.14.10" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Microsoft.Identity.Web" Version="3.2.1" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.1" />
   </ItemGroup>
