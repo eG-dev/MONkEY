@@ -8,7 +8,6 @@
 @inject AccountService Accounts
 @inject TransactionService Transactions
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager Navigation
 
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
@@ -27,7 +26,7 @@
 
     <br />
     <br />
-    <TransactionsOverview Name="@_account.Name" />
+    <TransactionsOverview @ref="_transactionsOverview" Name="@_account.Name" />
 }
 else
 {
@@ -41,15 +40,15 @@ else
     [Parameter]
     public string Name { get; set; } = default!;
 
-    private List<BreadcrumbItem> _breadcrumbs { get; set; } = new()
+    private List<BreadcrumbItem> _breadcrumbs = new()
     {
         new BreadcrumbItem { Text = "Übersicht", Href ="/" }
     };
 
     private List<ToastMessage> _messages = new ();
-
     private Account? _account = null;
 
+    private TransactionsOverview _transactionsOverview = default!;
 
     protected async override Task OnInitializedAsync()
     {
@@ -101,8 +100,7 @@ else
                         Type = amount < 0 ? ToastType.Danger : ToastType.Success,
                         Message = amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen..." : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt...",
                     });
-
-                Navigation.Refresh(true);
+                
             }
         }
         catch (Exception e)
@@ -111,6 +109,8 @@ else
         }
         finally
         {
+            await _transactionsOverview.Refresh();
+
             Busy.Hide();
         }
     }

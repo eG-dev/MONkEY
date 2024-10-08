@@ -40,8 +40,26 @@ else
     private Grid<Transaction> _grid = default!;
     private List<Transaction> _transactions = new();
 
+    public async Task Refresh()
+    {
+        _isLoading = true;
+
+        StateHasChanged();
+
+        await Load();
+
+        StateHasChanged();
+    }
+
     protected async override Task OnInitializedAsync()
     {
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        _isLoading = true;
+
         if (!string.IsNullOrWhiteSpace(Name))
         {
             _transactions = await Transactions.GetAllAsync(Name, 25);
