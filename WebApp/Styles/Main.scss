@@ -13,3 +13,9 @@
     margin-top: 12px;
     margin-bottom: 12px;
 }
+
+img {
+    &.account-image {
+        cursor: pointer;
+    }
+}

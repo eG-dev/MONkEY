@@ -1,4 +1,5 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
 @using System.Security.Principal
 @using System.Globalization
@@ -7,14 +8,13 @@
 
 @inject AccountService Accounts
 @inject TransactionService Transactions
+@inject NavigationManager Navigation
+
+<InitializeTimeZone />
 
 <PageTitle>MONkEY App</PageTitle>
 
-@if (_accounts == null)
-{
-    <PageLoader />
-}
-else
+@if (_accounts != null)
 {
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var account in _accounts)
@@ -23,24 +23,20 @@ else
 
             <div class="col">
                 <Card>
-                    <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top" alt="Image @account.Name">
+                    <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top account-image" alt="Image @account.Name" @onclick="() => ShowAccountDetails(account.Name)">
                     <CardBody>
                         <CardTitle>@account.Name</CardTitle>
                         <CardText>Aktuelles Guthaben: @account.Balance€</CardText>
-                        <Button Color="ButtonColor.Primary" To="@($"/accountDetails/{account.Name}")" Type="ButtonType.Link">Auswählen</Button>
+                        <Button Color="ButtonColor.Primary" Type="ButtonType.Button" @onclick="() => ShowAccountDetails(account.Name)">Auswählen</Button>
                     </CardBody>
                     <CardFooter>
                         @if (transaction != null)
                         {
-                            var text = @transaction.Timestamp.GetValueOrDefault().ToString("F");
-
-                            <small class="text-muted">Letzte Transaktion am @text</small>
+                            <small class="text-muted">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" /></small>
                         }
                         else
                         {
-                            var text = @account.Timestamp.GetValueOrDefault().ToString("F");
-
-                            <small class="text-muted">Letzte Aktualisierung am @text</small>
+                            <small class="text-muted">Keine Transaktionen vorhanden</small>
                         }
                     </CardFooter>
                 </Card>
@@ -50,16 +46,37 @@ else
 }
 
 @code {
+    [Inject]
+    protected PreloadService Busy { get; set; } = default!;
+
     private List<Account>? _accounts;
     private Dictionary<string, Transaction?> _lastTransactions = new();
 
     protected async override Task OnInitializedAsync()
     {
-        _accounts = await Accounts.GetAllAsync();
+        Busy.Show(SpinnerColor.Dark);
 
-        foreach (var account in _accounts)
+        try
         {
-            _lastTransactions[account.Name] = await Transactions.GetLatestAsync(account.Name);
+            _accounts = await Accounts.GetAllAsync();
+
+            foreach (var account in _accounts)
+            {
+                _lastTransactions[account.Name] = await Transactions.GetLatestAsync(account.Name);
+            }
         }
+        catch (Exception e)
+        {
+            throw e;
+        }
+        finally
+        {
+            Busy.Hide();
+        }
+    }
+
+    private void ShowAccountDetails(string accountName)
+    {
+        Navigation.NavigateTo($"/accountDetails/{accountName}");
     }
 }

@@ -8,6 +8,7 @@
 @inject AccountService Accounts
 @inject TransactionService Transactions
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
 
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
@@ -15,11 +16,7 @@
     <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="_breadcrumbs"></Breadcrumb>
 </div>
 
-@if (_isLoading)
-{
-    <PageLoader />
-}
-else if (_account != null)
+@if (_account != null)
 {
     <Toasts class="p-3" Messages="_messages" AutoHide="true" StackLength="3" Placement="ToastsPlacement.TopRight" />
 
@@ -38,6 +35,9 @@ else
 }
 
 @code {
+    [Inject]
+    protected PreloadService Busy { get; set; } = default!;
+
     [Parameter]
     public string Name { get; set; } = default!;
 
@@ -48,45 +48,70 @@ else
 
     private List<ToastMessage> _messages = new ();
 
-    private bool _isLoading = true;
     private Account? _account = null;
 
 
     protected async override Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(Name))
+        Busy.Show(SpinnerColor.Dark);
+
+        try
         {
-            _breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                _breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
 
-            _account = await Accounts.GetAsync(Name);
+                _account = await Accounts.GetAsync(Name);
+            }
         }
-
-        _isLoading = false;
+        catch (Exception e)
+        {
+            throw e;
+        }
+        finally
+        {
+            Busy.Hide();
+        }
     }
 
     public async Task UpdateBalance(double amount)
     {
-        var account = await Accounts.GetAsync(Name);
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        Busy.Show(SpinnerColor.Dark);
 
-        if (account != null && authState?.User?.Identity != null)
+        try
         {
-            await Transactions.InsertAsync(new Transaction()
-                {
-                    Recipient = account!.Name,
-                    TriggedBy = authState.User!.Identity!.Name!,
-                    Amount = amount,
-                });
+            var account = await Accounts.GetAsync(Name);
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            account.Balance += amount;
+            if (account != null && authState?.User?.Identity != null)
+            {
+                await Transactions.InsertAsync(new Transaction()
+                    {
+                        Recipient = account!.Name,
+                        TriggedBy = authState.User!.Identity!.Name!,
+                        Amount = amount,
+                    });
 
-            await Accounts.UpdateAsync(account);
+                account.Balance += amount;
 
-            _messages.Add(new ToastMessage()
-                {
-                    Type = amount < 0 ? ToastType.Danger : ToastType.Success,
-                    Message = amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen..." : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt...",
-                });
+                await Accounts.UpdateAsync(account);
+
+                _messages.Add(new ToastMessage()
+                    {
+                        Type = amount < 0 ? ToastType.Danger : ToastType.Success,
+                        Message = amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen..." : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt...",
+                    });
+
+                Navigation.Refresh(true);
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+        finally
+        {
+            Busy.Hide();
         }
     }
 }

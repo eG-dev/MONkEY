@@ -30,7 +30,9 @@ namespace WebApp.Services
                 result.Add(model);
             }
 
-            return result;
+            return result
+                .OrderByDescending(e => e.Timestamp)
+                .ToList();
         }
 
         public async Task<Transaction?> GetLatestAsync(string recipient)

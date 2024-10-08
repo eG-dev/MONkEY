@@ -34,9 +34,11 @@ var tableStorageConnectionString = builder.Configuration.GetConnectionString("TA
 
 TableServiceClient tableServiceClient = new TableServiceClient(tableStorageConnectionString);
 
-builder.Services.AddTransient(sp => tableServiceClient);
-builder.Services.AddTransient<AccountService>();
-builder.Services.AddTransient<TransactionService>();
+builder.Services.AddScoped(sp => tableServiceClient);
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<TransactionService>();
+
+builder.Services.AddBrowserTimeProvider();
 
 var app = builder.Build();
 

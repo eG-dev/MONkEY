@@ -9,23 +9,20 @@
 }
 else
 {
+    <h3>Letzte Transaktionen</h3>
     <Grid @ref="_grid"
           TItem="Transaction"
           Class="table table-hover table-bordered table-striped"
           EmptyText="Keine Transaktionen vorhanden.."
           DataProvider="TransactionsDataProvider"
-          AllowFiltering="true"
           Responsive="true">
 
         <GridColumns>
-            <GridColumn TItem="Transaction" HeaderText="RowKey" PropertyName="RowKey" hidden>
-                @context.RowKey
-            </GridColumn>
-            <GridColumn TItem="Transaction" HeaderText="Betrag" PropertyName="Amount">
-                @context.Amount
-            </GridColumn>
             <GridColumn TItem="Transaction" HeaderText="Datum" PropertyName="Timestamp">
-                @context.Timestamp
+                <LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" />
+            </GridColumn>
+            <GridColumn TItem="Transaction" HeaderText="Betrag" PropertyName="Amount" ColumnClass="@(e => e.Amount > 0 ? "table-success" : "table-danger")">
+                @context.Amount.ToString("+0;-#")€
             </GridColumn>
             <GridColumn TItem="Transaction" HeaderText="Ausgelöst durch" PropertyName="TriggedBy">
                 @context.TriggedBy
