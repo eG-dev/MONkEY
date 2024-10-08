@@ -32,13 +32,13 @@ else
                     <CardFooter>
                         @if (transaction != null)
                         {
-                            var text = @transaction.Timestamp.GetValueOrDefault().ToString("F", new CultureInfo("de-DE"));
+                            var text = @transaction.Timestamp.GetValueOrDefault().ToString("F");
 
                             <small class="text-muted">Letzte Transaktion am @text</small>
                         }
                         else
                         {
-                            var text = @account.Timestamp.GetValueOrDefault().ToString("F", new CultureInfo("de-DE"));
+                            var text = @account.Timestamp.GetValueOrDefault().ToString("F");
 
                             <small class="text-muted">Letzte Aktualisierung am @text</small>
                         }
