@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using System.Globalization;
 using WebApp.Components;
 using WebApp.Services;
 
@@ -26,6 +27,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddApplicationInsightsTelemetry();
+
+builder.Services.AddLocalization();
 
 var tableStorageConnectionString = builder.Configuration.GetConnectionString("TABLE_STORAGE_CONNECTION_STRING");
 
@@ -63,5 +66,7 @@ app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.UseRequestLocalization("de-DE");
 
 app.Run();
