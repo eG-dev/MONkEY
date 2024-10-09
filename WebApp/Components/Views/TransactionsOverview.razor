@@ -3,62 +3,41 @@
 
 @inject TransactionService Transactions
 
-@if (_isLoading)
-{
-    <PageLoader />
-}
-else
-{
-    <h3>Letzte Transaktionen</h3>
-    <Grid @ref="_grid"
-          TItem="Transaction"
-          Class="table table-hover table-bordered table-striped"
-          EmptyText="Keine Transaktionen vorhanden.."
-          DataProvider="TransactionsDataProvider"
-          Responsive="true">
-
-        <GridColumns>
-            <GridColumn TItem="Transaction" HeaderText="Datum" PropertyName="Timestamp">
-                <LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" />
-            </GridColumn>
-            <GridColumn TItem="Transaction" HeaderText="Betrag" PropertyName="Amount" ColumnClass="@(e => e.Amount > 0 ? "table-success" : "table-danger")">
-                @context.Amount.ToString("+0;-#")€
-            </GridColumn>
-            <GridColumn TItem="Transaction" HeaderText="Ausgelöst durch" PropertyName="TriggedBy">
-                @context.TriggedBy
-            </GridColumn>
-        </GridColumns>
-    </Grid>
-}
+<MudText Typo="Typo.h6">Letzte Transaktionen</MudText>
+<MudTable @ref="_table" Items="@_transactions" Hover="true" Dense="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
+    <NoRecordsContent>
+        Keine Transaktionen vorhanden...
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Datum</MudTh>
+        <MudTh>Betrag</MudTh>
+        <MudTh>Auslöser</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Datum" Class=""><LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" /></MudTd>
+        <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
+        <MudTd DataLabel="Auslöser">@context.TriggedBy</MudTd>
+    </RowTemplate>
+</MudTable>
 
 @code {
     [Parameter]
     public string Name { get; set; } = default!;
 
     private bool _isLoading = true;
+    private MudTable<Transaction> _table = default!;
 
-    private Grid<Transaction> _grid = default!;
     private List<Transaction> _transactions = new();
 
     public async Task Refresh()
     {
-        _isLoading = true;
+        _transactions.Clear();
 
-        StateHasChanged();
-
-        await Load();
-
-        StateHasChanged();
-    }
-
-    protected async override Task OnInitializedAsync()
-    {
-        await Load();
-    }
-
-    private async Task Load()
-    {
-        _isLoading = true;
+        if (_isLoading)
+        {
+            _isLoading = true;
+            StateHasChanged();
+        }
 
         if (!string.IsNullOrWhiteSpace(Name))
         {
@@ -66,10 +45,18 @@ else
         }
 
         _isLoading = false;
+        StateHasChanged();
     }
 
-    private async Task<GridDataProviderResult<Transaction>> TransactionsDataProvider(GridDataProviderRequest<Transaction> request)
+    protected async override Task OnInitializedAsync()
     {
-        return await Task.FromResult(request.ApplyTo(_transactions));
+        await Refresh();
     }
+
+    private Func<Transaction, string> GetAmountCellStyle => x =>
+    {
+        string style = x.Amount < 0 ? "background: #F8D7DA" : "background: #D1E7DD";
+
+        return style;
+    };
 }

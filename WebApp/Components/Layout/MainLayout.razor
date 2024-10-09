@@ -5,44 +5,38 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="page">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="/images/monkey.png" alt="Logo" height="30" class="d-inline-block align-text-top">
-            </a>
-            @if (!string.IsNullOrEmpty(userName))
-            {
-                <ul class="navbar-nav justify-content-end">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">@userName</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="MicrosoftIdentity/Account/SignOut">Abmelden</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            }
-            else
-            {
-                <a href="MicrosoftIdentity/Account/SignIn" class="btn btn-primary">Anmelden</a>
-            }
-        </div>
-    </nav>
+    <MudAppBar Color="Color.Dark" Fixed="false" Dense="false" Elevation="1">
+        <MudImage Height="30" Src="/images/monkey.png"></MudImage>
+        <MudSpacer />
+        @if (!string.IsNullOrEmpty(userName))
+        {
+            <MudText Color="Color.Default">@userName</MudText>
+            <MudButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
+        }
+        else
+        {
+            <MudButton Icon="@Icons.Material.Filled.Login" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignIn">Anmelden</MudButton>
+        }
+    </MudAppBar>
 
-    <div class="container page-container">
+    <MudContainer Class="page-container">
         <CascadingAuthenticationState>
             <AuthorizeView>
                 <Authorized>
                     @Body
                 </Authorized>
                 <NotAuthorized>
-                    <div class="d-flex flex-column justify-content-center align-items-center">Sie müssen sich anmelden, um den Inhalt zu sehen!</div>
+                    <p>Sie müssen sich anmelden, um den Inhalt zu sehen!</p>
                 </NotAuthorized>
             </AuthorizeView>
         </CascadingAuthenticationState>
-    </div>
+    </MudContainer>
 </div>
 
-<Preload LoadingText="Bitte warten..." />
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

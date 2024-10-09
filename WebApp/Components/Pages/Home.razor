@@ -1,5 +1,4 @@
 ﻿@page "/"
-@rendermode InteractiveServer
 
 @using System.Security.Principal
 @using System.Globalization
@@ -14,65 +13,59 @@
 
 <PageTitle>MONkEY App</PageTitle>
 
-@if (_accounts != null)
+@if (_isLoading)
 {
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <PageLoader />
+}
+else if (_accounts != null)
+{
+    <div class="d-flex flex-grow-1 flex-wrap gap-4 pa-4">
         @foreach (var account in _accounts)
         {
             var transaction = _lastTransactions[account.Name];
 
-            <div class="col">
-                <Card>
-                    <img src="@($"images/{account.Name.ToLower()}.png")" class="card-img-top account-image" alt="Image @account.Name" @onclick="() => ShowAccountDetails(account.Name)">
-                    <CardBody>
-                        <CardTitle>@account.Name</CardTitle>
-                        <CardText>Aktuelles Guthaben: @account.Balance€</CardText>
-                        <Button Color="ButtonColor.Primary" Type="ButtonType.Button" @onclick="() => ShowAccountDetails(account.Name)">Auswählen</Button>
-                    </CardBody>
-                    <CardFooter>
-                        @if (transaction != null)
-                        {
-                            <small class="text-muted">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" /></small>
-                        }
-                        else
-                        {
-                            <small class="text-muted">Keine Transaktionen vorhanden</small>
-                        }
-                    </CardFooter>
-                </Card>
-            </div>
+            <MudCard Class="flex-auto d-flex">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">@account.Name</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardMedia Image="@($"images/{account.Name.ToLower()}.png")" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
+                <MudCardContent>
+                    <MudText Typo="Typo.body1">Aktuelles Guthaben: @account.Balance€</MudText>
+                    @if (transaction != null)
+                    {
+                        <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" /></MudText>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption">Keine Transaktionen vorhanden</MudText>
+                    }
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => ShowAccountDetails(account.Name)">Auswählen</MudButton>
+                </MudCardActions>
+            </MudCard>
         }
     </div>
 }
 
 @code {
-    [Inject]
-    protected PreloadService Busy { get; set; } = default!;
+    private bool _isLoading = true;
 
     private List<Account>? _accounts;
     private Dictionary<string, Transaction?> _lastTransactions = new();
 
     protected async override Task OnInitializedAsync()
     {
-        Busy.Show(SpinnerColor.Dark);
+        _accounts = await Accounts.GetAllAsync();
 
-        try
+        foreach (var account in _accounts)
         {
-            _accounts = await Accounts.GetAllAsync();
+            _lastTransactions[account.Name] = await Transactions.GetLatestAsync(account.Name);
+        }
 
-            foreach (var account in _accounts)
-            {
-                _lastTransactions[account.Name] = await Transactions.GetLatestAsync(account.Name);
-            }
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-        finally
-        {
-            Busy.Hide();
-        }
+        _isLoading = false;
     }
 
     private void ShowAccountDetails(string accountName)

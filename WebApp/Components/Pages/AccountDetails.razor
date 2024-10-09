@@ -1,5 +1,4 @@
 ﻿@page "/accountDetails/{Name:alpha}"
-@rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using WebApp.Models
@@ -8,21 +7,25 @@
 @inject AccountService Accounts
 @inject TransactionService Transactions
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+@inject IDialogService Dialog
 
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
 <div>
-    <Breadcrumb style="--bs-breadcrumb-divider: '>';" Items="_breadcrumbs"></Breadcrumb>
+    <MudBreadcrumbs Items="_breadcrumbs" Separator=">"></MudBreadcrumbs>
 </div>
 
 @if (_account != null)
 {
-    <Toasts class="p-3" Messages="_messages" AutoHide="true" StackLength="3" Placement="ToastsPlacement.TopRight" />
+    <MudText Typo="Typo.h1">@_account.Name</MudText>
+    <MudText Typo="Typo.h4">Aktuelles Guthaben beträgt @_account.Balance Euro</MudText>
 
-    <h3>@_account.Name</h3>
-
-    <Button Color="ButtonColor.Success" Type="ButtonType.Button" @onclick="() => UpdateBalance(50.0)">+50€</Button>
-    <Button Color="ButtonColor.Danger" Type="ButtonType.Button" @onclick="() => UpdateBalance(-10.0)">-10€</Button>
+    <br />
+    <br />
+    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => UpdateBalance(50.0)">+50€</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => UpdateBalance(-10.0)">-10€</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenDialogAsync()">Dialog Test</MudButton>
 
     <br />
     <br />
@@ -30,53 +33,41 @@
 }
 else
 {
-    <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>Das Konto ist nicht bekannt! </Alert>
+    <MudAlert Severity="Severity.Error">Das Konto ist nicht bekannt!</MudAlert>
 }
 
 @code {
-    [Inject]
-    protected PreloadService Busy { get; set; } = default!;
-
     [Parameter]
     public string Name { get; set; } = default!;
 
     private List<BreadcrumbItem> _breadcrumbs = new()
     {
-        new BreadcrumbItem { Text = "Übersicht", Href ="/" }
+        new BreadcrumbItem("Übersicht", "/", false, Icons.Material.Filled.Home)
     };
 
-    private List<ToastMessage> _messages = new ();
     private Account? _account = null;
 
     private TransactionsOverview _transactionsOverview = default!;
 
     protected async override Task OnInitializedAsync()
     {
-        Busy.Show(SpinnerColor.Dark);
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            _account = await Accounts.GetAsync(Name);
 
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                _breadcrumbs.Add(new BreadcrumbItem { Text = Name, IsCurrentPage = true });
+            _breadcrumbs.Add(new BreadcrumbItem(Name, $"/accountDetails/{Name}", false, Icons.Material.Filled.Wallet));
+        }
+    }
 
-                _account = await Accounts.GetAsync(Name);
-            }
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-        finally
-        {
-            Busy.Hide();
-        }
+    private async Task OpenDialogAsync()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        await Dialog.ShowAsync<TransactionDialog>("Simple Dialog", options);
     }
 
     public async Task UpdateBalance(double amount)
     {
-        Busy.Show(SpinnerColor.Dark);
-
         try
         {
             var account = await Accounts.GetAsync(Name);
@@ -95,12 +86,7 @@ else
 
                 await Accounts.UpdateAsync(account);
 
-                _messages.Add(new ToastMessage()
-                    {
-                        Type = amount < 0 ? ToastType.Danger : ToastType.Success,
-                        Message = amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen..." : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt...",
-                    });
-                
+                Snackbar.Add(amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen" : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt", Severity.Success);
             }
         }
         catch (Exception e)
@@ -109,9 +95,10 @@ else
         }
         finally
         {
-            await _transactionsOverview.Refresh();
-
-            Busy.Hide();
+            if (_transactionsOverview != null)
+            {
+                await _transactionsOverview.Refresh();
+            }
         }
     }
 }

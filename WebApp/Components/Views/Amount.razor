@@ -1,0 +1,14 @@
+﻿@if (Value != null)
+{
+    var value = Value.Value;
+
+    <MudText Color="@(value < 0 ? Color.Error : Color.Success)">@value.ToString("+0;-#")@Unit</MudText>
+}
+
+@code {
+    [Parameter]
+    public double? Value { get; set; } = null;
+
+    [Parameter]
+    public string Unit { get; set; } = string.Empty;
+}
