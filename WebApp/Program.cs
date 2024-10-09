@@ -5,6 +5,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MudBlazor;
 using MudBlazor.Services;
+using MudBlazor.Translations;
 using WebApp.Components;
 using WebApp.Services;
 
@@ -37,6 +38,7 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.ShowTransitionDuration = 500;
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
 });
+builder.Services.AddMudTranslations();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
