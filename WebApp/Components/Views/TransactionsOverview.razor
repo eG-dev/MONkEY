@@ -9,13 +9,13 @@
         Keine Transaktionen vorhanden...
     </NoRecordsContent>
     <HeaderContent>
-        <MudTh>Datum</MudTh>
         <MudTh>Betrag</MudTh>
+        <MudTh>Datum</MudTh>
         <MudTh>Auslöser</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Datum" Class=""><LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" /></MudTd>
         <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
+        <MudTd DataLabel="Datum" Class=""><LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" /></MudTd>
         <MudTd DataLabel="Auslöser">@context.TriggedBy</MudTd>
     </RowTemplate>
 </MudTable>
