@@ -23,9 +23,8 @@
 
     <br />
     <br />
-    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => UpdateBalance(50.0)">+50€</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => UpdateBalance(-10.0)">-10€</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenDialogAsync()">Dialog Test</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.TwoTone.Add" OnClick="() => InitiateTransaction(false)">Einzahlen</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.TwoTone.Remove" OnClick="() => InitiateTransaction(true)">Auszahlen</MudButton>
 
     <br />
     <br />
@@ -50,7 +49,7 @@ else
 
     private List<BreadcrumbItem> _breadcrumbs = new()
     {
-        new BreadcrumbItem("Übersicht", "/", false, Icons.Material.Filled.Home)
+        new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
     };
 
     private bool _isLoading = true;
@@ -66,20 +65,37 @@ else
         {
             _account = await Accounts.GetAsync(Name);
 
-            _breadcrumbs.Add(new BreadcrumbItem(Name, $"/accountDetails/{Name}", false, Icons.Material.Filled.Wallet));
+            _breadcrumbs.Add(new BreadcrumbItem(Name, $"/accountDetails/{Name}", false, Icons.Material.TwoTone.Wallet));
         }
 
         _isLoading = false;
     }
 
-    private async Task OpenDialogAsync()
+    private async Task InitiateTransaction(bool payOut)
     {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = await Dialog.ShowAsync<TransactionDialog>(
+            payOut ? "Guthaben auszahlen" : "Guthaben einzahlen",
+            new DialogParameters<TransactionDialog>
+            {
+                { x => x.PayOut, payOut },
+            },
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Small,
+            });
 
-        var dialog = await Dialog.ShowAsync<TransactionDialog>("Simple Dialog", options);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled && result.Data is TransactionDialogModel model)
+        {
+            if (!double.IsNaN(model.Amount) && model.Amount != 0)
+            {
+                await UpdateBalance(model.Amount, model.Comment);
+            }
+        }
     }
 
-    public async Task UpdateBalance(double amount)
+    private async Task UpdateBalance(double amount, string? comment)
     {
         _isUpdating = true;
 
@@ -95,6 +111,7 @@ else
                         Recipient = account!.Name,
                         TriggedBy = authState.User!.Identity!.Name!,
                         Amount = amount,
+                        Comment = comment,
                     });
 
                 account.Balance += amount;

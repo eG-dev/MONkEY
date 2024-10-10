@@ -13,7 +13,9 @@ namespace WebApp.Models
 
         public string TriggedBy { get; init; } = default!;
 
-        public double Amount { get; init; }
+        public double Amount { get; set; }
+
+        public string? Comment { get; set; } = default!;
 
         public ETag ETag { get; set; } = default!;
 

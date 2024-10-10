@@ -11,11 +11,13 @@
     <HeaderContent>
         <MudTh>Betrag</MudTh>
         <MudTh>Datum</MudTh>
+        <MudTh>Kommentar</MudTh>
         <MudTh>Auslöser</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
         <MudTd DataLabel="Datum" Class=""><LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" /></MudTd>
+        <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
         <MudTd DataLabel="Auslöser">@context.TriggedBy</MudTd>
     </RowTemplate>
 </MudTable>

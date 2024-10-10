@@ -45,6 +45,8 @@ namespace WebApp.Services
         public async Task InsertAsync(Transaction model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
+            if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
             model.PartitionKey = model.Recipient;
             model.RowKey = Guid.NewGuid().ToString();
@@ -55,6 +57,8 @@ namespace WebApp.Services
         public async Task UpdateAsync(Transaction model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
+            if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
             await _tableClient.UpdateEntityAsync(model, model.ETag);
         }

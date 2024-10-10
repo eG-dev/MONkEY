@@ -1,21 +1,46 @@
-﻿<MudDialog>
-    <TitleContent>
-        Dialog Title
-    </TitleContent>
+﻿@using WebApp.Models
+
+<MudDialog>
     <DialogContent>
-        Dialog Content
+        <MudNumericField @bind-Value="_amount"
+            Label="Betrag" Variant="Variant.Text"
+            Min="1" Max="1000" Step="1"
+            Immediate="true"
+            Adornment="Adornment.Start" AdornmentIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)" AdornmentColor="@(PayOut ? Color.Error : Color.Success)" />
+
+        <MudTextField T="string" Label="Kommentar" Variant="Variant.Outlined" @bind-Text="@_comment" Lines="3" MaxLength="100" />
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="Cancel">Abbrechen</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Okay</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private MudDialogInstance MudDialog { get; set; } = default!;
 
-    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    [Parameter]
+    public bool PayOut { get; set; } = false;
+
+    private double? _amount = null;
+    private string? _comment = null;
+
+    private void Submit()
+    {
+        double amount = _amount ?? 0;
+
+        if (PayOut)
+        {
+            amount = 0 - amount;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new TransactionDialogModel()
+        {
+            Amount = amount,
+            Comment = _comment,
+        }));
+    }
 
     private void Cancel() => MudDialog.Cancel();
 }
