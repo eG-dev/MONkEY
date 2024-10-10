@@ -4,52 +4,70 @@
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<div class="page">
+<MudThemeProvider/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout Class="page">
     <MudAppBar Color="Color.Dark" Fixed="false" Dense="false" Elevation="1">
         <MudImage Height="30" Src="/images/monkey.png"></MudImage>
         <MudSpacer />
-        @if (!string.IsNullOrEmpty(userName))
+        @if (!string.IsNullOrEmpty(_userName))
         {
-            <MudText Color="Color.Default">@userName</MudText>
-            <MudButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
+            <MudText Color="Color.Default">@_userName</MudText>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => ToggleDrawer())" />
         }
         else
         {
             <MudButton Icon="@Icons.Material.Filled.Login" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignIn">Anmelden</MudButton>
         }
     </MudAppBar>
+    @if (!string.IsNullOrEmpty(_userName))
+    {
+        <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">@_userName</MudText>
+            </MudDrawerHeader>
 
-    <MudContainer Class="page-container">
-        <CascadingAuthenticationState>
-            <AuthorizeView>
-                <Authorized>
-                    @Body
-                </Authorized>
-                <NotAuthorized>
-                    <p>Sie müssen sich anmelden, um den Inhalt zu sehen!</p>
-                </NotAuthorized>
-            </AuthorizeView>
-        </CascadingAuthenticationState>
-    </MudContainer>
-</div>
+            <MudButton Icon="@Icons.Material.Filled.Logout" Color="Color.Secondary" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
+        </MudDrawer>
+    }
+    <MudMainContent>
+        <MudContainer Class="page-container">
+            <CascadingAuthenticationState>
+                <AuthorizeView>
+                    <Authorized>
+                        @Body
+                    </Authorized>
+                    <NotAuthorized>
+                        <p>Sie müssen sich anmelden, um den Inhalt zu sehen!</p>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </CascadingAuthenticationState>
+        </MudContainer>
+    </MudMainContent>
 
-<MudThemeProvider />
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+</MudLayout>
 
 @code {
-    private string userName = string.Empty;
+    bool _drawerOpen = false;
+
+    private string _userName = string.Empty;
 
     protected async override Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        userName = authState.User.FindFirst("name")?.Value ?? string.Empty;
+        _userName = authState.User.FindFirst("name")?.Value ?? string.Empty;
+    }
+
+    void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
     }
 }
