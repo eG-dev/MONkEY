@@ -88,9 +88,9 @@ else
 
         if (result != null && !result.Canceled && result.Data is TransactionDialogModel model)
         {
-            if (!double.IsNaN(model.Amount) && model.Amount != 0)
+            if (model.Amount.HasValue && !double.IsNaN(model.Amount.Value) && model.Amount != 0)
             {
-                await UpdateBalance(model.Amount, model.Comment);
+                await UpdateBalance(model.Amount.Value, model.Comment);
             }
         }
     }

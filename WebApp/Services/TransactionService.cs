@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using System.Reflection;
 using WebApp.Models;
 
 namespace WebApp.Services
@@ -9,7 +10,7 @@ namespace WebApp.Services
 
         public TransactionService(TableServiceClient tableServiceClient)
         {
-            if (tableServiceClient == null) throw new ArgumentNullException(nameof(tableServiceClient));
+            ArgumentNullException.ThrowIfNull(tableServiceClient, nameof(tableServiceClient));
 
             _tableClient = tableServiceClient.GetTableClient(
                 tableName: "transactions"
@@ -23,16 +24,14 @@ namespace WebApp.Services
 
         public async Task<List<Transaction>> GetAllAsync(string recipient, int? pageSize = null)
         {
-            List<Transaction> result = new();
+            List<Transaction> result = [];
 
             await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient, pageSize))
             {
                 result.Add(model);
             }
 
-            return result
-                .OrderByDescending(e => e.Timestamp)
-                .ToList();
+            return [.. result.OrderByDescending(e => e.Timestamp)];
         }
 
         public async Task<Transaction?> GetLatestAsync(string recipient)
@@ -44,7 +43,7 @@ namespace WebApp.Services
 
         public async Task InsertAsync(Transaction model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            ArgumentNullException.ThrowIfNull(model, nameof(model));
             if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
@@ -56,7 +55,7 @@ namespace WebApp.Services
 
         public async Task UpdateAsync(Transaction model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            ArgumentNullException.ThrowIfNull(model, nameof(model));
             if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 

@@ -9,7 +9,7 @@ namespace WebApp.Services
 
         public AccountService(TableServiceClient tableServiceClient)
         {
-            if (tableServiceClient == null) throw new ArgumentNullException(nameof(tableServiceClient));
+            ArgumentNullException.ThrowIfNull(tableServiceClient, nameof(tableServiceClient));
 
             _tableClient = tableServiceClient.GetTableClient(
                 tableName: "accounts"
@@ -30,7 +30,7 @@ namespace WebApp.Services
 
         public async Task<List<Account>> GetAllAsync()
         {
-            List<Account> result = new();
+            List<Account> result = [];
 
             await foreach (Account model in _tableClient.QueryAsync<Account>(e => true))
             {
@@ -55,7 +55,7 @@ namespace WebApp.Services
 
         public async Task InsertAsync(Account model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            ArgumentNullException.ThrowIfNull(model, nameof(model));
 
             model.PartitionKey = model.Name;
             model.RowKey = Guid.NewGuid().ToString();
@@ -65,7 +65,7 @@ namespace WebApp.Services
 
         public async Task UpdateAsync(Account model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            ArgumentNullException.ThrowIfNull(model, nameof(model));
 
             await _tableClient.UpdateEntityAsync(model, model.ETag);
         }
