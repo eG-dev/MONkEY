@@ -30,6 +30,14 @@
     <br />
     <br />
     <TransactionsOverview @ref="_transactionsOverview" Name="@_account.Name" />
+
+    <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+}
+else if (_isLoading)
+{
+    <PageLoader />
 }
 else
 {
@@ -45,6 +53,9 @@ else
         new BreadcrumbItem("Übersicht", "/", false, Icons.Material.Filled.Home)
     };
 
+    private bool _isLoading = true;
+    private bool _isUpdating = false;
+
     private Account? _account = null;
 
     private TransactionsOverview _transactionsOverview = default!;
@@ -57,17 +68,21 @@ else
 
             _breadcrumbs.Add(new BreadcrumbItem(Name, $"/accountDetails/{Name}", false, Icons.Material.Filled.Wallet));
         }
+
+        _isLoading = false;
     }
 
     private async Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
-        await Dialog.ShowAsync<TransactionDialog>("Simple Dialog", options);
+        var dialog = await Dialog.ShowAsync<TransactionDialog>("Simple Dialog", options);
     }
 
     public async Task UpdateBalance(double amount)
     {
+        _isUpdating = true;
+
         try
         {
             var account = await Accounts.GetAsync(Name);
@@ -86,6 +101,8 @@ else
 
                 await Accounts.UpdateAsync(account);
 
+                _account = account;
+
                 Snackbar.Add(amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen" : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt", Severity.Success);
             }
         }
@@ -95,6 +112,8 @@ else
         }
         finally
         {
+            _isUpdating = false;
+
             if (_transactionsOverview != null)
             {
                 await _transactionsOverview.Refresh();
