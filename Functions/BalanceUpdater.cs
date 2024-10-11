@@ -29,19 +29,22 @@ namespace MONkEY.Functions
 
             foreach (var account in accounts)
             {
-                var amount = 100.0;
-
-                await _transactions.InsertAsync(new Transaction()
+                if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    Recipient = account!.Name,
-                    TriggedBy = "Taschengeld-Service",
-                    Amount = amount,
-                    Comment = "Automatische monatliche Einzahlung",
-                });
+                    var amount = account.PocketMoney.Value;
 
-                account.Balance += amount;
+                    await _transactions.InsertAsync(new Transaction()
+                    {
+                        Recipient = account!.Name,
+                        TriggedBy = "Taschengeld-Service",
+                        Amount = amount,
+                        Comment = "Automatische monatliche Einzahlung",
+                    });
 
-                await _accounts.UpdateAsync(account);
+                    account.Balance += amount;
+
+                    await _accounts.UpdateAsync(account);
+                }
             }
         }
     }

@@ -13,6 +13,8 @@ namespace MONkEY.Data.Models
 
         public double Balance { get; set; }
 
+        public double? PocketMoney { get; set; }
+
         public ETag ETag { get; set; } = default!;
 
         public DateTimeOffset? Timestamp { get; set; } = default!;
