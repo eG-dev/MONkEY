@@ -22,6 +22,13 @@
     </RowTemplate>
 </MudTable>
 
+@if (_transactions.Count > 0)
+{
+    <div class="d-flex justify-center mt-3">
+        <MudButton Variant="@Variant.Outlined">Mehr laden</MudButton>
+    </div>
+}
+
 @code {
     [Parameter]
     public string Name { get; set; } = default!;
@@ -43,7 +50,7 @@
 
         if (!string.IsNullOrWhiteSpace(Name))
         {
-            _transactions = await Transactions.GetAllAsync(Name, 25);
+            _transactions = await Transactions.GetAsync(Name, 5);
         }
 
         _isLoading = false;

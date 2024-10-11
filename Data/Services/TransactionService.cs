@@ -21,13 +21,23 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public async Task<List<Transaction>> GetAllAsync(string recipient, int? pageSize = null)
+        public async Task<List<Transaction>> GetAsync(string recipient, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
+            if (olderThan == null)
+            {
+                olderThan = DateTimeOffset.UtcNow;
+            }
+
             List<Transaction> result = [];
 
-            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient, pageSize))
+            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp < olderThan, pageSize))
             {
                 result.Add(model);
+
+                if (pageSize != null && result.Count == pageSize)
+                {
+                    break;
+                }
             }
 
             return [.. result.OrderByDescending(e => e.Timestamp)];
@@ -35,16 +45,16 @@ namespace MONkEY.Data.Services
 
         public async Task<Transaction?> GetLatestAsync(string recipient)
         {
-            var transactions = await GetAllAsync(recipient, 1);
+            var transactions = await GetAsync(recipient, 1);
 
             return transactions.Count > 0 ? transactions[0] : null;
         }
 
-        public async Task<List<Transaction>> GetByTriggerAndTimestamp(string recipient, string triggeredBy, DateTimeOffset sinceTimestamp)
+        public async Task<List<Transaction>> GetByTriggerSince(string recipient, string triggeredBy, DateTimeOffset newerThan)
         {
             List<Transaction> result = [];
 
-            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.TriggedBy == triggeredBy && e.Timestamp >= sinceTimestamp))
+            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.TriggedBy == triggeredBy && e.Timestamp >= newerThan))
             {
                 result.Add(model);
             }

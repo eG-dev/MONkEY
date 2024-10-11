@@ -1,8 +1,10 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using System.Diagnostics;
 
 namespace MONkEY.Data.Models
 {
+    [DebuggerDisplay("{Recipient}, {Amount}, {Timestamp}, {Comment}")]
     public class Transaction : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;

@@ -1,8 +1,10 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using System.Diagnostics;
 
 namespace MONkEY.Data.Models
 {
+    [DebuggerDisplay("{Name}, {Balance}, {PocketMoney}")]
     public class Account : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;

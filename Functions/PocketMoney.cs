@@ -22,8 +22,7 @@ namespace MONkEY.Functions
         }
 
         [Function("PocketMoney")]
-        //public async Task Run([TimerTrigger("0 30 0 1 * *", RunOnStartup = true)] TimerInfo timer)
-        public async Task Run([TimerTrigger("0 */10 * * * *", RunOnStartup = true)] TimerInfo timer)
+        public async Task Run([TimerTrigger("0 30 0 1 * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing pocket money service");
 
@@ -33,9 +32,12 @@ namespace MONkEY.Functions
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var pocketMoneyTransactions = await _transactions.GetByTriggerAndTimestamp(account.Name, TRANSACTION_TRIGGER_NAME, DateTimeOffset.UtcNow.AddHours(-1.0));
+                    var utcNow = DateTime.UtcNow;
+                    var firstOfMonth = new DateTimeOffset(utcNow.Year, utcNow.Month, 1, 0, 0, 0, TimeSpan.Zero);
 
-                    if (!pocketMoneyTransactions.Any())
+                    var pocketMoneyTransactions = await _transactions.GetByTriggerSince(account.Name, TRANSACTION_TRIGGER_NAME, firstOfMonth);
+
+                    if (pocketMoneyTransactions.Count == 0)
                     {
                         var amount = account.PocketMoney.Value;
 
