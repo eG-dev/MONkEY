@@ -3,6 +3,7 @@
 @inherits LayoutComponentBase
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
 
 <InitializeTimeZone />
 
@@ -21,7 +22,7 @@
 
 <MudLayout Class="page">
     <MudAppBar Color="Color.Dark" Fixed="true" Dense="false" Elevation="2">
-        <MudImage Height="30" Src="/images/monkey.png"></MudImage>
+        <MudImage Height="30" Src="/images/monkey.png" @onclick="() => NavigateToHome()" Class="cursor-pointer"></MudImage>
         <MudSpacer />
         @if (!string.IsNullOrEmpty(_userName))
         {
@@ -74,6 +75,11 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _userName = authState.User.FindFirst("name")?.Value ?? string.Empty;
+    }
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
     }
 
     private void ToggleDrawer()
