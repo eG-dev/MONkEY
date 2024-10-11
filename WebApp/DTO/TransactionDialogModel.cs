@@ -1,4 +1,4 @@
-﻿namespace WebApp.Models
+﻿namespace MONkEY.WebApp.DTO
 {
     public class TransactionDialogModel
     {

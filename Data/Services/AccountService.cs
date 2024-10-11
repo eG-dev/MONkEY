@@ -1,7 +1,7 @@
 ﻿using Azure.Data.Tables;
-using WebApp.Models;
+using MONkEY.Data.Models;
 
-namespace WebApp.Services
+namespace MONkEY.Data.Services
 {
     public class AccountService
     {

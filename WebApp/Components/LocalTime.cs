@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components;
+using MONkEY.WebApp.Utils;
 
-namespace WebApp.Components
+namespace MONkEY.WebApp.Components
 {
     public static class TimeProviderExtensions
     {

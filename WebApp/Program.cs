@@ -6,8 +6,9 @@ using Microsoft.Identity.Web.UI;
 using MudBlazor;
 using MudBlazor.Services;
 using MudBlazor.Translations;
-using WebApp.Components;
-using WebApp.Services;
+using MONkEY.Data.Services;
+using MONkEY.WebApp.Components;
+using MONkEY.WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,9 +45,8 @@ builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddLocalization();
 
-var tableStorageConnectionString = builder.Configuration.GetConnectionString("TABLE_STORAGE_CONNECTION_STRING");
-
-TableServiceClient tableServiceClient = new TableServiceClient(tableStorageConnectionString);
+var tableStorageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
+TableServiceClient tableServiceClient = new(tableStorageConnectionString);
 
 builder.Services.AddScoped(sp => tableServiceClient);
 builder.Services.AddScoped<AccountService>();

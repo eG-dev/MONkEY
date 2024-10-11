@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace WebApp.Models
+namespace MONkEY.Data.Models
 {
     public class Account : ITableEntity
     {

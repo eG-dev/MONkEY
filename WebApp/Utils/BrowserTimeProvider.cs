@@ -1,26 +1,29 @@
-﻿internal sealed class BrowserTimeProvider : TimeProvider
+﻿namespace MONkEY.WebApp.Utils
 {
-    private TimeZoneInfo? _browserLocalTimeZone;
-
-    // Notify when the local time zone changes
-    public event EventHandler? LocalTimeZoneChanged;
-
-    public override TimeZoneInfo LocalTimeZone => _browserLocalTimeZone ?? base.LocalTimeZone;
-
-    internal bool IsLocalTimeZoneSet => _browserLocalTimeZone != null;
-
-    // Set the local time zone
-    public void SetBrowserTimeZone(string timeZone)
+    internal sealed class BrowserTimeProvider : TimeProvider
     {
-        if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZone, out var timeZoneInfo))
-        {
-            timeZoneInfo = null;
-        }
+        private TimeZoneInfo? _browserLocalTimeZone;
 
-        if (timeZoneInfo != LocalTimeZone)
+        // Notify when the local time zone changes
+        public event EventHandler? LocalTimeZoneChanged;
+
+        public override TimeZoneInfo LocalTimeZone => _browserLocalTimeZone ?? base.LocalTimeZone;
+
+        internal bool IsLocalTimeZoneSet => _browserLocalTimeZone != null;
+
+        // Set the local time zone
+        public void SetBrowserTimeZone(string timeZone)
         {
-            _browserLocalTimeZone = timeZoneInfo;
-            LocalTimeZoneChanged?.Invoke(this, EventArgs.Empty);
+            if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZone, out var timeZoneInfo))
+            {
+                timeZoneInfo = null;
+            }
+
+            if (timeZoneInfo != LocalTimeZone)
+            {
+                _browserLocalTimeZone = timeZoneInfo;
+                LocalTimeZoneChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

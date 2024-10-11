@@ -1,8 +1,7 @@
 ﻿using Azure.Data.Tables;
-using System.Reflection;
-using WebApp.Models;
+using MONkEY.Data.Models;
 
-namespace WebApp.Services
+namespace MONkEY.Data.Services
 {
     public class TransactionService
     {
@@ -44,6 +43,7 @@ namespace WebApp.Services
         public async Task InsertAsync(Transaction model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
+
             if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
@@ -56,6 +56,7 @@ namespace WebApp.Services
         public async Task UpdateAsync(Transaction model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
+
             if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 

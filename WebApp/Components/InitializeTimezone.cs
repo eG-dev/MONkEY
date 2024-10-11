@@ -1,26 +1,30 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MONkEY.WebApp.Utils;
 
-public sealed class InitializeTimeZone : ComponentBase
+namespace MONkEY.WebApp.Components
 {
-    [Inject]
-    public TimeProvider TimeProvider { get; set; } = default!;
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public sealed class InitializeTimeZone : ComponentBase
     {
-        if (firstRender && TimeProvider is BrowserTimeProvider browserTimeProvider && !browserTimeProvider.IsLocalTimeZoneSet)
+        [Inject]
+        public TimeProvider TimeProvider { get; set; } = default!;
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; } = default!;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            try
+            if (firstRender && TimeProvider is BrowserTimeProvider browserTimeProvider && !browserTimeProvider.IsLocalTimeZoneSet)
             {
-                await using var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./timezone.js");
-                var timeZone = await module.InvokeAsync<string>("getBrowserTimeZone");
-                browserTimeProvider.SetBrowserTimeZone(timeZone);
-            }
-            catch (JSDisconnectedException)
-            {
+                try
+                {
+                    await using var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./timezone.js");
+                    var timeZone = await module.InvokeAsync<string>("getBrowserTimeZone");
+                    browserTimeProvider.SetBrowserTimeZone(timeZone);
+                }
+                catch (JSDisconnectedException)
+                {
+                }
             }
         }
     }
