@@ -11,7 +11,7 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        var tableStorageConnectionString = Environment.GetEnvironmentVariable("ConnectionStrings:TableStorage");
+        var tableStorageConnectionString = Environment.GetEnvironmentVariable("TABLE_STORAGE_CONNECTION_STRING");
         TableServiceClient tableServiceClient = new(tableStorageConnectionString);
 
         services.AddScoped(sp => tableServiceClient);
