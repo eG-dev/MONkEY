@@ -7,6 +7,8 @@ namespace MONkEY.Functions
 {
     public class PocketMoney
     {
+        private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
+
         private readonly ILogger _logger;
         private readonly AccountService _accounts;
         private readonly TransactionService _transactions;
@@ -21,9 +23,9 @@ namespace MONkEY.Functions
 
         [Function("PocketMoney")]
         //public async Task Run([TimerTrigger("0 30 0 1 * *", RunOnStartup = true)] TimerInfo timer)
-        public async Task Run([TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo timer)
+        public async Task Run([TimerTrigger("0 */10 * * * *", RunOnStartup = true)] TimerInfo timer)
         {
-            _logger.LogInformation($"Executing automatic balance update");
+            _logger.LogInformation($"Executing pocket money service");
 
             var accounts = await _accounts.GetAllAsync();
 
@@ -31,19 +33,24 @@ namespace MONkEY.Functions
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var amount = account.PocketMoney.Value;
+                    var pocketMoneyTransactions = await _transactions.GetByTriggerAndTimestamp(account.Name, TRANSACTION_TRIGGER_NAME, DateTimeOffset.UtcNow.AddHours(-1.0));
 
-                    await _transactions.InsertAsync(new Transaction()
+                    if (!pocketMoneyTransactions.Any())
                     {
-                        Recipient = account!.Name,
-                        TriggedBy = "Taschengeld-Service",
-                        Amount = amount,
-                        Comment = "Monatliches Taschengeld",
-                    });
+                        var amount = account.PocketMoney.Value;
 
-                    account.Balance += amount;
+                        await _transactions.InsertAsync(new Transaction()
+                        {
+                            Recipient = account!.Name,
+                            TriggedBy = TRANSACTION_TRIGGER_NAME,
+                            Amount = amount,
+                            Comment = "Monatliches Taschengeld",
+                        });
 
-                    await _accounts.UpdateAsync(account);
+                        account.Balance += amount;
+
+                        await _accounts.UpdateAsync(account);
+                    }
                 }
             }
         }

@@ -40,6 +40,18 @@ namespace MONkEY.Data.Services
             return transactions.Count > 0 ? transactions[0] : null;
         }
 
+        public async Task<List<Transaction>> GetByTriggerAndTimestamp(string recipient, string triggeredBy, DateTimeOffset sinceTimestamp)
+        {
+            List<Transaction> result = [];
+
+            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.TriggedBy == triggeredBy && e.Timestamp >= sinceTimestamp))
+            {
+                result.Add(model);
+            }
+
+            return [.. result.OrderByDescending(e => e.Timestamp)];
+        }
+
         public async Task InsertAsync(Transaction model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
