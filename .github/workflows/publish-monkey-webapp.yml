@@ -10,10 +10,10 @@ on:
   workflow_dispatch:
 
 env:
+  DOTNET_VERSION: 8.0.x
   AZURE_WEBAPP_NAME: monkey-webapp
-  AZURE_WEBAPP_PACKAGE_PATH: WebApp/published
-  DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: WebApp
+  OUTPUT_DIRECTORY: output
 
 jobs:
   build-and-deploy:
@@ -21,20 +21,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
+      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build
-        run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration Release
-
-      - name: Publish
-        run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration Release --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+        run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration Release --output "${{ env.OUTPUT_DIRECTORY }}"
 
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: "production"
           publish-profile: ${{ secrets.WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: "${{ env.OUTPUT_DIRECTORY }}"

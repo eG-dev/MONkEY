@@ -10,9 +10,10 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: monkey-functions
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "Functions"
   DOTNET_VERSION: "8.0.x"
+  AZURE_FUNCTIONAPP_NAME: monkey-functions
+  WORKING_DIRECTORY: "Functions"
+  OUTPUT_DIRECTORY: output
 
 jobs:
   build-and-deploy:
@@ -27,12 +28,8 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: "Resolve Project Dependencies Using Dotnet"
-        shell: bash
-        run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build --configuration Release --output ./output
-          popd
+      - name: Build
+        run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration Release --output "${{ env.OUTPUT_DIRECTORY }}"
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
@@ -40,5 +37,5 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           slot-name: "production"
-          package: "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output"
           publish-profile: ${{ secrets.FUNCTIONS_PUBLISH_PROFILE }}
+          package: "${{ env.OUTPUT_DIRECTORY }}"
