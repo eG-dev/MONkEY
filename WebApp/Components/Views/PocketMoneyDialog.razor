@@ -1,0 +1,37 @@
+﻿@using MONkEY.WebApp.DTO
+
+<MudDialog>
+    <DialogContent>
+        <MudFocusTrap>
+            <MudNumericField @bind-Value="PocketMoney"
+                Label="Taschengeld" Variant="Variant.Text"
+                Min="0" Max="1000" Step="1"
+                Immediate="true"
+                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Wallet" />
+        </MudFocusTrap>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Abbrechen</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Okay</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public double? PocketMoney { get; set; } = default!;
+
+    private void Submit()
+    {
+        var model = new PocketMoneyDialogModel()
+        {
+            PocketMoney = PocketMoney ?? 0.0
+        };
+
+        MudDialog.Close(DialogResult.Ok(model));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}
