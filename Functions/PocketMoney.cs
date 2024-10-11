@@ -5,21 +5,21 @@ using MONkEY.Data.Services;
 
 namespace MONkEY.Functions
 {
-    public class BalanceUpdater
+    public class PocketMoney
     {
         private readonly ILogger _logger;
         private readonly AccountService _accounts;
         private readonly TransactionService _transactions;
 
-        public BalanceUpdater(ILoggerFactory loggerFactory, AccountService accounts, TransactionService transactions)
+        public PocketMoney(ILoggerFactory loggerFactory, AccountService accounts, TransactionService transactions)
         {
-            _logger = loggerFactory.CreateLogger<BalanceUpdater>();
+            _logger = loggerFactory.CreateLogger<PocketMoney>();
 
             _accounts = accounts;
             _transactions = transactions;
         }
 
-        [Function("BalanceUpdater")]
+        [Function("PocketMoney")]
         //public async Task Run([TimerTrigger("0 30 0 1 * *", RunOnStartup = true)] TimerInfo timer)
         public async Task Run([TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo timer)
         {

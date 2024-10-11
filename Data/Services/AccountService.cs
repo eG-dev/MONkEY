@@ -22,9 +22,9 @@ namespace MONkEY.Data.Services
 
             if (response.GetRawResponse().Status != 409)
             {
-                await InsertAsync(new Account() { Name = "Luis", Balance = 0.0 });
-                await InsertAsync(new Account() { Name = "Jonas", Balance = 0.0 });
-                await InsertAsync(new Account() { Name = "Charlotte", Balance = 0.0 });
+                await InsertAsync(new Account() { Name = "Luis", Balance = 0.0, PocketMoney = 0.0 });
+                await InsertAsync(new Account() { Name = "Jonas", Balance = 0.0, PocketMoney = 0.0 });
+                await InsertAsync(new Account() { Name = "Charlotte", Balance = 0.0, PocketMoney = 0.0 });
             }
         }
 
