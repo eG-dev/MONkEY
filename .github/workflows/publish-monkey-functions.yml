@@ -7,7 +7,7 @@ on:
       - "WebApp/**"
 env:
   AZURE_FUNCTIONAPP_NAME: monkey-functions
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: ./published
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: Functions/published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: Functions
