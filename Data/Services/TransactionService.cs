@@ -1,4 +1,5 @@
-﻿using Azure.Data.Tables;
+﻿using Azure;
+using Azure.Data.Tables;
 using MONkEY.Data.Models;
 
 namespace MONkEY.Data.Services
@@ -23,14 +24,19 @@ namespace MONkEY.Data.Services
 
         public async Task<List<Transaction>> GetAsync(string recipient, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
+            List<Transaction> result = [];
+            AsyncPageable<Transaction> pageableResult;
+
             if (olderThan == null)
             {
-                olderThan = DateTimeOffset.UtcNow;
+                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient);
+            }
+            else
+            {
+                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp < olderThan);
             }
 
-            List<Transaction> result = [];
-
-            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp < olderThan, pageSize))
+            await foreach (Transaction model in pageableResult)
             {
                 result.Add(model);
 
@@ -70,7 +76,10 @@ namespace MONkEY.Data.Services
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
             model.PartitionKey = model.Recipient;
-            model.RowKey = Guid.NewGuid().ToString();
+
+            // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
+            string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
+            model.RowKey = invertedTicks;
 
             await _tableClient.AddEntityAsync(model);
         }

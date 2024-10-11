@@ -58,7 +58,10 @@ namespace MONkEY.Data.Services
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
             model.PartitionKey = model.Name;
-            model.RowKey = Guid.NewGuid().ToString();
+
+            // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
+            string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
+            model.RowKey = invertedTicks;
 
             await _tableClient.AddEntityAsync(model);
         }

@@ -22,14 +22,16 @@
     </RowTemplate>
 </MudTable>
 
-@if (_transactions.Count > 0)
+@if (!_isLoading && _transactions.Count > 0)
 {
     <div class="d-flex justify-center mt-3">
-        <MudButton Variant="@Variant.Outlined">Mehr laden</MudButton>
+        <MudButton Variant="@Variant.Outlined" OnClick="() => LoadMore()">Mehr laden</MudButton>
     </div>
 }
 
 @code {
+    private const int PAGE_SIZE = 10;
+
     [Parameter]
     public string Name { get; set; } = default!;
 
@@ -38,11 +40,18 @@
 
     private List<Transaction> _transactions = new();
 
+    protected async override Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
     public async Task Refresh()
     {
+        var pageSize = Math.Max(_transactions.Count, PAGE_SIZE);
+
         _transactions.Clear();
 
-        if (_isLoading)
+        if (!_isLoading)
         {
             _isLoading = true;
             StateHasChanged();
@@ -50,16 +59,28 @@
 
         if (!string.IsNullOrWhiteSpace(Name))
         {
-            _transactions = await Transactions.GetAsync(Name, 5);
+            _transactions = await Transactions.GetAsync(Name, pageSize);
         }
 
         _isLoading = false;
         StateHasChanged();
     }
 
-    protected async override Task OnInitializedAsync()
+    private async Task LoadMore()
     {
-        await Refresh();
+        if (!_isLoading && _transactions.Count > 0)
+        {
+            _isLoading = true;
+            StateHasChanged();
+
+            var lastTransaction = _transactions.Last();
+
+            var olderTransactions = await Transactions.GetAsync(Name, PAGE_SIZE, lastTransaction.Timestamp);
+            _transactions.AddRange(olderTransactions);
+
+            _isLoading = false;
+            StateHasChanged();
+        }
     }
 
     private Func<Transaction, string> GetAmountCellStyle => x =>
