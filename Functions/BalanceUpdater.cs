@@ -36,7 +36,7 @@ namespace MONkEY.Functions
                     Recipient = account!.Name,
                     TriggedBy = "Taschengeld-Service",
                     Amount = amount,
-                    Comment = "Automatische Einzahlung",
+                    Comment = "Automatische monatliche Einzahlung",
                 });
 
                 account.Balance += amount;
