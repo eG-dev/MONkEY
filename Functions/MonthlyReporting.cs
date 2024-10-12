@@ -60,7 +60,7 @@ namespace MONkEY.Functions
                     Transactions = transactions.Select(x => new ReportTransaction()
                         {
                             Amount = x.Amount,
-                            TriggeredBy = x.TriggedBy,
+                            TriggeredBy = x.TriggeredBy,
                             Timestamp = x.Timestamp,
                         }).ToList()
                 };
