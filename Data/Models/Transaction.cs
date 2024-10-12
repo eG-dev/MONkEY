@@ -15,8 +15,6 @@ namespace MONkEY.Data.Models
 
         public string TriggeredBy { get; init; } = default!;
 
-        public string TriggedBy { get; init; } = default!;
-
         public double Amount { get; set; }
 
         public string? Comment { get; set; } = default!;

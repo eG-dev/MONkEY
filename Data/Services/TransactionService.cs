@@ -29,11 +29,11 @@ namespace MONkEY.Data.Services
 
             if (olderThan == null)
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient);
+                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient, pageSize);
             }
             else
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp < olderThan);
+                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp < olderThan, pageSize);
             }
 
             await foreach (Transaction model in pageableResult)
