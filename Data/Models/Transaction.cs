@@ -13,6 +13,8 @@ namespace MONkEY.Data.Models
 
         public string Recipient { get; init; } = default!;
 
+        public string TriggeredBy { get; init; } = default!;
+
         public string TriggedBy { get; init; } = default!;
 
         public double Amount { get; set; }

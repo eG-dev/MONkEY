@@ -148,7 +148,7 @@ else
                 await Transactions.InsertAsync(new Transaction()
                     {
                         Recipient = account!.Name,
-                        TriggedBy = !string.IsNullOrEmpty(userName) ? $"{userName} ({userEmail})" : userEmail,
+                        TriggeredBy = !string.IsNullOrEmpty(userName) ? $"{userName} ({userEmail})" : userEmail,
                         Amount = amount,
                         Comment = comment,
                     });

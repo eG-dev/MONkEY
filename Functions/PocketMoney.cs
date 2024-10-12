@@ -26,16 +26,16 @@ namespace MONkEY.Functions
         {
             _logger.LogInformation($"Executing pocket money service");
 
+            var utcNow = DateTime.UtcNow;
+            var firstOfMonth = new DateTimeOffset(utcNow.Year, utcNow.Month, 1, 0, 0, 0, TimeSpan.Zero);
+
             var accounts = await _accounts.GetAllAsync();
 
             foreach (var account in accounts)
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var utcNow = DateTime.UtcNow;
-                    var firstOfMonth = new DateTimeOffset(utcNow.Year, utcNow.Month, 1, 0, 0, 0, TimeSpan.Zero);
-
-                    var pocketMoneyTransactions = await _transactions.GetByTriggerSince(account.Name, TRANSACTION_TRIGGER_NAME, firstOfMonth);
+                    var pocketMoneyTransactions = await _transactions.GetNewerThanAsync(account.Name,firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
                     if (pocketMoneyTransactions.Count == 0)
                     {
@@ -44,7 +44,7 @@ namespace MONkEY.Functions
                         await _transactions.InsertAsync(new Transaction()
                         {
                             Recipient = account!.Name,
-                            TriggedBy = TRANSACTION_TRIGGER_NAME,
+                            TriggeredBy = TRANSACTION_TRIGGER_NAME,
                             Amount = amount,
                             Comment = "Monatliches Taschengeld",
                         });

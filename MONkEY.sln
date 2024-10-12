@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{3279B7AB-7ADD-4ACF-BA9C-6B9CE3E1CD79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions", "Functions\Functions.csproj", "{32438E87-0DB4-4708-A63B-6C9957EB7B6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions", "Functions\Functions.csproj", "{32438E87-0DB4-4708-A63B-6C9957EB7B6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

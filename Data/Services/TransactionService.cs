@@ -56,11 +56,21 @@ namespace MONkEY.Data.Services
             return transactions.Count > 0 ? transactions[0] : null;
         }
 
-        public async Task<List<Transaction>> GetByTriggerSince(string recipient, string triggeredBy, DateTimeOffset newerThan)
+        public async Task<List<Transaction>> GetNewerThanAsync(string recipient, DateTimeOffset newerThan, string? triggeredBy = null)
         {
             List<Transaction> result = [];
+            AsyncPageable<Transaction> pageableResult;
 
-            await foreach (Transaction model in _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.TriggedBy == triggeredBy && e.Timestamp >= newerThan))
+            if (string.IsNullOrEmpty(triggeredBy))
+            {
+                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp >= newerThan);
+            }
+            else
+            {
+                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.TriggeredBy == triggeredBy && e.Timestamp >= newerThan);
+            }
+
+            await foreach (Transaction model in pageableResult)
             {
                 result.Add(model);
             }
