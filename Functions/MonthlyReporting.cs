@@ -59,17 +59,23 @@ namespace MONkEY.Functions
             {
                 var transactions = await _transactions.GetNewerThanAsync(account.Name, firstOfMonth);
 
-                var data = new MonthyReportData()
+                var data = new MonthyReport()
                 {
                     AccountName = account.Name,
-                    PeriodName = utcNow.ToString("Y", culture),
+                    ReportedPeriod = utcNow.ToString("Y", culture),
                     Balance = account.Balance,
                     Transactions = transactions.Select(x =>
                     {
+                        var triggeredOn = string.Empty;
+                        if (x.Timestamp.HasValue)
+                        {
+                            triggeredOn = TimeZoneInfo.ConvertTime(x.Timestamp.Value, timeZone).LocalDateTime.ToString("o", culture);
+                        }
+
                         return new ReportTransaction()
                         {
                             Amount = x.Amount,
-                            TriggeredOn = x.Timestamp.HasValue ? TimeZoneInfo.ConvertTime(x.Timestamp.Value, timeZone).ToString(culture) : string.Empty,
+                            TriggeredOn = triggeredOn,
                             TriggeredBy = x.TriggeredBy,
                         };
                     }).ToList()
@@ -77,9 +83,14 @@ namespace MONkEY.Functions
 
                 foreach (var toEmail in _recipients)
                 {
-                    var msg = MailHelper.CreateSingleTemplateEmail(from, new EmailAddress(toEmail), EMAIL_TEMPLATE_ID, data);
+                    var reportMessage = MailHelper.CreateSingleTemplateEmail(from, new EmailAddress(toEmail), EMAIL_TEMPLATE_ID, data);
 
-                    await _emailClient.SendEmailAsync(msg);
+                    var result = await _emailClient.SendEmailAsync(reportMessage);
+
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        _logger.LogError("Failed to send monthly report!");
+                    }
                 }
             }
         }
