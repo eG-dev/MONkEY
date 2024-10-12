@@ -22,7 +22,7 @@ namespace MONkEY.Functions
         }
 
         [Function("PocketMoney")]
-        public async Task Run([TimerTrigger("0 30 0 1 * *", RunOnStartup = true)] TimerInfo timer)
+        public async Task Run([TimerTrigger("0 0 1 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing pocket money service");
 
