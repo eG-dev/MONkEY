@@ -52,7 +52,9 @@
                         @Body
                     </Authorized>
                     <NotAuthorized>
-                        <p>Sie müssen sich anmelden, um den Inhalt zu sehen!</p>
+                        <div class="d-flex justify-center">
+                            <MudText Typo="@Typo.body1">Sie müssen sich anmelden, um den Inhalt zu sehen!</MudText>
+                        </div>
                     </NotAuthorized>
                 </AuthorizeView>
             </CascadingAuthenticationState>
