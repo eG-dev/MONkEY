@@ -12,6 +12,10 @@ namespace MONkEY.Functions
     {
         private const string EMAIL_SENDER_ADDRESS = "monkey-app@outlook.com";
         private const string EMAIL_SENDER_NAME = "MONkEY App";
+        private const string EMAIL_TEMPLATE_ID = "d-51be69cb71f54e2f95a3a30c3c0426d7";
+
+        private const string TIMEZONE_ID = "Central Europe Standard Time";
+        private const string CULTURE_ID = "de-DE";
 
         private readonly List<string> _recipients =
         [
@@ -41,12 +45,15 @@ namespace MONkEY.Functions
         {
             _logger.LogInformation($"Executing monthly reporting service");
 
+            var from = new EmailAddress(EMAIL_SENDER_ADDRESS, EMAIL_SENDER_NAME);
+
             var utcNow = DateTime.UtcNow;
             var firstOfMonth = new DateTimeOffset(utcNow.Year, utcNow.Month, 1, 0, 0, 0, TimeSpan.Zero);
 
-            var accounts = await _accounts.GetAllAsync();
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
+            var culture = CultureInfo.CreateSpecificCulture(CULTURE_ID);
 
-            var from = new EmailAddress(EMAIL_SENDER_ADDRESS, EMAIL_SENDER_NAME);
+            var accounts = await _accounts.GetAllAsync();
 
             foreach (var account in accounts)
             {
@@ -55,19 +62,22 @@ namespace MONkEY.Functions
                 var data = new MonthyReportData()
                 {
                     AccountName = account.Name,
-                    PeriodName = utcNow.ToString("Y", CultureInfo.CreateSpecificCulture("de-DE")),
+                    PeriodName = utcNow.ToString("Y", culture),
                     Balance = account.Balance,
-                    Transactions = transactions.Select(x => new ReportTransaction()
+                    Transactions = transactions.Select(x =>
+                    {
+                        return new ReportTransaction()
                         {
                             Amount = x.Amount,
+                            TriggeredOn = x.Timestamp.HasValue ? TimeZoneInfo.ConvertTime(x.Timestamp.Value, timeZone).ToString(culture) : string.Empty,
                             TriggeredBy = x.TriggeredBy,
-                            Timestamp = x.Timestamp,
-                        }).ToList()
+                        };
+                    }).ToList()
                 };
 
                 foreach (var toEmail in _recipients)
                 {
-                    var msg = MailHelper.CreateSingleTemplateEmail(from, new EmailAddress(toEmail), "d-51be69cb71f54e2f95a3a30c3c0426d7", data);
+                    var msg = MailHelper.CreateSingleTemplateEmail(from, new EmailAddress(toEmail), EMAIL_TEMPLATE_ID, data);
 
                     await _emailClient.SendEmailAsync(msg);
                 }
