@@ -1,5 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+
 using MONkEY.Data.Models;
 using MONkEY.Data.Services;
 
@@ -22,7 +23,8 @@ namespace MONkEY.Functions
         }
 
         [Function("PocketMoney")]
-        public async Task Run([TimerTrigger("0 0 1 * * *", RunOnStartup = true)] TimerInfo timer)
+        // Runs on every day at 0:30
+        public async Task Run([TimerTrigger("0 30 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing pocket money service");
 
@@ -35,13 +37,13 @@ namespace MONkEY.Functions
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var pocketMoneyTransactions = await _transactions.GetNewerThanAsync(account.Name,firstOfMonth, TRANSACTION_TRIGGER_NAME);
+                    var pocketMoneyTransactions = await _transactions.GetSinceTimestampAsync(account.Name,firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
                     if (pocketMoneyTransactions.Count == 0)
                     {
                         var amount = account.PocketMoney.Value;
 
-                        await _transactions.InsertAsync(new Transaction()
+                        await _transactions.AddAsync(new Transaction()
                         {
                             Recipient = account!.Name,
                             TriggeredBy = TRANSACTION_TRIGGER_NAME,

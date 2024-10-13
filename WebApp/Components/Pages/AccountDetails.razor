@@ -145,7 +145,7 @@ else
                 string? userName = authState.User.FindFirst("name")?.Value;
                 string userEmail = authState.User.Identity.Name!;
 
-                await Transactions.InsertAsync(new Transaction()
+                await Transactions.AddAsync(new Transaction()
                     {
                         Recipient = account!.Name,
                         TriggeredBy = !string.IsNullOrEmpty(userName) ? $"{userName} ({userEmail})" : userEmail,

@@ -1,10 +1,13 @@
 ﻿using Azure.Data.Tables;
+
 using MONkEY.Data.Models;
 
 namespace MONkEY.Data.Services
 {
     public class AccountService
     {
+        private const string TABLE_NAME = "accounts";
+
         private readonly TableClient _tableClient;
 
         public AccountService(TableServiceClient tableServiceClient)
@@ -12,7 +15,7 @@ namespace MONkEY.Data.Services
             ArgumentNullException.ThrowIfNull(tableServiceClient, nameof(tableServiceClient));
 
             _tableClient = tableServiceClient.GetTableClient(
-                tableName: "accounts"
+                tableName: TABLE_NAME
             );
         }
 
@@ -22,9 +25,9 @@ namespace MONkEY.Data.Services
 
             if (response.GetRawResponse().Status != 409)
             {
-                await InsertAsync(new Account() { Name = "Luis", Balance = 0.0, PocketMoney = 0.0 });
-                await InsertAsync(new Account() { Name = "Jonas", Balance = 0.0, PocketMoney = 0.0 });
-                await InsertAsync(new Account() { Name = "Charlotte", Balance = 0.0, PocketMoney = 0.0 });
+                await AddAsync(new Account() { Name = "Luis", Balance = 0.0, PocketMoney = 0.0 });
+                await AddAsync(new Account() { Name = "Jonas", Balance = 0.0, PocketMoney = 0.0 });
+                await AddAsync(new Account() { Name = "Charlotte", Balance = 0.0, PocketMoney = 0.0 });
             }
         }
 
@@ -53,7 +56,7 @@ namespace MONkEY.Data.Services
             return model;
         }
 
-        public async Task InsertAsync(Account model)
+        public async Task AddAsync(Account model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 

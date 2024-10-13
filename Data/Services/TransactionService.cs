@@ -1,11 +1,14 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+
 using MONkEY.Data.Models;
 
 namespace MONkEY.Data.Services
 {
     public class TransactionService
     {
+        private const string TABLE_NAME = "transactions";
+
         private readonly TableClient _tableClient;
 
         public TransactionService(TableServiceClient tableServiceClient)
@@ -13,7 +16,7 @@ namespace MONkEY.Data.Services
             ArgumentNullException.ThrowIfNull(tableServiceClient, nameof(tableServiceClient));
 
             _tableClient = tableServiceClient.GetTableClient(
-                tableName: "transactions"
+                tableName: TABLE_NAME
             );
         }
 
@@ -56,7 +59,7 @@ namespace MONkEY.Data.Services
             return transactions.Count > 0 ? transactions[0] : null;
         }
 
-        public async Task<List<Transaction>> GetNewerThanAsync(string recipient, DateTimeOffset newerThan, string? triggeredBy = null)
+        public async Task<List<Transaction>> GetSinceTimestampAsync(string recipient, DateTimeOffset newerThan, string? triggeredBy = null)
         {
             List<Transaction> result = [];
             AsyncPageable<Transaction> pageableResult;
@@ -78,7 +81,7 @@ namespace MONkEY.Data.Services
             return [.. result.OrderByDescending(e => e.Timestamp)];
         }
 
-        public async Task InsertAsync(Transaction model)
+        public async Task AddAsync(Transaction model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 

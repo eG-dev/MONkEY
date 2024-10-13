@@ -51,16 +51,24 @@ TableServiceClient tableServiceClient = new(tableStorageConnectionString);
 builder.Services.AddScoped(sp => tableServiceClient);
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<ReportService>();
 
 builder.Services.AddBrowserTimeProvider();
 
 var app = builder.Build();
 
-var accountService = new AccountService(tableServiceClient);
-await accountService.InitAsync();
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+var serviceProvider = builder.Services.BuildServiceProvider();
+#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
-var transactionService = new TransactionService(tableServiceClient);
-await transactionService.InitAsync();
+var accountService = serviceProvider.GetService<AccountService>();
+await accountService!.InitAsync();
+
+var transactionService = serviceProvider.GetService<TransactionService>();
+await transactionService!.InitAsync();
+
+var reportService = serviceProvider.GetService<ReportService>();
+await reportService!.InitAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

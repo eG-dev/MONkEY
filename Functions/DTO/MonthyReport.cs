@@ -4,7 +4,7 @@
     {
         public string? AccountName { get; set; }
 
-        public string? ReportedPeriod { get; set; }
+        public string? ReportedPeriodName { get; set; }
 
         public double Balance { get; set; }
 
