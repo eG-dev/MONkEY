@@ -28,7 +28,10 @@ namespace MONkEY.Data.Services
         {
             List<Report> result = [];
 
-            var pageableResult = _tableClient.QueryAsync<Report>(e => e.PartitionKey == accountName && e.ReportedPeriod == reportedPeriod);
+            var pageableResult = _tableClient.QueryAsync<Report>(e =>
+                e.PartitionKey == accountName &&
+                e.ReportedPeriod == reportedPeriod);
+
             await foreach (Report model in pageableResult)
             {
                 result.Add(model);

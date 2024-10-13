@@ -32,11 +32,16 @@ namespace MONkEY.Data.Services
 
             if (olderThan == null)
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient, pageSize);
+                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                    e.PartitionKey == recipient,
+                    pageSize);
             }
             else
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp < olderThan, pageSize);
+                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                    e.PartitionKey == recipient &&
+                    e.Timestamp < olderThan,
+                    pageSize);
             }
 
             await foreach (Transaction model in pageableResult)
@@ -59,18 +64,52 @@ namespace MONkEY.Data.Services
             return transactions.Count > 0 ? transactions[0] : null;
         }
 
-        public async Task<List<Transaction>> GetSinceTimestampAsync(string recipient, DateTimeOffset newerThan, string? triggeredBy = null)
+        public async Task<List<Transaction>> GetSinceAsync(string recipient, DateTimeOffset sinceDate, string? triggeredBy = null)
         {
             List<Transaction> result = [];
             AsyncPageable<Transaction> pageableResult;
 
             if (string.IsNullOrEmpty(triggeredBy))
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.Timestamp >= newerThan);
+                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                    e.PartitionKey == recipient &&
+                    e.Timestamp >= sinceDate);
             }
             else
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e => e.PartitionKey == recipient && e.TriggeredBy == triggeredBy && e.Timestamp >= newerThan);
+                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                    e.PartitionKey == recipient &&
+                    e.TriggeredBy == triggeredBy &&
+                    e.Timestamp >= sinceDate);
+            }
+
+            await foreach (Transaction model in pageableResult)
+            {
+                result.Add(model);
+            }
+
+            return [.. result.OrderByDescending(e => e.Timestamp)];
+        }
+
+        public async Task<List<Transaction>> GetBetweenAsync(string recipient, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null)
+        {
+            List<Transaction> result = [];
+            AsyncPageable<Transaction> pageableResult;
+
+            if (string.IsNullOrEmpty(triggeredBy))
+            {
+                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                    e.PartitionKey == recipient &&
+                    e.Timestamp >= sinceDate &&
+                    e.Timestamp < untilDate);
+            }
+            else
+            {
+                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                    e.PartitionKey == recipient &&
+                    e.TriggeredBy == triggeredBy &&
+                    e.Timestamp >= sinceDate &&
+                    e.Timestamp < untilDate);
             }
 
             await foreach (Transaction model in pageableResult)

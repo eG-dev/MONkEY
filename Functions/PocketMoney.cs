@@ -23,7 +23,7 @@ namespace MONkEY.Functions
         }
 
         [Function("PocketMoney")]
-        // Runs on every day at 0:30
+        // Runs every day at 0:30
         public async Task Run([TimerTrigger("0 30 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing pocket money service");
@@ -37,7 +37,7 @@ namespace MONkEY.Functions
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var pocketMoneyTransactions = await _transactions.GetSinceTimestampAsync(account.Name,firstOfMonth, TRANSACTION_TRIGGER_NAME);
+                    var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.Name,firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
                     if (pocketMoneyTransactions.Count == 0)
                     {

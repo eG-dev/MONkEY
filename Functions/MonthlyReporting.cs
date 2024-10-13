@@ -46,7 +46,7 @@ namespace MONkEY.Functions
         }
 
         [Function("MonthlyReporting")]
-        // Runs on every day at 0:35
+        // Runs every day at 0:35
         public async Task Run([TimerTrigger("0 35 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing monthly reporting service");
@@ -58,7 +58,13 @@ namespace MONkEY.Functions
             var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
             var culture = CultureInfo.CreateSpecificCulture(CULTURE_ID);
 
-            var reportedPeriod = new DateTimeOffset(utcNow.Year, utcNow.Month - 1, 1, 0, 0, 0, TimeSpan.Zero);
+            var reportedYear = utcNow.Month == 1 ? utcNow.Year - 1 : utcNow.Year;
+            var reportedMonth = utcNow.Month == 1 ? 12 : utcNow.Month - 1;
+            var reportedPeriod = new DateTimeOffset(reportedYear, reportedMonth, 1, 0, 0, 0, TimeSpan.Zero);
+
+            var untilYear = reportedMonth == 12 ? reportedPeriod.Year + 1 : reportedPeriod.Year;
+            var untilMonth = reportedMonth == 12 ? 1 : reportedMonth + 1;
+            var untilDate = new DateTimeOffset(untilYear, untilMonth, 1, 0, 0, 0, TimeSpan.Zero);
 
             var accounts = await _accounts.GetAllAsync();
             foreach (var account in accounts)
@@ -67,12 +73,7 @@ namespace MONkEY.Functions
 
                 if (reports.Count == 0)
                 {
-                    var transactions = await _transactions.GetSinceTimestampAsync(account.Name, reportedPeriod);
-
-                    // TODO: This should be handled by the service
-                    transactions = transactions
-                        .Where(t => t.Timestamp.HasValue && t.Timestamp.Value.Year == reportedPeriod.Year && t.Timestamp.Value.Month == reportedPeriod.Month)
-                        .ToList();
+                    var transactions = await _transactions.GetBetweenAsync(account.Name, reportedPeriod, untilDate);
 
                     var reportPayload = new MonthyReport()
                     {
