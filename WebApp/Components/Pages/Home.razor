@@ -2,11 +2,11 @@
 
 @using System.Security.Principal
 @using System.Globalization
-@using MONkEY.Data.Models
+@using MONkEY.Data
 @using MONkEY.Data.Services
 
-@inject AccountService Accounts
-@inject TransactionService Transactions
+@inject IAccountService Accounts
+@inject ITransactionService Transactions
 @inject NavigationManager Navigation
 
 <PageTitle>MONkEY App</PageTitle>

@@ -1,10 +1,8 @@
 ﻿using Azure.Data.Tables;
 
-using MONkEY.Data.Models;
-
 namespace MONkEY.Data.Services
 {
-    public class AccountService
+    public class AccountService : IAccountService
     {
         private const string TABLE_NAME = "accounts";
 
@@ -33,9 +31,10 @@ namespace MONkEY.Data.Services
 
         public async Task<List<Account>> GetAllAsync()
         {
-            List<Account> result = [];
+            var queryResult = _tableClient.QueryAsync<Account>(e => true);
 
-            await foreach (Account model in _tableClient.QueryAsync<Account>(e => true))
+            List<Account> result = [];
+            await foreach (Account model in queryResult)
             {
                 result.Add(model);
             }
@@ -45,12 +44,13 @@ namespace MONkEY.Data.Services
 
         public async Task<Account?> GetAsync(string name)
         {
-            var query = _tableClient.QueryAsync<Account>(e => e.PartitionKey == name);
+            var queryResult = _tableClient.QueryAsync<Account>(e => e.PartitionKey == name);
 
             Account? model = null;
-            await foreach (Account entry in query)
+            await foreach (Account entry in queryResult)
             {
                 model = entry;
+                break;
             }
 
             return model;

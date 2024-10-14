@@ -1,10 +1,8 @@
 ﻿using Azure.Data.Tables;
 
-using MONkEY.Data.Models;
-
 namespace MONkEY.Data.Services
 {
-    public class ReportService
+    public class ReportService : IReportService
     {
         private const string TABLE_NAME = "reports";
 
@@ -24,20 +22,20 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public async Task<List<Report>> GetForPeriodAsync(string accountName, DateTimeOffset reportedPeriod)
+        public async Task<Report?> GetForPeriodAsync(string accountName, DateTimeOffset reportedPeriod)
         {
-            List<Report> result = [];
-
-            var pageableResult = _tableClient.QueryAsync<Report>(e =>
+            var queryResult = _tableClient.QueryAsync<Report>(e =>
                 e.PartitionKey == accountName &&
                 e.ReportedPeriod == reportedPeriod);
 
-            await foreach (Report model in pageableResult)
+            Report? model = null;
+            await foreach (Report entry in queryResult)
             {
-                result.Add(model);
+                model = entry;
+                break;
             }
 
-            return [.. result.OrderByDescending(e => e.Timestamp)];
+            return model;
         }
 
         public async Task AddAsync(Report model)

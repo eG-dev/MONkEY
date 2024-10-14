@@ -2,7 +2,7 @@
 using Azure.Data.Tables;
 using System.Diagnostics;
 
-namespace MONkEY.Data.Models
+namespace MONkEY.Data
 {
     [DebuggerDisplay("{Recipient}, {Amount}, {TriggeredOn}, {Comment}")]
     public class Transaction : ITableEntity

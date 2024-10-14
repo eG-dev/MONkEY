@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace MONkEY.Data.Models
+namespace MONkEY.Data
 {
     public class Report : ITableEntity
     {
@@ -12,6 +12,8 @@ namespace MONkEY.Data.Models
         public string AccountName { get; init; } = default!;
 
         public DateTimeOffset? ReportedPeriod { get; init; }
+
+        public string? Type { get; init; }
 
         public string SerializedPayload { get; init; } = default!;
 

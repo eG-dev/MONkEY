@@ -48,10 +48,11 @@ builder.Services.AddLocalization();
 var tableStorageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
 TableServiceClient tableServiceClient = new(tableStorageConnectionString);
 
-builder.Services.AddScoped(sp => tableServiceClient);
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<TransactionService>();
-builder.Services.AddScoped<ReportService>();
+builder.Services.AddSingleton(sp => tableServiceClient);
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddBrowserTimeProvider();
 
@@ -61,13 +62,13 @@ var app = builder.Build();
 var serviceProvider = builder.Services.BuildServiceProvider();
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
-var accountService = serviceProvider.GetService<AccountService>();
+var accountService = serviceProvider.GetService<IAccountService>();
 await accountService!.InitAsync();
 
-var transactionService = serviceProvider.GetService<TransactionService>();
+var transactionService = serviceProvider.GetService<ITransactionService>();
 await transactionService!.InitAsync();
 
-var reportService = serviceProvider.GetService<ReportService>();
+var reportService = serviceProvider.GetService<IReportService>();
 await reportService!.InitAsync();
 
 // Configure the HTTP request pipeline.

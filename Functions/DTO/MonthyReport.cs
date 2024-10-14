@@ -6,7 +6,9 @@
 
         public string? ReportedPeriodName { get; set; }
 
-        public double Balance { get; set; }
+        public double StartingBalance { get; set; }
+
+        public double ClosingBalance { get; set; }
 
         public List<ReportTransaction> Transactions { get; set; } = [];
     }

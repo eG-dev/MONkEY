@@ -1,11 +1,9 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-using MONkEY.Data.Models;
-
 namespace MONkEY.Data.Services
 {
-    public class TransactionService
+    public class TransactionService : ITransactionService
     {
         private const string TABLE_NAME = "transactions";
 
@@ -27,26 +25,26 @@ namespace MONkEY.Data.Services
 
         public async Task<List<Transaction>> GetAsync(string recipient, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
-            List<Transaction> result = [];
-            AsyncPageable<Transaction> pageableResult;
+            AsyncPageable<Transaction> queryResult;
 
             if (olderThan == null)
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                queryResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient,
                     pageSize);
             }
             else
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                queryResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredOn < olderThan,
                     pageSize);
             }
 
-            await foreach (Transaction model in pageableResult)
+            List<Transaction> result = [];
+            await foreach (Transaction entry in queryResult)
             {
-                result.Add(model);
+                result.Add(entry);
 
                 if (pageSize != null && result.Count == pageSize)
                 {
@@ -66,26 +64,26 @@ namespace MONkEY.Data.Services
 
         public async Task<List<Transaction>> GetSinceAsync(string recipient, DateTimeOffset sinceDate, string? triggeredBy = null)
         {
-            List<Transaction> result = [];
-            AsyncPageable<Transaction> pageableResult;
+            AsyncPageable<Transaction> queryResult;
 
             if (string.IsNullOrEmpty(triggeredBy))
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                queryResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredOn >= sinceDate);
             }
             else
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                queryResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredBy == triggeredBy &&
                     e.TriggeredOn >= sinceDate);
             }
 
-            await foreach (Transaction model in pageableResult)
+            List<Transaction> result = [];
+            await foreach (Transaction entry in queryResult)
             {
-                result.Add(model);
+                result.Add(entry);
             }
 
             return [.. result.OrderByDescending(e => e.TriggeredOn)];
@@ -93,26 +91,26 @@ namespace MONkEY.Data.Services
 
         public async Task<List<Transaction>> GetBetweenAsync(string recipient, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null)
         {
-            List<Transaction> result = [];
-            AsyncPageable<Transaction> pageableResult;
+            AsyncPageable<Transaction> queryResult;
 
             if (string.IsNullOrEmpty(triggeredBy))
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                queryResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredOn >= sinceDate &&
                     e.TriggeredOn < untilDate);
             }
             else
             {
-                pageableResult = _tableClient.QueryAsync<Transaction>(e =>
+                queryResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredBy == triggeredBy &&
                     e.TriggeredOn >= sinceDate &&
                     e.TriggeredOn < untilDate);
             }
 
-            await foreach (Transaction model in pageableResult)
+            List<Transaction> result = [];
+            await foreach (Transaction model in queryResult)
             {
                 result.Add(model);
             }

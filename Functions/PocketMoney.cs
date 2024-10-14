@@ -1,7 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
-using MONkEY.Data.Models;
+using MONkEY.Data;
 using MONkEY.Data.Services;
 
 namespace MONkEY.Functions
@@ -11,10 +11,11 @@ namespace MONkEY.Functions
         private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
 
         private readonly ILogger _logger;
-        private readonly AccountService _accounts;
-        private readonly TransactionService _transactions;
 
-        public PocketMoney(ILoggerFactory loggerFactory, AccountService accounts, TransactionService transactions)
+        private readonly IAccountService _accounts;
+        private readonly ITransactionService _transactions;
+
+        public PocketMoney(ILoggerFactory loggerFactory, IAccountService accounts, ITransactionService transactions)
         {
             _logger = loggerFactory.CreateLogger<PocketMoney>();
 

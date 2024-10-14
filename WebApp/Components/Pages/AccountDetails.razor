@@ -2,11 +2,11 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using MONkEY.WebApp.DTO
-@using MONkEY.Data.Models
+@using MONkEY.Data
 @using MONkEY.Data.Services
 
-@inject AccountService Accounts
-@inject TransactionService Transactions
+@inject IAccountService Accounts
+@inject ITransactionService Transactions
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService Dialog

@@ -18,10 +18,11 @@ var host = new HostBuilder()
         {
             TableServiceClient tableServiceClient = new(tableStorageConnectionString);
 
-            services.AddScoped(sp => tableServiceClient);
-            services.AddScoped<AccountService>();
-            services.AddScoped<TransactionService>();
-            services.AddScoped<ReportService>();
+            services.AddSingleton(sp => tableServiceClient);
+
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IReportService, ReportService>();
         }
 
         var sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
