@@ -1,7 +1,7 @@
 ﻿@using MONkEY.Data
 @using MONkEY.Data.Services
 
-@inject TransactionService Transactions
+@inject ITransactionService Transactions
 
 <MudText Typo="Typo.h6">Letzte Transaktionen</MudText>
 <MudTable @ref="_table" Items="@_transactions" Hover="true" Dense="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
