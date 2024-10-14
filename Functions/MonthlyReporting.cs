@@ -8,6 +8,7 @@ using System.Text.Json;
 using MONkEY.Data.Services;
 using MONkEY.Functions.DTO;
 using MONkEY.Data.Models;
+using MONkEY.Support;
 
 namespace MONkEY.Functions
 {
@@ -53,18 +54,13 @@ namespace MONkEY.Functions
 
             var fromEmail = new EmailAddress(EMAIL_SENDER_ADDRESS, EMAIL_SENDER_NAME);
 
-            var utcNow = DateTime.UtcNow;
+            var utcNow = DateTimeOffset.UtcNow;
 
             var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
             var culture = CultureInfo.CreateSpecificCulture(CULTURE_ID);
 
-            var reportedYear = utcNow.Month == 1 ? utcNow.Year - 1 : utcNow.Year;
-            var reportedMonth = utcNow.Month == 1 ? 12 : utcNow.Month - 1;
-            var reportedPeriod = new DateTimeOffset(reportedYear, reportedMonth, 1, 0, 0, 0, TimeSpan.Zero);
-
-            var untilYear = reportedMonth == 12 ? reportedPeriod.Year + 1 : reportedPeriod.Year;
-            var untilMonth = reportedMonth == 12 ? 1 : reportedMonth + 1;
-            var untilDate = new DateTimeOffset(untilYear, untilMonth, 1, 0, 0, 0, TimeSpan.Zero);
+            var reportedPeriod = utcNow.StartOfMonth();
+            var reportedPeriodEnd = reportedPeriod.ToNextMonth();
 
             var accounts = await _accounts.GetAllAsync();
             foreach (var account in accounts)
@@ -73,7 +69,7 @@ namespace MONkEY.Functions
 
                 if (reports.Count == 0)
                 {
-                    var transactions = await _transactions.GetBetweenAsync(account.Name, reportedPeriod, untilDate);
+                    var transactions = await _transactions.GetBetweenAsync(account.Name, reportedPeriod, reportedPeriodEnd);
 
                     var reportPayload = new MonthyReport()
                     {
@@ -82,11 +78,7 @@ namespace MONkEY.Functions
                         Balance = account.Balance,
                         Transactions = transactions.Select(x =>
                         {
-                            var triggeredOn = string.Empty;
-                            if (x.Timestamp.HasValue)
-                            {
-                                triggeredOn = TimeZoneInfo.ConvertTime(x.Timestamp.Value, timeZone).LocalDateTime.ToString("o", culture);
-                            }
+                            var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("o", culture);
 
                             return new ReportTransaction()
                             {

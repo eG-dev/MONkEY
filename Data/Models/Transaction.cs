@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace MONkEY.Data.Models
 {
-    [DebuggerDisplay("{Recipient}, {Amount}, {Timestamp}, {Comment}")]
+    [DebuggerDisplay("{Recipient}, {Amount}, {TriggeredOn}, {Comment}")]
     public class Transaction : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;
@@ -14,6 +14,8 @@ namespace MONkEY.Data.Models
         public string Recipient { get; init; } = default!;
 
         public string TriggeredBy { get; init; } = default!;
+
+        public DateTimeOffset TriggeredOn { get; set; } = default!;
 
         public double Amount { get; set; }
 

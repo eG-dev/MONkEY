@@ -16,7 +16,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
-        <MudTd DataLabel="Datum"><LocalTime DateTime="@context.Timestamp!.Value.UtcDateTime" /></MudTd>
+        <MudTd DataLabel="Datum"><LocalTime DateTime="@context.TriggeredOn.UtcDateTime" /></MudTd>
         <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
         <MudTd DataLabel="Auslöser">@context.TriggeredBy</MudTd>
     </RowTemplate>
@@ -75,7 +75,7 @@
 
             var lastTransaction = _transactions.Last();
 
-            var olderTransactions = await Transactions.GetAsync(Name, PAGE_SIZE, lastTransaction.Timestamp);
+            var olderTransactions = await Transactions.GetAsync(Name, PAGE_SIZE, lastTransaction.TriggeredOn);
             _transactions.AddRange(olderTransactions);
 
             _isLoading = false;

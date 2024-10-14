@@ -40,7 +40,7 @@ namespace MONkEY.Data.Services
             {
                 pageableResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
-                    e.Timestamp < olderThan,
+                    e.TriggeredOn < olderThan,
                     pageSize);
             }
 
@@ -54,7 +54,7 @@ namespace MONkEY.Data.Services
                 }
             }
 
-            return [.. result.OrderByDescending(e => e.Timestamp)];
+            return [.. result.OrderByDescending(e => e.TriggeredOn)];
         }
 
         public async Task<Transaction?> GetLatestAsync(string recipient)
@@ -73,14 +73,14 @@ namespace MONkEY.Data.Services
             {
                 pageableResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
-                    e.Timestamp >= sinceDate);
+                    e.TriggeredOn >= sinceDate);
             }
             else
             {
                 pageableResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredBy == triggeredBy &&
-                    e.Timestamp >= sinceDate);
+                    e.TriggeredOn >= sinceDate);
             }
 
             await foreach (Transaction model in pageableResult)
@@ -88,7 +88,7 @@ namespace MONkEY.Data.Services
                 result.Add(model);
             }
 
-            return [.. result.OrderByDescending(e => e.Timestamp)];
+            return [.. result.OrderByDescending(e => e.TriggeredOn)];
         }
 
         public async Task<List<Transaction>> GetBetweenAsync(string recipient, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null)
@@ -100,16 +100,16 @@ namespace MONkEY.Data.Services
             {
                 pageableResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
-                    e.Timestamp >= sinceDate &&
-                    e.Timestamp < untilDate);
+                    e.TriggeredOn >= sinceDate &&
+                    e.TriggeredOn < untilDate);
             }
             else
             {
                 pageableResult = _tableClient.QueryAsync<Transaction>(e =>
                     e.PartitionKey == recipient &&
                     e.TriggeredBy == triggeredBy &&
-                    e.Timestamp >= sinceDate &&
-                    e.Timestamp < untilDate);
+                    e.TriggeredOn >= sinceDate &&
+                    e.TriggeredOn < untilDate);
             }
 
             await foreach (Transaction model in pageableResult)
@@ -117,7 +117,7 @@ namespace MONkEY.Data.Services
                 result.Add(model);
             }
 
-            return [.. result.OrderByDescending(e => e.Timestamp)];
+            return [.. result.OrderByDescending(e => e.TriggeredOn)];
         }
 
         public async Task AddAsync(Transaction model)
@@ -128,6 +128,11 @@ namespace MONkEY.Data.Services
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
             model.PartitionKey = model.Recipient;
+
+            if (model.TriggeredOn == DateTimeOffset.MinValue)
+            {
+                model.TriggeredOn = DateTimeOffset.UtcNow;
+            }
 
             // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
             string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
