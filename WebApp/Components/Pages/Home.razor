@@ -34,7 +34,7 @@ else if (_accounts != null)
                     <MudText Typo="Typo.body1">Aktuelles Guthaben: @account.Balance€</MudText>
                     @if (transaction != null)
                     {
-                        <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" /></MudText>
+                        <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" /></MudText>
                     }
                     else
                     {

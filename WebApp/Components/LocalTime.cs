@@ -32,6 +32,9 @@ namespace MONkEY.WebApp.Components
         [Parameter]
         public DateTime? DateTime { get; set; }
 
+        [Parameter]
+        public string? Format { get; set; }
+
         protected override void OnInitialized()
         {
             if (TimeProvider is BrowserTimeProvider browserTimeProvider)
@@ -44,7 +47,14 @@ namespace MONkEY.WebApp.Components
         {
             if (DateTime != null)
             {
-                builder.AddContent(0, TimeProvider.ToLocalDateTime(DateTime.Value));
+                if (!string.IsNullOrEmpty(Format))
+                {
+                    builder.AddContent(0, TimeProvider.ToLocalDateTime(DateTime.Value).ToString(Format));
+                }
+                else
+                {
+                    builder.AddContent(0, TimeProvider.ToLocalDateTime(DateTime.Value));
+                }
             }
         }
 
