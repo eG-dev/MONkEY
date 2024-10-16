@@ -15,7 +15,10 @@ namespace MONkEY.Functions
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
 
-        public PocketMoney(ILoggerFactory loggerFactory, IAccountService accounts, ITransactionService transactions)
+        public PocketMoney(
+            ILoggerFactory loggerFactory,
+            IAccountService accounts,
+            ITransactionService transactions)
         {
             _logger = loggerFactory.CreateLogger<PocketMoney>();
 

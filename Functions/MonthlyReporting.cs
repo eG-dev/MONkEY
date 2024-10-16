@@ -35,7 +35,12 @@ namespace MONkEY.Functions
 
         private readonly SendGridClient _emailClient;
 
-        public MonthlyReporting(ILoggerFactory loggerFactory, IAccountService accounts, ITransactionService transactions, IReportService reports, SendGridClient emailClient)
+        public MonthlyReporting(
+            ILoggerFactory loggerFactory,
+            IAccountService accounts,
+            ITransactionService transactions,
+            IReportService reports,
+            SendGridClient emailClient)
         {
             _logger = loggerFactory.CreateLogger<MonthlyReporting>();
 
@@ -59,8 +64,8 @@ namespace MONkEY.Functions
             var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
             var culture = CultureInfo.CreateSpecificCulture(CULTURE_ID);
 
-            var reportedPeriod = utcNow.StartOfMonth().ToPreviousMonth();
-            var reportedPeriodEnd = reportedPeriod.ToNextMonth();
+            var reportedPeriod = utcNow.StartOfMonth().SubtractMonth();
+            var reportedPeriodEnd = reportedPeriod.AddMonth();
 
             var accounts = await _accounts.GetAllAsync();
             foreach (var account in accounts)
@@ -71,9 +76,16 @@ namespace MONkEY.Functions
                     continue;
                 }
 
-                var previosReport = await _reports.GetForPeriodAsync(account.Name, reportedPeriod.ToPreviousMonth());
+                var previosReport = await _reports.GetForPeriodAsync(account.Name, reportedPeriod.SubtractMonth());
 
                 var transactions = await _transactions.GetBetweenAsync(account.Name, reportedPeriod, reportedPeriodEnd);
+
+                if (previosReport == null && transactions.Count == 0)
+                {
+                    // There is no need to generate a report if there were no transactions or any previously created report.
+                    // This is normally the case when the application went live in this month.
+                    continue;
+                }
 
                 double startingBalance = previosReport?.SerializedPayload != null
                     ? JsonSerializer.Deserialize<MonthyReport>(previosReport.SerializedPayload)!.StartingBalance
@@ -89,7 +101,7 @@ namespace MONkEY.Functions
                     ClosingBalance = closingBalance,
                     Transactions = transactions.Select(x =>
                     {
-                        var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("o", culture);
+                        var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("g", culture);
 
                         return new ReportTransaction()
                         {
@@ -114,9 +126,7 @@ namespace MONkEY.Functions
                 {
                     var toEmail = new EmailAddress(recipient);
 
-                    // Here we make sure that the stored payload can be properly deserialized.
-                    var messagePayload = JsonSerializer.Deserialize<MonthyReport>(report.SerializedPayload);
-                    var reportMessage = MailHelper.CreateSingleTemplateEmail(fromEmail, toEmail, EMAIL_TEMPLATE_ID, messagePayload);
+                    var reportMessage = MailHelper.CreateSingleTemplateEmail(fromEmail, toEmail, EMAIL_TEMPLATE_ID, reportPayload);
 
                     var result = await _emailClient.SendEmailAsync(reportMessage);
                     if (!result.IsSuccessStatusCode)
