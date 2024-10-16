@@ -1,4 +1,5 @@
 using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
@@ -46,10 +47,12 @@ builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddLocalization();
 
-var tableStorageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
-TableServiceClient tableServiceClient = new(tableStorageConnectionString);
+var storageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
+TableServiceClient tableServiceClient = new(storageConnectionString);
+BlobContainerClient blobContainerClient = new(storageConnectionString, "images");
 
 builder.Services.AddSingleton(sp => tableServiceClient);
+builder.Services.AddSingleton(sp => blobContainerClient);
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();

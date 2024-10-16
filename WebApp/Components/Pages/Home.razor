@@ -29,7 +29,7 @@ else if (_accounts != null)
                         <MudText Typo="Typo.h5">@account.Name</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
-                <MudCardMedia Image="@($"images/{account.Name.ToLower()}.png")" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
+                <MudCardMedia Image="@($"api/image/{account.Name.ToLower()}.png")" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
                 <MudCardContent>
                     <MudText Typo="Typo.body1">Aktuelles Guthaben: @account.Balance€</MudText>
                     @if (transaction != null)
@@ -52,8 +52,9 @@ else if (_accounts != null)
 @code {
     private bool _isLoading = true;
 
+    private readonly Dictionary<string, Transaction?> _lastTransactions = new();
+
     private List<Account>? _accounts;
-    private Dictionary<string, Transaction?> _lastTransactions = new();
 
     protected async override Task OnInitializedAsync()
     {
