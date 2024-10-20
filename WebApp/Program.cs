@@ -99,8 +99,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
-
 app.UseAuthentication();
 app.UseAuthorization();
 
