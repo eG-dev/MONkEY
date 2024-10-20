@@ -62,7 +62,10 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddMudTranslations();
 
-builder.Services.AddCropper();
+builder.Services.AddCropper(new Cropper.Blazor.ModuleOptions.CropperJsInteropOptions()
+{
+    GlobalPathToCropperModule = "wwwroot/_content/Cropper.Blazor/cropperJsInterop.min.js",
+});
 
 var storageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
 TableServiceClient tableServiceClient = new(storageConnectionString);
