@@ -1,3 +1,30 @@
-﻿<div class="d-flex justify-center">
-    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-</div>
+﻿@if (IsActive)
+{
+    <div class="page-loader d-flex justify-center">
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    </div>
+}
+
+@code {
+    private bool _isActive = true;
+
+    [Parameter]
+    public bool IsActive
+    {
+        get => _isActive;
+        set
+        {
+            if (value != _isActive)
+            {
+                _isActive = value;
+                if (IsActiveChanged.HasDelegate)
+                {
+                    IsActiveChanged.InvokeAsync(_isActive);
+                }
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> IsActiveChanged { get; set; }
+}
