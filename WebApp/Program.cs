@@ -2,6 +2,7 @@ using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Cropper.Blazor.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -97,6 +98,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 app.UseAuthentication();
 app.UseAuthorization();

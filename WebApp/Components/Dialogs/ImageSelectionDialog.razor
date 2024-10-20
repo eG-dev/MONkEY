@@ -81,21 +81,16 @@
             AutoCropArea = 1,
         };
 
-    private bool IsErrorLoadImage = false;
-    private bool IsAvailableInitCropper = true;
-
-    private string OldSrc = string.Empty;
-
     private CropperComponent? CropperComponent = default!;
 
     public async Task LoadImageAsync(IBrowserFile imageFile)
     {
         if (imageFile != null)
         {
-            OldSrc = Src;
+            var oldSrc = Src;
             Src = await CropperComponent!.GetImageUsingStreamingAsync(imageFile, imageFile.Size);
 
-            Destroy(OldSrc);
+            Destroy(oldSrc);
         }
     }
 
