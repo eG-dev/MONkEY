@@ -21,13 +21,8 @@
                                   Options="@CropperOptions"
                                   Src="@Src"
                                   @ref="CropperComponent" />
-                
-                @if (_isLoading)
-                {
-                    <MudOverlay Visible="true" DarkBackground="true">
-                        <PageLoader />
-                    </MudOverlay>
-                }
+
+                <PageLoader @bind-IsActive="_isLoading" AsOverlay="true" IndicatorColor="Color.Secondary" />
             </div>
         </div>
 

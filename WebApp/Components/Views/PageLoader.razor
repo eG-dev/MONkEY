@@ -1,8 +1,17 @@
 ﻿@if (IsActive)
 {
-    <div class="page-loader d-flex justify-center">
-        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-    </div>
+    if (AsOverlay)
+    {
+        <MudOverlay Class="page-loader" Visible="true" DarkBackground="true">
+            <MudProgressCircular Color="@IndicatorColor" Size="Size.Large" Indeterminate="true" />
+        </MudOverlay>
+    }
+    else
+    {
+        <div class="page-loader d-flex justify-center">
+            <MudProgressCircular Color="@IndicatorColor" Size="Size.Large" Indeterminate="true" />
+        </div>
+    }
 }
 
 @code {
@@ -27,4 +36,10 @@
 
     [Parameter]
     public EventCallback<bool> IsActiveChanged { get; set; }
+
+    [Parameter]
+    public bool AsOverlay { get; set; } = false;
+
+    [Parameter]
+    public Color IndicatorColor { get; set; } = Color.Primary;
 }
