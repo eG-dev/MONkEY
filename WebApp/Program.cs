@@ -64,7 +64,7 @@ builder.Services.AddMudTranslations();
 
 builder.Services.AddCropper(new Cropper.Blazor.ModuleOptions.CropperJsInteropOptions()
 {
-    GlobalPathToCropperModule = "wwwroot/_content/Cropper.Blazor/cropperJsInterop.min.js",
+    GlobalPathToCropperModule = "_content/Cropper.Blazor/cropperJsInterop.min.js",
 });
 
 var storageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
