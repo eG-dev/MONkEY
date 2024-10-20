@@ -48,8 +48,6 @@ builder.Services
 
 builder.Services.AddBrowserTimeProvider();
 
-builder.Services.AddCropper();
-
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
@@ -64,10 +62,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddMudTranslations();
 
-//builder.Services.AddCropper(new Cropper.Blazor.ModuleOptions.CropperJsInteropOptions()
-//{
-//    GlobalPathToCropperModule = "_content/Cropper.Blazor/cropperJsInterop.min.js",
-//});
+builder.Services.AddCropper();
 
 var storageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
 TableServiceClient tableServiceClient = new(storageConnectionString);
@@ -109,6 +104,7 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
 app.UseAntiforgery();
 
 app.MapControllers();
