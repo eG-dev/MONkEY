@@ -1,5 +1,6 @@
 using Azure.Data.Tables;
 using Azure.Storage.Blobs;
+using Cropper.Blazor.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
@@ -25,9 +26,27 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AuthorizeFilter(policy));
 }).AddMicrosoftIdentityUI();
 
+builder.Services.AddApplicationInsightsTelemetry();
+
+builder.Services.AddLocalization();
+
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services
+    .AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddHubOptions(options =>
+    {
+        // These options are needed for Cropper to work correctly!
+        options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+        options.EnableDetailedErrors = false;
+        options.HandshakeTimeout = TimeSpan.FromSeconds(15);
+        options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+        options.MaximumParallelInvocationsPerClient = 1;
+        options.MaximumReceiveMessageSize = 32 * 1024 * 100;
+        options.StreamBufferCapacity = 10;
+    });
+
+builder.Services.AddBrowserTimeProvider();
 
 builder.Services.AddMudServices(config =>
 {
@@ -43,9 +62,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddMudTranslations();
 
-builder.Services.AddApplicationInsightsTelemetry();
-
-builder.Services.AddLocalization();
+builder.Services.AddCropper();
 
 var storageConnectionString = builder.Configuration.GetConnectionString("TableStorage");
 TableServiceClient tableServiceClient = new(storageConnectionString);
@@ -57,8 +74,6 @@ builder.Services.AddSingleton(sp => blobContainerClient);
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IReportService, ReportService>();
-
-builder.Services.AddBrowserTimeProvider();
 
 var app = builder.Build();
 

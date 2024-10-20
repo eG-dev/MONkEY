@@ -34,10 +34,34 @@
 
     <br />
     <br />
-    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.TwoTone.Add" OnClick="() => InitiateTransaction(false)">Einzahlen</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.TwoTone.Remove" OnClick="() => InitiateTransaction(true)">Auszahlen</MudButton>
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Success"
+               StartIcon="@Icons.Material.TwoTone.Add"
+               OnClick="() => InitiateTransaction(false)">
+                Einzahlen
+    </MudButton>
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Error"
+               StartIcon="@Icons.Material.TwoTone.Remove"
+               OnClick="() => InitiateTransaction(true)">
+               Auszahlen
+    </MudButton>
     <br />
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.TwoTone.Wallet" class="mt-2" OnClick="() => InitiatePocketMoneyAdjustment()">Taschengeld festlegen</MudButton>
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.TwoTone.Wallet"
+               class="mt-2"
+               OnClick="InitiatePocketMoneyAdjustment">
+               Taschengeld festlegen
+    </MudButton>
+    <br />
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Secondary"
+               StartIcon="@Icons.Material.TwoTone.Edit"
+               class="mt-2"
+               OnClick="InitiateProfileImageUpdate">
+               Bild ändern
+    </MudButton>
 
     <br />
     <br />
@@ -129,6 +153,28 @@ else
             {
                 await AdjustPocketMoney(model.PocketMoney.Value);
             }
+        }
+    }
+
+    private async Task InitiateProfileImageUpdate()
+    {
+        var dialog = await Dialog.ShowAsync<ProfileImageDialog>(
+            "Profilbild ändern",
+            new DialogParameters<ProfileImageDialog>()
+            {
+                { x => x.Src, $"api/image/{_account!.Name.ToLower()}.png" }
+            },
+            new DialogOptions()
+                {
+                    FullScreen = true,
+                    Position = DialogPosition.Custom,
+                });
+
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+
         }
     }
 

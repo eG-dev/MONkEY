@@ -1,0 +1,138 @@
+﻿@using Cropper.Blazor.Components
+@using Cropper.Blazor.Extensions
+@using Cropper.Blazor.Models
+
+@using MONkEY.WebApp.DTO
+
+<MudDialog>
+    <DialogContent>
+        <div class="image-selector">
+            <div class="image-selector-buttons">
+                <MudFileUpload T="IBrowserFile" Accept=".png, .jpg, .jpeg" FilesChanged="LoadImageAsync" MaximumFileCount="1">
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit">
+                            Bild auswählen
+                        </MudButton>
+                    </ActivatorContent>
+                </MudFileUpload>
+            </div>
+            <div class="image-selector-container mt-3">
+                <CropperComponent Class="image-selector-cropper"
+                                  Options="@CropperOptions"
+                                  Src="@Src"
+                                  @ref="CropperComponent" />
+            </div>
+        </div>
+
+        <style>
+            .image-selector {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                height: 100%;
+                width: 100%;
+                max-height: 100%;
+                max-width: 100%;
+            }
+
+            .image-selector-container {
+                max-height: calc(100% - 36.5px - 12px);
+                height: calc(100% - 36.5px - 12px);
+                width: 100%;
+            }
+
+            .image-selector-cropper {
+                max-height: 100%;
+                max-width: 100%;
+            }
+
+            .cropper-error-load {
+                max-height: 100%;
+                max-width: 100%;
+            }
+
+            .center {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Abbrechen</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Okay</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public string Src { get; set; } = string.Empty;
+
+    private readonly Options CropperOptions = new Options()
+        {
+            AspectRatio = 1,
+            ViewMode = ViewMode.Vm2,
+            DragMode = DragMode.Move.ToEnumString()!,
+            AutoCrop = true,
+            AutoCropArea = 1,
+        };
+
+    private bool IsErrorLoadImage = false;
+    private bool IsAvailableInitCropper = true;
+
+    private string OldSrc = string.Empty;
+
+    private CropperComponent? CropperComponent = default!;
+
+    public async Task LoadImageAsync(IBrowserFile imageFile)
+    {
+        if (imageFile != null)
+        {
+            OldSrc = Src;
+            Src = await CropperComponent!.GetImageUsingStreamingAsync(imageFile, imageFile.Size);
+
+            Destroy(OldSrc);
+        }
+    }
+
+    private void Destroy(string imageSrc)
+    {
+        if (!string.IsNullOrEmpty(imageSrc))
+        {
+            CropperComponent?.Destroy();
+            CropperComponent?.RevokeObjectUrlAsync(imageSrc);
+        }
+    }
+
+    private async Task Submit()
+    {
+        decimal imageWidth = 512;
+        decimal imageHeight = 512;
+        ImageSmoothingQuality imageSmoothing = ImageSmoothingQuality.High;
+
+        float imageQuality = 1;
+        string imageType = "image/png";
+
+        var croppedCanvasDataURL = await CropperComponent!.GetCroppedCanvasDataURLAsync(
+            new GetCroppedCanvasOptions()
+                {
+                    Width = imageWidth,
+                    Height = imageHeight,
+                    ImageSmoothingQuality = imageSmoothing.ToEnumString(),
+                    FillColor = "white"
+                },
+            imageType,
+            imageQuality
+        );
+
+        var imageData = croppedCanvasDataURL.Decode();
+
+        MudDialog.Close(DialogResult.Ok(imageData));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}
