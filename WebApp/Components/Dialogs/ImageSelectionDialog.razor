@@ -100,8 +100,6 @@
 
             StateHasChanged();
 
-            await Task.Delay(5000);
-
             var oldSrc = Src;
             Src = await CropperComponent!.GetImageUsingStreamingAsync(imageFile, imageFile.Size);
 
