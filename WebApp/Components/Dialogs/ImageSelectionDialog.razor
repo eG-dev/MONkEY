@@ -131,7 +131,13 @@
 
         var imageData = croppedCanvasDataURL.Decode();
 
-        MudDialog.Close(DialogResult.Ok(imageData));
+        ImageSelectionDialogModel model = new()
+        {
+            ImageDataBase64 = imageData.base64ImageData,
+            MediaType = imageData.mediaType,
+        };
+
+        MudDialog.Close(DialogResult.Ok(model));
     }
 
     private void Cancel() => MudDialog.Cancel();

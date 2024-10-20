@@ -158,9 +158,9 @@ else
 
     private async Task InitiateProfileImageUpdate()
     {
-        var dialog = await Dialog.ShowAsync<ProfileImageDialog>(
+        var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
             "Profilbild ändern",
-            new DialogParameters<ProfileImageDialog>()
+            new DialogParameters<ImageSelectionDialog>()
             {
                 { x => x.Src, $"api/image/{_account!.Name.ToLower()}.png" }
             },
@@ -172,9 +172,11 @@ else
 
         var result = await dialog.Result;
 
-        if (result != null && !result.Canceled)
+        if (result != null && !result.Canceled && result.Data is ImageSelectionDialogModel model && !string.IsNullOrEmpty(model.ImageDataBase64))
         {
+            byte[] imageBytes = Convert.FromBase64String(model.ImageDataBase64);
 
+            Console.WriteLine(imageBytes.Length);
         }
     }
 

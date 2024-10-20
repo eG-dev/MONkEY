@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Components\Dialogs\ProfileImageDialog.razor">
+    <Content Update="Components\Dialogs\ImageSelectionDialog.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>
