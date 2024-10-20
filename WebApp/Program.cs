@@ -2,7 +2,6 @@ using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Cropper.Blazor.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
