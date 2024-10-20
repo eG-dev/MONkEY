@@ -11,6 +11,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService Dialog
+@inject IBlobService Blobs
 
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
@@ -165,18 +166,19 @@ else
                 { x => x.Src, $"api/image/{_account!.Name.ToLower()}.png" }
             },
             new DialogOptions()
-                {
-                    FullScreen = true,
-                    Position = DialogPosition.Custom,
-                });
+            {
+                FullScreen = true,
+                Position = DialogPosition.Custom,
+            });
 
         var result = await dialog.Result;
 
         if (result != null && !result.Canceled && result.Data is ImageSelectionDialogModel model && !string.IsNullOrEmpty(model.ImageDataBase64))
         {
             byte[] imageBytes = Convert.FromBase64String(model.ImageDataBase64);
+            string fileName = FileNameGenerator.GetRandom();
 
-            Console.WriteLine(imageBytes.Length);
+            await Blobs.UploadFileAsync($"klerners/{fileName}.png", imageBytes);
         }
     }
 

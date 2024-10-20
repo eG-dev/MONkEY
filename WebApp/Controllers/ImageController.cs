@@ -1,7 +1,7 @@
-﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Specialized;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using MONkEY.Data.Services;
 
 namespace MONkEY.WebApp.Controllers
 {
@@ -9,24 +9,24 @@ namespace MONkEY.WebApp.Controllers
     [ApiController]
     public class ImageController : Controller
     {
-        private readonly BlobContainerClient _blobs;
+        private readonly IBlobService _blobService;
 
-        public ImageController(BlobContainerClient blobClient)
+        public ImageController(IBlobService blobService)
         {
-            _blobs = blobClient ?? throw new ArgumentNullException(nameof(blobClient));
+            _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        [HttpGet("{filename}")]
+        [HttpGet("{fileName}")]
         [Authorize]
-        public async Task<IActionResult> GetImage(string filename)
+        public async Task<IActionResult> FetchImage(string fileName)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(fileName))
             {
                 return BadRequest();
             }
 
             string contentType;
-            switch (Path.GetExtension(filename).ToLower())
+            switch (Path.GetExtension(fileName).ToLower())
             {
                 case ".png":
                     contentType = "image/png";
@@ -41,12 +41,11 @@ namespace MONkEY.WebApp.Controllers
                     return BadRequest();
             }
             
-            var blockBlockClient = _blobs.GetBlockBlobClient(filename);
-            var response = await blockBlockClient.DownloadStreamingAsync();
+            var stream = await _blobService.GetFileStreamAsync(fileName);
 
-            if (response.GetRawResponse().Status == 200)
+            if (stream != null)
             {
-                return new FileStreamResult(response.Value.Content, contentType);
+                return new FileStreamResult(stream, contentType);
             }
 
             return NotFound();

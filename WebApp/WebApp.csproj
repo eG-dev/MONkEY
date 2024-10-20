@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Support\Support.csproj" />
   </ItemGroup>
 
   <ItemGroup>
