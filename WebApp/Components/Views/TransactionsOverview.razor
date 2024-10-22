@@ -22,7 +22,7 @@
     </RowTemplate>
 </MudTable>
 
-@if (!_isLoading && _transactions.Count > 0)
+@if (!_isLoading && !_allTransactionsLoaded)
 {
     <div class="d-flex justify-center py-3">
         <MudButton Variant="@Variant.Outlined" OnClick="() => LoadMore()">Mehr laden</MudButton>
@@ -39,6 +39,7 @@
     private MudTable<Transaction> _table = default!;
 
     private List<Transaction> _transactions = new();
+    private bool _allTransactionsLoaded = false;
 
     protected async override Task OnInitializedAsync()
     {
@@ -50,6 +51,7 @@
         var pageSize = Math.Max(_transactions.Count, PAGE_SIZE);
 
         _transactions.Clear();
+        _allTransactionsLoaded = false;
 
         if (!_isLoading)
         {
@@ -62,13 +64,15 @@
             _transactions = await Transactions.GetAsync(Name, pageSize);
         }
 
+        _allTransactionsLoaded = _transactions.Count < pageSize;
+
         _isLoading = false;
         StateHasChanged();
     }
 
     private async Task LoadMore()
     {
-        if (!_isLoading && _transactions.Count > 0)
+        if (!_isLoading && !_allTransactionsLoaded)
         {
             _isLoading = true;
             StateHasChanged();
@@ -77,6 +81,8 @@
 
             var olderTransactions = await Transactions.GetAsync(Name, PAGE_SIZE, lastTransaction.TriggeredOn);
             _transactions.AddRange(olderTransactions);
+
+            _allTransactionsLoaded = olderTransactions.Count < PAGE_SIZE;
 
             _isLoading = false;
             StateHasChanged();
