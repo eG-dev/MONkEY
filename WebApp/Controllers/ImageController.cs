@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using MONkEY.Data.Services;
@@ -16,9 +17,9 @@ namespace MONkEY.WebApp.Controllers
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        [HttpGet("{fileName}")]
+        [HttpGet("{tenantId}/{fileName}")]
         [Authorize]
-        public async Task<IActionResult> FetchImage(string fileName)
+        public async Task<IActionResult> FetchImage(string tenantId, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -41,14 +42,18 @@ namespace MONkEY.WebApp.Controllers
                     return BadRequest();
             }
             
-            var stream = await _blobService.GetFileStreamAsync(fileName);
+            var imagePath = $"{tenantId}/{fileName}";
 
-            if (stream != null)
+            try
             {
-                return new FileStreamResult(stream, contentType);
-            }
+                var stream = await _blobService.GetFileStreamAsync(imagePath);
 
-            return NotFound();
+                return new FileStreamResult(stream!, contentType);
+            }
+            catch (RequestFailedException)
+            {
+                return NotFound();
+            }
         }
     }
 }

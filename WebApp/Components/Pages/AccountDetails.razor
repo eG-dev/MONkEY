@@ -38,12 +38,14 @@
     <MudButton Variant="Variant.Filled"
                Color="Color.Success"
                StartIcon="@Icons.Material.TwoTone.Add"
+               style="min-width: 150px"
                OnClick="() => InitiateTransaction(false)">
                 Einzahlen
     </MudButton>
     <MudButton Variant="Variant.Filled"
                Color="Color.Error"
                StartIcon="@Icons.Material.TwoTone.Remove"
+               style="min-width: 150px"
                OnClick="() => InitiateTransaction(true)">
                Auszahlen
     </MudButton>
@@ -52,6 +54,7 @@
                Color="Color.Primary"
                StartIcon="@Icons.Material.TwoTone.Wallet"
                class="mt-2"
+               style="min-width: 304px"
                OnClick="InitiatePocketMoneyAdjustment">
                Taschengeld festlegen
     </MudButton>
@@ -60,6 +63,7 @@
                Color="Color.Secondary"
                StartIcon="@Icons.Material.TwoTone.Edit"
                class="mt-2"
+               style="min-width: 304px"
                OnClick="InitiateProfileImageUpdate">
                Bild ändern
     </MudButton>
@@ -159,11 +163,17 @@ else
 
     private async Task InitiateProfileImageUpdate()
     {
+        string imageSrc = string.Empty;
+        if (!string.IsNullOrEmpty(_account!.ProfileImageBig))
+        {
+            imageSrc = $"api/image/{_account.TenantId}/{_account.ProfileImageBig}";
+        }
+
         var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
             "Profilbild ändern",
             new DialogParameters<ImageSelectionDialog>()
             {
-                { x => x.Src, $"api/image/{_account!.Name.ToLower()}.png" }
+                { x => x.Src, imageSrc }
             },
             new DialogOptions()
             {
@@ -175,10 +185,34 @@ else
 
         if (result != null && !result.Canceled && result.Data is ImageSelectionDialogModel model && !string.IsNullOrEmpty(model.ImageDataBase64))
         {
-            byte[] imageBytes = Convert.FromBase64String(model.ImageDataBase64);
-            string fileName = FileNameGenerator.GetRandom();
+            await UpdateAccountImage(model.ImageDataBase64);
+        }
+    }
 
-            await Blobs.UploadFileAsync($"klerners/{fileName}.png", imageBytes);
+    private async Task UpdateAccountImage(string imageDataBase64)
+    {
+        _isUpdating = true;
+
+        try
+        {
+            if (!string.IsNullOrEmpty(_account!.ProfileImageBig))
+            {
+                await Blobs.DeleteFileAsync(_account.ProfileImageBig);
+            }
+
+            byte[] imageBytes = Convert.FromBase64String(imageDataBase64);
+            var fileName = $"{FileNameGenerator.GetRandom(24)}.png";
+
+            var profileImagePath = $"{_account.TenantId}/{fileName}";
+            await Blobs.UploadFileAsync(profileImagePath, imageBytes);
+
+            _account.ProfileImageBig = fileName;
+            await Accounts.UpdateAsync(_account);
+        }
+        catch {}
+        finally
+        {
+            _isUpdating = false;
         }
     }
 
@@ -213,10 +247,7 @@ else
                 Snackbar.Add(amount < 0 ? $"{Math.Abs(amount)}€ vom Guthaben abgezogen" : $"{Math.Abs(amount)}€ zum Guthaben hinzugefügt", Severity.Success);
             }
         }
-        catch (Exception e)
-        {
-            throw e;
-        }
+        catch {}
         finally
         {
             _isUpdating = false;
@@ -254,10 +285,7 @@ else
                 }
             }
         }
-        catch (Exception e)
-        {
-            throw e;
-        }
+        catch {}
         finally
         {
             _isUpdating = false;

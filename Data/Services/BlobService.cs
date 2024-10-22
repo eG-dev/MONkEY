@@ -35,5 +35,10 @@ namespace MONkEY.Data.Services
             using var stream = new MemoryStream(fileData);
             await UploadFileAsync(fileName, stream);
         }
+
+        public async Task DeleteFileAsync(string fileName)
+        {
+            await _blobClient.DeleteBlobAsync(fileName);
+        }
     }
 }

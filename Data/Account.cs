@@ -17,6 +17,12 @@ namespace MONkEY.Data
 
         public double? PocketMoney { get; set; }
 
+        public string TenantId { get; set; } = default!;
+
+        public string? ProfileImageSmall { get; set; } = default!;
+
+        public string? ProfileImageBig { get; set; } = default!;
+
         public ETag ETag { get; set; } = default!;
 
         public DateTimeOffset? Timestamp { get; set; } = default!;

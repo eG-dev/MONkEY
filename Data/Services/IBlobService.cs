@@ -7,5 +7,7 @@
         Task UploadFileAsync(string filename, Stream stream);
 
         Task UploadFileAsync(string filename, byte[] fileData);
+
+        Task DeleteFileAsync(string fileName);
     }
 }

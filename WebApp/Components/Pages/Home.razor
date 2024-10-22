@@ -23,13 +23,17 @@ else if (_accounts != null)
         {
             var transaction = _lastTransactions[account.Name];
 
+            var accountImageSrc = !string.IsNullOrEmpty(account.ProfileImageBig)
+                ? $"api/image/{account.TenantId}/{account.ProfileImageBig}"
+                : "images/monkey_face.png";
+
             <MudCard Class="flex-auto d-flex" Elevation="5">
                 <MudCardHeader>
                     <CardHeaderContent>
                         <MudText Typo="Typo.h5">@account.Name</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
-                <MudCardMedia Image="@($"api/image/{account.Name.ToLower()}.png")" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
+                <MudCardMedia Image="@accountImageSrc" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
                 <MudCardContent>
                     <MudText Typo="Typo.body1">Aktuelles Guthaben: @account.Balance€</MudText>
                     @if (transaction != null)
