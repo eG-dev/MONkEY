@@ -21,7 +21,7 @@
 
 @if (_account != null)
 {
-    <MudGrid Spacing="6" Justify="Justify.FlexStart">
+    <MudGrid Spacing="6" Justify="Justify.FlexStart" Align="Align.Center">
         <MudItem>
             <MudAvatar>
                 @*<MudImage Src="images/mony.jpg"></MudImage>*@
@@ -32,7 +32,7 @@
             <MudText Typo="Typo.h3">@_account.Name</MudText>
         </MudItem>
         <MudItem>
-            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" />
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="InitiateProfileImageUpdate" />
         </MudItem>
     </MudGrid>
     <br />
@@ -71,16 +71,6 @@
                OnClick="InitiatePocketMoneyAdjustment">
                Taschengeld festlegen
     </MudButton>
-    <br />
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Secondary"
-               StartIcon="@Icons.Material.TwoTone.Edit"
-               class="mt-2"
-               style="min-width: 304px"
-               OnClick="InitiateProfileImageUpdate">
-               Bild ändern
-    </MudButton>
-
     <br />
     <br />
     <TransactionsOverview @ref="_transactionsOverview" Name="@_account.Name" />
