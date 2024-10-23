@@ -12,6 +12,7 @@ using MudBlazor.Translations;
 using MONkEY.Data.Services;
 using MONkEY.WebApp.Components;
 using MONkEY.WebApp;
+using MONkEY.WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,8 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IBlobService, BlobService>();
+
+builder.Services.AddScoped<AccountManagementService>();
 
 var app = builder.Build();
 

@@ -23,8 +23,8 @@ else if (_accounts != null)
         {
             var transaction = _lastTransactions[account.Name];
 
-            var accountImageSrc = !string.IsNullOrEmpty(account.ProfileImageBig)
-                ? $"api/image/{account.TenantId}/{account.ProfileImageBig}"
+            var accountImageSrc = !string.IsNullOrEmpty(account.ProfileImage)
+                ? $"api/image/{account.TenantId}/{account.ProfileImage}"
                 : "images/monkey_face.png";
 
             <MudCard Class="flex-auto d-flex" Elevation="5">

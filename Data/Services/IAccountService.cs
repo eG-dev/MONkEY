@@ -11,5 +11,7 @@
         Task<List<Account>> GetAllAsync();
 
         Task<Account?> GetAsync(string name);
+
+        Task<Account?> GetByKeyAsync(string rowKey);
     }
 }

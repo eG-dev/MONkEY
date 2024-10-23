@@ -56,6 +56,20 @@ namespace MONkEY.Data.Services
             return model;
         }
 
+        public async Task<Account?> GetByKeyAsync(string rowKey)
+        {
+            var queryResult = _tableClient.QueryAsync<Account>(e => e.RowKey == rowKey);
+
+            Account? model = null;
+            await foreach (Account entry in queryResult)
+            {
+                model = entry;
+                break;
+            }
+
+            return model;
+        }
+
         public async Task AddAsync(Account model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));

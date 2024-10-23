@@ -6,6 +6,7 @@
 @using MONkEY.Data
 @using MONkEY.Data.Services
 
+@inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
 @inject ITransactionService Transactions
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -21,8 +22,8 @@
 
 @if (_account != null)
 {
-    var accountImageSrc = !string.IsNullOrEmpty(_account.ProfileImageBig)
-        ? $"api/image/{_account.TenantId}/{_account.ProfileImageBig}"
+    var accountImageSrc = !string.IsNullOrEmpty(_account.ProfileImage)
+        ? $"api/image/{_account.TenantId}/{_account.ProfileImage}"
         : "images/monkey_face.png";
 
     <div class="d-flex gap-6 justify-start align-center">
@@ -130,7 +131,9 @@ else
 
         if (result != null && !result.Canceled && result.Data is TransactionDialogModel model)
         {
-            if (model.Amount.HasValue && !double.IsNaN(model.Amount.Value) && model.Amount != 0)
+            if (model.Amount.HasValue &&
+                !double.IsNaN(model.Amount.Value) &&
+                model.Amount != 0)
             {
                 await UpdateBalance(model.Amount.Value, model.Comment);
             }
@@ -154,7 +157,9 @@ else
 
         if (result != null && !result.Canceled && result.Data is PocketMoneyDialogModel model)
         {
-            if (model.PocketMoney.HasValue && !double.IsNaN(model.PocketMoney.Value) && model.PocketMoney >= 0)
+            if (model.PocketMoney.HasValue &&
+                !double.IsNaN(model.PocketMoney.Value) &&
+                model.PocketMoney >= 0)
             {
                 await AdjustPocketMoney(model.PocketMoney.Value);
             }
@@ -164,9 +169,9 @@ else
     private async Task InitiateProfileImageUpdate()
     {
         string imageSrc = string.Empty;
-        if (!string.IsNullOrEmpty(_account!.ProfileImageBig))
+        if (!string.IsNullOrEmpty(_account!.ProfileImage))
         {
-            imageSrc = $"api/image/{_account.TenantId}/{_account.ProfileImageBig}";
+            imageSrc = $"api/image/{_account.TenantId}/{_account.ProfileImage}";
         }
 
         var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
@@ -183,41 +188,30 @@ else
 
         var result = await dialog.Result;
 
-        if (result != null && !result.Canceled && result.Data is ImageSelectionDialogModel model && !string.IsNullOrEmpty(model.ImageDataBase64))
+        if (result != null &&
+            !result.Canceled && result.Data is ImageSelectionDialogModel model &&
+            !string.IsNullOrEmpty(model.ImageDataBase64))
         {
-            await UpdateAccountImage(model.ImageDataBase64);
-        }
-    }
+            _isUpdating = true;
+            StateHasChanged();
 
-    private async Task UpdateAccountImage(string imageDataBase64)
-    {
-        _isUpdating = true;
-
-        try
-        {
-            if (!string.IsNullOrEmpty(_account!.ProfileImageBig))
+            try
             {
-                await Blobs.DeleteFileAsync($"{_account.TenantId}/{_account.ProfileImageBig}");
+                _account = await AccountManagement.UpdateProfileImage(_account.RowKey, model.ImageDataBase64);
             }
-
-            byte[] imageBytes = Convert.FromBase64String(imageDataBase64);
-            var fileName = $"{FileNameGenerator.GetRandom(24)}.png";
-
-            await Blobs.UploadFileAsync($"{_account.TenantId}/{fileName}", imageBytes);
-
-            _account.ProfileImageBig = fileName;
-            await Accounts.UpdateAsync(_account);
-        }
-        catch {}
-        finally
-        {
-            _isUpdating = false;
+            catch { }
+            finally
+            {
+                _isUpdating = false;
+                StateHasChanged();
+            }
         }
     }
 
     private async Task UpdateBalance(double amount, string? comment)
     {
         _isUpdating = true;
+        StateHasChanged();
 
         try
         {
@@ -250,6 +244,7 @@ else
         finally
         {
             _isUpdating = false;
+            StateHasChanged();
 
             if (_transactionsOverview != null)
             {
@@ -261,6 +256,7 @@ else
     private async Task AdjustPocketMoney(double pocketMoney)
     {
         _isUpdating = true;
+        StateHasChanged();
 
         try
         {
@@ -288,6 +284,7 @@ else
         finally
         {
             _isUpdating = false;
+            StateHasChanged();
         }
     }
 }
