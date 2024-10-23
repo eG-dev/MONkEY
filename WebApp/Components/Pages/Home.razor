@@ -29,9 +29,15 @@ else if (_accounts != null)
 
             <MudCard Class="flex-auto d-flex" Elevation="5">
                 <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudAvatar Color="Color.Primary">@account.Name.Substring(0, 1).ToUpper()</MudAvatar>
+                    </CardHeaderAvatar>
                     <CardHeaderContent>
                         <MudText Typo="Typo.h5">@account.Name</MudText>
                     </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                    </CardHeaderActions>
                 </MudCardHeader>
                 <MudCardMedia Image="@accountImageSrc" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
                 <MudCardContent>
