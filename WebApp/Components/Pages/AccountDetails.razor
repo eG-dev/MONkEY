@@ -21,15 +21,18 @@
 
 @if (_account != null)
 {
+    var accountImageSrc = !string.IsNullOrEmpty(_account.ProfileImageBig)
+        ? $"api/image/{_account.TenantId}/{_account.ProfileImageBig}"
+        : "images/monkey_face.png";
+
     <div class="d-flex gap-6 justify-start align-center">
         <MudAvatar>
-            @*<MudImage Src="images/mony.jpg"></MudImage>*@
-            @_account.Name.Substring(0, 1).ToUpper()
+            <MudImage Src="@accountImageSrc"></MudImage>
         </MudAvatar>
         <MudText Typo="Typo.h3">@_account.Name</MudText>
+        <div class="flex-grow-1" />
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="InitiateProfileImageUpdate" />
     </div>
-    <br />
     <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
     @if (_account.PocketMoney.GetValueOrDefault() > 0)
     {
