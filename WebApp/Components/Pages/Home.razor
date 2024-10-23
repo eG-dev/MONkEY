@@ -36,7 +36,7 @@ else if (_accounts != null)
                         <MudText Typo="Typo.h5">@account.Name</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" />
                     </CardHeaderActions>
                 </MudCardHeader>
                 <MudCardMedia Image="@accountImageSrc" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
