@@ -21,20 +21,14 @@
 
 @if (_account != null)
 {
-    <MudGrid Spacing="6" Justify="Justify.FlexStart" Align="Align.Center">
-        <MudItem>
-            <MudAvatar>
-                @*<MudImage Src="images/mony.jpg"></MudImage>*@
-                @_account.Name.Substring(0, 1).ToUpper()
-            </MudAvatar>
-        </MudItem>
-        <MudItem>
-            <MudText Typo="Typo.h3">@_account.Name</MudText>
-        </MudItem>
-        <MudItem>
-            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="InitiateProfileImageUpdate" />
-        </MudItem>
-    </MudGrid>
+    <div class="d-flex gap-6 justify-start align-center">
+        <MudAvatar>
+            @*<MudImage Src="images/mony.jpg"></MudImage>*@
+            @_account.Name.Substring(0, 1).ToUpper()
+        </MudAvatar>
+        <MudText Typo="Typo.h3">@_account.Name</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="InitiateProfileImageUpdate" />
+    </div>
     <br />
     <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
     @if (_account.PocketMoney.GetValueOrDefault() > 0)
