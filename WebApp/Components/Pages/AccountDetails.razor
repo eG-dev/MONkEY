@@ -197,14 +197,13 @@ else
         {
             if (!string.IsNullOrEmpty(_account!.ProfileImageBig))
             {
-                await Blobs.DeleteFileAsync(_account.ProfileImageBig);
+                await Blobs.DeleteFileAsync($"{_account.TenantId}/{_account.ProfileImageBig}");
             }
 
             byte[] imageBytes = Convert.FromBase64String(imageDataBase64);
             var fileName = $"{FileNameGenerator.GetRandom(24)}.png";
 
-            var profileImagePath = $"{_account.TenantId}/{fileName}";
-            await Blobs.UploadFileAsync(profileImagePath, imageBytes);
+            await Blobs.UploadFileAsync($"{_account.TenantId}/{fileName}", imageBytes);
 
             _account.ProfileImageBig = fileName;
             await Accounts.UpdateAsync(_account);
