@@ -40,7 +40,7 @@ namespace MONkEY.Data.Services
                 result.Add(model);
             }
 
-            return result;
+            return [.. result.OrderBy(e => e.Name)];
         }
 
         public async Task<Account?> GetAsync(string tenant, string accountKey)
