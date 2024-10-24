@@ -1,15 +1,21 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace MONkEY.Data
 {
+    [DebuggerDisplay("{Tenant}, {AccountKey}, {ReportedPeriod}, {Type}")]
     public class Report : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;
 
         public string RowKey { get; set; } = default!;
 
-        public string AccountName { get; init; } = default!;
+        [IgnoreDataMember]
+        public string Tenant { get => PartitionKey; }
+
+        public string AccountKey { get; init; } = default!;
 
         public DateTimeOffset? ReportedPeriod { get; init; }
 

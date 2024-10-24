@@ -1,17 +1,21 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace MONkEY.Data
 {
-    [DebuggerDisplay("{Recipient}, {Amount}, {TriggeredOn}, {Comment}")]
+    [DebuggerDisplay("{Tenant}, {AccountKey}, {Amount}, {TriggeredOn}, {Comment}")]
     public class Transaction : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;
 
         public string RowKey { get; set; } = default!;
 
-        public string Recipient { get; init; } = default!;
+        [IgnoreDataMember]
+        public string Tenant { get => PartitionKey; }
+
+        public string AccountKey { get; init; } = default!;
 
         public string TriggeredBy { get; init; } = default!;
 

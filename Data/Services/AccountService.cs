@@ -23,15 +23,16 @@ namespace MONkEY.Data.Services
 
             if (response.GetRawResponse().Status != 409)
             {
-                await AddAsync(new Account() { Name = "Luis", Balance = 0.0, PocketMoney = 0.0 });
-                await AddAsync(new Account() { Name = "Jonas", Balance = 0.0, PocketMoney = 0.0 });
-                await AddAsync(new Account() { Name = "Charlotte", Balance = 0.0, PocketMoney = 0.0 });
+                await AddAsync(new Account() { PartitionKey = "klerner", Name = "Luis", Balance = 0.0, PocketMoney = 0.0 });
+                await AddAsync(new Account() { PartitionKey = "klerner", Name = "Jonas", Balance = 0.0, PocketMoney = 0.0 }); 
+                await AddAsync(new Account() { PartitionKey = "klerner", Name = "Charlotte", Balance = 0.0, PocketMoney = 0.0 });
             }
         }
 
-        public async Task<List<Account>> GetAllAsync()
+        public async Task<List<Account>> GetAllAsync(string tenant)
         {
-            var queryResult = _tableClient.QueryAsync<Account>(e => true);
+            var queryResult = _tableClient.QueryAsync<Account>(e =>
+                e.PartitionKey == tenant);
 
             List<Account> result = [];
             await foreach (Account model in queryResult)
@@ -42,23 +43,11 @@ namespace MONkEY.Data.Services
             return result;
         }
 
-        public async Task<Account?> GetAsync(string name)
+        public async Task<Account?> GetAsync(string tenant, string accountKey)
         {
-            var queryResult = _tableClient.QueryAsync<Account>(e => e.PartitionKey == name);
-
-            Account? model = null;
-            await foreach (Account entry in queryResult)
-            {
-                model = entry;
-                break;
-            }
-
-            return model;
-        }
-
-        public async Task<Account?> GetByKeyAsync(string rowKey)
-        {
-            var queryResult = _tableClient.QueryAsync<Account>(e => e.RowKey == rowKey);
+            var queryResult = _tableClient.QueryAsync<Account>(e => 
+                e.PartitionKey == tenant && 
+                e.RowKey == accountKey);
 
             Account? model = null;
             await foreach (Account entry in queryResult)
@@ -74,11 +63,9 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            model.PartitionKey = model.Name;
+            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
 
-            // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
-            string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
-            model.RowKey = invertedTicks;
+            model.RowKey = Guid.NewGuid().ToString();
 
             await _tableClient.AddEntityAsync(model);
         }
@@ -86,6 +73,8 @@ namespace MONkEY.Data.Services
         public async Task UpdateAsync(Account model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
+
+            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
 
             await _tableClient.UpdateEntityAsync(model, model.ETag);
         }

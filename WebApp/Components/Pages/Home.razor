@@ -21,10 +21,10 @@ else if (_accounts != null)
     <div class="d-flex flex-grow-1 flex-wrap gap-4 pa-4">
         @foreach (var account in _accounts)
         {
-            var transaction = _lastTransactions[account.Name];
+            var transaction = _lastTransactions[account.AccountKey];
 
-            var accountImageSrc = !string.IsNullOrEmpty(account.ProfileImage)
-                ? $"api/image/{account.TenantId}/{account.ProfileImage}"
+            var accountImageSrc = !string.IsNullOrEmpty(account.Image)
+                ? $"api/image/{account.Tenant}/{account.Image}"
                 : "images/monkey_face.png";
 
             <MudCard Class="flex-auto d-flex" Elevation="5">
@@ -36,10 +36,10 @@ else if (_accounts != null)
                         <MudText Typo="Typo.h5">@account.Name</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit(account.AccountKey)" />
                     </CardHeaderActions>
                 </MudCardHeader>
-                <MudCardMedia Image="@accountImageSrc" Class="cursor-pointer" @onclick="() => ShowAccountDetails(account.Name)" />
+                <MudCardMedia Image="@accountImageSrc" Class="cursor-pointer" @onclick="() => GotoAccountDetails(account.AccountKey)" />
                 <MudCardContent>
                     <MudText Typo="Typo.body1">Aktuelles Guthaben: @account.Balance€</MudText>
                     @if (transaction != null)
@@ -52,7 +52,7 @@ else if (_accounts != null)
                     }
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => ShowAccountDetails(account.Name)">Auswählen</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => GotoAccountDetails(account.AccountKey)">Auswählen</MudButton>
                 </MudCardActions>
             </MudCard>
         }
@@ -60,6 +60,8 @@ else if (_accounts != null)
 }
 
 @code {
+    private const string TENANT = "klerner";
+
     private bool _isLoading = true;
 
     private readonly Dictionary<string, Transaction?> _lastTransactions = new();
@@ -68,18 +70,23 @@ else if (_accounts != null)
 
     protected async override Task OnInitializedAsync()
     {
-        _accounts = await Accounts.GetAllAsync();
+        _accounts = await Accounts.GetAllAsync(TENANT);
 
         foreach (var account in _accounts)
         {
-            _lastTransactions[account.Name] = await Transactions.GetLatestAsync(account.Name);
+            _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(account.Tenant, account.AccountKey);
         }
 
         _isLoading = false;
     }
 
-    private void ShowAccountDetails(string accountName)
+    private void GotoAccountDetails(string accountKey)
     {
-        Navigation.NavigateTo($"/accountDetails/{accountName}");
+        Navigation.NavigateTo($"/{TENANT}/account/{accountKey}");
+    }
+
+    private void GotoAccountEdit(string accountKey)
+    {
+        Navigation.NavigateTo($"/{TENANT}/account/{accountKey}/edit");
     }
 }

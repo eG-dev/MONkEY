@@ -14,6 +14,8 @@ namespace MONkEY.Functions
 {
     public class MonthlyReporting
     {
+        private const string TENANT = "klerner";
+
         private const string EMAIL_SENDER_ADDRESS = "no-reply@monkey-app.de";
         private const string EMAIL_SENDER_NAME = "MONkEY App";
         private const string EMAIL_TEMPLATE_ID = "d-51be69cb71f54e2f95a3a30c3c0426d7";
@@ -67,18 +69,18 @@ namespace MONkEY.Functions
             var reportedPeriod = utcNow.StartOfMonth().SubtractMonth();
             var reportedPeriodEnd = reportedPeriod.AddMonth();
 
-            var accounts = await _accounts.GetAllAsync();
+            var accounts = await _accounts.GetAllAsync(TENANT);
             foreach (var account in accounts)
             {
-                var existingReport = await _reports.GetForPeriodAsync(account.Name, reportedPeriod);
+                var existingReport = await _reports.GetForPeriodAsync(TENANT, account.AccountKey, reportedPeriod);
                 if (existingReport != null)
                 {
                     continue;
                 }
 
-                var previosReport = await _reports.GetForPeriodAsync(account.Name, reportedPeriod.SubtractMonth());
+                var previosReport = await _reports.GetForPeriodAsync(TENANT, account.AccountKey, reportedPeriod.SubtractMonth());
 
-                var transactions = await _transactions.GetBetweenAsync(account.Name, reportedPeriod, reportedPeriodEnd);
+                var transactions = await _transactions.GetBetweenAsync(TENANT, account.AccountKey, reportedPeriod, reportedPeriodEnd);
 
                 if (previosReport == null && transactions.Count == 0)
                 {
@@ -114,7 +116,8 @@ namespace MONkEY.Functions
 
                 var report = new Report()
                 {
-                    AccountName = account.Name,
+                    PartitionKey = account.Tenant,
+                    AccountKey = account.AccountKey,
                     ReportedPeriod = reportedPeriod,
                     Type = ReportTypes.Monthly,
                     SerializedPayload = JsonSerializer.Serialize(reportPayload)

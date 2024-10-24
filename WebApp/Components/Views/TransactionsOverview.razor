@@ -33,7 +33,10 @@
     private const int PAGE_SIZE = 10;
 
     [Parameter]
-    public string Name { get; set; } = default!;
+    public string Tenant { get; set; } = default!;
+
+    [Parameter]
+    public string AccountKey { get; set; } = default!;
 
     private bool _isLoading = true;
     private MudTable<Transaction> _table = default!;
@@ -59,9 +62,9 @@
             StateHasChanged();
         }
 
-        if (!string.IsNullOrWhiteSpace(Name))
+        if (!string.IsNullOrWhiteSpace(Tenant) && !string.IsNullOrWhiteSpace(AccountKey))
         {
-            _transactions = await Transactions.GetAsync(Name, pageSize);
+            _transactions = await Transactions.GetAsync(Tenant, AccountKey, pageSize);
         }
 
         _allTransactionsLoaded = _transactions.Count < pageSize;
@@ -79,7 +82,7 @@
 
             var lastTransaction = _transactions.Last();
 
-            var olderTransactions = await Transactions.GetAsync(Name, PAGE_SIZE, lastTransaction.TriggeredOn);
+            var olderTransactions = await Transactions.GetAsync(Tenant, AccountKey, PAGE_SIZE, lastTransaction.TriggeredOn);
             _transactions.AddRange(olderTransactions);
 
             _allTransactionsLoaded = olderTransactions.Count < PAGE_SIZE;

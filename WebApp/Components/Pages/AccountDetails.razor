@@ -1,4 +1,4 @@
-﻿@page "/accountDetails/{Name:alpha}"
+﻿@page "/{Tenant}/account/{AccountKey}"
 
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -6,13 +6,13 @@
 @using MONkEY.Data
 @using MONkEY.Data.Services
 
+@inject NavigationManager Navigation
 @inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
 @inject ITransactionService Transactions
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService Dialog
-@inject IBlobService Blobs
 
 <PageTitle>MONkEY App - Kontodetails</PageTitle>
 
@@ -22,8 +22,8 @@
 
 @if (_account != null)
 {
-    var accountImageSrc = !string.IsNullOrEmpty(_account.ProfileImage)
-        ? $"api/image/{_account.TenantId}/{_account.ProfileImage}"
+    var accountImageSrc = !string.IsNullOrEmpty(_account.Image)
+        ? $"api/image/{_account.Tenant}/{_account.Image}"
         : "images/monkey_face.png";
 
     <div class="d-flex gap-6 justify-start align-center">
@@ -32,7 +32,7 @@
         </MudAvatar>
         <MudText Typo="Typo.h3">@_account.Name</MudText>
         <div class="flex-grow-1" />
-        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="InitiateProfileImageUpdate" />
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
     </div>
     <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
     @if (_account.PocketMoney.GetValueOrDefault() > 0)
@@ -71,7 +71,7 @@
     </MudButton>
     <br />
     <br />
-    <TransactionsOverview @ref="_transactionsOverview" Name="@_account.Name" />
+    <TransactionsOverview @ref="_transactionsOverview" Tenant="@_account.Tenant" AccountKey="@_account.AccountKey" />
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -88,7 +88,10 @@ else
 
 @code {
     [Parameter]
-    public string Name { get; set; } = default!;
+    public string Tenant { get; set; } = default!;
+
+    [Parameter]
+    public string AccountKey { get; set; } = default!;
 
     private List<BreadcrumbItem> _breadcrumbs = new()
     {
@@ -104,14 +107,28 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(Name))
-        {
-            _account = await Accounts.GetAsync(Name);
+        _isLoading = true;
 
-            _breadcrumbs.Add(new BreadcrumbItem(Name, $"/accountDetails/{Name}", false, Icons.Material.TwoTone.Wallet));
+        if (!string.IsNullOrWhiteSpace(Tenant) && !string.IsNullOrWhiteSpace(AccountKey))
+        {
+            _account = await Accounts.GetAsync(Tenant, AccountKey);
+
+            if (_account != null)
+            {
+                _breadcrumbs.Add(new BreadcrumbItem(
+                    _account.Name,
+                    $"/{_account.Tenant}/account/{_account.AccountKey}",
+                    false,
+                    Icons.Material.TwoTone.Wallet));
+            }
         }
 
         _isLoading = false;
+    }
+
+    private void GotoAccountEdit()
+    {
+        Navigation.NavigateTo($"{_account!.Tenant}/account/{_account.AccountKey}/edit");
     }
 
     private async Task InitiateTransaction(bool payOut)
@@ -169,9 +186,9 @@ else
     private async Task InitiateProfileImageUpdate()
     {
         string imageSrc = string.Empty;
-        if (!string.IsNullOrEmpty(_account!.ProfileImage))
+        if (!string.IsNullOrEmpty(_account!.Image))
         {
-            imageSrc = $"api/image/{_account.TenantId}/{_account.ProfileImage}";
+            imageSrc = $"api/image/{_account.Tenant}/{_account.Image}";
         }
 
         var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
@@ -197,7 +214,7 @@ else
 
             try
             {
-                _account = await AccountManagement.UpdateProfileImage(_account.RowKey, model.ImageDataBase64);
+                _account = await AccountManagement.UpdateProfileImage(_account.Tenant, _account.AccountKey, model.ImageDataBase64);
             }
             catch { }
             finally
@@ -215,7 +232,7 @@ else
 
         try
         {
-            var account = await Accounts.GetAsync(Name);
+            var account = await Accounts.GetAsync(_account!.Tenant, _account.AccountKey);
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             if (account != null && authState?.User?.Identity != null)
@@ -225,7 +242,8 @@ else
 
                 await Transactions.AddAsync(new Transaction()
                     {
-                        Recipient = account!.Name,
+                        PartitionKey = account.Tenant,
+                        AccountKey = account.AccountKey,
                         TriggeredBy = !string.IsNullOrEmpty(userName) ? $"{userName} ({userEmail})" : userEmail,
                         Amount = amount,
                         Comment = comment,
@@ -260,7 +278,7 @@ else
 
         try
         {
-            var account = await Accounts.GetAsync(Name);
+            var account = await Accounts.GetAsync(_account!.Tenant, _account.AccountKey);
 
             if (account != null)
             {

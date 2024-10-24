@@ -8,6 +8,6 @@
 
         Task UpdateAsync(Report model);
 
-        Task<Report?> GetForPeriodAsync(string accountName, DateTimeOffset reportedPeriod);
+        Task<Report?> GetForPeriodAsync(string tenant, string accountKey, DateTimeOffset reportedPeriod);
     }
 }

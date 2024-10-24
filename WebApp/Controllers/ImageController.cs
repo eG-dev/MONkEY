@@ -19,7 +19,7 @@ namespace MONkEY.WebApp.Controllers
 
         [HttpGet("{tenantId}/{fileName}")]
         [Authorize]
-        public async Task<IActionResult> FetchImage(string tenantId, string fileName)
+        public async Task<IActionResult> FetchImage(string tenant, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -42,7 +42,7 @@ namespace MONkEY.WebApp.Controllers
                     return BadRequest();
             }
             
-            var imagePath = $"{tenantId}/{fileName}";
+            var imagePath = $"{tenant}/{fileName}";
 
             try
             {

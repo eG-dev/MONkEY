@@ -8,6 +8,8 @@ namespace MONkEY.Functions
 {
     public class PocketMoney
     {
+        private const string TENANT = "klerner";
+
         private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
 
         private readonly ILogger _logger;
@@ -35,13 +37,13 @@ namespace MONkEY.Functions
             var utcNow = DateTime.UtcNow;
             var firstOfMonth = new DateTimeOffset(utcNow.Year, utcNow.Month, 1, 0, 0, 0, TimeSpan.Zero);
 
-            var accounts = await _accounts.GetAllAsync();
+            var accounts = await _accounts.GetAllAsync(TENANT);
 
             foreach (var account in accounts)
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.Name,firstOfMonth, TRANSACTION_TRIGGER_NAME);
+                    var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.Tenant, account.AccountKey, firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
                     if (pocketMoneyTransactions.Count == 0)
                     {
@@ -49,7 +51,8 @@ namespace MONkEY.Functions
 
                         await _transactions.AddAsync(new Transaction()
                         {
-                            Recipient = account!.Name,
+                            PartitionKey = account.Tenant,
+                            AccountKey = account.AccountKey,
                             TriggeredBy = TRANSACTION_TRIGGER_NAME,
                             Amount = amount,
                             Comment = "Monatliches Taschengeld",

@@ -8,10 +8,8 @@
 
         Task UpdateAsync(Account model);
 
-        Task<List<Account>> GetAllAsync();
+        Task<List<Account>> GetAllAsync(string tenant);
 
-        Task<Account?> GetAsync(string name);
-
-        Task<Account?> GetByKeyAsync(string rowKey);
+        Task<Account?> GetAsync(string tenant, string accountKey);
     }
 }
