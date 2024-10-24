@@ -1,4 +1,4 @@
-﻿@page "/{Tenant}/account/{AccountKey}"
+﻿@page "/account/{TenantKey}/{AccountKey}"
 
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -88,7 +88,7 @@ else
 
 @code {
     [Parameter]
-    public string Tenant { get; set; } = default!;
+    public string TenantKey { get; set; } = default!;
 
     [Parameter]
     public string AccountKey { get; set; } = default!;
@@ -109,15 +109,15 @@ else
     {
         _isLoading = true;
 
-        if (!string.IsNullOrWhiteSpace(Tenant) && !string.IsNullOrWhiteSpace(AccountKey))
+        if (!string.IsNullOrWhiteSpace(TenantKey) && !string.IsNullOrWhiteSpace(AccountKey))
         {
-            _account = await Accounts.GetAsync(Tenant, AccountKey);
+            _account = await Accounts.GetAsync(TenantKey, AccountKey);
 
             if (_account != null)
             {
                 _breadcrumbs.Add(new BreadcrumbItem(
                     _account.Name,
-                    $"/{_account.TenantKey}/account/{_account.AccountKey}",
+                    $"/account/{_account.TenantKey}/{_account.AccountKey}",
                     false,
                     Icons.Material.TwoTone.Wallet));
             }

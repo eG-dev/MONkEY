@@ -82,11 +82,11 @@ else if (_accounts != null)
 
     private void GotoAccountDetails(string accountKey)
     {
-        Navigation.NavigateTo($"/{TENANT}/account/{accountKey}");
+        Navigation.NavigateTo($"/account/{TENANT}/{accountKey}");
     }
 
     private void GotoAccountEdit(string accountKey)
     {
-        Navigation.NavigateTo($"/{TENANT}/account/{accountKey}/edit");
+        Navigation.NavigateTo($"/account/{TENANT}/{accountKey}/edit");
     }
 }
