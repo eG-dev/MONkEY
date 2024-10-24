@@ -13,7 +13,7 @@ namespace MONkEY.Data
         public string RowKey { get; set; } = default!;
 
         [IgnoreDataMember]
-        public string Tenant { get => PartitionKey; }
+        public string TenantKey { get => PartitionKey; }
 
         public string AccountKey { get; init; } = default!;
 

@@ -24,7 +24,7 @@ else if (_accounts != null)
             var transaction = _lastTransactions[account.AccountKey];
 
             var accountImageSrc = !string.IsNullOrEmpty(account.Image)
-                ? $"api/image/{account.Tenant}/{account.Image}"
+                ? $"api/image/{account.TenantKey}/{account.Image}"
                 : "images/monkey_face.png";
 
             <MudCard Class="flex-auto d-flex" Elevation="5">
@@ -74,7 +74,7 @@ else if (_accounts != null)
 
         foreach (var account in _accounts)
         {
-            _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(account.Tenant, account.AccountKey);
+            _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(account.TenantKey, account.AccountKey);
         }
 
         _isLoading = false;

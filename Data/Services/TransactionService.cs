@@ -128,13 +128,13 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
             if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
 
             if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
             if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
 
-            model.PartitionKey = model.Tenant;
+            model.PartitionKey = model.TenantKey;
 
             if (model.TriggeredOn == DateTimeOffset.MinValue)
             {
@@ -152,7 +152,7 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
             if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
 
             if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");

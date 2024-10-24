@@ -26,13 +26,13 @@ namespace MONkEY.WebApp.Services
             {
                 if (!string.IsNullOrEmpty(account.Image))
                 {
-                    await Blobs.DeleteFileAsync($"{account.Tenant}/{account.Image}");
+                    await Blobs.DeleteFileAsync($"{account.TenantKey}/{account.Image}");
                 }
 
                 byte[] imageBytes = Convert.FromBase64String(imageDataBase64);
                 var fileName = $"{FileNameGenerator.GetRandom(24)}.png";
 
-                await Blobs.UploadFileAsync($"{account.Tenant}/{fileName}", imageBytes);
+                await Blobs.UploadFileAsync($"{account.TenantKey}/{fileName}", imageBytes);
 
                 account.Image = fileName;
                 await Accounts.UpdateAsync(account);

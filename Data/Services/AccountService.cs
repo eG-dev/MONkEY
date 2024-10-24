@@ -63,7 +63,7 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
 
             model.RowKey = Guid.NewGuid().ToString();
 
@@ -74,7 +74,7 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
 
             await _tableClient.UpdateEntityAsync(model, model.ETag);
         }

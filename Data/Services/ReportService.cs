@@ -43,7 +43,7 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
             if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
 
             // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
@@ -57,7 +57,7 @@ namespace MONkEY.Data.Services
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.Tenant)) throw new ArgumentException("Tenant must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
             if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
 
             await _tableClient.UpdateEntityAsync(model, model.ETag);

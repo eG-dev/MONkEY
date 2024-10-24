@@ -43,7 +43,7 @@ namespace MONkEY.Functions
             {
                 if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                 {
-                    var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.Tenant, account.AccountKey, firstOfMonth, TRANSACTION_TRIGGER_NAME);
+                    var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.TenantKey, account.AccountKey, firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
                     if (pocketMoneyTransactions.Count == 0)
                     {
@@ -51,7 +51,7 @@ namespace MONkEY.Functions
 
                         await _transactions.AddAsync(new Transaction()
                         {
-                            PartitionKey = account.Tenant,
+                            PartitionKey = account.TenantKey,
                             AccountKey = account.AccountKey,
                             TriggeredBy = TRANSACTION_TRIGGER_NAME,
                             Amount = amount,

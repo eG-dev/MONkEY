@@ -116,7 +116,7 @@ namespace MONkEY.Functions
 
                 var report = new Report()
                 {
-                    PartitionKey = account.Tenant,
+                    PartitionKey = account.TenantKey,
                     AccountKey = account.AccountKey,
                     ReportedPeriod = reportedPeriod,
                     Type = ReportTypes.Monthly,
