@@ -3,31 +3,33 @@
 
 @inject ITransactionService Transactions
 
-<MudText Typo="Typo.h6">Letzte Transaktionen</MudText>
-<MudTable @ref="_table" Items="@_transactions" Hover="true" Dense="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
-    <NoRecordsContent>
-        Keine Transaktionen vorhanden...
-    </NoRecordsContent>
-    <HeaderContent>
-        <MudTh>Betrag</MudTh>
-        <MudTh>Datum</MudTh>
-        <MudTh>Kommentar</MudTh>
-        <MudTh>Auslöser</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
-        <MudTd DataLabel="Datum"><LocalTime DateTime="@context.TriggeredOn.UtcDateTime" /></MudTd>
-        <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
-        <MudTd DataLabel="Auslöser">@context.TriggeredBy</MudTd>
-    </RowTemplate>
-</MudTable>
+<div class="@Class">
+    <MudText Typo="Typo.h6">Letzte Transaktionen</MudText>
+    <MudTable @ref="_table" Items="@_transactions" Hover="true" Dense="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
+        <NoRecordsContent>
+            Keine Transaktionen vorhanden...
+        </NoRecordsContent>
+        <HeaderContent>
+            <MudTh>Betrag</MudTh>
+            <MudTh>Datum</MudTh>
+            <MudTh>Kommentar</MudTh>
+            <MudTh>Auslöser</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
+            <MudTd DataLabel="Datum"><LocalTime DateTime="@context.TriggeredOn.UtcDateTime" /></MudTd>
+            <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
+            <MudTd DataLabel="Auslöser">@context.TriggeredBy</MudTd>
+        </RowTemplate>
+    </MudTable>
 
-@if (!_isLoading && !_allTransactionsLoaded)
-{
-    <div class="d-flex justify-center py-3">
-        <MudButton Variant="@Variant.Outlined" OnClick="() => LoadMore()">Mehr laden</MudButton>
-    </div>
-}
+    @if (!_isLoading && !_allTransactionsLoaded)
+    {
+        <div class="d-flex justify-center py-3">
+            <MudButton Variant="@Variant.Outlined" OnClick="() => LoadMore()">Mehr laden</MudButton>
+        </div>
+    }
+</div>
 
 @code {
     private const int PAGE_SIZE = 10;
@@ -37,6 +39,9 @@
 
     [Parameter]
     public string AccountKey { get; set; } = default!;
+
+    [Parameter]
+    public string Class { get; set; } = default!;
 
     private bool _isLoading = true;
     private MudTable<Transaction> _table = default!;

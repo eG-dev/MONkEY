@@ -33,44 +33,46 @@
         <MudText Typo="Typo.h3">@_account.Name</MudText>
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
     </div>
-    <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
-    @if (_account.PocketMoney.GetValueOrDefault() > 0)
-    {
-        <MudText Typo="Typo.subtitle2">@_account.Name bekommt monatlich @_account.PocketMoney€ Taschengeld.</MudText>
-    }
-    else
-    {
-        <MudText Typo="Typo.subtitle2">@_account.Name bekommt kein Taschengeld.</MudText>
-    }
+    
+    <div class="mt-6">
+        <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
+        @if (_account.PocketMoney.GetValueOrDefault() > 0)
+        {
+            <MudText Typo="Typo.subtitle2">@_account.Name bekommt monatlich @_account.PocketMoney€ Taschengeld.</MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.subtitle2">@_account.Name bekommt kein Taschengeld.</MudText>
+        }
+    </div>
 
-    <br />
-    <br />
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Success"
-               StartIcon="@Icons.Material.TwoTone.Add"
-               style="min-width: 150px"
-               OnClick="() => InitiateTransaction(false)">
-                Einzahlen
-    </MudButton>
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Error"
-               StartIcon="@Icons.Material.TwoTone.Remove"
-               style="min-width: 150px"
-               OnClick="() => InitiateTransaction(true)">
-               Auszahlen
-    </MudButton>
-    <br />
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Primary"
-               StartIcon="@Icons.Material.TwoTone.Wallet"
-               class="mt-2"
-               style="min-width: 304px"
-               OnClick="InitiatePocketMoneyAdjustment">
-               Taschengeld festlegen
-    </MudButton>
-    <br />
-    <br />
-    <TransactionsOverview @ref="_transactionsOverview" Tenant="@_account.TenantKey" AccountKey="@_account.AccountKey" />
+    <div class="mt-6">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Success"
+                   StartIcon="@Icons.Material.TwoTone.Add"
+                   style="min-width: 150px"
+                   OnClick="() => InitiateTransaction(false)">
+                    Einzahlen
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Error"
+                   StartIcon="@Icons.Material.TwoTone.Remove"
+                   style="min-width: 150px"
+                   OnClick="() => InitiateTransaction(true)">
+                   Auszahlen
+        </MudButton>
+        <br />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.TwoTone.Wallet"
+                   class="mt-2"
+                   style="min-width: 304px"
+                   OnClick="InitiatePocketMoneyAdjustment">
+                   Taschengeld festlegen
+        </MudButton>
+    </div>
+
+    <TransactionsOverview Class="mt-6" @ref="_transactionsOverview" Tenant="@_account.TenantKey" AccountKey="@_account.AccountKey" />
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
