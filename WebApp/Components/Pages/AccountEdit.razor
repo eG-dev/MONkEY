@@ -1,0 +1,144 @@
+﻿@page "/account/{TenantKey}/{AccountKey}/edit"
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+@using MONkEY.WebApp.DTO
+@using MONkEY.Data
+@using MONkEY.Data.Services
+
+@inject NavigationManager Navigation
+@inject AccountManagementService AccountManagement
+@inject IAccountService Accounts
+@inject ITransactionService Transactions
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+@inject IDialogService Dialog
+
+<PageTitle>MONkEY App - Konto bearbeiten</PageTitle>
+
+<div>
+    <MudBreadcrumbs Items="_breadcrumbs" Separator=">"></MudBreadcrumbs>
+</div>
+
+@if (_account != null)
+{
+    var accountImageSrc = !string.IsNullOrEmpty(_account.Image)
+        ? $"api/image/{_account.TenantKey}/{_account.Image}"
+        : "images/monkey_face.png";
+
+    <div class="d-flex gap-6 justify-start align-center">
+        <MudAvatar>
+            <MudImage Src="@accountImageSrc"></MudImage>
+        </MudAvatar>
+        <MudText Typo="Typo.h3">@_account.Name</MudText>
+    </div>
+
+    <MudImage Src="@accountImageSrc" Width="512" Height="512"></MudImage>
+    <br />
+    <br />
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.Edit"
+               style="min-width: 150px"
+               OnClick="InitiateProfileImageUpdate">
+               Bild ändern
+    </MudButton>
+
+    <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+}
+else if (_isLoading)
+{
+    <PageLoader />
+}
+else
+{
+    <MudAlert Severity="Severity.Error">Das Konto ist nicht bekannt!</MudAlert>
+}
+
+@code {
+    [Parameter]
+    public string TenantKey { get; set; } = default!;
+
+    [Parameter]
+    public string AccountKey { get; set; } = default!;
+
+    private List<BreadcrumbItem> _breadcrumbs = new()
+    {
+        new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
+    };
+
+    private bool _isLoading = true;
+    private bool _isUpdating = false;
+
+    private Account? _account = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _isLoading = true;
+
+        if (!string.IsNullOrWhiteSpace(TenantKey) && !string.IsNullOrWhiteSpace(AccountKey))
+        {
+            _account = await Accounts.GetAsync(TenantKey, AccountKey);
+
+            if (_account != null)
+            {
+                _breadcrumbs.Add(new BreadcrumbItem(
+                    _account.Name,
+                    $"/account/{_account.TenantKey}/{_account.AccountKey}",
+                    false,
+                    Icons.Material.TwoTone.Wallet));
+
+                _breadcrumbs.Add(new BreadcrumbItem(
+                    "Bearbeiten",
+                    $"/account/{_account.TenantKey}/{_account.AccountKey}/edit",
+                    false,
+                    Icons.Material.Filled.Edit));
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    private async Task InitiateProfileImageUpdate()
+    {
+        string imageSrc = string.Empty;
+        if (!string.IsNullOrEmpty(_account!.Image))
+        {
+            imageSrc = $"api/image/{_account.TenantKey}/{_account.Image}";
+        }
+
+        var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
+            "Profilbild ändern",
+            new DialogParameters<ImageSelectionDialog>()
+            {
+                { x => x.Src, imageSrc }
+            },
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Large,
+            });
+
+        var result = await dialog.Result;
+
+        if (result != null &&
+            !result.Canceled && result.Data is ImageSelectionDialogModel model &&
+            !string.IsNullOrEmpty(model.ImageDataBase64))
+        {
+            _isUpdating = true;
+            StateHasChanged();
+
+            try
+            {
+                _account = await AccountManagement.UpdateProfileImage(_account.TenantKey, _account.AccountKey, model.ImageDataBase64);
+            }
+            catch { }
+            finally
+            {
+                _isUpdating = false;
+                StateHasChanged();
+            }
+        }
+    }
+}

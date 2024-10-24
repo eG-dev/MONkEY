@@ -10,13 +10,13 @@
             <div class="image-selector-buttons">
                 <MudFileUpload T="IBrowserFile" Accept=".png, .jpg, .jpeg" FilesChanged="LoadImageAsync" MaximumFileCount="1">
                     <ActivatorContent>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FileOpen">
                             Bild auswählen
                         </MudButton>
                     </ActivatorContent>
                 </MudFileUpload>
             </div>
-            <div class="image-selector-container mt-3">
+            <div class="image-selector-container my-3">
                 <CropperComponent Class="image-selector-cropper"
                                   Options="@CropperOptions"
                                   Src="@Src"
@@ -39,8 +39,8 @@
             }
 
             .image-selector-container {
-                max-height: calc(100% - 36.5px - 12px);
-                height: calc(100% - 36.5px - 12px);
+                max-height: calc(100% - 36.5px - 12px - 12px);
+                height: calc(100% - 36.5px - 12px - 12px);
                 width: 100%;
             }
 

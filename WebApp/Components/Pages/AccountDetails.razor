@@ -31,7 +31,6 @@
             <MudImage Src="@accountImageSrc"></MudImage>
         </MudAvatar>
         <MudText Typo="Typo.h3">@_account.Name</MudText>
-        <div class="flex-grow-1" />
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
     </div>
     <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
@@ -128,7 +127,7 @@ else
 
     private void GotoAccountEdit()
     {
-        Navigation.NavigateTo($"{_account!.TenantKey}/account/{_account.AccountKey}/edit");
+        Navigation.NavigateTo($"/account/{_account!.TenantKey}/{_account.AccountKey}/edit");
     }
 
     private async Task InitiateTransaction(bool payOut)
@@ -179,48 +178,6 @@ else
                 model.PocketMoney >= 0)
             {
                 await AdjustPocketMoney(model.PocketMoney.Value);
-            }
-        }
-    }
-
-    private async Task InitiateProfileImageUpdate()
-    {
-        string imageSrc = string.Empty;
-        if (!string.IsNullOrEmpty(_account!.Image))
-        {
-            imageSrc = $"api/image/{_account.TenantKey}/{_account.Image}";
-        }
-
-        var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
-            "Profilbild ändern",
-            new DialogParameters<ImageSelectionDialog>()
-            {
-                { x => x.Src, imageSrc }
-            },
-            new DialogOptions()
-            {
-                FullScreen = true,
-                Position = DialogPosition.Custom,
-            });
-
-        var result = await dialog.Result;
-
-        if (result != null &&
-            !result.Canceled && result.Data is ImageSelectionDialogModel model &&
-            !string.IsNullOrEmpty(model.ImageDataBase64))
-        {
-            _isUpdating = true;
-            StateHasChanged();
-
-            try
-            {
-                _account = await AccountManagement.UpdateProfileImage(_account.TenantKey, _account.AccountKey, model.ImageDataBase64);
-            }
-            catch { }
-            finally
-            {
-                _isUpdating = false;
-                StateHasChanged();
             }
         }
     }

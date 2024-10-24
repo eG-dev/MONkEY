@@ -17,9 +17,9 @@ namespace MONkEY.WebApp.Controllers
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        [HttpGet("{tenantId}/{fileName}")]
+        [HttpGet("{tenantKey}/{fileName}")]
         [Authorize]
-        public async Task<IActionResult> FetchImage(string tenant, string fileName)
+        public async Task<IActionResult> FetchImage(string tenantKey, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -42,7 +42,7 @@ namespace MONkEY.WebApp.Controllers
                     return BadRequest();
             }
             
-            var imagePath = $"{tenant}/{fileName}";
+            var imagePath = $"{tenantKey}/{fileName}";
 
             try
             {
