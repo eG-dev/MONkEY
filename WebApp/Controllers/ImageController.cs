@@ -17,8 +17,9 @@ namespace MONkEY.WebApp.Controllers
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        [HttpGet("{tenantKey}/{fileName}")]
         [Authorize]
+        [HttpGet("{tenantKey}/{fileName}")]
+        [ResponseCache(CacheProfileName = "Images")]
         public async Task<IActionResult> FetchImage(string tenantKey, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))

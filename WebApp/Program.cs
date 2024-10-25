@@ -13,6 +13,7 @@ using MONkEY.Data.Services;
 using MONkEY.WebApp.Components;
 using MONkEY.WebApp;
 using MONkEY.WebApp.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,17 @@ builder.Services.AddControllersWithViews(options =>
     var policy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
+
+    options.CacheProfiles.Add("Images", new CacheProfile()
+    {
+        Duration = 2592000,
+        Location = ResponseCacheLocation.Any
+    });
+    options.CacheProfiles.Add("NoCache", new CacheProfile()
+    {
+        Location = ResponseCacheLocation.None,
+        NoStore = true
+    });
 
     options.Filters.Add(new AuthorizeFilter(policy));
 }).AddMicrosoftIdentityUI();
