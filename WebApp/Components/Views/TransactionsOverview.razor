@@ -16,7 +16,7 @@
             <MudTh>Auslöser</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Betrag"><Amount Value="@context.Amount" Unit="€" /></MudTd>
+            <MudTd DataLabel="Betrag"><MudText Typo="Typo.body1"><b><Amount Value="@context.Amount" Unit="€" /></b></MudText></MudTd>
             <MudTd DataLabel="Datum"><LocalTime DateTime="@context.TriggeredOn.UtcDateTime" /></MudTd>
             <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
             <MudTd DataLabel="Auslöser">@context.TriggeredBy</MudTd>

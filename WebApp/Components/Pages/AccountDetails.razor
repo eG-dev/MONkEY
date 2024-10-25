@@ -33,12 +33,13 @@
         <MudText Typo="Typo.h3">@_account.Name</MudText>
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
     </div>
+
+    <MudText Class="mt-6" Typo="Typo.subtitle1">Aktuelles Guthaben beträgt <b><Amount Value="@_account.Balance" Unit="€" /></b>.</MudText>
     
-    <div class="mt-6">
-        <MudText Typo="Typo.subtitle1">Aktuelles Guthaben beträgt @_account.Balance€.</MudText>
+    <div class="mt-3">
         @if (_account.PocketMoney.GetValueOrDefault() > 0)
         {
-            <MudText Typo="Typo.subtitle2">@_account.Name bekommt monatlich @_account.PocketMoney€ Taschengeld.</MudText>
+            <MudText Typo="Typo.subtitle2">@_account.Name bekommt monatlich <b>@_account.PocketMoney€</b> Taschengeld.</MudText>
         }
         else
         {
