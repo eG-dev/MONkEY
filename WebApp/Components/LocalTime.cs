@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components;
+
 using MONkEY.WebApp.Utils;
 
 namespace MONkEY.WebApp.Components
 {
     public static class TimeProviderExtensions
     {
-        public static DateTime ToLocalDateTime(this TimeProvider timeProvider, DateTime dateTime)
+        public static DateTime ToLocalDateTime(this BrowserTimeProvider timeProvider, DateTime dateTime)
         {
             return dateTime.Kind switch
             {
@@ -16,7 +17,7 @@ namespace MONkEY.WebApp.Components
             };
         }
 
-        public static DateTime ToLocalDateTime(this TimeProvider timeProvider, DateTimeOffset dateTime)
+        public static DateTime ToLocalDateTime(this BrowserTimeProvider timeProvider, DateTimeOffset dateTime)
         {
             var local = TimeZoneInfo.ConvertTimeFromUtc(dateTime.UtcDateTime, timeProvider.LocalTimeZone);
             local = DateTime.SpecifyKind(local, DateTimeKind.Local);
@@ -27,7 +28,7 @@ namespace MONkEY.WebApp.Components
     public sealed class LocalTime : ComponentBase, IDisposable
     {
         [Inject]
-        public TimeProvider TimeProvider { get; set; } = default!;
+        public BrowserTimeProvider BrowserTimeProvider { get; set; } = default!;
 
         [Parameter]
         public DateTime? DateTime { get; set; }
@@ -37,10 +38,7 @@ namespace MONkEY.WebApp.Components
 
         protected override void OnInitialized()
         {
-            if (TimeProvider is BrowserTimeProvider browserTimeProvider)
-            {
-                browserTimeProvider.LocalTimeZoneChanged += LocalTimeZoneChanged;
-            }
+            BrowserTimeProvider.LocalTimeZoneChanged += LocalTimeZoneChanged;
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -49,21 +47,18 @@ namespace MONkEY.WebApp.Components
             {
                 if (!string.IsNullOrEmpty(Format))
                 {
-                    builder.AddContent(0, TimeProvider.ToLocalDateTime(DateTime.Value).ToString(Format));
+                    builder.AddContent(0, BrowserTimeProvider.ToLocalDateTime(DateTime.Value).ToString(Format));
                 }
                 else
                 {
-                    builder.AddContent(0, TimeProvider.ToLocalDateTime(DateTime.Value));
+                    builder.AddContent(0, BrowserTimeProvider.ToLocalDateTime(DateTime.Value));
                 }
             }
         }
 
         public void Dispose()
         {
-            if (TimeProvider is BrowserTimeProvider browserTimeProvider)
-            {
-                browserTimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
-            }
+            BrowserTimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
         }
 
         private void LocalTimeZoneChanged(object? sender, EventArgs e)

@@ -2,6 +2,7 @@ using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Cropper.Blazor.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -11,13 +12,14 @@ using MudBlazor.Translations;
 
 using MONkEY.Data.Services;
 using MONkEY.WebApp.Components;
-using MONkEY.WebApp;
 using MONkEY.WebApp.Services;
-using Microsoft.AspNetCore.Mvc;
+using MONkEY.WebApp.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration);
+
+builder.Services.AddScoped<BrowserTimeProvider>();
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -58,8 +60,6 @@ builder.Services
         options.MaximumReceiveMessageSize = 32 * 1024 * 100;
         options.StreamBufferCapacity = 10;
     });
-
-builder.Services.AddBrowserTimeProvider();
 
 builder.Services.AddMudServices(config =>
 {
@@ -128,6 +128,6 @@ app.MapControllers();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.UseRequestLocalization("de-DE");
+//app.UseRequestLocalization("de-DE");
 
 app.Run();

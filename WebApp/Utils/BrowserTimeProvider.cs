@@ -1,13 +1,13 @@
 ﻿namespace MONkEY.WebApp.Utils
 {
-    internal sealed class BrowserTimeProvider : TimeProvider
+    public sealed class BrowserTimeProvider
     {
         private TimeZoneInfo? _browserLocalTimeZone;
 
         // Notify when the local time zone changes
         public event EventHandler? LocalTimeZoneChanged;
 
-        public override TimeZoneInfo LocalTimeZone => _browserLocalTimeZone ?? base.LocalTimeZone;
+        public TimeZoneInfo LocalTimeZone => _browserLocalTimeZone ?? TimeZoneInfo.Local;
 
         internal bool IsLocalTimeZoneSet => _browserLocalTimeZone != null;
 
