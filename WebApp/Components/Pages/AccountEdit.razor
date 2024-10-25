@@ -33,7 +33,14 @@
         <MudText Typo="Typo.h3">@_account.Name</MudText>
     </div>
 
-    <MudImage Class="my-3" Src="@accountImageSrc" Width="512" Height="512"></MudImage>
+    <MudBreakpointProvider>
+        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
+            <MudImage Class="my-3" Src="@accountImageSrc" Width="256" Height="256"></MudImage>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+            <MudImage Class="my-3" Src="@accountImageSrc" Width="512" Height="512"></MudImage>
+        </MudHidden>
+    </MudBreakpointProvider>
     <br />
 
     <MudButton Variant="Variant.Filled"
