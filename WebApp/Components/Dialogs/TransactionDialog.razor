@@ -4,13 +4,24 @@
     <DialogContent>
         <MudFocusTrap>
             <MudNumericField @bind-Value="_model.Amount"
-                Label="Betrag" Variant="Variant.Text"
-                Min="1" Max="1000" Step="1"
-                Immediate="true"
-                Adornment="Adornment.Start" AdornmentIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)" AdornmentColor="@(PayOut ? Color.Error : Color.Success)" />
+                             Label="Betrag"
+                             Variant="Variant.Text"
+                             Min="1"
+                             Max="1000"
+                             Step="1"
+                             Style="@(PayOut ? "color: var(--mud-palette-error)" : "color: var(--mud-palette-success)")"
+                             Immediate="true"
+                             Adornment="Adornment.Start"
+                             AdornmentIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)"
+                             AdornmentColor="@(PayOut ? Color.Error : Color.Success)" />
         </MudFocusTrap>
 
-        <MudTextField T="string" Label="Kommentar" Variant="Variant.Outlined" @bind-Text="@_model.Comment" Lines="3" MaxLength="100" />
+        <MudTextField T="string"
+                      Label="Kommentar"
+                      Variant="Variant.Outlined"
+                      @bind-Text="@_model.Comment"
+                      Lines="3"
+                      MaxLength="100" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
