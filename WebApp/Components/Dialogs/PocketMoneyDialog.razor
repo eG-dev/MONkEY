@@ -2,6 +2,12 @@
 
 <MudDialog>
     <DialogContent>
+        <MudAlert Class="mb-6" Severity="Severity.Info">
+            Diese Summe wird monatlich automatisch dem Konto gutgeschrieben.
+            <br />
+            Änderungen an dem Taschengeld wirken sich erst im nächsten Monat aus wenn das Taschengeld im aktuellen Monat bereits automatisch gutgeschrieben wurde.
+        </MudAlert>
+
         <MudFocusTrap>
             <MudNumericField @bind-Value="PocketMoney"
                 Label="Monatliches Taschengeld" Variant="Variant.Text"
