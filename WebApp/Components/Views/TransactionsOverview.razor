@@ -5,33 +5,35 @@
 
 <div class="@Class">
     <MudText Typo="Typo.h6">Letzte Transaktionen</MudText>
+    
+    <div class="pb-3">
+        <MudTable @ref="_table"
+                  Class="pb-3"
+                  Items="@_transactions"
+                  Hover="true"
+                  Dense="true"
+                  Striped="true"
+                  Breakpoint="Breakpoint.Sm"
+                  Loading="@_isLoading"
+                  LoadingProgressColor="Color.Info">
 
-    <MudTable @ref="_table"
-              Class="mb-3"
-              Items="@_transactions"
-              Hover="true"
-              Dense="true"
-              Striped="true"
-              Breakpoint="Breakpoint.Sm"
-              Loading="@_isLoading"
-              LoadingProgressColor="Color.Info">
-
-        <NoRecordsContent>
-            Keine Transaktionen vorhanden...
-        </NoRecordsContent>
-        <HeaderContent>
-            <MudTh>Betrag</MudTh>
-            <MudTh>Datum</MudTh>
-            <MudTh>Kommentar</MudTh>
-            <MudTh>Auslöser</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Betrag"><MudText Typo="Typo.body1"><b><Amount Value="@context.Amount" Unit="€" /></b></MudText></MudTd>
-            <MudTd DataLabel="Datum"><LocalTime DateTime="@context.TriggeredOn.UtcDateTime" /></MudTd>
-            <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
-            <MudTd DataLabel="Auslöser">@context.TriggeredBy</MudTd>
-        </RowTemplate>
-    </MudTable>
+            <NoRecordsContent>
+                Keine Transaktionen vorhanden...
+            </NoRecordsContent>
+            <HeaderContent>
+                <MudTh>Betrag</MudTh>
+                <MudTh>Datum</MudTh>
+                <MudTh>Kommentar</MudTh>
+                <MudTh>Auslöser</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Betrag"><MudText Typo="Typo.body1"><Amount Value="@context.Amount" Unit="€" /></MudText></MudTd>
+                <MudTd DataLabel="Datum"><LocalTime DateTime="@context.TriggeredOn.UtcDateTime" /></MudTd>
+                <MudTd DataLabel="Kommentar">@context.Comment</MudTd>
+                <MudTd DataLabel="Auslöser">@context.TriggeredBy</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
 
     @if (!_isLoading && !_allTransactionsLoaded)
     {

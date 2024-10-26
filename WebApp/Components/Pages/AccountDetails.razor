@@ -35,7 +35,7 @@
     </div>
 
     <MudText Class="mt-6" Typo="Typo.subtitle1">Aktuelles Guthaben</MudText>
-    <MudText Typo="Typo.h4"><Amount Value="@_account.Balance" Unit="€" /></MudText>
+    <MudText Typo="Typo.h4"><Amount Value="@_account.Balance" Unit="€" IsBold="true" /></MudText>
 
     <div class="mt-3">
         <MudButton Variant="Variant.Filled"
@@ -58,7 +58,7 @@
     <div class="mt-6">
         @if (_account.PocketMoney.GetValueOrDefault() > 0)
         {
-            <MudText Typo="Typo.subtitle1">@_account.Name bekommt monatlich <b><Amount Value="@_account.PocketMoney" Unit="€" /></b> Taschengeld.</MudText>
+            <MudText Typo="Typo.subtitle1">@_account.Name bekommt monatlich <Amount Value="@_account.PocketMoney" Unit="€" IsBold="true" /> Taschengeld.</MudText>
         }
         else
         {

@@ -1,8 +1,8 @@
 ﻿@if (Value != null)
 {
-    var value = Value.Value;
-
-    <span style="color: var(@(value < 0 ? "--mud-palette-error" : "--mud-palette-success"))">@value.ToString("+0;-#")@Unit</span>
+    <span style="@GetStyle()">
+        @Value.Value.ToString("+0;-#")@Unit
+    </span>
 }
 
 @code {
@@ -11,4 +11,15 @@
 
     [Parameter]
     public string Unit { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsBold { get; set; } = false;
+
+    private string GetStyle()
+    {
+        var color = Value!.Value < 0 ? "var(--mud-palette-error)" : "var(--mud-palette-success)";
+        var fontWeight = IsBold ? "font-weight: bold;" : "";
+
+        return $"color: {color}; {fontWeight}";
+    }
 }

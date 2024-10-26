@@ -41,7 +41,7 @@ else if (_accounts != null)
                 </MudCardHeader>
                 <MudCardMedia Image="@accountImageSrc" Class="cursor-pointer" @onclick="() => GotoAccountDetails(account.AccountKey)" />
                 <MudCardContent>
-                    <MudText Typo="Typo.body1">Aktuelles Guthaben <b><Amount Value="@account.Balance" Unit="€" /></b></MudText>
+                    <MudText Typo="Typo.body1">Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" /></MudText>
                     @if (transaction != null)
                     {
                         <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" /></MudText>
