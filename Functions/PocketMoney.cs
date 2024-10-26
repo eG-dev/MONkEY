@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 
 using MONkEY.Data;
 using MONkEY.Data.Services;
+using MONkEY.Support;
 
 namespace MONkEY.Functions
 {
@@ -34,8 +35,7 @@ namespace MONkEY.Functions
         {
             _logger.LogInformation($"Executing pocket money service");
 
-            var utcNow = DateTime.UtcNow;
-            var firstOfMonth = new DateTimeOffset(utcNow.Year, utcNow.Month, 1, 0, 0, 0, TimeSpan.Zero);
+            var firstOfMonth = DateTimeOffset.UtcNow.StartOfMonth();
 
             var accounts = await _accounts.GetAllAsync(TENANT);
 

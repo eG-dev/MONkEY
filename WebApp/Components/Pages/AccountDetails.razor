@@ -34,16 +34,25 @@
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
     </div>
 
-    <MudText Class="mt-6" Typo="Typo.subtitle1">Aktuelles Guthaben beträgt <b><Amount Value="@_account.Balance" Unit="€" /></b>.</MudText>
+    <MudText Class="mt-6" Typo="Typo.subtitle1">Aktuelles Guthaben</MudText>
+    <MudText Typo="Typo.h4"><Amount Value="@_account.Balance" Unit="€" /></MudText>
     
     <div class="mt-3">
         @if (_account.PocketMoney.GetValueOrDefault() > 0)
         {
-            <MudText Typo="Typo.subtitle2">@_account.Name bekommt monatlich <b>@_account.PocketMoney€</b> Taschengeld.</MudText>
+            <MudText Typo="Typo.subtitle1">@_account.Name bekommt monatlich <b><Amount Value="@_account.PocketMoney" Unit="€" /></b> Taschengeld.</MudText>
         }
         else
         {
-            <MudText Typo="Typo.subtitle2">@_account.Name bekommt kein Taschengeld.</MudText>
+            <MudText Typo="Typo.subtitle1">@_account.Name bekommt <b>kein</b> Taschengeld.</MudText>
+        }
+        @if (_pocketMoneyTransaction != null)
+        {
+            <MudText Typo="Typo.subtitle2">
+                Das Taschendgeld wurde in diesem Monat am
+                <LocalTime DateTime="@_pocketMoneyTransaction.TriggeredOn.UtcDateTime" Format="d" />
+                ausgezahlt.
+            </MudText>
         }
     </div>
 
@@ -95,6 +104,8 @@ else
     [Parameter]
     public string AccountKey { get; set; } = default!;
 
+    private const string POCKET_MONEY_TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
+
     private List<BreadcrumbItem> _breadcrumbs = new()
     {
         new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
@@ -104,6 +115,7 @@ else
     private bool _isUpdating = false;
 
     private Account? _account = null;
+    private Transaction? _pocketMoneyTransaction = null;
 
     private TransactionsOverview _transactionsOverview = default!;
 
@@ -122,6 +134,13 @@ else
                     $"/account/{_account.TenantKey}/{_account.AccountKey}",
                     false,
                     Icons.Material.TwoTone.Wallet));
+
+                var transactions = await Transactions.GetSinceAsync(
+                    _account.TenantKey,
+                    _account.AccountKey,
+                    DateTimeOffset.UtcNow.StartOfMonth(),
+                    POCKET_MONEY_TRANSACTION_TRIGGER_NAME);
+                _pocketMoneyTransaction = transactions.FirstOrDefault();
             }
         }
 
