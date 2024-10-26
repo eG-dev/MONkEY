@@ -33,7 +33,7 @@ else if (_accounts != null)
                         <MudAvatar Color="Color.Primary">@account.Name.Substring(0, 1).ToUpper()</MudAvatar>
                     </CardHeaderAvatar>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h5">@account.Name</MudText>
+                        <MudText Typo="@(account.Name.Length > 16 ? Typo.h6 : Typo.h5)">@account.Name</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit(account.AccountKey)" />
