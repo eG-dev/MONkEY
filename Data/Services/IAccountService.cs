@@ -4,12 +4,12 @@
     {
         Task InitAsync();
 
-        Task AddAsync(Account model);
+        Task<Account?> AddAsync(Account model);
 
-        Task UpdateAsync(Account model);
+        Task<Account?> UpdateAsync(Account model);
 
-        Task<List<Account>> GetAllAsync(string tenant);
+        Task<List<Account>> GetAllAsync(string tenantKey);
 
-        Task<Account?> GetAsync(string tenant, string accountKey);
+        Task<Account?> GetAsync(string tenantKey, string accountKey);
     }
 }

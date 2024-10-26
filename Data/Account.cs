@@ -18,7 +18,7 @@ namespace MONkEY.Data
         [IgnoreDataMember]
         public string AccountKey { get => RowKey; }
 
-        public string Name { get; init; } = default!;
+        public string Name { get; set; } = default!;
 
         public string? Image { get; set; } = default!;
 

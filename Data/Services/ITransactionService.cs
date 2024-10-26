@@ -6,15 +6,13 @@
 
         Task AddAsync(Transaction model);
 
-        Task UpdateAsync(Transaction model);
+        Task<List<Transaction>> GetAsync(string tenantKey, string accountKey, int? pageSize = null, DateTimeOffset? olderThan = null);
 
-        Task<List<Transaction>> GetAsync(string tenant, string accountKey, int? pageSize = null, DateTimeOffset? olderThan = null);
+        Task<List<Transaction>> GetBetweenAsync(string tenantKey, string accountKey, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null);
 
-        Task<List<Transaction>> GetBetweenAsync(string tenant, string accountKey, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null);
+        Task<Transaction?> GetLatestAsync(string tenantKey, string accountKey);
 
-        Task<Transaction?> GetLatestAsync(string tenant, string accountKey);
-
-        Task<List<Transaction>> GetSinceAsync(string tenant, string accountKey, DateTimeOffset sinceDate, string? triggeredBy = null);
+        Task<List<Transaction>> GetSinceAsync(string tenantKey, string accountKey, DateTimeOffset sinceDate, string? triggeredBy = null);
         
     }
 }

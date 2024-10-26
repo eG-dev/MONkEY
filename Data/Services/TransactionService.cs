@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using System.Reflection;
 
 namespace MONkEY.Data.Services
 {
@@ -23,21 +24,21 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public async Task<List<Transaction>> GetAsync(string tenant, string accountKey, int? pageSize = null, DateTimeOffset? olderThan = null)
+        public async Task<List<Transaction>> GetAsync(string tenantKey, string accountKey, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
             AsyncPageable<Transaction> queryResult;
 
             if (olderThan == null)
             {
                 queryResult = _tableClient.QueryAsync<Transaction>(e =>
-                        e.PartitionKey == tenant &&
+                        e.PartitionKey == tenantKey &&
                         e.AccountKey == accountKey,
                     pageSize);
             }
             else
             {
                 queryResult = _tableClient.QueryAsync<Transaction>(e =>
-                        e.PartitionKey == tenant &&
+                        e.PartitionKey == tenantKey &&
                         e.AccountKey == accountKey &&
                         e.TriggeredOn < olderThan,
                     pageSize);
@@ -57,28 +58,28 @@ namespace MONkEY.Data.Services
             return [.. result.OrderByDescending(e => e.TriggeredOn)];
         }
 
-        public async Task<Transaction?> GetLatestAsync(string tenant, string accountKey)
+        public async Task<Transaction?> GetLatestAsync(string tenantKey, string accountKey)
         {
-            var transactions = await GetAsync(tenant, accountKey, 1);
+            var transactions = await GetAsync(tenantKey, accountKey, 1);
 
             return transactions.Count > 0 ? transactions[0] : null;
         }
 
-        public async Task<List<Transaction>> GetSinceAsync(string tenant, string accountKey, DateTimeOffset sinceDate, string? triggeredBy = null)
+        public async Task<List<Transaction>> GetSinceAsync(string tenantKey, string accountKey, DateTimeOffset sinceDate, string? triggeredBy = null)
         {
             AsyncPageable<Transaction> queryResult;
 
             if (string.IsNullOrEmpty(triggeredBy))
             {
                 queryResult = _tableClient.QueryAsync<Transaction>(e =>
-                    e.PartitionKey == tenant &&
+                    e.PartitionKey == tenantKey &&
                     e.AccountKey == accountKey &&
                     e.TriggeredOn >= sinceDate);
             }
             else
             {
                 queryResult = _tableClient.QueryAsync<Transaction>(e =>
-                    e.PartitionKey == tenant &&
+                    e.PartitionKey == tenantKey &&
                     e.AccountKey == accountKey &&
                     e.TriggeredBy == triggeredBy &&
                     e.TriggeredOn >= sinceDate);
@@ -93,14 +94,14 @@ namespace MONkEY.Data.Services
             return [.. result.OrderByDescending(e => e.TriggeredOn)];
         }
 
-        public async Task<List<Transaction>> GetBetweenAsync(string tenant, string accountKey, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null)
+        public async Task<List<Transaction>> GetBetweenAsync(string tenantKey, string accountKey, DateTimeOffset sinceDate, DateTimeOffset untilDate, string? triggeredBy = null)
         {
             AsyncPageable<Transaction> queryResult;
 
             if (string.IsNullOrEmpty(triggeredBy))
             {
                 queryResult = _tableClient.QueryAsync<Transaction>(e =>
-                    e.PartitionKey == tenant &&
+                    e.PartitionKey == tenantKey &&
                     e.AccountKey == accountKey &&
                     e.TriggeredOn >= sinceDate &&
                     e.TriggeredOn < untilDate);
@@ -108,7 +109,7 @@ namespace MONkEY.Data.Services
             else
             {
                 queryResult = _tableClient.QueryAsync<Transaction>(e =>
-                    e.PartitionKey == tenant &&
+                    e.PartitionKey == tenantKey &&
                     e.AccountKey == accountKey &&
                     e.TriggeredBy == triggeredBy &&
                     e.TriggeredOn >= sinceDate &&
@@ -126,13 +127,7 @@ namespace MONkEY.Data.Services
 
         public async Task AddAsync(Transaction model)
         {
-            ArgumentNullException.ThrowIfNull(model, nameof(model));
-
-            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
-            if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
-
-            if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
-            if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
+            ValidateModel(model);
 
             model.PartitionKey = model.TenantKey;
 
@@ -148,17 +143,29 @@ namespace MONkEY.Data.Services
             await _tableClient.AddEntityAsync(model);
         }
 
-        public async Task UpdateAsync(Transaction model)
+        private void ValidateModel(Transaction model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
+            
+            if (string.IsNullOrWhiteSpace(model.TenantKey))
+            {
+                throw new ArgumentException($"{nameof(model.TenantKey)} must be specified!");
+            }
 
-            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
-            if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
+            if (string.IsNullOrWhiteSpace(model.AccountKey))
+            {
+                throw new ArgumentException($"{nameof(model.AccountKey)} must be specified!");
+            }
 
-            if (model.Amount == 0) throw new ArgumentException("Amount must not be zero!");
-            if (model.Comment?.Length > 100) throw new ArgumentException("Comment is too long!");
+            if (model.Amount == 0)
+            {
+                throw new ArgumentException($"{nameof(model.Amount)} must not be zero!");
+            }
 
-            await _tableClient.UpdateEntityAsync(model, model.ETag);
+            if (model.Comment?.Length > 100)
+            {
+                throw new ArgumentException($"{nameof(model.Comment)} is too long!");
+            }
         }
     }
 }

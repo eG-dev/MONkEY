@@ -22,10 +22,10 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public async Task<Report?> GetForPeriodAsync(string tenant, string accountKey, DateTimeOffset reportedPeriod)
+        public async Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod)
         {
             var queryResult = _tableClient.QueryAsync<Report>(e =>
-                e.PartitionKey == tenant &&
+                e.PartitionKey == tenantKey &&
                 e.AccountKey == accountKey &&
                 e.ReportedPeriod == reportedPeriod);
 
@@ -41,10 +41,7 @@ namespace MONkEY.Data.Services
 
         public async Task AddAsync(Report model)
         {
-            ArgumentNullException.ThrowIfNull(model, nameof(model));
-
-            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
-            if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
+            ValidateModel(model);
 
             // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
             string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
@@ -53,14 +50,19 @@ namespace MONkEY.Data.Services
             await _tableClient.AddEntityAsync(model);
         }
 
-        public async Task UpdateAsync(Report model)
+        private void ValidateModel(Report model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-            if (string.IsNullOrWhiteSpace(model.TenantKey)) throw new ArgumentException("Tenant must be specified!");
-            if (string.IsNullOrWhiteSpace(model.AccountKey)) throw new ArgumentException("Account key must be specified!");
+            if (string.IsNullOrWhiteSpace(model.TenantKey))
+            {
+                throw new ArgumentException($"{nameof(model.TenantKey)} must be specified!");
+            }
 
-            await _tableClient.UpdateEntityAsync(model, model.ETag);
+            if (string.IsNullOrWhiteSpace(model.AccountKey))
+            {
+                throw new ArgumentException($"{nameof(model.AccountKey)} must be specified!");
+            }
         }
     }
 }
