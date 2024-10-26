@@ -5,7 +5,17 @@
 
 <div class="@Class">
     <MudText Typo="Typo.h6">Letzte Transaktionen</MudText>
-    <MudTable @ref="_table" Items="@_transactions" Hover="true" Dense="true" Striped="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
+
+    <MudTable @ref="_table"
+              Class="mb-3"
+              Items="@_transactions"
+              Hover="true"
+              Dense="true"
+              Striped="true"
+              Breakpoint="Breakpoint.Sm"
+              Loading="@_isLoading"
+              LoadingProgressColor="Color.Info">
+
         <NoRecordsContent>
             Keine Transaktionen vorhanden...
         </NoRecordsContent>
@@ -25,7 +35,7 @@
 
     @if (!_isLoading && !_allTransactionsLoaded)
     {
-        <div class="d-flex justify-center py-3">
+        <div class="d-flex justify-center pb-3">
             <MudButton Variant="@Variant.Outlined" OnClick="() => LoadMore()">Mehr laden</MudButton>
         </div>
     }
