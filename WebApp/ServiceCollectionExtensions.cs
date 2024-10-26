@@ -16,7 +16,7 @@ namespace MONkEY.WebApp
 
         public static IServiceCollection AddCustomAzureStorage(this IServiceCollection services, ConfigurationManager config)
         {
-            var storageConnectionString = config.GetConnectionString("TableStorage");
+            var storageConnectionString = config.GetConnectionString("STORAGE_CONNECTION_STRING");
             TableServiceClient tableServiceClient = new(storageConnectionString);
             BlobContainerClient blobContainerClient = new(storageConnectionString, "images");
 

@@ -13,10 +13,10 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        var tableStorageConnectionString = Environment.GetEnvironmentVariable("TABLE_STORAGE_CONNECTION_STRING");
-        if (!string.IsNullOrEmpty(tableStorageConnectionString))
+        var storageConnectionString = Environment.GetEnvironmentVariable("STORAGE_CONNECTION_STRING");
+        if (!string.IsNullOrEmpty(storageConnectionString))
         {
-            TableServiceClient tableServiceClient = new(tableStorageConnectionString);
+            TableServiceClient tableServiceClient = new(storageConnectionString);
 
             services.AddSingleton(sp => tableServiceClient);
 
