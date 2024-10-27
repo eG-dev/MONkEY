@@ -184,11 +184,27 @@ else
 
     private async Task InitiateDeletion()
     {
-        _isUpdating = true;
-        StateHasChanged();
+        var dialog = await Dialog.ShowAsync<AccountDeletionDialog>(
+            "Zwo, Eins, Risiko!",
+            new DialogParameters<AccountDeletionDialog>()
+            {
+                { x => x.AccountName, _account!.Name }
+            },
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Small,
+            });
 
-        await AccountManagement.DeleteAccount(_account!.TenantKey, _account.AccountKey);
+        var result = await dialog.Result;
 
-        Navigation.NavigateTo("/");
+        if (result?.Data != null && (bool)result.Data == true)
+        {
+            _isUpdating = true;
+            StateHasChanged();
+
+            await AccountManagement.DeleteAccount(_account!.TenantKey, _account.AccountKey);
+
+            Navigation.NavigateTo("/");
+        }
     }
 }

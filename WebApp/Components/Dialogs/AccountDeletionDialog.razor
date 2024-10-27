@@ -1,0 +1,30 @@
+﻿@using MONkEY.WebApp.DTO
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body1"><b>Soll das Konto von @AccountName wirklich gelöscht werden?</b></MudText>
+
+        <MudAlert Class="mt-6" Severity="Severity.Warning">
+            Alle dazugehörigen Daten werden unwiderruflich gelöscht!
+        </MudAlert>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Abbrechen</MudButton>
+        <MudButton Color="Color.Error" OnClick="Submit">Konto löschen</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public string? AccountName { get; set; } = default!;
+
+    private void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}
