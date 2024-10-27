@@ -6,9 +6,11 @@
 @using MONkEY.Data
 @using MONkEY.Data.Services
 
+@inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
 @inject ITransactionService Transactions
 @inject NavigationManager Navigation
+@inject IDialogService Dialog
 
 <PageTitle>MONkEY App</PageTitle>
 
@@ -18,7 +20,7 @@
 }
 else if (_accounts != null)
 {
-    <div class="d-flex flex-grow-1 flex-wrap gap-4 pa-4">
+    <MudGrid Spacing="6" Justify="Justify.Center">
         @foreach (var account in _accounts)
         {
             _lastTransactions.TryGetValue(account.AccountKey, out Transaction? transaction);
@@ -27,51 +29,52 @@ else if (_accounts != null)
                 ? $"api/image/{account.TenantKey}/{account.Image}"
                 : "images/monkey_face.png";
 
-            <MudCard Class="flex-auto d-flex" Elevation="5">
-                <MudCardHeader>
-                    <CardHeaderAvatar>
-                        <MudAvatar Color="Color.Primary">@account.Name.Substring(0, 1).ToUpper()</MudAvatar>
-                    </CardHeaderAvatar>
-                    <CardHeaderContent>
-                        <MudText Typo="@(account.Name.Length > 16 ? Typo.h6 : Typo.h5)">@account.Name</MudText>
-                    </CardHeaderContent>
-                    <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit(account.AccountKey)" />
-                    </CardHeaderActions>
-                </MudCardHeader>
-                <MudCardMedia Style="min-width: 300px"
-                              Image="@accountImageSrc"
-                              Class="cursor-pointer"
-                              @onclick="() => GotoAccountDetails(account.AccountKey)" />
-                <MudCardContent>
-                    <MudText Typo="Typo.body1">Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" /></MudText>
-                    @if (transaction != null)
-                    {
-                        <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" /></MudText>
-                    }
-                    else
-                    {
-                        <MudText Typo="Typo.caption">Keine Transaktionen vorhanden</MudText>
-                    }
-                </MudCardContent>
-                <MudCardActions>
-                    <MudButton Variant="Variant.Text"
-                               Color="Color.Primary"
-                               OnClick="() => GotoAccountDetails(account.AccountKey)">
-                        Auswählen
-                    </MudButton>
-                </MudCardActions>
-            </MudCard>
+            <MudItem xs="12" sm="6" xl="4">
+                <MudCard Class="flex-auto d-flex" Elevation="5">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Color="Color.Primary">@account.Name.Substring(0, 1).ToUpper()</MudAvatar>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="@(account.Name.Length > 16 ? Typo.h6 : Typo.h5)">@account.Name</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit(account.AccountKey)" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardMedia Image="@accountImageSrc"
+                                  Class="cursor-pointer"
+                                  @onclick="() => GotoAccountDetails(account.AccountKey)" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.body1">Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" /></MudText>
+                        @if (transaction != null)
+                        {
+                            <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" /></MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.caption">Keine Transaktionen vorhanden</MudText>
+                        }
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text"
+                                   Color="Color.Primary"
+                                   OnClick="() => GotoAccountDetails(account.AccountKey)">
+                            Auswählen
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
         }
-    </div>
+    </MudGrid>
 
     @if (_accounts.Count == 0)
     {
         // TODO: Welcome message and info how to create new accounts
     }
-    else if (_accounts.Count < 10)
+    else if (_accounts.Count < 9)
     {
-        <div class="my-3">
+        <div class="mt-6 pb-3">
             <MudButton Variant="Variant.Text"
                        Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
@@ -106,13 +109,25 @@ else if (_accounts != null)
 
     private async Task AddAccount()
     {
-        var account = await Accounts.AddAsync(new Account()
-            {
-                PartitionKey = TENANT,
-                Name = "Unbekannt",
-            });
+        var dialog = await Dialog.ShowAsync<AccountCreationDialog>(
+            "Im Dutzend billiger?",
+            new DialogParameters<AccountCreationDialog>(),
+            new DialogOptions()
+                {
+                    MaxWidth = MaxWidth.Small,
+                });
 
-        _accounts!.Add(account!);
+        var result = await dialog.Result;
+
+        if (result?.Data != null && result.Data is string accountName)
+        {
+            var account = await AccountManagement.CreateAccount(TENANT, accountName);
+
+            if (account != null)
+            {
+                Navigation.NavigateTo($"/account/{TENANT}/{account.AccountKey}/edit");
+            }
+        }
     }
 
     private void GotoAccountDetails(string accountKey)

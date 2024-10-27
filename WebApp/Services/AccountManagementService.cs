@@ -1,4 +1,5 @@
-﻿using MONkEY.Data;
+﻿using Microsoft.Identity.Client;
+using MONkEY.Data;
 using MONkEY.Data.Services;
 using MONkEY.Support;
 
@@ -45,6 +46,17 @@ namespace MONkEY.WebApp.Services
                 account.Image = fileName;
                 await Accounts.UpdateAsync(account);
             }
+
+            return account;
+        }
+
+        public async Task<Account?> CreateAccount(string tenantKey, string name)
+        {
+            var account = await Accounts.AddAsync(new Account()
+            {
+                PartitionKey = tenantKey,
+                Name = name,
+            });
 
             return account;
         }
