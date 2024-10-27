@@ -38,6 +38,8 @@
                           Variant="Variant.Outlined"
                           Value="@_account.Name"
                           MaxLength="24"
+                          Error="@(!string.IsNullOrEmpty(_accountNameError))"
+                          ErrorText="@_accountNameError"
                           DebounceInterval="1000"
                           ValueChanged="OnNameChanged" />
         </MudItem>
@@ -101,6 +103,8 @@ else
 
     private Account? _account = null;
 
+    private string? _accountNameError = default!;
+
     protected async override Task OnInitializedAsync()
     {
         _isLoading = true;
@@ -130,15 +134,23 @@ else
 
     private async Task OnNameChanged(string name)
     {
-        _account!.Name = name;
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            _accountNameError = null;
 
-        _account = await Accounts.UpdateAsync(_account);
+            _account!.Name = name;
+            _account = await Accounts.UpdateAsync(_account);
 
-        _breadcrumbs[1] = new BreadcrumbItem(
-            _account!.Name,
-            $"/account/{_account.TenantKey}/{_account.AccountKey}",
-            false,
-            Icons.Material.TwoTone.Wallet);
+            _breadcrumbs[1] = new BreadcrumbItem(
+                _account!.Name,
+                $"/account/{_account.TenantKey}/{_account.AccountKey}",
+                false,
+                Icons.Material.TwoTone.Wallet);
+        }
+        else
+        {
+            _accountNameError = "Das Konto benötigt einen Namen!";
+        }
     }
 
     private async Task InitiateImageUpdate()
@@ -150,7 +162,7 @@ else
         }
 
         var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
-            "Profilbild ändern",
+            "Bild ändern",
             new DialogParameters<ImageSelectionDialog>()
             {
                 { x => x.Src, imageSrc }
