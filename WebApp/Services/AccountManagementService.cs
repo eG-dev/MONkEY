@@ -8,19 +8,27 @@ namespace MONkEY.WebApp.Services
     {
         private IAccountService Accounts { get; }
 
+        private ITransactionService Transactions { get; }
+
+        private IReportService Reports { get; }
+
         private IBlobService Blobs { get; }
 
         public AccountManagementService(
             IAccountService accountService,
+            ITransactionService transactions,
+            IReportService reports,
             IBlobService blobService)
         {
             Accounts = accountService ?? throw new ArgumentNullException(nameof(accountService));
+            Transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
+            Reports = reports ?? throw new ArgumentNullException(nameof(reports));
             Blobs = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        public async Task<Account?> UpdateProfileImage(string tenant, string accountKey, string imageDataBase64)
+        public async Task<Account?> UpdateImage(string tenantKey, string accountKey, string imageDataBase64)
         {
-            var account = await Accounts.GetAsync(tenant, accountKey);
+            var account = await Accounts.GetAsync(tenantKey, accountKey);
 
             if (account != null)
             {
@@ -39,6 +47,25 @@ namespace MONkEY.WebApp.Services
             }
 
             return account;
+        }
+
+        public async Task DeleteAccount(string tenantKey, string accountKey)
+        {
+            var account = await Accounts.GetAsync(tenantKey, accountKey);
+
+            if (account != null)
+            {
+                if (!string.IsNullOrEmpty(account.Image))
+                {
+                    await Blobs.DeleteFileAsync($"{account.TenantKey}/{account.Image}");
+                }
+
+                await Reports.DeleteAll(tenantKey, accountKey);
+
+                await Transactions.DeleteAll(tenantKey, accountKey);
+
+                await Accounts.Delete(tenantKey, accountKey);
+            }
         }
     }
 }

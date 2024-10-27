@@ -22,23 +22,6 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public async Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod)
-        {
-            var queryResult = _tableClient.QueryAsync<Report>(e =>
-                e.PartitionKey == tenantKey &&
-                e.AccountKey == accountKey &&
-                e.ReportedPeriod == reportedPeriod);
-
-            Report? model = null;
-            await foreach (Report entry in queryResult)
-            {
-                model = entry;
-                break;
-            }
-
-            return model;
-        }
-
         public async Task AddAsync(Report model)
         {
             ValidateModel(model);
@@ -50,7 +33,36 @@ namespace MONkEY.Data.Services
             await _tableClient.AddEntityAsync(model);
         }
 
-        private void ValidateModel(Report model)
+        public async Task DeleteAll(string tenantKey, string accountKey)
+        {
+            var queryResult = _tableClient.QueryAsync<Report>(e =>
+                e.PartitionKey == tenantKey &&
+                e.AccountKey == accountKey);
+
+            await foreach (var entry in queryResult)
+            {
+                await _tableClient.DeleteEntityAsync(entry);
+            }
+        }
+
+        public async Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod)
+        {
+            var queryResult = _tableClient.QueryAsync<Report>(e =>
+                e.PartitionKey == tenantKey &&
+                e.AccountKey == accountKey &&
+                e.ReportedPeriod == reportedPeriod);
+
+            Report? model = null;
+            await foreach (var entry in queryResult)
+            {
+                model = entry;
+                break;
+            }
+
+            return model;
+        }
+
+        private static void ValidateModel(Report model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 

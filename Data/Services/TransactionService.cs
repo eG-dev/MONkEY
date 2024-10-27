@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.Data.Tables;
-using System.Reflection;
 
 namespace MONkEY.Data.Services
 {
@@ -24,6 +23,36 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
+        public async Task AddAsync(Transaction model)
+        {
+            ValidateModel(model);
+
+            model.PartitionKey = model.TenantKey;
+
+            if (model.TriggeredOn == DateTimeOffset.MinValue)
+            {
+                model.TriggeredOn = DateTimeOffset.UtcNow;
+            }
+
+            // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
+            string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
+            model.RowKey = invertedTicks;
+
+            await _tableClient.AddEntityAsync(model);
+        }
+
+        public async Task DeleteAll(string tenantKey, string accountKey)
+        {
+            var queryResult = _tableClient.QueryAsync<Transaction>(e =>
+                e.PartitionKey == tenantKey &&
+                e.AccountKey == accountKey);
+
+            await foreach (var entry in queryResult)
+            {
+                await _tableClient.DeleteEntityAsync(entry);
+            }
+        }
+
         public async Task<List<Transaction>> GetAsync(string tenantKey, string accountKey, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
             AsyncPageable<Transaction> queryResult;
@@ -45,7 +74,7 @@ namespace MONkEY.Data.Services
             }
 
             List<Transaction> result = [];
-            await foreach (Transaction entry in queryResult)
+            await foreach (var entry in queryResult)
             {
                 result.Add(entry);
 
@@ -86,7 +115,7 @@ namespace MONkEY.Data.Services
             }
 
             List<Transaction> result = [];
-            await foreach (Transaction entry in queryResult)
+            await foreach (var entry in queryResult)
             {
                 result.Add(entry);
             }
@@ -117,7 +146,7 @@ namespace MONkEY.Data.Services
             }
 
             List<Transaction> result = [];
-            await foreach (Transaction model in queryResult)
+            await foreach (var model in queryResult)
             {
                 result.Add(model);
             }
@@ -125,25 +154,7 @@ namespace MONkEY.Data.Services
             return [.. result.OrderByDescending(e => e.TriggeredOn)];
         }
 
-        public async Task AddAsync(Transaction model)
-        {
-            ValidateModel(model);
-
-            model.PartitionKey = model.TenantKey;
-
-            if (model.TriggeredOn == DateTimeOffset.MinValue)
-            {
-                model.TriggeredOn = DateTimeOffset.UtcNow;
-            }
-
-            // See: https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
-            string invertedTicks = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
-            model.RowKey = invertedTicks;
-
-            await _tableClient.AddEntityAsync(model);
-        }
-
-        private void ValidateModel(Transaction model)
+        private static void ValidateModel(Transaction model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
             

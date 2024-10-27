@@ -41,14 +41,14 @@
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    StartIcon="@Icons.Material.TwoTone.Add"
-                   style="min-width: 150px"
+                   Style="min-width: 150px"
                    OnClick="() => InitiateTransaction(false)">
             Einzahlen
         </MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Error"
                    StartIcon="@Icons.Material.TwoTone.Remove"
-                   style="min-width: 150px"
+                   Style="min-width: 150px"
                    OnClick="() => InitiateTransaction(true)">
             Auszahlen
         </MudButton>
@@ -78,14 +78,14 @@
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.TwoTone.Wallet"
-                   class="mt-2"
-                   style="min-width: 304px"
+                   Class="mt-2"
+                   Style="min-width: 304px"
                    OnClick="InitiatePocketMoneyAdjustment">
-                   Taschengeld festlegen
+            Taschengeld festlegen
         </MudButton>
     </div>
 
-    <TransactionsOverview Class="mt-6" @ref="_transactionsOverview" Tenant="@_account.TenantKey" AccountKey="@_account.AccountKey" />
+    <TransactionsOverview Class="mt-6" @ref="_transactionsOverview" TenantKey="@_account.TenantKey" AccountKey="@_account.AccountKey" />
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />

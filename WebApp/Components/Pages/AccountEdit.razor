@@ -9,9 +9,6 @@
 @inject NavigationManager Navigation
 @inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
-@inject ITransactionService Transactions
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ISnackbar Snackbar
 @inject IDialogService Dialog
 
 <PageTitle>MONkEY App - Konto bearbeiten</PageTitle>
@@ -41,7 +38,7 @@
                           Variant="Variant.Outlined"
                           Value="@_account.Name"
                           MaxLength="24"
-                          DebounceInterval="500"
+                          DebounceInterval="1000"
                           ValueChanged="OnNameChanged" />
         </MudItem>
     </MudGrid>
@@ -54,15 +51,25 @@
             <MudImage Class="rounded-lg my-3" Src="@accountImageSrc" Width="512" Height="512" Elevation="5"></MudImage>
         </MudHidden>
     </MudBreakpointProvider>
-    <br />
 
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Primary"
-               StartIcon="@Icons.Material.Filled.Edit"
-               style="min-width: 150px"
-               OnClick="InitiateProfileImageUpdate">
-               Bild ändern
-    </MudButton>
+    <div>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Edit"
+                   Style="min-width: 150px"
+                   OnClick="InitiateImageUpdate">
+            Bild ändern
+        </MudButton>
+    </div>
+    <div class="mt-6">
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Error"
+                   StartIcon="@Icons.Material.Filled.Delete"
+                   Style="min-width: 150px"
+                   OnClick="InitiateDeletion">
+            Konto löschen
+        </MudButton>
+    </div>
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -134,7 +141,7 @@ else
             Icons.Material.TwoTone.Wallet);
     }
 
-    private async Task InitiateProfileImageUpdate()
+    private async Task InitiateImageUpdate()
     {
         string imageSrc = string.Empty;
         if (!string.IsNullOrEmpty(_account!.Image))
@@ -164,7 +171,7 @@ else
 
             try
             {
-                _account = await AccountManagement.UpdateProfileImage(_account.TenantKey, _account.AccountKey, model.ImageDataBase64);
+                _account = await AccountManagement.UpdateImage(_account.TenantKey, _account.AccountKey, model.ImageDataBase64);
             }
             catch { }
             finally
@@ -173,5 +180,15 @@ else
                 StateHasChanged();
             }
         }
+    }
+
+    private async Task InitiateDeletion()
+    {
+        _isUpdating = true;
+        StateHasChanged();
+
+        await AccountManagement.DeleteAccount(_account!.TenantKey, _account.AccountKey);
+
+        Navigation.NavigateTo("/");
     }
 }

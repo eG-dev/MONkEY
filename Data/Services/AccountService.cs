@@ -29,36 +29,6 @@ namespace MONkEY.Data.Services
             }
         }
 
-        public async Task<List<Account>> GetAllAsync(string tenantKey)
-        {
-            var queryResult = _tableClient.QueryAsync<Account>(e =>
-                e.PartitionKey == tenantKey);
-
-            List<Account> result = [];
-            await foreach (Account model in queryResult)
-            {
-                result.Add(model);
-            }
-
-            return [.. result.OrderBy(e => e.Name)];
-        }
-
-        public async Task<Account?> GetAsync(string tenantKey, string accountKey)
-        {
-            var queryResult = _tableClient.QueryAsync<Account>(e => 
-                e.PartitionKey == tenantKey && 
-                e.RowKey == accountKey);
-
-            Account? model = null;
-            await foreach (Account entry in queryResult)
-            {
-                model = entry;
-                break;
-            }
-
-            return model;
-        }
-
         public async Task<Account?> AddAsync(Account model)
         {
             ValidateModel(model);
@@ -85,7 +55,8 @@ namespace MONkEY.Data.Services
 
             if (response.IsError)
             {
-                throw new InvalidOperationException("Failed to update the account entry!");
+                throw new InvalidOperationException($"Failed to update the {nameof(Account)} entry " +
+                    $"with partion key {model.PartitionKey} row key {model.RowKey}!");
             }
 
             var updatedModel = await GetAsync(model.TenantKey, model.AccountKey);
@@ -93,7 +64,48 @@ namespace MONkEY.Data.Services
             return updatedModel;
         }
 
-        private void ValidateModel(Account model)
+        public async Task Delete(string tenantKey, string accountKey)
+        {
+            var response = await _tableClient.DeleteEntityAsync(tenantKey, accountKey);
+
+            if (response.IsError)
+            {
+                throw new InvalidOperationException($"Failed to delete the {nameof(Account)} entry " +
+                    $"with partion key {tenantKey} row key {accountKey}!");
+            }
+        }
+
+        public async Task<List<Account>> GetAllAsync(string tenantKey)
+        {
+            var queryResult = _tableClient.QueryAsync<Account>(e =>
+                e.PartitionKey == tenantKey);
+
+            List<Account> result = [];
+            await foreach (var entry in queryResult)
+            {
+                result.Add(entry);
+            }
+
+            return [.. result.OrderBy(e => e.Name)];
+        }
+
+        public async Task<Account?> GetAsync(string tenantKey, string accountKey)
+        {
+            var queryResult = _tableClient.QueryAsync<Account>(e => 
+                e.PartitionKey == tenantKey && 
+                e.RowKey == accountKey);
+
+            Account? model = null;
+            await foreach (var entry in queryResult)
+            {
+                model = entry;
+                break;
+            }
+
+            return model;
+        }
+
+        private static void ValidateModel(Account model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 
