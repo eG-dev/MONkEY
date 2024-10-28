@@ -11,12 +11,11 @@ namespace MONkEY.Data
 
         public string TenantKey { get; init; } = string.Empty;
 
+        public bool IsEnabled { get; init; } = false;
+
         public bool IsGlobalAdmin { get; init; } = false;
 
-        public bool IsKnown()
-        {
-            return !string.IsNullOrEmpty(Email);
-        }
+        public bool IsKnown { get => !string.IsNullOrEmpty(Email); }
 
         public override string ToString()
         {

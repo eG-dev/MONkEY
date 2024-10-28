@@ -3,8 +3,6 @@ using Azure.Data.Tables;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-using MONkEY.Data.Services;
-
 namespace MONkEY.Data
 {
     [DebuggerDisplay("{TenantKey}, {Email}")]
@@ -19,6 +17,8 @@ namespace MONkEY.Data
 
         [IgnoreDataMember]
         public string TenantKey { get => RowKey; }
+
+        public string Status { get; set; } = AccountOwnerStatus.Pending;
 
         public string Role { get; set; } = AccountOwnerRole.Manager;
 

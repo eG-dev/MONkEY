@@ -29,7 +29,7 @@
     <MudAppBar Color="Color.Dark" Fixed="true" Dense="false" Elevation="2">
         <MudImage Height="30" Src="/images/monkey.png" @onclick="() => NavigateToHome()" Class="cursor-pointer"></MudImage>
         <MudSpacer />
-        @if (_user?.IsKnown() == true)
+        @if (_user?.IsKnown == true)
         {
             <MudText Color="Color.Default">@_user</MudText>
             <MudIconButton Icon="@Icons.Material.TwoTone.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => ToggleDrawer())" />
@@ -40,7 +40,7 @@
         }
     </MudAppBar>
 
-    @if (_user?.IsKnown() == true)
+    @if (_user?.IsKnown == true)
     {
         <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
             <MudDrawerHeader>
@@ -94,18 +94,6 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = await Identity.FromPrincipal(authState.User);
-
-        if (_user != null && string.IsNullOrEmpty(_user.TenantKey))
-        {
-            var tenantFallback = "df77aabf-4cb0-4f1f-ace5-642de3a0cb7c";
-            
-            await Owners.AddAsync(new()
-            {
-                PartitionKey = _user.Email,
-                RowKey = tenantFallback,
-                Role = AccountOwnerRole.Manager,
-            });
-        }
     }
 
     private void NavigateToHome()
