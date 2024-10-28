@@ -46,26 +46,31 @@
     }
     <MudMainContent>
         <MudContainer Class="page-container">
-            <CascadingAuthenticationState>
-                <AuthorizeView>
-                    <Authorized>
-                        @Body
-                    </Authorized>
-                    <NotAuthorized>
-                        <div class="d-flex justify-center">
-                            <MudText Typo="@Typo.body1">Sie müssen sich anmelden, um den Inhalt zu sehen!</MudText>
-                        </div>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </CascadingAuthenticationState>
+            <ErrorBoundary>
+                <ChildContent>
+                    <CascadingAuthenticationState>
+                        <AuthorizeView>
+                            <Authorized>
+                                @Body
+                            </Authorized>
+                            <NotAuthorized>
+                                <div class="d-flex justify-center">
+                                    <MudText Typo="@Typo.body1">Sie müssen sich anmelden, um den Inhalt zu sehen!</MudText>
+                                </div>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </CascadingAuthenticationState>
+                </ChildContent>
+                <ErrorContent>
+                    <div class="d-flex flex-column align-center">
+                        <MudImage Class="mb-6" Src="images/monkey_face_error.png" Width="256" Height="256"></MudImage>
+                        <MudText Color="Color.Error" Typo="Typo.h5">Oh nein! Etwas ist schief gelaufen...</MudText>
+                        <MudText Typo="Typo.body1">Lade die Seite neu und probiert es nochmal.</MudText>
+                    </div>
+                </ErrorContent>
+            </ErrorBoundary>
         </MudContainer>
     </MudMainContent>
-
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
 </MudLayout>
 
 @code {
