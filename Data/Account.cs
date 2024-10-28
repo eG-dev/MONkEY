@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 namespace MONkEY.Data
 {
-    [DebuggerDisplay("{Tenant}, {Name}, {Balance}, {PocketMoney}")]
+    [DebuggerDisplay("{TenantKey}, {Name}, {Balance}, {PocketMoney}")]
     public class Account : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;

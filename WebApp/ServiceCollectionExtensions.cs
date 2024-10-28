@@ -33,6 +33,8 @@ namespace MONkEY.WebApp
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IBlobService, BlobService>();
 
+            services.AddScoped<IIdentityService, IdentityService>();
+
             services.AddScoped<AccountManagementService>();
 
             return services;

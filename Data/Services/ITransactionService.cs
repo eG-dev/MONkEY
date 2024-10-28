@@ -6,7 +6,7 @@
 
         Task AddAsync(Transaction model);
 
-        Task DeleteAll(string tenantKey, string accountKey);
+        Task DeleteAllAsync(string tenantKey, string accountKey);
 
         Task<List<Transaction>> GetAsync(string tenantKey, string accountKey, int? pageSize = null, DateTimeOffset? olderThan = null);
 

@@ -10,10 +10,14 @@ namespace MONkEY.WebApp.Controllers
     [ApiController]
     public class ImageController : Controller
     {
+        private readonly IIdentityService _identityService;
         private readonly IBlobService _blobService;
 
-        public ImageController(IBlobService blobService)
+        public ImageController(
+            IIdentityService userService,
+            IBlobService blobService)
         {
+            _identityService = userService ?? throw new ArgumentNullException(nameof(userService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
@@ -25,6 +29,12 @@ namespace MONkEY.WebApp.Controllers
             if (string.IsNullOrEmpty(fileName))
             {
                 return BadRequest();
+            }
+
+            var identity = await _identityService.FromPrincipal(HttpContext.User);
+            if (identity == null || identity.TenantKey != tenantKey)
+            {
+                return Forbid();
             }
 
             string contentType;

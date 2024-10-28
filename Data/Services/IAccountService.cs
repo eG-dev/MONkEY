@@ -8,7 +8,7 @@
 
         Task<Account?> UpdateAsync(Account model);
 
-        Task Delete(string tenantKey, string accountKey);
+        Task DeleteAsync(string tenantKey, string accountKey);
 
         Task<List<Account>> GetAllAsync(string tenantKey);
 

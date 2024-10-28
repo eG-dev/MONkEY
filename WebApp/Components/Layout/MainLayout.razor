@@ -1,8 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 
+@using MONkEY.Data
+@using MONkEY.Data.Services
+
 @inherits LayoutComponentBase
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IIdentityService Identity
 @inject NavigationManager Navigation
 
 <InitializeTimeZone />
@@ -24,9 +28,9 @@
     <MudAppBar Color="Color.Dark" Fixed="true" Dense="false" Elevation="2">
         <MudImage Height="30" Src="/images/monkey.png" @onclick="() => NavigateToHome()" Class="cursor-pointer"></MudImage>
         <MudSpacer />
-        @if (!string.IsNullOrEmpty(_userName))
+        @if (_user?.IsKnown() == true)
         {
-            <MudText Color="Color.Default">@_userName</MudText>
+            <MudText Color="Color.Default">@_user</MudText>
             <MudIconButton Icon="@Icons.Material.TwoTone.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => ToggleDrawer())" />
         }
         else
@@ -34,11 +38,11 @@
             <MudButton StartIcon="@Icons.Material.TwoTone.Login" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignIn">Anmelden</MudButton>
         }
     </MudAppBar>
-    @if (!string.IsNullOrEmpty(_userName))
+    @if (_user?.IsKnown() == true)
     {
         <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
             <MudDrawerHeader>
-                <MudText Typo="Typo.h6">@_userName</MudText>
+                <MudText Typo="Typo.h6">@_user</MudText>
             </MudDrawerHeader>
 
             <MudButton StartIcon="@Icons.Material.TwoTone.Logout" Color="Color.Secondary" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
@@ -51,7 +55,9 @@
                     <CascadingAuthenticationState>
                         <AuthorizeView>
                             <Authorized>
-                                @Body
+                                <CascadingValue Value="@_user">
+                                    @Body
+                                </CascadingValue>
                             </Authorized>
                             <NotAuthorized>
                                 <div class="d-flex justify-center">
@@ -72,12 +78,12 @@
 @code {
     private bool _drawerOpen = false;
 
-    private string _userName = string.Empty;
+    private Identity? _user = default!;
 
     protected async override Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _userName = authState.User.FindFirst("name")?.Value ?? string.Empty;
+        _user = await Identity.FromPrincipal(authState.User);
     }
 
     private void NavigateToHome()

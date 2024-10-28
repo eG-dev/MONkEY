@@ -64,7 +64,7 @@ namespace MONkEY.Data.Services
             return updatedModel;
         }
 
-        public async Task Delete(string tenantKey, string accountKey)
+        public async Task DeleteAsync(string tenantKey, string accountKey)
         {
             var response = await _tableClient.DeleteEntityAsync(tenantKey, accountKey);
 

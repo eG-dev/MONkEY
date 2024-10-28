@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+@using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Principal
 @using System.Globalization
 
@@ -25,9 +26,7 @@ else if (_accounts != null)
         {
             _lastTransactions.TryGetValue(account.AccountKey, out Transaction? transaction);
 
-            var accountImageSrc = !string.IsNullOrEmpty(account.Image)
-                ? $"api/image/{account.TenantKey}/{account.Image}"
-                : "images/monkey_face.png";
+            var accountImageSrc = AccountManagement.GetAccountImageSrc(account);
 
             <MudItem xs="12" sm="6" xl="4">
                 <MudCard Class="flex-auto d-flex" Elevation="5">
@@ -99,21 +98,25 @@ else if (_accounts != null)
 }
 
 @code {
-    private const string TENANT = "klerner";
+    [CascadingParameter]
+    private Identity User { get; set; } = default!;
 
     private bool _isLoading = true;
 
     private readonly Dictionary<string, Transaction?> _lastTransactions = new();
 
-    private List<Account>? _accounts;
+    private List<Account>? _accounts = new();
 
     protected async override Task OnInitializedAsync()
     {
-        _accounts = await Accounts.GetAllAsync(TENANT);
-
-        foreach (var account in _accounts)
+        if (User?.IsKnown() == true)
         {
-            _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(account.TenantKey, account.AccountKey);
+            _accounts = await Accounts.GetAllAsync(User.TenantKey);
+
+            foreach (var account in _accounts)
+            {
+                _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(User.TenantKey, account.AccountKey);
+            }
         }
 
         _isLoading = false;
@@ -133,27 +136,27 @@ else if (_accounts != null)
 
         if (result?.Data != null && result.Data is string accountName)
         {
-            var account = await AccountManagement.CreateAccount(TENANT, accountName);
+            var account = await AccountManagement.CreateAccount(User.TenantKey, accountName);
 
             if (account != null)
             {
-                Navigation.NavigateTo($"/account/{TENANT}/{account.AccountKey}/edit");
+                Navigation.NavigateTo($"/account/{User.TenantKey}/{account.AccountKey}/edit");
             }
         }
     }
 
     private void ThrowTestError()
     {
-        throw new InvalidOperationException("Test exception");
+        throw new InvalidOperationException("Provoked test exception");
     }
 
     private void GotoAccountDetails(string accountKey)
     {
-        Navigation.NavigateTo($"/account/{TENANT}/{accountKey}");
+        Navigation.NavigateTo($"/account/{User.TenantKey}/{accountKey}");
     }
 
     private void GotoAccountEdit(string accountKey)
     {
-        Navigation.NavigateTo($"/account/{TENANT}/{accountKey}/edit");
+        Navigation.NavigateTo($"/account/{User.TenantKey}/{accountKey}/edit");
     }
 }

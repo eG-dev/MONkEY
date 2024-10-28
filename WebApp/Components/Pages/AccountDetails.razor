@@ -10,7 +10,6 @@
 @inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
 @inject ITransactionService Transactions
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService Dialog
 
@@ -22,9 +21,7 @@
 
 @if (_account != null)
 {
-    var accountImageSrc = !string.IsNullOrEmpty(_account.Image)
-        ? $"api/image/{_account.TenantKey}/{_account.Image}"
-        : "images/monkey_face.png";
+    var accountImageSrc = AccountManagement.GetAccountImageSrc(_account);
 
     <div class="d-flex gap-6 justify-start align-center">
         <MudAvatar>
@@ -101,6 +98,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    private Identity User { get; set; } = default!;
+
     [Parameter]
     public string TenantKey { get; set; } = default!;
 
@@ -135,7 +135,7 @@ else
                 _breadcrumbs.Add(new BreadcrumbItem(
                     _account.Name,
                     $"/account/{_account.TenantKey}/{_account.AccountKey}",
-                    true,
+                    false,
                     Icons.Material.TwoTone.Wallet));
 
                 var transactions = await Transactions.GetSinceAsync(
@@ -209,24 +209,25 @@ else
 
     private async Task UpdateBalance(double amount, string? comment)
     {
+        if (User == null || !User.IsKnown())
+        {
+            return;
+        }
+
         _isUpdating = true;
         StateHasChanged();
 
         try
         {
             var account = await Accounts.GetAsync(_account!.TenantKey, _account.AccountKey);
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            if (account != null && authState?.User?.Identity != null)
+            if (account != null)
             {
-                string? userName = authState.User.FindFirst("name")?.Value;
-                string userEmail = authState.User.Identity.Name!;
-
                 await Transactions.AddAsync(new Transaction()
                     {
                         PartitionKey = account.TenantKey,
                         AccountKey = account.AccountKey,
-                        TriggeredBy = !string.IsNullOrEmpty(userName) ? $"{userName} ({userEmail})" : userEmail,
+                        TriggeredBy = !string.IsNullOrEmpty(User.Name) ? $"{User.Name} ({User.Email})" : User.Email,
                         Amount = amount,
                         Comment = comment,
                     });

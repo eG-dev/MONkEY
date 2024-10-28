@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using MONkEY.Data;
+﻿using MONkEY.Data;
 using MONkEY.Data.Services;
 using MONkEY.Support;
 
@@ -72,12 +71,19 @@ namespace MONkEY.WebApp.Services
                     await Blobs.DeleteFileAsync($"{account.TenantKey}/{account.Image}");
                 }
 
-                await Reports.DeleteAll(tenantKey, accountKey);
+                await Reports.DeleteAllAsync(tenantKey, accountKey);
 
-                await Transactions.DeleteAll(tenantKey, accountKey);
+                await Transactions.DeleteAllAsync(tenantKey, accountKey);
 
-                await Accounts.Delete(tenantKey, accountKey);
+                await Accounts.DeleteAsync(tenantKey, accountKey);
             }
+        }
+
+        public string GetAccountImageSrc(Account account)
+        {
+            return !string.IsNullOrEmpty(account?.Image)
+                ? $"api/image/{account.TenantKey}/{account.Image}"
+                : "images/monkey_face.png";
         }
     }
 }

@@ -19,9 +19,7 @@
 
 @if (_account != null)
 {
-    var accountImageSrc = !string.IsNullOrEmpty(_account.Image)
-        ? $"api/image/{_account.TenantKey}/{_account.Image}"
-        : "images/monkey_face.png";
+    var accountImageSrc = AccountManagement.GetAccountImageSrc(_account);
 
     <div class="d-flex gap-6 justify-start align-center">
         <MudAvatar>
@@ -87,6 +85,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    private Identity User { get; set; } = default!;
+
     [Parameter]
     public string TenantKey { get; set; } = default!;
 
@@ -122,7 +123,7 @@ else
                 _breadcrumbs.Add(new BreadcrumbItem(
                     "Bearbeiten",
                     $"/account/{_account.TenantKey}/{_account.AccountKey}/edit",
-                    true,
+                    false,
                     Icons.Material.Filled.Edit));
             }
         }
@@ -156,9 +157,10 @@ else
     private async Task InitiateImageUpdate()
     {
         string imageSrc = string.Empty;
-        if (!string.IsNullOrEmpty(_account!.Image))
+        
+        if (!string.IsNullOrEmpty(_account?.Image))
         {
-            imageSrc = $"api/image/{_account.TenantKey}/{_account.Image}";
+            imageSrc = AccountManagement.GetAccountImageSrc(_account);
         }
 
         var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
@@ -183,7 +185,7 @@ else
 
             try
             {
-                _account = await AccountManagement.UpdateImage(_account.TenantKey, _account.AccountKey, model.ImageDataBase64);
+                _account = await AccountManagement.UpdateImage(_account!.TenantKey, _account.AccountKey, model.ImageDataBase64);
             }
             catch { }
             finally
