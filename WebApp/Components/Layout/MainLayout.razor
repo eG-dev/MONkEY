@@ -62,11 +62,7 @@
                     </CascadingAuthenticationState>
                 </ChildContent>
                 <ErrorContent>
-                    <div class="d-flex flex-column align-center">
-                        <MudImage Class="mb-6" Src="images/monkey_face_error.png" Width="256" Height="256"></MudImage>
-                        <MudText Color="Color.Error" Typo="Typo.h5">Oh nein! Etwas ist schief gelaufen...</MudText>
-                        <MudText Typo="Typo.body1">Lade die Seite neu und probiert es nochmal.</MudText>
-                    </div>
+                    <GlobalError Error="@context" />
                 </ErrorContent>
             </ErrorBoundary>
         </MudContainer>
