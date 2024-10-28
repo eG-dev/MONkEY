@@ -14,8 +14,6 @@ namespace MONkEY.Functions
 {
     public class MonthlyReporting
     {
-        private const string TENANT = "df77aabf-4cb0-4f1f-ace5-642de3a0cb7c";
-
         private const string EMAIL_SENDER_ADDRESS = "no-reply@monkey-app.de";
         private const string EMAIL_SENDER_NAME = "MONkEY App";
         private const string EMAIL_TEMPLATE_ID = "d-51be69cb71f54e2f95a3a30c3c0426d7";
@@ -23,13 +21,9 @@ namespace MONkEY.Functions
         private const string TIMEZONE_ID = "Central Europe Standard Time";
         private const string CULTURE_ID = "de-DE";
 
-        private readonly List<string> _recipients =
-        [
-            "e.klerner@outlook.com",
-            "c.klerner@outlook.com"
-        ];
-
         private readonly ILogger _logger;
+
+        private readonly IAccountOwnerService _owners;
 
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
@@ -39,6 +33,7 @@ namespace MONkEY.Functions
 
         public MonthlyReporting(
             ILoggerFactory loggerFactory,
+            IAccountOwnerService owners,
             IAccountService accounts,
             ITransactionService transactions,
             IReportService reports,
@@ -46,11 +41,13 @@ namespace MONkEY.Functions
         {
             _logger = loggerFactory.CreateLogger<MonthlyReporting>();
 
-            _accounts = accounts;
-            _transactions = transactions;
-            _reports = reports;
+            _owners = owners ?? throw new ArgumentNullException(nameof(owners));
 
-            _emailClient = emailClient;
+            _accounts = accounts ?? throw new ArgumentNullException(nameof(accounts));
+            _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
+            _reports = reports ?? throw new ArgumentNullException(nameof(reports));
+
+            _emailClient = emailClient ?? throw new ArgumentNullException(nameof(emailClient));
         }
 
         [Function("MonthlyReporting")]
@@ -69,72 +66,78 @@ namespace MONkEY.Functions
             var reportedPeriod = utcNow.StartOfMonth().SubtractMonth();
             var reportedPeriodEnd = reportedPeriod.AddMonth();
 
-            var accounts = await _accounts.GetAllAsync(TENANT);
-            foreach (var account in accounts)
+            var owners = await _owners.GetAllAsync();
+            foreach (var ownersGroup in owners.GroupBy(x => x.TenantKey))
             {
-                var existingReport = await _reports.GetForPeriodAsync(TENANT, account.AccountKey, reportedPeriod);
-                if (existingReport != null)
+                var tenantKey = ownersGroup.Key;
+
+                var accounts = await _accounts.GetAllAsync(tenantKey);
+                foreach (var account in accounts)
                 {
-                    continue;
-                }
-
-                var previosReport = await _reports.GetForPeriodAsync(TENANT, account.AccountKey, reportedPeriod.SubtractMonth());
-
-                var transactions = await _transactions.GetBetweenAsync(TENANT, account.AccountKey, reportedPeriod, reportedPeriodEnd);
-
-                if (previosReport == null && transactions.Count == 0)
-                {
-                    // There is no need to generate a report if there were no transactions or any previously created report.
-                    // This is normally the case when the application went live in this month.
-                    continue;
-                }
-
-                double startingBalance = previosReport?.SerializedPayload != null
-                    ? JsonSerializer.Deserialize<MonthyReport>(previosReport.SerializedPayload)!.StartingBalance
-                    : 0;
-
-                double closingBalance = startingBalance + transactions.Sum(t => t.Amount);
-
-                var reportPayload = new MonthyReport()
-                {
-                    AccountName = account.Name,
-                    ReportedPeriodName = reportedPeriod.ToString("Y", culture),
-                    StartingBalance = startingBalance,
-                    ClosingBalance = closingBalance,
-                    Transactions = transactions.Select(x =>
+                    var existingReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod);
+                    if (existingReport != null)
                     {
-                        var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("g", culture);
+                        continue;
+                    }
 
-                        return new ReportTransaction()
+                    var previosReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod.SubtractMonth());
+
+                    var transactions = await _transactions.GetBetweenAsync(tenantKey, account.AccountKey, reportedPeriod, reportedPeriodEnd);
+
+                    if (previosReport == null && transactions.Count == 0)
+                    {
+                        // There is no need to generate a report if there were no transactions or any previously created report.
+                        // This is normally the case when the application went live in this month.
+                        continue;
+                    }
+
+                    double startingBalance = previosReport?.SerializedPayload != null
+                        ? JsonSerializer.Deserialize<MonthyReport>(previosReport.SerializedPayload)!.StartingBalance
+                        : 0;
+
+                    double closingBalance = startingBalance + transactions.Sum(t => t.Amount);
+
+                    var reportPayload = new MonthyReport()
+                    {
+                        AccountName = account.Name,
+                        ReportedPeriodName = reportedPeriod.ToString("Y", culture),
+                        StartingBalance = startingBalance,
+                        ClosingBalance = closingBalance,
+                        Transactions = transactions.Select(x =>
                         {
-                            Amount = x.Amount,
-                            TriggeredOn = triggeredOn,
-                            TriggeredBy = x.TriggeredBy,
-                        };
-                    }).ToList()
-                };
+                            var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("g", culture);
 
-                var report = new Report()
-                {
-                    PartitionKey = account.TenantKey,
-                    AccountKey = account.AccountKey,
-                    ReportedPeriod = reportedPeriod,
-                    Type = ReportTypes.Monthly,
-                    SerializedPayload = JsonSerializer.Serialize(reportPayload)
-                };
+                            return new ReportTransaction()
+                            {
+                                Amount = x.Amount,
+                                TriggeredOn = triggeredOn,
+                                TriggeredBy = x.TriggeredBy,
+                            };
+                        }).ToList()
+                    };
 
-                await _reports.AddAsync(report);
-
-                foreach (var recipient in _recipients)
-                {
-                    var toEmail = new EmailAddress(recipient);
-
-                    var reportMessage = MailHelper.CreateSingleTemplateEmail(fromEmail, toEmail, EMAIL_TEMPLATE_ID, reportPayload);
-
-                    var result = await _emailClient.SendEmailAsync(reportMessage);
-                    if (!result.IsSuccessStatusCode)
+                    var report = new Report()
                     {
-                        _logger.LogError("Failed to send monthly report!");
+                        PartitionKey = account.TenantKey,
+                        AccountKey = account.AccountKey,
+                        ReportedPeriod = reportedPeriod,
+                        Type = ReportTypes.Monthly,
+                        SerializedPayload = JsonSerializer.Serialize(reportPayload)
+                    };
+
+                    await _reports.AddAsync(report);
+
+                    foreach (var recipient in ownersGroup)
+                    {
+                        var toEmail = new EmailAddress(recipient.Email);
+
+                        var reportMessage = MailHelper.CreateSingleTemplateEmail(fromEmail, toEmail, EMAIL_TEMPLATE_ID, reportPayload);
+
+                        var result = await _emailClient.SendEmailAsync(reportMessage);
+                        if (!result.IsSuccessStatusCode)
+                        {
+                            _logger.LogError("Failed to send monthly report!");
+                        }
                     }
                 }
             }

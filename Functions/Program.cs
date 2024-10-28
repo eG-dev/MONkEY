@@ -20,6 +20,8 @@ var host = new HostBuilder()
 
             services.AddSingleton(sp => tableServiceClient);
 
+            services.AddScoped<IAccountOwnerService, AccountOwnerService>();
+
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IReportService, ReportService>();

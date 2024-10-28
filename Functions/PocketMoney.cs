@@ -9,24 +9,27 @@ namespace MONkEY.Functions
 {
     public class PocketMoney
     {
-        private const string TENANT = "df77aabf-4cb0-4f1f-ace5-642de3a0cb7c";
-
         private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
 
         private readonly ILogger _logger;
+
+        private readonly IAccountOwnerService _owners;
 
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
 
         public PocketMoney(
             ILoggerFactory loggerFactory,
+            IAccountOwnerService owners,
             IAccountService accounts,
             ITransactionService transactions)
         {
             _logger = loggerFactory.CreateLogger<PocketMoney>();
 
-            _accounts = accounts;
-            _transactions = transactions;
+            _owners = owners ?? throw new ArgumentNullException(nameof(owners));
+
+            _accounts = accounts ?? throw new ArgumentNullException(nameof(accounts));
+            _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
         }
 
         [Function("PocketMoney")]
@@ -37,30 +40,36 @@ namespace MONkEY.Functions
 
             var firstOfMonth = DateTimeOffset.UtcNow.StartOfMonth();
 
-            var accounts = await _accounts.GetAllAsync(TENANT);
-
-            foreach (var account in accounts)
+            var owners = await _owners.GetAllAsync();
+            foreach (var ownersGroup in owners.GroupBy(x => x.TenantKey))
             {
-                if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
+                var tenantKey = ownersGroup.Key;
+
+                var accounts = await _accounts.GetAllAsync(tenantKey);
+
+                foreach (var account in accounts)
                 {
-                    var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.TenantKey, account.AccountKey, firstOfMonth, TRANSACTION_TRIGGER_NAME);
-
-                    if (pocketMoneyTransactions.Count == 0)
+                    if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
                     {
-                        var amount = account.PocketMoney.Value;
+                        var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.TenantKey, account.AccountKey, firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
-                        await _transactions.AddAsync(new Transaction()
+                        if (pocketMoneyTransactions.Count == 0)
                         {
-                            PartitionKey = account.TenantKey,
-                            AccountKey = account.AccountKey,
-                            TriggeredBy = TRANSACTION_TRIGGER_NAME,
-                            Amount = amount,
-                            Comment = "Monatliches Taschengeld",
-                        });
+                            var amount = account.PocketMoney.Value;
 
-                        account.Balance += amount;
+                            await _transactions.AddAsync(new Transaction()
+                            {
+                                PartitionKey = account.TenantKey,
+                                AccountKey = account.AccountKey,
+                                TriggeredBy = TRANSACTION_TRIGGER_NAME,
+                                Amount = amount,
+                                Comment = "Monatliches Taschengeld",
+                            });
 
-                        await _accounts.UpdateAsync(account);
+                            account.Balance += amount;
+
+                            await _accounts.UpdateAsync(account);
+                        }
                     }
                 }
             }
