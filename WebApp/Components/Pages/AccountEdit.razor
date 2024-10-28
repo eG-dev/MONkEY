@@ -14,7 +14,7 @@
 <PageTitle>MONkEY App - Konto bearbeiten</PageTitle>
 
 <div>
-    <MudBreadcrumbs Items="_breadcrumbs" Separator=">"></MudBreadcrumbs>
+    <MudBreadcrumbs Items="_breadcrumbs" Separator=">" MaxItems="2"></MudBreadcrumbs>
 </div>
 
 @if (_account != null)
@@ -122,7 +122,7 @@ else
                 _breadcrumbs.Add(new BreadcrumbItem(
                     "Bearbeiten",
                     $"/account/{_account.TenantKey}/{_account.AccountKey}/edit",
-                    false,
+                    true,
                     Icons.Material.Filled.Edit));
             }
         }

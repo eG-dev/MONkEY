@@ -135,7 +135,7 @@ else
                 _breadcrumbs.Add(new BreadcrumbItem(
                     _account.Name,
                     $"/account/{_account.TenantKey}/{_account.AccountKey}",
-                    false,
+                    true,
                     Icons.Material.TwoTone.Wallet));
 
                 var transactions = await Transactions.GetSinceAsync(

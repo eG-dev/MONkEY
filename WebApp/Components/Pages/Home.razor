@@ -70,11 +70,16 @@ else if (_accounts != null)
 
     @if (_accounts.Count == 0)
     {
-        // TODO: Welcome message and info how to create new accounts
+        <div class="d-flex flex-column align-center mt-6">
+            <MudText Typo="Typo.h5">Es ist ganz schön leer hier...</MudText>
+            <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+            <MudText Typo="Typo.body1">Wir sollten als allererstes ein neues Konto hinzufügen.</MudText>
+        </div>
     }
-    else if (_accounts.Count < 9)
+    
+    if (_accounts.Count < 9)
     {
-        <div class="mt-6 pb-3">
+        <div class="d-flex flex-column align-center mt-6 pb-3">
             <MudButton Variant="Variant.Text"
                        Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
