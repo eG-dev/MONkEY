@@ -37,9 +37,9 @@
                           Label="Name"
                           Variant="Variant.Outlined"
                           Value="@_account.Name"
-                          MaxLength="24"
-                          Error="@(!string.IsNullOrEmpty(_accountNameError))"
-                          ErrorText="@_accountNameError"
+                          MaxLength="25"
+                          OnlyValidateIfDirty="true"
+                          Validation="@(new Func<string, IEnumerable<string>>(ValidateName))"
                           DebounceInterval="1000"
                           ValueChanged="OnNameChanged" />
         </MudItem>
@@ -103,8 +103,6 @@ else
 
     private Account? _account = null;
 
-    private string? _accountNameError = default!;
-
     protected async override Task OnInitializedAsync()
     {
         _isLoading = true;
@@ -132,12 +130,18 @@ else
         _isLoading = false;
     }
 
+    private IEnumerable<string> ValidateName(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            yield return "Das Konto benötigt einen Namen!";
+        }
+    }
+
     private async Task OnNameChanged(string name)
     {
         if (!string.IsNullOrWhiteSpace(name))
         {
-            _accountNameError = null;
-
             _account!.Name = name;
             _account = await Accounts.UpdateAsync(_account);
 
@@ -146,10 +150,6 @@ else
                 $"/account/{_account.TenantKey}/{_account.AccountKey}",
                 false,
                 Icons.Material.TwoTone.Wallet);
-        }
-        else
-        {
-            _accountNameError = "Das Konto benötigt einen Namen!";
         }
     }
 

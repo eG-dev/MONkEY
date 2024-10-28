@@ -20,12 +20,18 @@
                       Label="Kommentar"
                       Variant="Variant.Outlined"
                       @bind-Value="@_model.Comment"
-                      Lines="3"
+                      MaxLines="5"
+                      AutoGrow="true"
                       MaxLength="100" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Okay</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="@(PayOut ? Color.Error : Color.Success)"
+                   StartIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)"
+                   OnClick="Submit">
+            @(PayOut ? "Auszahlen" : "Einzahlen")
+        </MudButton>
     </DialogActions>
 </MudDialog>
 

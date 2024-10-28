@@ -118,7 +118,7 @@ namespace MONkEY.Data.Services
             {
                 throw new ArgumentException($"{nameof(model.Name)} must be specified!");
             }
-            if (model.Name.Length > 24)
+            if (model.Name.Length > 25)
             {
                 throw new ArgumentException($"{nameof(model.Name)} is too long!");
             }

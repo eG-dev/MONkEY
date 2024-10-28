@@ -10,7 +10,12 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
-        <MudButton Color="Color.Error" OnClick="Submit">Konto löschen</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Error"
+                   StartIcon="@Icons.Material.Filled.Delete"
+                   OnClick="Submit">
+            Konto löschen
+        </MudButton>
     </DialogActions>
 </MudDialog>
 

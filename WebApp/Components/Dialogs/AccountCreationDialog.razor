@@ -9,14 +9,20 @@
                       Label="Name"
                       Variant="Variant.Outlined"
                       @bind-Value="@AccountName"
-                      MaxLength="24"
-                      Error="@(!string.IsNullOrEmpty(_accountNameError))"
-                      ErrorText="@_accountNameError"
+                      MaxLength="25"
+                      Counter="25"
+                      OnlyValidateIfDirty="true"
+                      Validation="@(new Func<string, IEnumerable<string>>(ValidateName))"
                       Immediate="true" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
-        <MudButton Color="Color.Success" OnClick="Submit">Konto anlegen</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="Submit">
+            Konto hinzufügen
+        </MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -27,15 +33,17 @@
     [Parameter]
     public string? AccountName { get; set; } = default!;
 
-    private string? _accountNameError = default!;
+    private IEnumerable<string> ValidateName(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            yield return "Das Konto benötigt einen Namen!";
+        }
+    }
 
     private void Submit()
     {
-        if (string.IsNullOrWhiteSpace(AccountName))
-        {
-            _accountNameError = "Das Konto benötigt einen Namen!";
-        }
-        else
+        if (!string.IsNullOrWhiteSpace(AccountName))
         {
             MudDialog.Close(DialogResult.Ok(AccountName));
         }
