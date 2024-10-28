@@ -19,14 +19,7 @@ namespace MONkEY.Data.Services
 
         public async Task InitAsync()
         {
-            var response = await _tableClient.CreateIfNotExistsAsync();
-
-            if (response.GetRawResponse().Status != 409)
-            {
-                await AddAsync(new Account() { PartitionKey = "klerner", Name = "Luis", Balance = 0.0, PocketMoney = 0.0 });
-                await AddAsync(new Account() { PartitionKey = "klerner", Name = "Jonas", Balance = 0.0, PocketMoney = 0.0 }); 
-                await AddAsync(new Account() { PartitionKey = "klerner", Name = "Charlotte", Balance = 0.0, PocketMoney = 0.0 });
-            }
+            await _tableClient.CreateIfNotExistsAsync();
         }
 
         public async Task<Account?> AddAsync(Account model)

@@ -5,13 +5,13 @@ namespace MONkEY.Data
     [DebuggerDisplay("{Name}, {Email}")]
     public class Identity
     {
-        public string Name { get; init; } = default!;
+        public string Name { get; init; } = string.Empty;
 
-        public string Email { get; init; } = default!;
+        public string Email { get; init; } = string.Empty;
 
-        public string TenantKey { get; init; } = default!;
+        public string TenantKey { get; init; } = string.Empty;
 
-        public bool IsGlobalAdmin { get; init; } = default!;
+        public bool IsGlobalAdmin { get; init; } = false;
 
         public bool IsKnown()
         {

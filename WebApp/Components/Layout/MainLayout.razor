@@ -8,6 +8,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IIdentityService Identity
 @inject NavigationManager Navigation
+@inject IAccountOwnerService Owners
 
 <InitializeTimeZone />
 
@@ -38,6 +39,7 @@
             <MudButton StartIcon="@Icons.Material.TwoTone.Login" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignIn">Anmelden</MudButton>
         }
     </MudAppBar>
+
     @if (_user?.IsKnown() == true)
     {
         <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
@@ -48,6 +50,7 @@
             <MudButton StartIcon="@Icons.Material.TwoTone.Logout" Color="Color.Secondary" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
         </MudDrawer>
     }
+
     <MudMainContent>
         <MudContainer Class="page-container">
             <ErrorBoundary>
@@ -55,9 +58,16 @@
                     <CascadingAuthenticationState>
                         <AuthorizeView>
                             <Authorized>
-                                <CascadingValue Value="@_user">
-                                    @Body
-                                </CascadingValue>
+                                @if (_user == null)
+                                {
+                                    <PageLoader />
+                                }
+                                else
+                                {
+                                    <CascadingValue Value="@_user">
+                                        @Body
+                                    </CascadingValue>
+                                }
                             </Authorized>
                             <NotAuthorized>
                                 <div class="d-flex justify-center">
@@ -84,6 +94,18 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = await Identity.FromPrincipal(authState.User);
+
+        if (_user != null && string.IsNullOrEmpty(_user.TenantKey))
+        {
+            var tenantFallback = "df77aabf-4cb0-4f1f-ace5-642de3a0cb7c";
+            
+            await Owners.AddAsync(new()
+            {
+                PartitionKey = _user.Email,
+                RowKey = tenantFallback,
+                Role = AccountOwnerRole.Manager,
+            });
+        }
     }
 
     private void NavigateToHome()

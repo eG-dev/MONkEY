@@ -9,7 +9,7 @@ namespace MONkEY.Functions
 {
     public class PocketMoney
     {
-        private const string TENANT = "klerner";
+        private const string TENANT = "df77aabf-4cb0-4f1f-ace5-642de3a0cb7c";
 
         private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
 

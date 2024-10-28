@@ -28,12 +28,14 @@ namespace MONkEY.WebApp
 
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
+            services.AddScoped<IAccountOwnerService, AccountOwnerService>();
+            services.AddScoped<IIdentityService, IdentityService>();
+
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<IBlobService, BlobService>();
 
-            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IBlobService, BlobService>();
 
             services.AddScoped<AccountManagementService>();
 

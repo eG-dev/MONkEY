@@ -8,14 +8,17 @@ namespace MONkEY.WebApp
         {
             var scope = app.Services.CreateScope();
 
-            var accountService = scope.ServiceProvider.GetService<IAccountService>();
-            await accountService!.InitAsync();
+            var accountOwnerService = scope.ServiceProvider.GetService<IAccountOwnerService>()!;
+            await accountOwnerService.InitAsync();
 
-            var transactionService = scope.ServiceProvider.GetService<ITransactionService>();
-            await transactionService!.InitAsync();
+            var accountService = scope.ServiceProvider.GetService<IAccountService>()!;
+            await accountService.InitAsync();
 
-            var reportService = scope.ServiceProvider.GetService<IReportService>();
-            await reportService!.InitAsync();
+            var transactionService = scope.ServiceProvider.GetService<ITransactionService>()!;
+            await transactionService.InitAsync();
+
+            var reportService = scope.ServiceProvider.GetService<IReportService>()!;
+            await reportService.InitAsync();
 
             return app;
         }

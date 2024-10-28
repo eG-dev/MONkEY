@@ -107,7 +107,7 @@ else if (_accounts != null)
 
     private List<Account>? _accounts = new();
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         if (User?.IsKnown() == true)
         {

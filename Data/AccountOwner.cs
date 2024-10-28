@@ -3,6 +3,8 @@ using Azure.Data.Tables;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
+using MONkEY.Data.Services;
+
 namespace MONkEY.Data
 {
     [DebuggerDisplay("{TenantKey}, {Email}")]
@@ -13,10 +15,12 @@ namespace MONkEY.Data
         public string RowKey { get; set; } = default!;
 
         [IgnoreDataMember]
-        public string TenantKey { get => PartitionKey; }
+        public string Email { get => PartitionKey; }
 
         [IgnoreDataMember]
-        public string Email { get => RowKey; }
+        public string TenantKey { get => RowKey; }
+
+        public string Role { get; set; } = AccountOwnerRole.Manager;
 
         public ETag ETag { get; set; } = default!;
 

@@ -8,6 +8,10 @@
 
         Task DeleteAsync(string tenantKey, string email);
 
-        Task<List<Account>> GetAllAsync(string tenantKey);
+        Task<AccountOwner?> GetByEmailAsync(string email);
+
+        Task<List<AccountOwner>> GetAllAsync();
+
+        Task<List<AccountOwner>> GetTenantOwnersAsync(string tenantKey);
     }
 }

@@ -1,43 +1,46 @@
-﻿using Azure.Data.Tables;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace MONkEY.Data.Services
 {
     public class IdentityService : IIdentityService
     {
-        private const string TENANT = "klerner";
-        private const string TABLE_NAME = "users";
+        private readonly IAccountOwnerService _accountOwners;
 
-        private readonly TableClient _tableClient;
+        private KeyValuePair<string, AccountOwner?>? _cachedOwner = null;
 
-        private KeyValuePair<string, Identity>? _cachedUser = null;
-
-        public IdentityService(TableServiceClient tableServiceClient)
+        public IdentityService(
+            IAccountOwnerService accountOwnerService)
         {
-            ArgumentNullException.ThrowIfNull(tableServiceClient, nameof(tableServiceClient));
+            ArgumentNullException.ThrowIfNull(accountOwnerService, nameof(accountOwnerService));
 
-            _tableClient = tableServiceClient.GetTableClient(
-                tableName: TABLE_NAME
-            );
+            _accountOwners = accountOwnerService;
         }
 
         public async Task<Identity?> FromPrincipal(ClaimsPrincipal principal)
         {
-            if (principal != null)
+            if (principal?.Identity?.IsAuthenticated == true)
             {
-                var email = principal.Identity?.Name ?? string.Empty;
+                var name = principal.FindFirst("name")?.Value ?? string.Empty;
+                var email = principal.Identity.Name ?? string.Empty;
 
-                //if (!_cachedUser.HasValue || _cachedUser.Value.Key != email)
-                //{
-                //    var user = await _tableClient.QueryAsync<Identity>(x => x.
-                //}
+                AccountOwner? owner;
+                if (!_cachedOwner.HasValue || _cachedOwner.Value.Key != email)
+                {
+                    owner = await _accountOwners.GetByEmailAsync(email);
+
+                    _cachedOwner = new KeyValuePair<string, AccountOwner?>(email, owner);
+                }
+                else
+                {
+                    owner = _cachedOwner.Value.Value;
+                }
 
                 return new()
                 {
-                    Name = principal.FindFirst("name")?.Value ?? string.Empty,
+                    Name = name,
                     Email = email,
-                    TenantKey = TENANT,
-                    IsGlobalAdmin = false,
+                    TenantKey = owner?.TenantKey ?? string.Empty,
+                    IsGlobalAdmin = owner?.Role == AccountOwnerRole.GlobalAdmin,
                 };
             }
 

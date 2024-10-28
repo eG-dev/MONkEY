@@ -14,7 +14,7 @@ namespace MONkEY.Functions
 {
     public class MonthlyReporting
     {
-        private const string TENANT = "klerner";
+        private const string TENANT = "df77aabf-4cb0-4f1f-ace5-642de3a0cb7c";
 
         private const string EMAIL_SENDER_ADDRESS = "no-reply@monkey-app.de";
         private const string EMAIL_SENDER_NAME = "MONkEY App";

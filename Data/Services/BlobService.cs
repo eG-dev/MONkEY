@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 
 namespace MONkEY.Data.Services
@@ -38,7 +39,17 @@ namespace MONkEY.Data.Services
 
         public async Task DeleteFileAsync(string fileName)
         {
-            await _blobClient.DeleteBlobAsync(fileName);
+            try
+            {
+                await _blobClient.DeleteBlobAsync(fileName);
+            }
+            catch (RequestFailedException ex)
+            {
+                if (ex.Status != 404)
+                {
+                    throw;
+                }
+            }
         }
     }
 }
