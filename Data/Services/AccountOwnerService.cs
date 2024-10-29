@@ -38,14 +38,34 @@ namespace MONkEY.Data.Services
             return updatedModel;
         }
 
-        public async Task DeleteAsync(string email, string tenantKey)
+        public async Task<AccountOwner?> UpdateAsync(AccountOwner model)
         {
-            var response = await _tableClient.DeleteEntityAsync(email, tenantKey);
+            ValidateModel(model);
+
+            var response = await _tableClient.UpdateEntityAsync(model, model.ETag);
 
             if (response.IsError)
             {
-                throw new InvalidOperationException($"Failed to delete the {nameof(AccountOwner)} entry " +
-                    $"with partion key {email} row key {tenantKey}!");
+                throw new InvalidOperationException($"Failed to update the {nameof(AccountOwner)} entry!");
+            }
+
+            var updatedModel = await GetByEmailAsync(model.Email);
+
+            return updatedModel;
+        }
+
+        public async Task DeleteAsync(string email)
+        {
+            var model = await GetByEmailAsync(email);
+
+            if (model != null)
+            {
+                var response = await _tableClient.DeleteEntityAsync(email, model.RowKey);
+
+                if (response.IsError)
+                {
+                    throw new InvalidOperationException($"Failed to delete the {nameof(AccountOwner)} entry with partion key {model.PartitionKey}!");
+                }
             }
         }
 

@@ -18,9 +18,9 @@ namespace MONkEY.Data
         [IgnoreDataMember]
         public string TenantKey { get => RowKey; }
 
-        public string Status { get; set; } = AccountOwnerStatus.Pending;
+        public AccountOwnerStatus Status { get; set; } = AccountOwnerStatus.New;
 
-        public string Role { get; set; } = AccountOwnerRole.Manager;
+        public AccountOwnerRole Role { get; set; } = AccountOwnerRole.Manager;
 
         public ETag ETag { get; set; } = default!;
 

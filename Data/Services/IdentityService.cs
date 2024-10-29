@@ -40,7 +40,7 @@ namespace MONkEY.Data.Services
                     Name = name,
                     Email = email,
                     TenantKey = owner?.TenantKey ?? string.Empty,
-                    IsEnabled = owner?.Status == AccountOwnerStatus.Active,
+                    Status = owner?.Status ?? AccountOwnerStatus.Undefined,
                     IsGlobalAdmin = owner?.Role == AccountOwnerRole.GlobalAdmin,
                 };
             }

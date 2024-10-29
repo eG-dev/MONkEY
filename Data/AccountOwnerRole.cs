@@ -1,11 +1,11 @@
 ﻿namespace MONkEY.Data
 {
-    public static class AccountOwnerRole
+    public enum AccountOwnerRole
     {
-        public static string User { get; } = string.Empty;
+        Member = 0,
 
-        public static string Manager { get; } = "Manager";
+        Manager = 1,
 
-        public static string GlobalAdmin { get; } = "GlobalAdmin";
+        GlobalAdmin = 999
     }
 }

@@ -38,6 +38,7 @@ namespace MONkEY.WebApp
             services.AddScoped<IBlobService, BlobService>();
 
             services.AddScoped<AccountManagementService>();
+            services.AddScoped<TenantManagementService>();
 
             return services;
         }

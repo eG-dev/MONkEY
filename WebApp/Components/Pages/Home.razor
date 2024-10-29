@@ -20,7 +20,7 @@
 {
     <PageLoader />
 }
-else if (User?.IsEnabled == true)
+else if (User?.Status == AccountOwnerStatus.Active)
 {
     <MudGrid Spacing="6" Justify="Justify.Center">
         @foreach (var account in _accounts)
@@ -99,28 +99,7 @@ else if (User?.IsEnabled == true)
 }
 else
 {
-    if (_accountOwner?.Status == AccountOwnerStatus.Pending)
-    {
-        <div class="d-flex flex-column align-center mt-6">
-            <MudText Typo="Typo.h5">Dein Nutzer wartet auf die Freischaltung!</MudText>
-            <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
-            <MudAlert Severity="Severity.Info">
-                Bitte schau zu einem späteren Zeitpunkt wieder vorbei oder wende Dich an den Administrator.
-            </MudAlert>
-        </div>
-    }
-    else
-    {
-        <div class="d-flex flex-column align-center mt-6">
-            <MudText Typo="Typo.h5">Du hast noch keinen eigenen Bereich...</MudText>
-            <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
-            <MudAlert Severity="Severity.Warning">
-                Das Anlegen von eigenen Bereichen ist noch in Arbeit.
-                <br />
-                Bitte schau zu einem späteren Zeitpunkt wieder vorbei oder wende Dich an den Administrator.
-            </MudAlert>
-        </div>
-    }
+    <AccountOwnerActions AccountOwner="@_accountOwner" />
 }
 
 @code {
@@ -138,7 +117,7 @@ else
     {
         if (User != null)
         {
-            if (User.IsEnabled)
+            if (User.Status == AccountOwnerStatus.Active)
             {
                 _accounts = await Accounts.GetAllAsync(User.TenantKey);
 

@@ -11,7 +11,7 @@ namespace MONkEY.Data
 
         public string TenantKey { get; init; } = string.Empty;
 
-        public bool IsEnabled { get; init; } = false;
+        public AccountOwnerStatus Status { get; init; }
 
         public bool IsGlobalAdmin { get; init; } = false;
 

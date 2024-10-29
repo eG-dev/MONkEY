@@ -1,0 +1,79 @@
+﻿@using MONkEY.Data
+
+@inject TenantManagementService TenantManagement
+
+@if (AccountOwner == null)
+{
+    <div class="d-flex flex-column align-center mt-6">
+        <MudText Typo="Typo.h5">Du hast noch keinen eigenen Bereich...</MudText>
+        <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+        <MudAlert Severity="Severity.Warning">
+            Das Anlegen von eigenen Bereichen ist noch in Arbeit.
+            <br />
+            Bitte schau zu einem späteren Zeitpunkt wieder vorbei oder wende Dich an den Administrator.
+        </MudAlert>
+    </div>
+}
+else if (AccountOwner.Status == AccountOwnerStatus.New)
+{
+    <div class="d-flex flex-column align-center mt-6">
+        <MudText Typo="Typo.h5">Dein Nutzer wartet auf die Freischaltung!</MudText>
+        <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+        <MudAlert Severity="Severity.Info">
+            Bitte schau zu einem späteren Zeitpunkt wieder vorbei oder wende Dich an den Administrator.
+        </MudAlert>
+    </div>
+}
+else if (AccountOwner.Status == AccountOwnerStatus.Invited)
+{
+    <div class="d-flex flex-column align-center mt-6">
+        <MudText Typo="Typo.h5">Du wurdest zu der MONkEY App eingeladen!</MudText>
+        <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+        <MudAlert Severity="Severity.Info">
+            Solltest Du Dich entscheiden die Einladung abzulehnen, werden alle Deine Daten aus dem System gelöscht.
+            <br />
+            Du bekommst danach die Möglichkeit Deinen eigenen Bereich anzulegen.
+        </MudAlert>
+
+        <div class="d-flex flex-row align-center mt-3">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       StartIcon="@Icons.Material.TwoTone.ThumbUp"
+                       Style="min-width: 150px"
+                       OnClick="AcceptInvitation">
+                Annehmen
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Error"
+                       Class="ml-3"
+                       StartIcon="@Icons.Material.TwoTone.ThumbDown"
+                       Style="min-width: 150px"
+                       OnClick="DeclineInvitation">
+                Ablehnen
+            </MudButton>
+            <br />
+        </div>
+    </div>
+}
+else if (AccountOwner.Status == AccountOwnerStatus.Disabled)
+{
+    <div class="d-flex flex-column align-center mt-6">
+        <MudText Typo="Typo.h5">Dein Nutzer wurde vom Administrator gesperrt!</MudText>
+        <MudImage Class="my-6" Src="images/monkey_face_error.png" Width="256" Height="256"></MudImage>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public AccountOwner? AccountOwner { get; set; } = default!;
+
+    private async Task AcceptInvitation()
+    {
+        await TenantManagement.AcceptInvitation(AccountOwner!);
+    }
+
+    private async Task DeclineInvitation()
+    {
+        await TenantManagement.DeclineInvitation(AccountOwner!);
+    }
+}

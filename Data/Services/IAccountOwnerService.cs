@@ -6,7 +6,9 @@
 
         Task<AccountOwner?> AddAsync(AccountOwner model);
 
-        Task DeleteAsync(string tenantKey, string email);
+        Task<AccountOwner?> UpdateAsync(AccountOwner model);
+
+        Task DeleteAsync(string email);
 
         Task<AccountOwner?> GetByEmailAsync(string email);
 

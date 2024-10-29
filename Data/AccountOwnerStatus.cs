@@ -1,11 +1,15 @@
 ﻿namespace MONkEY.Data
 {
-    public static class AccountOwnerStatus
+    public enum AccountOwnerStatus
     {
-        public static string Pending { get; } = string.Empty;
+        Undefined = 0,
 
-        public static string Active { get; } = "Active";
+        New = 1,
 
-        public static string Disabled { get; } = "Disabled";
+        Invited = 10,
+
+        Active = 100,
+
+        Disabled = 999,
     }
 }
