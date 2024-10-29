@@ -1,4 +1,5 @@
-﻿using MONkEY.Data;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using MONkEY.Data;
 using MONkEY.Data.Services;
 
 namespace MONkEY.WebApp.Services
@@ -15,6 +16,25 @@ namespace MONkEY.WebApp.Services
         {
             AccountOwners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
             Accounts = accountService ?? throw new ArgumentNullException(nameof(accountService));
+        }
+
+        public async Task<AccountOwner?> CreateTenant(Identity user)
+        {
+            ArgumentNullException.ThrowIfNull(nameof(user));
+
+            var model = await AccountOwners.GetByEmailAsync(user.Email);
+
+            if (model == null)
+            {
+                model = await AccountOwners.AddAsync(new()
+                {
+                    PartitionKey = user.Email,
+                    RowKey = Guid.NewGuid().ToString(),
+                    Status = AccountOwnerStatus.New,
+                });
+            }
+
+            return model;
         }
 
         public async Task AcceptInvitation(AccountOwner accountOwner)

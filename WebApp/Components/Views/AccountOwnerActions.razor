@@ -1,17 +1,25 @@
 ﻿@using MONkEY.Data
 
 @inject TenantManagementService TenantManagement
+@inject NavigationManager Navigation
 
 @if (AccountOwner == null)
 {
     <div class="d-flex flex-column align-center mt-6">
-        <MudText Typo="Typo.h5">Du hast noch keinen eigenen Bereich...</MudText>
+        <MudText Typo="Typo.h5">Willkommen bei der MONkEY App!</MudText>
         <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
-        <MudAlert Severity="Severity.Warning">
-            Das Anlegen von eigenen Bereichen ist noch in Arbeit.
-            <br />
-            Bitte schau zu einem späteren Zeitpunkt wieder vorbei oder wende Dich an den Administrator.
+        <MudAlert Severity="Severity.Info">
+            Lege einen eigenen Bereich an, um zu beginnen...
         </MudAlert>
+        <div class="d-flex flex-row align-center mt-3">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       StartIcon="@Icons.Material.TwoTone.AddHome"
+                       Style="min-width: 150px"
+                       OnClick="CreateTenant">
+                Eigenen Bereich anlegen
+            </MudButton>
+        </div>
     </div>
 }
 else if (AccountOwner.Status == AccountOwnerStatus.New)
@@ -51,7 +59,6 @@ else if (AccountOwner.Status == AccountOwnerStatus.Invited)
                        OnClick="DeclineInvitation">
                 Ablehnen
             </MudButton>
-            <br />
         </div>
     </div>
 }
@@ -64,16 +71,30 @@ else if (AccountOwner.Status == AccountOwnerStatus.Disabled)
 }
 
 @code {
+    [CascadingParameter]
+    private Identity User { get; set; } = default!;
+
     [Parameter]
     public AccountOwner? AccountOwner { get; set; } = default!;
+
+    private async Task CreateTenant()
+    {
+        await TenantManagement.CreateTenant(User!);
+
+        Navigation.NavigateTo("/", true);
+    }
 
     private async Task AcceptInvitation()
     {
         await TenantManagement.AcceptInvitation(AccountOwner!);
+
+        Navigation.NavigateTo("/", true);
     }
 
     private async Task DeclineInvitation()
     {
         await TenantManagement.DeclineInvitation(AccountOwner!);
+
+        Navigation.NavigateTo("/", true);
     }
 }
