@@ -1,0 +1,45 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div class="d-flex flex-column align-center pb-3">
+    <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+
+    <MudBreakpointProvider>
+        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
+            <MudText Typo="Typo.h5">Willkommen in der MONkEY App!</MudText>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+            <MudText Typo="Typo.h3">Willkommen in der MONkEY App!</MudText>
+        </MudHidden>
+    </MudBreakpointProvider>
+
+    <MudContainer Class="mt-6" MaxWidth="MaxWidth.Medium">
+        <MudText Typo="Typo.body1">
+            Was als kleines Hobbyprojekt zur Verwaltung des Taschengelds meiner Kinder begann, hat sich zu einer vollwertigen Anwendung entwickelt, die für jeden von Nutzen sein kann.
+        </MudText>
+        <MudText Class="mt-3" Typo="Typo.body1">
+            Die MONkEY App ermöglicht es Dir, Deinen persönlichen Finanzbereich zu erstellen und zu verwalten - und nur Du hast Zugriff darauf!
+        </MudText>
+        <MudText Class="mt-3" Typo="Typo.body1">
+            Egal, ob Du das Taschengeld Deiner Kinder verwalten oder Deine Ausgaben im Blick behalten möchtest, die MONkEY App bietet Dir die Werkzeuge und den Raum dafür.
+        </MudText>
+        <MudText Class="mt-3" Typo="Typo.body1">
+            <b>Viel Spaß beim Entdecken und Verwalten!</b>
+        </MudText>
+    </MudContainer>
+
+    <MudText Class="mt-6">Bei Fragen und Anregungen, hier geht es zu meinem LinkedIn-Profil</MudText>
+    <MudChip T="string" Icon="@Icons.Custom.Brands.LinkedIn" Label="true" style="color: white; background: #0a66c2;" OnClick="GotoLinkedIn">Eugen Klerner</MudChip>
+
+    <MudAlert Class="mt-6" Severity="Severity.Warning">
+        Das ist ein Hobbyprojekt, das von mir alleine, für nicht-kommerzielle Zwecke und in meiner Freizeit entwickelt wird!
+        <br />
+        Die Anwendung und auch die Daten befinden sich in der Microsoft Azure Cloud in der Region "Germany West Central".
+    </MudAlert>
+</div>
+
+@code {
+    private async Task GotoLinkedIn()
+    {
+        await JSRuntime.InvokeVoidAsync("open", "https://www.linkedin.com/in/eugen-klerner", "_blank");
+    }
+}

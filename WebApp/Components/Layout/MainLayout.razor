@@ -36,7 +36,7 @@
         }
         else
         {
-            <MudButton StartIcon="@Icons.Material.TwoTone.Login" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignIn">Anmelden</MudButton>
+            <MudButton StartIcon="@Icons.Custom.Brands.Microsoft" Color="Color.Inherit" Href="MicrosoftIdentity/Account/SignIn">Anmelden</MudButton>
         }
     </MudAppBar>
 
@@ -70,9 +70,7 @@
                                 }
                             </Authorized>
                             <NotAuthorized>
-                                <div class="d-flex justify-center">
-                                    <MudText Typo="@Typo.body1">Sie müssen sich anmelden, um den Inhalt zu sehen!</MudText>
-                                </div>
+                                <Welcome />
                             </NotAuthorized>
                         </AuthorizeView>
                     </CascadingAuthenticationState>
