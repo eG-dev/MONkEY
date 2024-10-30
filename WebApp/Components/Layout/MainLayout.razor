@@ -42,12 +42,16 @@
 
     @if (_user?.IsKnown == true)
     {
-        <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
+        <MudDrawer Variant="DrawerVariant.Responsive" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">@_user</MudText>
             </MudDrawerHeader>
 
             <MudButton StartIcon="@Icons.Material.TwoTone.Logout" Color="Color.Secondary" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
+            <MudDivider DividerType="DividerType.Middle" />
+            <MudSpacer />
+            <MudButton Color="Color.Default" Href="/terms/usage-terms">Nutzungsbedingungen</MudButton>
+            <MudButton Color="Color.Default" Href="/terms/data-privacy">Datenschutzerklärung</MudButton>
         </MudDrawer>
     }
 
@@ -55,25 +59,32 @@
         <MudContainer Class="page-container">
             <ErrorBoundary>
                 <ChildContent>
-                    <CascadingAuthenticationState>
-                        <AuthorizeView>
-                            <Authorized>
-                                @if (_user == null)
-                                {
-                                    <PageLoader />
-                                }
-                                else
-                                {
-                                    <CascadingValue Value="@_user">
-                                        @Body
-                                    </CascadingValue>
-                                }
-                            </Authorized>
-                            <NotAuthorized>
-                                <Welcome />
-                            </NotAuthorized>
-                        </AuthorizeView>
-                    </CascadingAuthenticationState>
+                    @if (Navigation.Uri.Contains("/terms"))
+                    {
+                        @Body
+                    }
+                    else
+                    {
+                        <CascadingAuthenticationState>
+                            <AuthorizeView>
+                                <Authorized>
+                                    @if (_user == null)
+                                    {
+                                        <PageLoader />
+                                    }
+                                    else
+                                    {
+                                        <CascadingValue Value="@_user">
+                                            @Body
+                                        </CascadingValue>
+                                    }
+                                </Authorized>
+                                <NotAuthorized>
+                                    <Welcome />
+                                </NotAuthorized>
+                            </AuthorizeView>
+                        </CascadingAuthenticationState>
+                    }
                 </ChildContent>
                 <ErrorContent>
                     <GlobalError Error="@context" />

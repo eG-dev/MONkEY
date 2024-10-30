@@ -1,9 +1,9 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<div class="d-flex flex-column align-center pb-3">
-    <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+ <MudContainer Class="d-flex flex-column align-center pb-3" MaxWidth="MaxWidth.Medium">
+    <MudImage Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
 
-    <MudBreakpointProvider>
+    <MudBreakpointProvider Class="mt-6">
         <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
             <MudText Typo="Typo.h5">Willkommen in der MONkEY App!</MudText>
         </MudHidden>
@@ -15,22 +15,28 @@
         </MudHidden>
     </MudBreakpointProvider>
 
-    <MudContainer Class="mt-6" MaxWidth="MaxWidth.Medium">
-        <MudText Typo="Typo.body1">
-            Was als kleines Hobbyprojekt zur Verwaltung des Taschengelds meiner Kinder begann, hat sich zu einer vollwertigen Anwendung entwickelt, die für jeden von Nutzen sein kann.
-        </MudText>
-        <MudText Class="mt-3" Typo="Typo.body1">
-            Die MONkEY App ermöglicht es Dir, Deinen persönlichen Finanzbereich zu erstellen und zu verwalten - und nur Du hast Zugriff darauf!
-        </MudText>
-        <MudText Class="mt-3" Typo="Typo.body1">
-            Egal, ob Du das Taschengeld Deiner Kinder verwalten oder Deine Ausgaben im Blick behalten möchtest, die MONkEY App bietet Dir die Werkzeuge und den Raum dafür.
-        </MudText>
-        <MudText Class="mt-3" Typo="Typo.body1">
-            <b>Viel Spaß beim Entdecken und Verwalten!</b>
-        </MudText>
-    </MudContainer>
+    <MudText Class="mt-6" Typo="Typo.body1" GutterBottom="true" Align="Align.Center">
+        Was als kleines Hobbyprojekt zur Verwaltung des Taschengelds meiner Kinder begann, hat sich zu einer vollwertigen Anwendung entwickelt, die für jeden von Nutzen sein kann.
+    </MudText>
+    <MudText Typo="Typo.body1" GutterBottom="true" Align="Align.Center">
+        Die MONkEY App ermöglicht es Dir, Deinen persönlichen Finanzbereich zu erstellen und zu verwalten - und nur Du hast Zugriff darauf!
+    </MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center">
+        Egal, ob Du das Taschengeld Deiner Kinder verwalten oder Deine Ausgaben im Blick behalten möchtest, die MONkEY App bietet Dir die Werkzeuge und den Raum dafür.
+    </MudText>
+    <MudText Class="mt-3" Typo="Typo.body1" Align="Align.Center">
+        <b>Viel Spaß beim Entdecken und Verwalten!</b>
+    </MudText>
 
-    <MudText Class="mt-6">Für Fragen und Anregungen hier entlang</MudText>
+    <MudText Class="mt-6" Align="Align.Center">
+        Wenn Du fortfährst, erklärst Du Dich mit den
+        <MudLink Href="/terms/usage-terms" Underline="Underline.None">Nutzungsbedingungen</MudLink>
+        und der
+        <MudLink Href="/terms/data-privacy" Underline="Underline.None">Datenschutzerklärung</MudLink>
+        einverstanden.
+    </MudText>
+
+    <MudText Class="mt-6" Align="Align.Center">Hast Du Fragen oder Anregungen?</MudText>
     <div class="d-flex flex-row justify-center">
         <MudChip T="string" Icon="@Icons.Material.TwoTone.Email" Label="true" Color="Color.Primary" OnClick="GotoEmail">E-Mail</MudChip>
         <MudChip T="string" Icon="@Icons.Custom.Brands.LinkedIn" Label="true" style="color: white; background: #0a66c2;" OnClick="GotoLinkedIn">Eugen Klerner</MudChip>
@@ -38,10 +44,8 @@
 
     <MudAlert Class="mt-6" Severity="Severity.Warning">
         Das ist ein Hobbyprojekt, das von mir alleine, für nicht-kommerzielle Zwecke und in meiner Freizeit entwickelt wird!
-        <br />
-        Die Anwendung und auch die Daten befinden sich in der Microsoft Azure Cloud in der Region "Germany West Central".
     </MudAlert>
-</div>
+</MudContainer>
 
 @code {
     private async Task GotoLinkedIn()

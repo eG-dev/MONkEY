@@ -1,0 +1,61 @@
+﻿@page "/terms/usage-terms"
+
+@inject NavigationManager Navigation
+
+<MudText Typo="Typo.h5" GutterBottom="true">Nutzungsbedingungen</MudText>
+<MudText Typo="Typo.subtitle1" GutterBottom="true">Stand: 31. November 2024</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    Bitte lies die folgenden Nutzungsbedingungen aufmerksam durch, bevor Du diesen Service nutzt.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Kostenloser Service:</strong>
+    Die Nutzung des Services ist für Dich komplett kostenlos.
+    Es fallen keine Gebühren für die Nutzung an.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Freiwillige Nutzung:</strong>
+    Die Nutzung des Services erfolgt auf freiwilliger Basis.
+    Es besteht keinerlei Anspruch auf die Nutzung oder Fortführung des Services.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Änderung und Einstellung des Services:</strong>
+    Der Betreiber behält sich das Recht vor, den Umfang des Services zu verändern oder den Service komplett einzustellen.
+    Dies kann jederzeit und ohne Angabe von Gründen erfolgen.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Keine Ansprüche:</strong>
+    Der Betreiber dieser Webseite übernimmt keine Haftung für Schäden oder Verluste, die durch die Nutzung des Services entstehen könnten.
+    Die Nutzung erfolgt auf eigenes Risiko des Nutzers.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Illegale Aktivitäten:</strong>
+    Der Nutzer darf den Service nicht für illegale Aktivitäten jeglicher Art verwenden.
+    Jeglicher Missbrauch wird nicht toleriert und führt zum sofortigen Ausschluss vom Service.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Ausschluss vom Service:</strong>
+    Der Betreiber der Webseite behält sich das Recht vor, Nutzer jederzeit und ohne Angabe von Gründen vom Service auszuschließen.
+    Dies kann insbesondere bei Missbrauch oder Verstößen gegen diese Nutzungsbedingungen erfolgen.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    <strong>Konto und Datenlöschung:</strong>
+    Der Nutzer hat jederzeit die Möglichkeit, sein Konto und die damit verbundenen Daten vollständig zu löschen.
+    Hierfür kann der Nutzer die entsprechende Funktion in den Kontoeinstellungen nutzen oder sich an
+    <MudLink Href="mailto:info@monkey-app.de" Underline="Underline.None">info@monkey-app.de</MudLink> wenden.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    Mit der Nutzung unserer Webseite und des Services erklärst Du Dich mit diesen Nutzungsbedingungen einverstanden.
+</MudText>
+<MudText Typo="Typo.body1" GutterBottom="true">
+    Vielen Dank für Dein Verständnis und viel Spaß bei der Nutzung des Services!
+</MudText>
+
+<div class="d-flex flex-row align-center mt-6">
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.TwoTone.ArrowBack"
+               Style="min-width: 150px"
+               OnClick="@(() =>Navigation.NavigateTo("/"))">
+        Zurück
+    </MudButton>
+</div>
