@@ -28,7 +28,7 @@
         <strong>Viel Spaß beim Entdecken und Verwalten!</strong>
     </MudText>
 
-    <MudText Class="mt-10" Align="Align.Center">
+    <MudText Class="mt-10" Align="Align.Center" GutterBottom="true">
         Wenn Du fortfährst, erklärst Du Dich mit den
         <MudLink Href="/terms/usage-terms" Underline="Underline.None">Nutzungsbedingungen</MudLink>
         und der
@@ -36,32 +36,34 @@
         einverstanden.
     </MudText>
 
-    <MudButton Class="mt-3"
-               Variant="Variant.Filled"
+    <MudButton Variant="Variant.Filled"
                Color="Color.Primary"
                StartIcon="@Icons.Custom.Brands.Microsoft"
                Href="MicrosoftIdentity/Account/SignIn">
         Anmelden
     </MudButton>
 
-    <MudText Class="mt-10" Align="Align.Center">Hast Du Fragen oder Anregungen?</MudText>
-    <div class="d-flex flex-row justify-center">
-        <MudButton Variant="Variant.Outlined"
-                   Color="Color.Primary"
-                   style="text-transform: none;"
-                   StartIcon="@Icons.Material.TwoTone.Email"
-                   Href="mailto:info@monkey-app.de?subject=MONkEY%20App">
-            info@monkey-app.de
-        </MudButton>
-        <MudButton Variant="Variant.Outlined"
-                   class="ml-3"
-                   style="color: white; background: #0a66c2; border-color: #0a66c2; text-transform: none;"
-                   StartIcon="@Icons.Custom.Brands.LinkedIn"
-                   Href="https://www.linkedin.com/in/eugen-klerner"
-                   Target="_blank">
-            Eugen Klerner
-        </MudButton>
-    </div>
+    <MudText Class="mt-10" Align="Align.Center" GutterBottom="true">Hast Du Fragen oder Anregungen?</MudText>
+    <MudGrid Spacing="3" Justify="Justify.Center">
+        <MudItem>
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Primary"
+                       style="text-transform: none;"
+                       StartIcon="@Icons.Material.TwoTone.Email"
+                       Href="mailto:info@monkey-app.de?subject=MONkEY%20App">
+                info@monkey-app.de
+            </MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton Variant="Variant.Outlined"
+                       style="color: white; background: #0a66c2; border-color: #0a66c2; text-transform: none;"
+                       StartIcon="@Icons.Custom.Brands.LinkedIn"
+                       Href="https://www.linkedin.com/in/eugen-klerner"
+                       Target="_blank">
+                Eugen Klerner
+            </MudButton>
+        </MudItem>
+    </MudGrid>
 
     <MudAlert Class="mt-6" Severity="Severity.Warning">
         Das ist ein Hobbyprojekt, das von mir alleine, für nicht-kommerzielle Zwecke und in meiner Freizeit entwickelt wird!
