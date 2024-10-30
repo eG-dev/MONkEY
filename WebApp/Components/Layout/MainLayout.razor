@@ -27,12 +27,12 @@
 
 <MudLayout Class="page">
     <MudAppBar Color="Color.Dark" Fixed="true" Dense="false" Elevation="2">
-        <MudImage Height="30" Src="/images/monkey.png" @onclick="() => NavigateToHome()" Class="cursor-pointer"></MudImage>
+        <MudImage Height="30" Src="/images/monkey.png" @onclick="NavigateToHome" Class="cursor-pointer"></MudImage>
         <MudSpacer />
         @if (_user?.IsKnown == true)
         {
             <MudText Color="Color.Default">@_user</MudText>
-            <MudIconButton Icon="@Icons.Material.TwoTone.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => ToggleDrawer())" />
+            <MudIconButton Icon="@Icons.Material.TwoTone.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="ToggleDrawer" />
         }
         else
         {
@@ -42,7 +42,7 @@
 
     @if (_user?.IsKnown == true)
     {
-        <MudDrawer Variant="DrawerVariant.Responsive" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
+        <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">@_user</MudText>
             </MudDrawerHeader>
@@ -50,13 +50,13 @@
             <MudButton StartIcon="@Icons.Material.TwoTone.Logout" Color="Color.Secondary" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
             <MudDivider DividerType="DividerType.Middle" />
             <MudSpacer />
-            <MudButton Color="Color.Default" Href="/terms/usage-terms">Nutzungsbedingungen</MudButton>
-            <MudButton Color="Color.Default" Href="/terms/data-privacy">Datenschutzerklärung</MudButton>
+            <MudButton Color="Color.Default" Href="/terms/usage-terms" OnClick="ToggleDrawer">Nutzungsbedingungen</MudButton>
+            <MudButton Color="Color.Default" Href="/terms/data-privacy" OnClick="ToggleDrawer">Datenschutzerklärung</MudButton>
         </MudDrawer>
     }
 
     <MudMainContent>
-        <MudContainer Class="page-container">
+        <MudContainer Class="page-container pb-3">
             <ErrorBoundary>
                 <ChildContent>
                     @if (Navigation.Uri.Contains("/terms"))

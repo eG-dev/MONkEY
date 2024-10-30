@@ -45,14 +45,14 @@
 
     <MudBreakpointProvider>
         <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
-            <MudImage Class="rounded-lg my-3" Src="@accountImageSrc" Width="256" Height="256" Elevation="5"></MudImage>
+            <MudImage Class="rounded-lg" Src="@accountImageSrc" Width="256" Height="256" Elevation="5"></MudImage>
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
-            <MudImage Class="rounded-lg my-3" Src="@accountImageSrc" Width="512" Height="512" Elevation="5"></MudImage>
+            <MudImage Class="rounded-lg" Src="@accountImageSrc" Width="512" Height="512" Elevation="5"></MudImage>
         </MudHidden>
     </MudBreakpointProvider>
 
-    <div>
+    <div class="mt-3">
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.Edit"

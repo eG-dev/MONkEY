@@ -79,20 +79,13 @@ else if (User?.Status == AccountOwnerStatus.Active)
     
     if (_accounts.Count < 9)
     {
-        <div class="d-flex flex-column align-center mt-6 pb-3">
+        <div class="d-flex flex-column align-center mt-6">
             <MudButton Variant="Variant.Text"
                        Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
                        Style="min-width: 150px"
                        OnClick="AddAccount">
                 Konto hinzufügen
-            </MudButton>
-            <MudButton Variant="Variant.Text"
-                       Color="Color.Error"
-                       StartIcon="@Icons.Material.Filled.Error"
-                       Style="min-width: 150px"
-                       OnClick="ThrowTestError">
-                Fehler provozieren
             </MudButton>
         </div>
     }
@@ -156,11 +149,6 @@ else
                 Navigation.NavigateTo($"/account/{User.TenantKey}/{account.AccountKey}/edit");
             }
         }
-    }
-
-    private void ThrowTestError()
-    {
-        throw new InvalidOperationException("Provoked test exception");
     }
 
     private void GotoAccountDetails(string accountKey)
