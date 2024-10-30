@@ -6,10 +6,15 @@
 @if (AccountOwner == null)
 {
     <div class="d-flex flex-column align-center mt-6">
-        <MudText Typo="Typo.h5">Willkommen bei der MONkEY App!</MudText>
-        <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
-        <MudAlert Severity="Severity.Info">
-            Lege einen eigenen Bereich an, um zu beginnen...
+        <MudImage Class="mb-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
+        <MudText Typo="Typo.h5" GutterBottom=true>Du bist neu hier!</MudText>
+        <MudText Typo="Typo.body1" Align="Align.Center">Lege einen eigenen Bereich an oder lass dich zu einem bestehenden Bereich einladen.</MudText>
+        <MudAlert Class="mt-6" Severity="Severity.Info">
+            Willst Du im bestehenden Bereich aufgenommen werden, der jemand anderem gehört?
+            <br />
+            Dann lass Dich von dieser Person zu diesem Bereich hinzufügen und komme später wieder hierher zurück.
+            <br />
+            Du bekommst dann hier die Möglichkeit die Einladung anzunehmen.
         </MudAlert>
         <div class="d-flex flex-row align-center mt-3">
             <MudButton Variant="Variant.Filled"
@@ -66,7 +71,7 @@ else if (AccountOwner.Status == AccountOwnerStatus.Disabled)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudText Typo="Typo.h5">Dein Nutzer wurde vom Administrator gesperrt!</MudText>
-        <MudImage Class="my-6" Src="images/monkey_face_error.png" Width="256" Height="256"></MudImage>
+        <MudImage Class="mt-6" Src="images/monkey_face_error.png" Width="256" Height="256"></MudImage>
     </div>
 }
 
