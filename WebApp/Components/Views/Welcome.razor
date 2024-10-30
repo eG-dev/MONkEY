@@ -7,7 +7,10 @@
         <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
             <MudText Typo="Typo.h5">Willkommen in der MONkEY App!</MudText>
         </MudHidden>
-        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+        <MudHidden Breakpoint="Breakpoint.Sm" Invert="true">
+            <MudText Typo="Typo.h4">Willkommen in der MONkEY App!</MudText>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
             <MudText Typo="Typo.h3">Willkommen in der MONkEY App!</MudText>
         </MudHidden>
     </MudBreakpointProvider>
@@ -27,8 +30,11 @@
         </MudText>
     </MudContainer>
 
-    <MudText Class="mt-6">Bei Fragen und Anregungen, hier geht es zu meinem LinkedIn-Profil</MudText>
-    <MudChip T="string" Icon="@Icons.Custom.Brands.LinkedIn" Label="true" style="color: white; background: #0a66c2;" OnClick="GotoLinkedIn">Eugen Klerner</MudChip>
+    <MudText Class="mt-6">Für Fragen und Anregungen hier entlang</MudText>
+    <div class="d-flex flex-row justify-center">
+        <MudChip T="string" Icon="@Icons.Material.TwoTone.Email" Label="true" Color="Color.Primary" OnClick="GotoEmail">E-Mail</MudChip>
+        <MudChip T="string" Icon="@Icons.Custom.Brands.LinkedIn" Label="true" style="color: white; background: #0a66c2;" OnClick="GotoLinkedIn">Eugen Klerner</MudChip>
+    </div>
 
     <MudAlert Class="mt-6" Severity="Severity.Warning">
         Das ist ein Hobbyprojekt, das von mir alleine, für nicht-kommerzielle Zwecke und in meiner Freizeit entwickelt wird!
@@ -41,5 +47,10 @@
     private async Task GotoLinkedIn()
     {
         await JSRuntime.InvokeVoidAsync("open", "https://www.linkedin.com/in/eugen-klerner", "_blank");
+    }
+
+    private async Task GotoEmail()
+    {
+        await JSRuntime.InvokeVoidAsync("open", "mailto:info@monkey-app.de?subject=MONkEY%20App", "_blank");
     }
 }
