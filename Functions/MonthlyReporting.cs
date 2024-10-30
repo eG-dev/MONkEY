@@ -67,9 +67,14 @@ namespace MONkEY.Functions
             var reportedPeriodEnd = reportedPeriod.AddMonth();
 
             var owners = await _owners.GetAllAsync();
-            foreach (var ownersGroup in owners.GroupBy(x => x.TenantKey))
+
+            var recipients = owners
+                .Where(x => x.Role != AccountOwnerRole.Member)
+                .GroupBy(x => x.TenantKey);
+
+            foreach (var emailGroup in recipients)
             {
-                var tenantKey = ownersGroup.Key;
+                var tenantKey = emailGroup.Key;
 
                 var accounts = await _accounts.GetAllAsync(tenantKey);
                 foreach (var account in accounts)
@@ -127,7 +132,7 @@ namespace MONkEY.Functions
 
                     await _reports.AddAsync(report);
 
-                    foreach (var recipient in ownersGroup)
+                    foreach (var recipient in emailGroup)
                     {
                         var toEmail = new EmailAddress(recipient.Email);
 
