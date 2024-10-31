@@ -6,10 +6,11 @@
             <MudNumericField @bind-Value="_model.Amount"
                              Label="Betrag"
                              Variant="Variant.Text"
-                             Min="1"
-                             Max="1000"
-                             Step="0.01"
                              Style="@(PayOut ? "color: var(--mud-palette-error)" : "color: var(--mud-palette-success)")"
+                             Min="0"
+                             Max="1000"
+                             Step="1"
+                             Format="N2"
                              Immediate="true"
                              Adornment="Adornment.Start"
                              AdornmentIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)"
@@ -46,14 +47,21 @@
 
     private void Submit()
     {
-        _model.Amount = _model.Amount ?? 0.0;
+        _model.Amount = Math.Round(_model.Amount ?? 0.0, 2);
 
-        if (PayOut)
+        if (_model.Amount == 0.0)
         {
-            _model.Amount = 0 - _model.Amount;
+            MudDialog.Cancel();
         }
+        else
+        {
+            if (PayOut)
+            {
+                _model.Amount = 0 - _model.Amount;
+            }
 
-        MudDialog.Close(DialogResult.Ok(_model));
+            MudDialog.Close(DialogResult.Ok(_model));
+        }
     }
 
     private void Cancel() => MudDialog.Cancel();

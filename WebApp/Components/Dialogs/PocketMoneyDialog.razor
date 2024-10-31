@@ -14,7 +14,8 @@
                              Variant="Variant.Text"
                              Min="0"
                              Max="1000"
-                             Step="0.01"
+                             Step="1"
+                             Format="N2"
                              @bind-Value="PocketMoney"
                              Immediate="true"
                              Adornment="Adornment.Start"
@@ -41,12 +42,9 @@
 
     private void Submit()
     {
-        var model = new PocketMoneyDialogModel()
-        {
-            PocketMoney = PocketMoney ?? 0.0
-        };
+        var amount = Math.Round(PocketMoney ?? 0.0, 2);
 
-        MudDialog.Close(DialogResult.Ok(model));
+        MudDialog.Close(DialogResult.Ok(amount));
     }
 
     private void Cancel() => MudDialog.Cancel();

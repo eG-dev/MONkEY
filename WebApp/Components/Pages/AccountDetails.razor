@@ -196,13 +196,11 @@ else
 
         var result = await dialog.Result;
 
-        if (result != null && !result.Canceled && result.Data is PocketMoneyDialogModel model)
+        if (result != null && !result.Canceled && result.Data is double amount)
         {
-            if (model.PocketMoney.HasValue &&
-                !double.IsNaN(model.PocketMoney.Value) &&
-                model.PocketMoney >= 0)
+            if (!double.IsNaN(amount) && amount >= 0)
             {
-                await AdjustPocketMoney(model.PocketMoney.Value);
+                await AdjustPocketMoney(amount);
             }
         }
     }
@@ -254,7 +252,7 @@ else
         }
     }
 
-    private async Task AdjustPocketMoney(double pocketMoney)
+    private async Task AdjustPocketMoney(double amount)
     {
         _isUpdating = true;
         StateHasChanged();
@@ -265,19 +263,19 @@ else
 
             if (account != null)
             {
-                account.PocketMoney = pocketMoney;
+                account.PocketMoney = amount;
 
                 await Accounts.UpdateAsync(account);
 
                 _account = account;
 
-                if (pocketMoney == 0)
+                if (amount == 0)
                 {
                     Snackbar.Add($"{_account.Name} bekommt zukünftig kein Taschengeld!", Severity.Success);
                 }
                 else
                 {
-                    Snackbar.Add($"{_account.Name} bekommt zukünftig {pocketMoney}€ Taschengeld im Monat!", Severity.Success);
+                    Snackbar.Add($"{_account.Name} bekommt zukünftig {amount}€ Taschengeld im Monat!", Severity.Success);
                 }
             }
         }
