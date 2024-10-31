@@ -7,6 +7,8 @@ namespace MONkEY.Data.Services
         private readonly IAccountOwnerService _accountOwners;
 
         private KeyValuePair<string, AccountOwner?>? _cachedOwner = null;
+        private DateTimeOffset _cacheTimestamp = DateTimeOffset.UtcNow;
+
 
         public IdentityService(
             IAccountOwnerService accountOwnerService)
@@ -23,12 +25,23 @@ namespace MONkEY.Data.Services
                 var name = principal.FindFirst("name")?.Value ?? string.Empty;
                 var email = principal.Identity.Name ?? string.Empty;
 
+                var utcNow = DateTimeOffset.UtcNow;
+
                 AccountOwner? owner;
-                if (!_cachedOwner.HasValue || _cachedOwner.Value.Key != email)
+                if (!_cachedOwner.HasValue ||
+                    _cachedOwner.Value.Key != email ||
+                    (utcNow - _cacheTimestamp) > TimeSpan.FromMinutes(30))
                 {
                     owner = await _accountOwners.GetByEmailAsync(email);
 
+                    if (owner != null && (owner.LastLoggedOn == null || owner.LastLoggedOn.Value.Date != utcNow.Date))
+                    {
+                        owner.LastLoggedOn = utcNow;
+                        owner = await _accountOwners.UpdateAsync(owner);
+                    }
+
                     _cachedOwner = new KeyValuePair<string, AccountOwner?>(email, owner);
+                    _cacheTimestamp = utcNow;
                 }
                 else
                 {
@@ -40,6 +53,8 @@ namespace MONkEY.Data.Services
                     Name = name,
                     Email = email,
                     TenantKey = owner?.TenantKey ?? string.Empty,
+                    LastLoggedOn = owner?.LastLoggedOn,
+                    TermsAcceptedOn = owner?.TermsAcceptedOn,
                     Status = owner?.Status ?? AccountOwnerStatus.Undefined,
                     IsGlobalAdmin = owner?.Role == AccountOwnerRole.GlobalAdmin,
                 };

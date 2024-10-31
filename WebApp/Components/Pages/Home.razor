@@ -7,7 +7,6 @@
 @using MONkEY.Data
 @using MONkEY.Data.Services
 
-@inject IAccountOwnerService AccountOwners
 @inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
 @inject ITransactionService Transactions
@@ -90,10 +89,6 @@ else if (User?.Status == AccountOwnerStatus.Active)
         </div>
     }
 }
-else
-{
-    <AccountOwnerActions AccountOwner="@_accountOwner" />
-}
 
 @code {
     [CascadingParameter]
@@ -104,24 +99,16 @@ else
     private readonly Dictionary<string, Transaction?> _lastTransactions = new();
 
     private List<Account> _accounts = new();
-    private AccountOwner? _accountOwner = null;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (User != null)
+        if (User?.Status == AccountOwnerStatus.Active)
         {
-            if (User.Status == AccountOwnerStatus.Active)
-            {
-                _accounts = await Accounts.GetAllAsync(User.TenantKey);
+            _accounts = await Accounts.GetAllAsync(User.TenantKey);
 
-                foreach (var account in _accounts)
-                {
-                    _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(User.TenantKey, account.AccountKey);
-                }
-            }
-            else if (User.IsKnown)
+            foreach (var account in _accounts)
             {
-                _accountOwner = await AccountOwners.GetByEmailAsync(User.Email);
+                _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(User.TenantKey, account.AccountKey);
             }
         }
 

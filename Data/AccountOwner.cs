@@ -22,6 +22,10 @@ namespace MONkEY.Data
 
         public AccountOwnerRole Role { get; set; } = AccountOwnerRole.Manager;
 
+        public DateTimeOffset? LastLoggedOn { get; set; }
+
+        public DateTimeOffset? TermsAcceptedOn { get; set; }
+
         public ETag ETag { get; set; } = default!;
 
         public DateTimeOffset? Timestamp { get; set; } = default!;

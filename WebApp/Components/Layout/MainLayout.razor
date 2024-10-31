@@ -6,9 +6,9 @@
 @inherits LayoutComponentBase
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IIdentityService Identity
 @inject NavigationManager Navigation
-@inject IAccountOwnerService Owners
+@inject IIdentityService Identity
+@inject IAccountOwnerService AccountOwners
 
 <InitializeTimeZone />
 
@@ -72,6 +72,22 @@
                                     {
                                         <PageLoader />
                                     }
+                                    else if (_user.TermsAcceptedOn == null || _user.TermsAcceptedOn < USAGE_TERMS_VALID_FROM)
+                                    {
+                                        <UsageTermsView />
+
+                                        <MudButton Class="mt-3"
+                                                   Variant="Variant.Filled"
+                                                   StartIcon="@Icons.Material.Filled.CheckCircle"
+                                                   Color="Color.Success"
+                                                   OnClick="AcceptUsageTerms">
+                                            Akzeptieren und fortfahren
+                                        </MudButton>
+                                    }
+                                    else if (_user.Status != AccountOwnerStatus.Active)
+                                    {
+                                        <AccountOwnerActions AccountOwner="@_accountOwner" />
+                                    }
                                     else
                                     {
                                         <CascadingValue Value="@_user">
@@ -95,14 +111,35 @@
 </MudLayout>
 
 @code {
+    private readonly DateTimeOffset USAGE_TERMS_VALID_FROM = DateTimeOffset.Parse("2024-10-31");
+
     private bool _drawerOpen = false;
 
     private Identity? _user = default!;
+    private AccountOwner? _accountOwner = null;
 
     protected async override Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = await Identity.FromPrincipal(authState.User);
+
+        if (_user != null && _user.Status != AccountOwnerStatus.Active)
+        {
+            _accountOwner = await AccountOwners.GetByEmailAsync(_user.Email);
+        }
+    }
+
+    private async Task AcceptUsageTerms()
+    {
+        _accountOwner = await AccountOwners.GetByEmailAsync(_user!.Email);
+
+        if (_accountOwner != null)
+        {
+            _accountOwner.TermsAcceptedOn = DateTimeOffset.UtcNow;
+            _accountOwner = await AccountOwners.UpdateAsync(_accountOwner);
+
+            Navigation.NavigateTo("/", true);
+        }
     }
 
     private void NavigateToHome()

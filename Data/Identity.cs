@@ -11,6 +11,10 @@ namespace MONkEY.Data
 
         public string TenantKey { get; init; } = string.Empty;
 
+        public DateTimeOffset? LastLoggedOn { get; init; }
+
+        public DateTimeOffset? TermsAcceptedOn { get; init; }
+
         public AccountOwnerStatus Status { get; init; }
 
         public bool IsGlobalAdmin { get; init; } = false;
