@@ -5,8 +5,8 @@
 Bitte lies die folgenden Nutzungsbedingungen aufmerksam durch, bevor Du diesen Service nutzt.
 
 **Nicht-kommerzieller Service:**
-Der Service ist nicht kommerziell und die Nutzung des Services ist für Dich komplett kostenlos.
-Es fallen keine Gebühren für die Nutzung an.
+Der Service ist nicht kommerziell.
+Die Nutzung des Services ist für Dich komplett kostenlos.
 
 **Freiwillige Nutzung:**
 Die Nutzung des Services erfolgt auf freiwilliger Basis.
