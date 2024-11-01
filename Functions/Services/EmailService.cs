@@ -5,10 +5,10 @@ using Microsoft.Extensions.Options;
 using MimeKit.Text;
 using MimeKit;
 using System.Reflection;
-
-using MONkEY.Functions.DTO;
 using System.Globalization;
 using System.Text;
+
+using MONkEY.Functions.DTO;
 
 namespace MONkEY.Functions.Services
 {
@@ -33,30 +33,32 @@ namespace MONkEY.Functions.Services
                 recipients.Count()));
 
             var fromAddress = new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.SenderEmail);
+            fromAddress.Encoding = Encoding.UTF8;
 
             MimeMessage email = new();
             email.From.Add(fromAddress);
 
             foreach (var recipient in recipients)
             {
-                email.To.Add(MailboxAddress.Parse(recipient));
+                var toAddress = MailboxAddress.Parse(recipient);
+                toAddress.Encoding = Encoding.UTF8;
+
+                email.To.Add(toAddress);
             }
 
-            email.Headers.Replace("Subject", Encoding.UTF8, subject);
+            email.Subject = subject;
 
-            var body = new TextPart(TextFormat.Html);
-            body.SetText(Encoding.UTF8, GetTemplate("default").Replace("{{EMAIL_BODY}}", content));
-            email.Body = body;
+            var bodyContent = GetTemplate("default").Replace("{{EMAIL_BODY}}", content);
+            email.Body = new TextPart(TextFormat.Html)
+            {
+                Text = bodyContent,
+            };
 
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(_smtpSettings.Host, _smtpSettings.Port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_smtpSettings.User, _smtpSettings.Password);
 
-            var options = FormatOptions.Default.Clone();
-            options.International = true;
-            options.AllowMixedHeaderCharsets = false;
-
-            await smtp.SendAsync(options, email);
+            await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }
 
@@ -66,7 +68,7 @@ namespace MONkEY.Functions.Services
             var resourceName = $"MONkEY.Functions.EmailTemplates.{templateName}.html";
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-            using StreamReader reader = new(stream!, Encoding.UTF8);
+            using StreamReader reader = new(stream!, Encoding.UTF8, true);
 
             string template = reader.ReadToEnd();
 
