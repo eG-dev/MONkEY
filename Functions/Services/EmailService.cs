@@ -54,6 +54,7 @@ namespace MONkEY.Functions.Services
 
             var options = FormatOptions.Default.Clone();
             options.International = true;
+            options.AllowMixedHeaderCharsets = false;
 
             await smtp.SendAsync(options, email);
             await smtp.DisconnectAsync(true);
