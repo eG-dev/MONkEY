@@ -125,7 +125,7 @@ namespace MONkEY.Functions
 
                     //await _reports.AddAsync(report);
 
-                    var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
+                    var emailSubject = $"{reportPayload.AccountName} - Bericht fÃ¼r {reportPayload.ReportedPeriodName}";
 
                     string transactionEntries = string.Empty;
                     if (reportPayload.Transactions.Count > 0)
@@ -135,7 +135,7 @@ namespace MONkEY.Functions
                         foreach (var transaction in reportPayload.Transactions)
                         {
                             transactionEntries += string.Format(
-                                "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
+                                "<li><p><b style=\"color: {0}\">{1}â‚¬</b> am {2} durch {3}<p></li>",
                                 transaction.Amount < 0 ? "red" : "green",
                                 transaction.Amount.ToString("+0.##;-0.##"),
                                 transaction.TriggeredOn,
@@ -156,9 +156,7 @@ namespace MONkEY.Functions
                         .Replace("{{STARTING_BALANCE}}", reportPayload.StartingBalance.ToString())
                         .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries, StringComparison.Ordinal);
 
-                    //await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
-
-                    _logger.LogInformation("Test ÄäÄ öÖö €€€ üÜü");
+                    await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
                 }
             }
         }
