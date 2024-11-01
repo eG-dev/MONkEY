@@ -59,8 +59,7 @@ namespace MONkEY.Functions
             var owners = await _owners.GetAllAsync();
 
             var recipientGroups = owners
-                //.Where(x => x.Role != AccountOwnerRole.Member)
-                .Where(x => x.Role == AccountOwnerRole.GlobalAdmin)
+                .Where(x => x.Role != AccountOwnerRole.Member)
                 .GroupBy(x => x.TenantKey);
 
             foreach (var emailGroup in recipientGroups)
@@ -123,7 +122,7 @@ namespace MONkEY.Functions
                         SerializedPayload = JsonSerializer.Serialize(reportPayload)
                     };
 
-                    //await _reports.AddAsync(report);
+                    await _reports.AddAsync(report);
 
                     var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
 
