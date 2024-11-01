@@ -9,12 +9,8 @@
     <UserSecretsId>363c026b-5b4d-4da8-9890-2f8e462e527c</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Email\Templates\body_monthly_report.html" />
-    <None Remove="Email\Templates\Default.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Email\Templates\body_monthly_report.html" />
-    <EmbeddedResource Include="Email\Templates\default.html" />
+    <EmbeddedResource Include="EmailTemplates\body_monthly_report.html" />
+    <EmbeddedResource Include="EmailTemplates\default.html" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
