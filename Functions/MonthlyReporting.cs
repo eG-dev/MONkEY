@@ -128,7 +128,7 @@ namespace MONkEY.Functions
 
                     //await _reports.AddAsync(report);
 
-                    var emailSubject = string.Format(CultureInfo.InvariantCulture,
+                    var emailSubject = string.Format(culture,
                         "{0} - Bericht für {1}",
                         reportPayload.AccountName,
                         reportPayload.ReportedPeriodName);
@@ -140,7 +140,7 @@ namespace MONkEY.Functions
 
                         foreach (var transaction in reportPayload.Transactions)
                         {
-                            transactionEntries += string.Format(CultureInfo.InvariantCulture,
+                            transactionEntries += string.Format(culture,
                                 "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
                                 transaction.Amount < 0 ? "red" : "green",
                                 transaction.Amount.ToString("+0.##;-0.##"),
