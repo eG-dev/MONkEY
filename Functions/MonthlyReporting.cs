@@ -62,7 +62,8 @@ namespace MONkEY.Functions
             var owners = await _owners.GetAllAsync();
 
             var recipientGroups = owners
-                .Where(x => x.Role != AccountOwnerRole.Member)
+                //.Where(x => x.Role != AccountOwnerRole.Member)
+                .Where(x => x.Role == AccountOwnerRole.GlobalAdmin)
                 .GroupBy(x => x.TenantKey);
 
             foreach (var emailGroup in recipientGroups)
@@ -70,6 +71,7 @@ namespace MONkEY.Functions
                 var tenantKey = emailGroup.Key;
 
                 var accounts = await _accounts.GetAllAsync(tenantKey);
+                accounts = [accounts[0]];
 
                 foreach (var account in accounts)
                 {
@@ -124,9 +126,12 @@ namespace MONkEY.Functions
                         SerializedPayload = JsonSerializer.Serialize(reportPayload)
                     };
 
-                    await _reports.AddAsync(report);
+                    //await _reports.AddAsync(report);
 
-                    var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
+                    var emailSubject = string.Format(CultureInfo.InvariantCulture,
+                        "{0} - Bericht für {1}",
+                        reportPayload.AccountName,
+                        reportPayload.ReportedPeriodName);
 
                     string transactionEntries = string.Empty;
                     if (reportPayload.Transactions.Count > 0)
@@ -135,10 +140,12 @@ namespace MONkEY.Functions
 
                         foreach (var transaction in reportPayload.Transactions)
                         {
-                            var amountColor = transaction.Amount < 0 ? "red" : "green";
-                            var amountText = transaction.Amount.ToString("+0.##;-0.##");
-
-                            transactionEntries += $"<li><p><b style=\"color: {amountColor}\">{amountText}€</b> am {transaction.TriggeredOn} durch {transaction.TriggeredBy}<p></li>";
+                            transactionEntries += string.Format(CultureInfo.InvariantCulture,
+                                "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
+                                transaction.Amount < 0 ? "red" : "green",
+                                transaction.Amount.ToString("+0.##;-0.##"),
+                                transaction.TriggeredOn,
+                                transaction.TriggeredBy);
                         }
 
                         transactionEntries += "</ul>";

@@ -7,6 +7,7 @@ using MimeKit;
 using System.Reflection;
 
 using MONkEY.Functions.DTO;
+using System.Globalization;
 
 namespace MONkEY.Functions.Services
 {
@@ -25,7 +26,10 @@ namespace MONkEY.Functions.Services
 
         public async Task Send(IEnumerable<string> recipients, string subject, string content)
         {
-            _logger.LogInformation($"Sending email with subject '{subject}' to {recipients.Count()} recipients.");
+            _logger.LogInformation(string.Format(CultureInfo.InvariantCulture,
+                "Sending email with subject '{0}' to {1} recipients.",
+                subject,
+                recipients.Count()));
 
             var fromAddress = new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.SenderEmail);
 
