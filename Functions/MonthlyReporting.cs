@@ -1,7 +1,5 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using System.Globalization;
 using System.Text.Json;
 
@@ -9,15 +7,12 @@ using MONkEY.Data;
 using MONkEY.Data.Services;
 using MONkEY.Functions.DTO;
 using MONkEY.Support;
+using MONkEY.Functions.Services;
 
 namespace MONkEY.Functions
 {
     public class MonthlyReporting
     {
-        private const string EMAIL_SENDER_ADDRESS = "no-reply@monkey-app.de";
-        private const string EMAIL_SENDER_NAME = "MONkEY App";
-        private const string EMAIL_TEMPLATE_ID = "d-51be69cb71f54e2f95a3a30c3c0426d7";
-
         private const string TIMEZONE_ID = "Central Europe Standard Time";
         private const string CULTURE_ID = "de-DE";
 
@@ -29,7 +24,7 @@ namespace MONkEY.Functions
         private readonly ITransactionService _transactions;
         private readonly IReportService _reports;
 
-        private readonly SendGridClient _emailClient;
+        private readonly IEmailService _email;
 
         public MonthlyReporting(
             ILoggerFactory loggerFactory,
@@ -37,7 +32,7 @@ namespace MONkEY.Functions
             IAccountService accounts,
             ITransactionService transactions,
             IReportService reports,
-            SendGridClient emailClient)
+            IEmailService emailService)
         {
             _logger = loggerFactory.CreateLogger<MonthlyReporting>();
 
@@ -47,7 +42,7 @@ namespace MONkEY.Functions
             _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
             _reports = reports ?? throw new ArgumentNullException(nameof(reports));
 
-            _emailClient = emailClient ?? throw new ArgumentNullException(nameof(emailClient));
+            _email = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
         [Function("MonthlyReporting")]
@@ -55,8 +50,6 @@ namespace MONkEY.Functions
         public async Task Run([TimerTrigger("0 35 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing monthly reporting service");
-
-            var fromEmail = new EmailAddress(EMAIL_SENDER_ADDRESS, EMAIL_SENDER_NAME);
 
             var utcNow = DateTimeOffset.UtcNow;
 
@@ -68,15 +61,16 @@ namespace MONkEY.Functions
 
             var owners = await _owners.GetAllAsync();
 
-            var recipients = owners
+            var recipientGroups = owners
                 .Where(x => x.Role != AccountOwnerRole.Member)
                 .GroupBy(x => x.TenantKey);
 
-            foreach (var emailGroup in recipients)
+            foreach (var emailGroup in recipientGroups)
             {
                 var tenantKey = emailGroup.Key;
 
                 var accounts = await _accounts.GetAllAsync(tenantKey);
+
                 foreach (var account in accounts)
                 {
                     var existingReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod);
@@ -132,18 +126,36 @@ namespace MONkEY.Functions
 
                     await _reports.AddAsync(report);
 
-                    foreach (var recipient in emailGroup)
+                    var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
+
+                    string transactionEntries = string.Empty;
+                    if (reportPayload.Transactions.Count > 0)
                     {
-                        var toEmail = new EmailAddress(recipient.Email);
+                        transactionEntries += "<ul>";
 
-                        var reportMessage = MailHelper.CreateSingleTemplateEmail(fromEmail, toEmail, EMAIL_TEMPLATE_ID, reportPayload);
-
-                        var result = await _emailClient.SendEmailAsync(reportMessage);
-                        if (!result.IsSuccessStatusCode)
+                        foreach (var transaction in reportPayload.Transactions)
                         {
-                            _logger.LogError("Failed to send monthly report!");
+                            var amountColor = transaction.Amount < 0 ? "red" : "green";
+                            var amountText = transaction.Amount.ToString("+0.##;-0.##");
+
+                            transactionEntries += $"<li><p><b style=\"color: {amountColor}\">{amountText}€</b> am {transaction.TriggeredOn} durch {transaction.TriggeredBy}<p></li>";
                         }
+
+                        transactionEntries += "</ul>";
                     }
+                    else
+                    {
+                        transactionEntries = "<p>Es gab keine Transaktionen.</p>";
+                    }
+
+                    var emailBody = _email
+                        .GetTemplate("body_monthly_report")
+                        .Replace("{{ACCOUNT_NAME}}", reportPayload.AccountName)
+                        .Replace("{{CLOSING_BALANCE}}", reportPayload.ClosingBalance.ToString())
+                        .Replace("{{STARTING_BALANCE}}", reportPayload.StartingBalance.ToString())
+                        .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries);
+
+                    await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
                 }
             }
         }
