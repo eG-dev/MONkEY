@@ -5,8 +5,6 @@ using Microsoft.Extensions.Options;
 using MimeKit.Text;
 using MimeKit;
 using System.Reflection;
-using System.Globalization;
-using System.Text;
 
 using MONkEY.Functions.DTO;
 
@@ -43,11 +41,13 @@ namespace MONkEY.Functions.Services
 
             email.Subject = subject;
 
-            var bodyContent = GetTemplate("default").Replace("{{EMAIL_BODY}}", content);
-            email.Body = new TextPart(TextFormat.Plain)
+            var template = GetTemplate("default").Replace("{{EMAIL_BODY}}", content);
+            var body = new TextPart(TextFormat.Html)
             {
-                Text = bodyContent,
+                Text = template,
             };
+
+            email.Body = body;
 
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(_smtpSettings.Host, _smtpSettings.Port, SecureSocketOptions.StartTls);

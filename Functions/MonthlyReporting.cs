@@ -1,6 +1,5 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System.Globalization;
 using System.Text.Json;
 
 using MONkEY.Data;
@@ -126,13 +125,7 @@ namespace MONkEY.Functions
 
                     //await _reports.AddAsync(report);
 
-                    var emailSubject = string.Format(
-                        "{0} - Bericht für {1}",
-                        reportPayload.AccountName,
-                        reportPayload.ReportedPeriodName);
-
-                    _logger.LogInformation("Subject");
-                    _logger.LogInformation(emailSubject);
+                    var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
 
                     string transactionEntries = string.Empty;
                     if (reportPayload.Transactions.Count > 0)
@@ -156,17 +149,16 @@ namespace MONkEY.Functions
                         transactionEntries = "<p>Es gab keine Transaktionen.</p>";
                     }
 
-                    _logger.LogInformation("Transactions");
-                    _logger.LogInformation(transactionEntries);
-
                     var emailBody = _email
                         .GetTemplate("body_monthly_report")
                         .Replace("{{ACCOUNT_NAME}}", reportPayload.AccountName)
                         .Replace("{{CLOSING_BALANCE}}", reportPayload.ClosingBalance.ToString())
                         .Replace("{{STARTING_BALANCE}}", reportPayload.StartingBalance.ToString())
-                        .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries);
+                        .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries, StringComparison.Ordinal);
 
-                    await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
+                    //await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
+
+                    _logger.LogInformation("Test ÄäÄ öÖö €€€ üÜü");
                 }
             }
         }
