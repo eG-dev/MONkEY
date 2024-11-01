@@ -66,7 +66,7 @@ namespace MONkEY.Functions.Services
             var resourceName = $"MONkEY.Functions.EmailTemplates.{templateName}.html";
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-            using StreamReader reader = new(stream!);
+            using StreamReader reader = new(stream!, Encoding.UTF8);
 
             string template = reader.ReadToEnd();
 
