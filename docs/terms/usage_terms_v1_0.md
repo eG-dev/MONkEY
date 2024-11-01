@@ -26,7 +26,7 @@ Dies kann insbesondere bei Missbrauch oder Verstößen gegen diese Nutzungsbedin
 
 **Konto und Datenlöschung:**
 Der Nutzer hat jederzeit die Möglichkeit, sein Konto und die damit verbundenen Daten vollständig zu löschen.
-Hierfür kann der Nutzer die entsprechende Funktion in den Kontoeinstellungen nutzen oder sich an info@monkey-app.de wenden.
+Hierfür kann der Nutzer die entsprechende Funktion in den Kontoeinstellungen nutzen oder sich an info@pocket-monkey.de wenden.
 
 Mit der Nutzung unserer Webseite und des Services erklärst Du Dich mit diesen Nutzungsbedingungen einverstanden.
 

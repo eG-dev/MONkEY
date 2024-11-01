@@ -25,6 +25,6 @@ Alle Datenübertragungen zwischen Deinem Gerät und den Servern sind verschlüss
 
 **Datenschutzrechte:**
 Du hast das Recht, jederzeit Auskunft über die von uns gespeicherten Daten zu erhalten, diese zu korrigieren oder deren Löschung zu verlangen.
-Wende Dich dazu einfach an info@monkey-app.de.
+Wende Dich dazu einfach an info@pocket-monkey.de.
 
 Bei Fragen oder Bedenken stehen wir Dir jederzeit zur Verfügung!
