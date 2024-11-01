@@ -14,7 +14,6 @@ namespace MONkEY.Functions
     public class MonthlyReporting
     {
         private const string TIMEZONE_ID = "Central Europe Standard Time";
-        private const string CULTURE_ID = "de-DE";
 
         private readonly ILogger _logger;
 
@@ -54,7 +53,6 @@ namespace MONkEY.Functions
             var utcNow = DateTimeOffset.UtcNow;
 
             var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
-            var culture = CultureInfo.CreateSpecificCulture(CULTURE_ID);
 
             var reportedPeriod = utcNow.StartOfMonth().SubtractMonth();
             var reportedPeriodEnd = reportedPeriod.AddMonth();
@@ -101,12 +99,12 @@ namespace MONkEY.Functions
                     var reportPayload = new MonthyReport()
                     {
                         AccountName = account.Name,
-                        ReportedPeriodName = reportedPeriod.ToString("Y", culture),
+                        ReportedPeriodName = reportedPeriod.ToString("Y"),
                         StartingBalance = startingBalance,
                         ClosingBalance = closingBalance,
                         Transactions = transactions.Select(x =>
                         {
-                            var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("g", culture);
+                            var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("g");
 
                             return new ReportTransaction()
                             {
@@ -128,10 +126,13 @@ namespace MONkEY.Functions
 
                     //await _reports.AddAsync(report);
 
-                    var emailSubject = string.Format(culture,
+                    var emailSubject = string.Format(
                         "{0} - Bericht für {1}",
                         reportPayload.AccountName,
                         reportPayload.ReportedPeriodName);
+
+                    _logger.LogInformation("Subject");
+                    _logger.LogInformation(emailSubject);
 
                     string transactionEntries = string.Empty;
                     if (reportPayload.Transactions.Count > 0)
@@ -140,7 +141,7 @@ namespace MONkEY.Functions
 
                         foreach (var transaction in reportPayload.Transactions)
                         {
-                            transactionEntries += string.Format(culture,
+                            transactionEntries += string.Format(
                                 "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
                                 transaction.Amount < 0 ? "red" : "green",
                                 transaction.Amount.ToString("+0.##;-0.##"),
@@ -154,6 +155,9 @@ namespace MONkEY.Functions
                     {
                         transactionEntries = "<p>Es gab keine Transaktionen.</p>";
                     }
+
+                    _logger.LogInformation("Transactions");
+                    _logger.LogInformation(transactionEntries);
 
                     var emailBody = _email
                         .GetTemplate("body_monthly_report")

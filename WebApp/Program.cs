@@ -10,6 +10,7 @@ using MudBlazor.Translations;
 
 using MONkEY.WebApp;
 using MONkEY.WebApp.Components;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,5 +103,9 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.UseRequestLocalization("de-DE");
+
+var culture = CultureInfo.CreateSpecificCulture("de-DE");
+CultureInfo.CurrentCulture = culture;
+CultureInfo.CurrentUICulture = culture;
 
 app.Run();

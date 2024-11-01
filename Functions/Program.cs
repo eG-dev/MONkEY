@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using MONkEY.Data.Services;
 using MONkEY.Functions.DTO;
 using MONkEY.Functions.Services;
+using System.Globalization;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -38,5 +39,9 @@ var host = new HostBuilder()
         }
     })
     .Build();
+
+var culture = CultureInfo.CreateSpecificCulture("de-DE");
+CultureInfo.CurrentCulture = culture;
+CultureInfo.CurrentUICulture = culture;
 
 host.Run();

@@ -27,21 +27,16 @@ namespace MONkEY.Functions.Services
 
         public async Task Send(IEnumerable<string> recipients, string subject, string content)
         {
-            _logger.LogInformation(string.Format(CultureInfo.InvariantCulture,
-                "Sending email with subject '{0}' to {1} recipients.",
-                subject,
-                recipients.Count()));
-
-            var fromAddress = new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.SenderEmail);
-            fromAddress.Encoding = Encoding.UTF8;
+            _logger.LogInformation($"Sending email with subject '{subject}' to {recipients.Count()} recipients.");
 
             MimeMessage email = new();
+
+            var fromAddress = new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.SenderEmail);
             email.From.Add(fromAddress);
 
             foreach (var recipient in recipients)
             {
                 var toAddress = MailboxAddress.Parse(recipient);
-                toAddress.Encoding = Encoding.UTF8;
 
                 email.To.Add(toAddress);
             }
@@ -49,7 +44,7 @@ namespace MONkEY.Functions.Services
             email.Subject = subject;
 
             var bodyContent = GetTemplate("default").Replace("{{EMAIL_BODY}}", content);
-            email.Body = new TextPart(TextFormat.Html)
+            email.Body = new TextPart(TextFormat.Plain)
             {
                 Text = bodyContent,
             };
@@ -68,7 +63,7 @@ namespace MONkEY.Functions.Services
             var resourceName = $"MONkEY.Functions.EmailTemplates.{templateName}.html";
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-            using StreamReader reader = new(stream!, Encoding.UTF8, true);
+            using StreamReader reader = new(stream!);
 
             string template = reader.ReadToEnd();
 
