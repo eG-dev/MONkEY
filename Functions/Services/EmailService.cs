@@ -8,6 +8,7 @@ using System.Reflection;
 
 using MONkEY.Functions.DTO;
 using System.Globalization;
+using System.Text;
 
 namespace MONkEY.Functions.Services
 {
@@ -41,17 +42,20 @@ namespace MONkEY.Functions.Services
                 email.To.Add(MailboxAddress.Parse(recipient));
             }
 
-            email.Subject = subject;
-            email.Body = new TextPart(TextFormat.Html)
-            {
-                Text = GetTemplate("default").Replace("{{EMAIL_BODY}}", content)
-            };
+            email.Headers.Replace("Subject", Encoding.UTF8, subject);
+
+            var body = new TextPart(TextFormat.Html);
+            body.SetText(Encoding.UTF8, GetTemplate("default").Replace("{{EMAIL_BODY}}", content));
+            email.Body = body;
 
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(_smtpSettings.Host, _smtpSettings.Port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_smtpSettings.User, _smtpSettings.Password);
 
-            await smtp.SendAsync(email);
+            var options = FormatOptions.Default.Clone();
+            options.International = true;
+
+            await smtp.SendAsync(options, email);
             await smtp.DisconnectAsync(true);
         }
 
