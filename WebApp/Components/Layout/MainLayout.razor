@@ -72,7 +72,7 @@
                                     {
                                         <PageLoader />
                                     }
-                                    else if (_user.TermsAcceptedOn == null || _user.TermsAcceptedOn < USAGE_TERMS_VALID_FROM)
+                                    else if (_user.TermsAcceptedOn.GetValueOrDefault() < USAGE_TERMS_VALID_FROM)
                                     {
                                         <UsageTermsView />
 

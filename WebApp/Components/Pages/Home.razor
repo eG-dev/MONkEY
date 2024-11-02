@@ -28,22 +28,29 @@ else if (User?.Status == AccountOwnerStatus.Active)
 
             var accountImageSrc = AccountManagement.GetAccountImageSrc(account);
 
+            var accountDetailsAction = () => GotoAccountDetails(account.AccountKey);
+            var accountEditAction = () => GotoAccountEdit(account.AccountKey);
+
             <MudItem xs="12" sm="6" xl="4">
                 <MudCard Class="flex-auto d-flex" Elevation="5">
                     <MudCardHeader>
                         <CardHeaderAvatar>
-                            <MudAvatar Color="Color.Primary">@account.Name.Substring(0, 1).ToUpper()</MudAvatar>
+                            <MudAvatar Color="Color.Primary" Class="cursor-pointer" @onclick="accountDetailsAction">
+                                @account.Name.Substring(0, 1).ToUpper()
+                            </MudAvatar>
                         </CardHeaderAvatar>
                         <CardHeaderContent>
-                            <MudText Typo="@(account.Name.Length > 16 ? Typo.h6 : Typo.h5)">@account.Name</MudText>
+                            <MudText Typo="@(account.Name.Length > 16 ? Typo.h6 : Typo.h5)" Class="cursor-pointer" @onclick="accountDetailsAction">
+                                @account.Name
+                            </MudText>
                         </CardHeaderContent>
                         <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit(account.AccountKey)" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="accountEditAction" />
                         </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardMedia Image="@accountImageSrc"
                                   Class="cursor-pointer"
-                                  @onclick="() => GotoAccountDetails(account.AccountKey)" />
+                                  @onclick="accountEditAction" />
                     <MudCardContent>
                         <MudText Typo="Typo.body1">Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" /></MudText>
                         @if (transaction != null)
@@ -58,7 +65,7 @@ else if (User?.Status == AccountOwnerStatus.Active)
                     <MudCardActions>
                         <MudButton Variant="Variant.Text"
                                    Color="Color.Primary"
-                                   OnClick="() => GotoAccountDetails(account.AccountKey)">
+                                   OnClick="accountDetailsAction">
                             Auswählen
                         </MudButton>
                     </MudCardActions>
