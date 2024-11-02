@@ -19,6 +19,8 @@ namespace MONkEY.Data
 
         public AccountOwnerRole Role { get; init; }
 
+        public bool HasAcceptedUsageTerms { get; init; }
+
         public bool IsGlobalAdmin { get => Role == AccountOwnerRole.GlobalAdmin; }
 
         public bool IsAllowedToManage { get => Role > AccountOwnerRole.Member; }

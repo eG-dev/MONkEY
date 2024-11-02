@@ -4,6 +4,8 @@ namespace MONkEY.Data.Services
 {
     public class IdentityService : IIdentityService
     {
+        private readonly DateTimeOffset USAGE_TERMS_VALID_FROM = DateTimeOffset.Parse("2024-10-31");
+
         private readonly IAccountOwnerService _accountOwners;
 
         private KeyValuePair<string, AccountOwner?>? _cachedOwner = null;
@@ -57,6 +59,7 @@ namespace MONkEY.Data.Services
                     TermsAcceptedOn = owner?.TermsAcceptedOn,
                     Status = owner?.Status ?? AccountOwnerStatus.Undefined,
                     Role = owner?.Role ?? AccountOwnerRole.Undefined,
+                    HasAcceptedUsageTerms = owner?.TermsAcceptedOn.GetValueOrDefault() > USAGE_TERMS_VALID_FROM,
                 };
             }
 

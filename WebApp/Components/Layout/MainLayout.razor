@@ -72,7 +72,7 @@
                                     {
                                         <PageLoader />
                                     }
-                                    else if (_user.TermsAcceptedOn.GetValueOrDefault() < USAGE_TERMS_VALID_FROM)
+                                    else if (!_user.HasAcceptedUsageTerms)
                                     {
                                         <UsageTermsView />
 
@@ -111,8 +111,6 @@
 </MudLayout>
 
 @code {
-    private readonly DateTimeOffset USAGE_TERMS_VALID_FROM = DateTimeOffset.Parse("2024-10-31");
-
     private readonly MudTheme Theme = new MudTheme()
         {
             PaletteLight = new PaletteLight()
