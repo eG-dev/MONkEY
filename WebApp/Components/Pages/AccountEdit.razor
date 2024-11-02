@@ -19,7 +19,12 @@
 
 @if (_account != null)
 {
-    var accountImageSrc = AccountManagement.GetAccountImageSrc(_account);
+    if (!User.IsAllowedToManage)
+    {
+        <MudAlert Class="mb-6" Severity="Severity.Info">Du darfst dieses Konto nicht bearbeiten.</MudAlert>
+    }
+
+    var accountImageSrc = AccountManagement.GetImageSrc(_account);
 
     <div class="d-flex gap-6 justify-start align-center">
         <MudAvatar>
@@ -36,6 +41,7 @@
                           Variant="Variant.Outlined"
                           Value="@_account.Name"
                           MaxLength="25"
+                          ReadOnly="@(User.IsAllowedToManage == false)"
                           OnlyValidateIfDirty="true"
                           Validation="@(new Func<string, IEnumerable<string>>(ValidateName))"
                           DebounceInterval="1000"
@@ -52,24 +58,28 @@
         </MudHidden>
     </MudBreakpointProvider>
 
-    <div class="mt-1">
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.Edit"
-                   Style="min-width: 150px"
-                   OnClick="InitiateImageUpdate">
-            Bild ändern
-        </MudButton>
-    </div>
-    <div class="mt-6">
-        <MudButton Variant="Variant.Text"
-                   Color="Color.Error"
-                   StartIcon="@Icons.Material.Filled.Delete"
-                   Style="min-width: 150px"
-                   OnClick="InitiateDeletion">
-            Konto löschen
-        </MudButton>
-    </div>
+    if (User.IsAllowedToManage)
+    {
+        <div class="mt-1">
+            <MudButton Variant="Variant.Filled"
+            Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.Edit"
+            Style="min-width: 150px"
+            OnClick="InitiateImageUpdate">
+                Bild ändern
+            </MudButton>
+        </div>
+
+        <div class="mt-6">
+            <MudButton Variant="Variant.Text"
+            Color="Color.Error"
+            StartIcon="@Icons.Material.Filled.Delete"
+            Style="min-width: 150px"
+            OnClick="InitiateDeletion">
+                Konto löschen
+            </MudButton>
+        </div>
+    }
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -160,7 +170,7 @@ else
         
         if (!string.IsNullOrEmpty(_account?.Image))
         {
-            imageSrc = AccountManagement.GetAccountImageSrc(_account);
+            imageSrc = AccountManagement.GetImageSrc(_account);
         }
 
         var dialog = await Dialog.ShowAsync<ImageSelectionDialog>(
@@ -185,7 +195,7 @@ else
 
             try
             {
-                _account = await AccountManagement.UpdateImage(_account!.TenantKey, _account.AccountKey, model.ImageDataBase64);
+                _account = await AccountManagement.UpdateImage(User, _account!.AccountKey, model.ImageDataBase64);
             }
             catch { }
             finally
@@ -216,7 +226,7 @@ else
             _isUpdating = true;
             StateHasChanged();
 
-            await AccountManagement.DeleteAccount(_account!.TenantKey, _account.AccountKey);
+            await AccountManagement.Delete(User, _account.AccountKey);
 
             Navigation.NavigateTo("/");
         }

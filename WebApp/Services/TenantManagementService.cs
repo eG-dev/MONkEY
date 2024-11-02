@@ -19,7 +19,7 @@ namespace MONkEY.WebApp.Services
 
         public async Task<AccountOwner?> CreateTenant(Identity user)
         {
-            ArgumentNullException.ThrowIfNull(nameof(user));
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
 
             var model = await AccountOwners.GetByEmailAsync(user.Email);
 
@@ -30,17 +30,18 @@ namespace MONkEY.WebApp.Services
                     PartitionKey = user.Email,
                     RowKey = Guid.NewGuid().ToString(),
                     Status = AccountOwnerStatus.New,
+                    Role = AccountOwnerRole.Manager,
                 });
             }
 
             return model;
         }
 
-        public async Task AcceptInvitation(AccountOwner accountOwner)
+        public async Task AcceptInvitation(Identity user)
         {
-            ArgumentNullException.ThrowIfNull(nameof(accountOwner));
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var model = await AccountOwners.GetByEmailAsync(accountOwner.Email);
+            var model = await AccountOwners.GetByEmailAsync(user.Email);
 
             if (model != null)
             {
@@ -59,11 +60,11 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task DeclineInvitation(AccountOwner accountOwner)
+        public async Task DeclineInvitation(Identity user)
         {
-            ArgumentNullException.ThrowIfNull(nameof(accountOwner));
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var model = await AccountOwners.GetByEmailAsync(accountOwner.Email);
+            var model = await AccountOwners.GetByEmailAsync(user.Email);
 
             if (model != null)
             {

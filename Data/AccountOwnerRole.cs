@@ -2,9 +2,11 @@
 {
     public enum AccountOwnerRole
     {
-        Member = 0,
+        Undefined = 0,
 
-        Manager = 1,
+        Member = 1,
+
+        Manager = 10,
 
         GlobalAdmin = 999
     }

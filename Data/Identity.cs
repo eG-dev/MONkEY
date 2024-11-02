@@ -17,7 +17,11 @@ namespace MONkEY.Data
 
         public AccountOwnerStatus Status { get; init; }
 
-        public bool IsGlobalAdmin { get; init; } = false;
+        public AccountOwnerRole Role { get; init; }
+
+        public bool IsGlobalAdmin { get => Role == AccountOwnerRole.GlobalAdmin; }
+
+        public bool IsAllowedToManage { get => Role > AccountOwnerRole.Member; }
 
         public bool IsKnown { get => !string.IsNullOrEmpty(Email); }
 

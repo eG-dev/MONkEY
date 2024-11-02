@@ -56,7 +56,7 @@ namespace MONkEY.Data.Services
                     LastLoggedOn = owner?.LastLoggedOn,
                     TermsAcceptedOn = owner?.TermsAcceptedOn,
                     Status = owner?.Status ?? AccountOwnerStatus.Undefined,
-                    IsGlobalAdmin = owner?.Role == AccountOwnerRole.GlobalAdmin,
+                    Role = owner?.Role ?? AccountOwnerRole.Undefined,
                 };
             }
 

@@ -91,14 +91,14 @@ else if (AccountOwner.Status == AccountOwnerStatus.Disabled)
 
     private async Task AcceptInvitation()
     {
-        await TenantManagement.AcceptInvitation(AccountOwner!);
+        await TenantManagement.AcceptInvitation(User!);
 
         Navigation.NavigateTo("/", true);
     }
 
     private async Task DeclineInvitation()
     {
-        await TenantManagement.DeclineInvitation(AccountOwner!);
+        await TenantManagement.DeclineInvitation(User!);
 
         Navigation.NavigateTo("/", true);
     }

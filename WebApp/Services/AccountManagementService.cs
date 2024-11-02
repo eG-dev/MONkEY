@@ -26,9 +26,24 @@ namespace MONkEY.WebApp.Services
             Blobs = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        public async Task<Account?> UpdateImage(string tenantKey, string accountKey, string imageDataBase64)
+        public async Task<Account?> UpdateImage(Identity user, string accountKey, string imageDataBase64)
         {
-            var account = await Accounts.GetAsync(tenantKey, accountKey);
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (!user.IsAllowedToManage)
+            {
+                throw new InvalidOperationException("User is not allowed to edit accounts!");
+            }
+            if (string.IsNullOrEmpty(accountKey))
+            {
+                throw new ArgumentException("Account key is required!", nameof(accountKey));
+            }
+
+            var account = await Accounts.GetAsync(user.TenantKey, accountKey);
 
             if (account != null)
             {
@@ -49,37 +64,67 @@ namespace MONkEY.WebApp.Services
             return account;
         }
 
-        public async Task<Account?> CreateAccount(string tenantKey, string name)
+        public async Task<Account?> Create(Identity user, string accountName)
         {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (!user.IsAllowedToManage)
+            {
+                throw new InvalidOperationException("User is not allowed to create accounts!");
+            }
+            if (string.IsNullOrEmpty(accountName))
+            {
+                throw new ArgumentException("Account name is required!", nameof(accountName));
+            }
+
             var account = await Accounts.AddAsync(new Account()
             {
-                PartitionKey = tenantKey,
-                Name = name,
+                PartitionKey = user.TenantKey,
+                Name = accountName,
             });
 
             return account;
         }
 
-        public async Task DeleteAccount(string tenantKey, string accountKey)
+        public async Task Delete(Identity user, string accountKey)
         {
-            var account = await Accounts.GetAsync(tenantKey, accountKey);
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (!user.IsAllowedToManage)
+            {
+                throw new InvalidOperationException("User is not allowed to delete accounts!");
+            }
+            if (string.IsNullOrEmpty(accountKey))
+            {
+                throw new ArgumentException("Account key is required!", nameof(accountKey));
+            }
+
+            var account = await Accounts.GetAsync(user.TenantKey, accountKey);
 
             if (account != null)
             {
                 if (!string.IsNullOrEmpty(account.Image))
                 {
-                    await Blobs.DeleteFileAsync($"{account.TenantKey}/{account.Image}");
+                    await Blobs.DeleteFileAsync($"{user.TenantKey}/{account.Image}");
                 }
 
-                await Reports.DeleteAllAsync(tenantKey, accountKey);
+                await Reports.DeleteAllAsync(user.TenantKey, accountKey);
 
-                await Transactions.DeleteAllAsync(tenantKey, accountKey);
+                await Transactions.DeleteAllAsync(user.TenantKey, accountKey);
 
-                await Accounts.DeleteAsync(tenantKey, accountKey);
+                await Accounts.DeleteAsync(user.TenantKey, accountKey);
             }
         }
 
-        public string GetAccountImageSrc(Account account)
+        public string GetImageSrc(Account account)
         {
             return !string.IsNullOrEmpty(account?.Image)
                 ? $"api/image/{account.TenantKey}/{account.Image}"

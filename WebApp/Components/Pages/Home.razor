@@ -26,7 +26,7 @@ else if (User?.Status == AccountOwnerStatus.Active)
         {
             _lastTransactions.TryGetValue(account.AccountKey, out Transaction? transaction);
 
-            var accountImageSrc = AccountManagement.GetAccountImageSrc(account);
+            var accountImageSrc = AccountManagement.GetImageSrc(account);
 
             var accountDetailsAction = () => GotoAccountDetails(account.AccountKey);
             var accountEditAction = () => GotoAccountEdit(account.AccountKey);
@@ -45,12 +45,15 @@ else if (User?.Status == AccountOwnerStatus.Active)
                             </MudText>
                         </CardHeaderContent>
                         <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="accountEditAction" />
+                            @if (User.IsAllowedToManage)
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="accountEditAction" />
+                            }
                         </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardMedia Image="@accountImageSrc"
                                   Class="cursor-pointer"
-                                  @onclick="accountEditAction" />
+                                  @onclick="accountDetailsAction" />
                     <MudCardContent>
                         <MudText Typo="Typo.body1">Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" /></MudText>
                         @if (transaction != null)
@@ -79,11 +82,15 @@ else if (User?.Status == AccountOwnerStatus.Active)
         <div class="d-flex flex-column align-center mt-6">
             <MudText Typo="Typo.h5">Es ist ganz schön leer hier...</MudText>
             <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
-            <MudText Typo="Typo.body1">Wir sollten als allererstes ein neues Konto hinzufügen.</MudText>
+            
+            @if (User.IsAllowedToManage)
+            {
+                <MudText Typo="Typo.body1">Wir sollten als allererstes ein neues Konto hinzufügen.</MudText>
+            }
         </div>
     }
-    
-    if (_accounts.Count < 9)
+
+    if (_accounts.Count < 9 && User.IsAllowedToManage)
     {
         <div class="d-flex flex-column align-center mt-6">
             <MudButton Variant="Variant.Text"
@@ -136,7 +143,7 @@ else if (User?.Status == AccountOwnerStatus.Active)
 
         if (result?.Data != null && result.Data is string accountName)
         {
-            var account = await AccountManagement.CreateAccount(User.TenantKey, accountName);
+            var account = await AccountManagement.Create(User, accountName);
 
             if (account != null)
             {
