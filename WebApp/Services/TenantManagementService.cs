@@ -29,7 +29,7 @@ namespace MONkEY.WebApp.Services
                 {
                     PartitionKey = user.Email,
                     RowKey = Guid.NewGuid().ToString(),
-                    Status = AccountOwnerStatus.New,
+                    Status = AccountOwnerStatus.Active,
                     Role = AccountOwnerRole.Manager,
                 });
             }
