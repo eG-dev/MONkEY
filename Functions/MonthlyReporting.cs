@@ -67,7 +67,6 @@ namespace MONkEY.Functions
                 var tenantKey = emailGroup.Key;
 
                 var accounts = await _accounts.GetAllAsync(tenantKey);
-                accounts = [accounts[0]];
 
                 foreach (var account in accounts)
                 {
