@@ -134,7 +134,7 @@ namespace MONkEY.Functions
                         {
                             transactionEntries += string.Format(
                                 "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
-                                transaction.Amount < 0 ? "red" : "green",
+                                transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
                                 transaction.Amount.ToString("+0.##;-0.##"),
                                 transaction.TriggeredOn,
                                 transaction.TriggeredBy);

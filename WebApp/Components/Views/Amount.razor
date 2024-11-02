@@ -1,7 +1,9 @@
-﻿@if (Value != null)
+﻿@if (Value.HasValue)
 {
+    var value = Value.GetValueOrDefault();
+
     <span style="@GetStyle()">
-        @Value.Value.ToString("+0.##;-0.##")@Unit
+        @(value == 0 ? 0 : value.ToString("+0.##;-0.##"))@Unit
     </span>
 }
 
@@ -17,9 +19,16 @@
 
     private string GetStyle()
     {
-        var color = Value!.Value < 0 ? "var(--mud-palette-error)" : "var(--mud-palette-success)";
+        var value = Value.GetValueOrDefault();
+
+        var color = value == 0
+            ? "--mud-palette-text-primary"
+            : value < 0
+                ? "--mud-palette-error"
+                : "--mud-palette-success";
+
         var fontWeight = IsBold ? "font-weight: bold;" : "";
 
-        return $"color: {color}; {fontWeight}";
+        return $"color: var({color}); {fontWeight}";
     }
 }

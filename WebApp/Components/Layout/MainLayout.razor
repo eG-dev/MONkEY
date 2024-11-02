@@ -12,8 +12,8 @@
 
 <InitializeTimeZone />
 
-<MudThemeProvider/>
-<MudPopoverProvider/>
+<MudThemeProvider Theme="Theme" />
+<MudPopoverProvider />
 
 <MudDialogProvider FullWidth="true"
                    MaxWidth="MaxWidth.Medium"
@@ -112,6 +112,16 @@
 
 @code {
     private readonly DateTimeOffset USAGE_TERMS_VALID_FROM = DateTimeOffset.Parse("2024-10-31");
+
+    private readonly MudTheme Theme = new MudTheme()
+        {
+            PaletteLight = new PaletteLight()
+            {
+                Primary = Colors.Indigo.Default,
+                Success = Colors.Green.Darken2,
+                Error = Colors.Red.Darken4,
+            },
+        };
 
     private bool _drawerOpen = false;
 
