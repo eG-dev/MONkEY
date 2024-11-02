@@ -4,9 +4,9 @@
     {
         Undefined = 0,
 
-        New = 1,
+        Invited = 1,
 
-        Invited = 10,
+        New = 10,
 
         Active = 100,
 

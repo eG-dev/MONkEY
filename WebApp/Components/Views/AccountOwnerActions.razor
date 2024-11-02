@@ -3,7 +3,7 @@
 @inject TenantManagementService TenantManagement
 @inject NavigationManager Navigation
 
-@if (AccountOwner == null)
+@if (User.Status == AccountOwnerStatus.Undefined)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudImage Class="mb-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
@@ -27,17 +27,32 @@
         </div>
     </div>
 }
-else if (AccountOwner.Status == AccountOwnerStatus.New)
+else if (User.Status == AccountOwnerStatus.New)
 {
     <div class="d-flex flex-column align-center mt-6">
-        <MudText Typo="Typo.h5">Dein Nutzer wartet auf die Freischaltung!</MudText>
+        <MudText Typo="Typo.h5">Wunderbar, wir sind fast fertig!</MudText>
         <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
-        <MudAlert Severity="Severity.Info">
-            Bitte schau zu einem späteren Zeitpunkt wieder vorbei oder wende Dich an den Administrator.
+        <MudText Typo="Typo.body1" Align="Align.Center">Lass uns noch schnell die Einrichtung deines Kontos abschließen.</MudText>
+
+        <MudCheckBox @bind-Value="accountOwnerSettings.IsMonthlyReportingEnabled">
+            Ich möchte monatliche Berichte per E-Mail erhalten.
+        </MudCheckBox>
+
+        <MudAlert Class="my-3" Severity="Severity.Info">
+            Du kannst diese Einstellungen auch später jederzeit wieder in den Kontoeinstellungen ändern.
         </MudAlert>
+
+        <div class="d-flex flex-row align-center mt-6">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.CheckCircle"
+                       Color="Color.Success"
+                       OnClick="ActivateUser">
+                Einrichtung abschließen
+            </MudButton>
+        </div>
     </div>
 }
-else if (AccountOwner.Status == AccountOwnerStatus.Invited)
+else if (User.Status == AccountOwnerStatus.Invited)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudText Typo="Typo.h5">Du wurdest zu POCKET MONkEY eingeladen!</MudText>
@@ -67,7 +82,7 @@ else if (AccountOwner.Status == AccountOwnerStatus.Invited)
         </div>
     </div>
 }
-else if (AccountOwner.Status == AccountOwnerStatus.Disabled)
+else if (User.Status == AccountOwnerStatus.Disabled)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudText Typo="Typo.h5">Dein Nutzer wurde vom Administrator gesperrt!</MudText>
@@ -76,15 +91,21 @@ else if (AccountOwner.Status == AccountOwnerStatus.Disabled)
 }
 
 @code {
-    [CascadingParameter]
-    private Identity User { get; set; } = default!;
-
     [Parameter]
-    public AccountOwner? AccountOwner { get; set; } = default!;
+    public Identity User { get; set; } = default!;
+
+    private readonly AccountOwnerPreferences accountOwnerSettings = new();
 
     private async Task CreateTenant()
     {
         await TenantManagement.CreateTenant(User!);
+
+        Navigation.NavigateTo("/", true);
+    }
+
+    private async Task ActivateUser()
+    {
+        await TenantManagement.ActivateUser(User!, accountOwnerSettings);
 
         Navigation.NavigateTo("/", true);
     }

@@ -8,7 +8,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigation
 @inject IIdentityService Identity
-@inject IAccountOwnerService AccountOwners
+@inject UsageTermsService UsageTerms
 
 <InitializeTimeZone />
 
@@ -29,7 +29,7 @@
     <MudAppBar Color="Color.Dark" Fixed="true" Dense="false" Elevation="2">
         <MudImage Height="30" Src="/images/monkey.png" @onclick="NavigateToHome" Class="cursor-pointer"></MudImage>
         <MudSpacer />
-        @if (_user?.IsKnown == true)
+        @if (_user != null)
         {
             <MudText Color="Color.Default">@_user</MudText>
             <MudIconButton Icon="@Icons.Material.TwoTone.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="ToggleDrawer" />
@@ -40,7 +40,7 @@
         }
     </MudAppBar>
 
-    @if (_user?.IsKnown == true)
+    @if (_user != null)
     {
         <MudDrawer Variant="DrawerVariant.Temporary" Anchor="Anchor.End" Elevation="1" @bind-Open="@_drawerOpen">
             <MudDrawerHeader>
@@ -72,21 +72,22 @@
                                     {
                                         <PageLoader />
                                     }
-                                    else if (!_user.HasAcceptedUsageTerms)
+                                    else if (!UsageTerms.HasAcceptedUsageTerms(_user))
                                     {
                                         <UsageTermsView />
 
-                                        <MudButton Class="mt-3"
-                                                   Variant="Variant.Filled"
-                                                   StartIcon="@Icons.Material.Filled.CheckCircle"
-                                                   Color="Color.Success"
-                                                   OnClick="AcceptUsageTerms">
-                                            Akzeptieren und fortfahren
-                                        </MudButton>
+                                        <div class="d-flex flex-row align-center mt-6">
+                                            <MudButton Variant="Variant.Filled"
+                                                       StartIcon="@Icons.Material.Filled.CheckCircle"
+                                                       Color="Color.Success"
+                                                       OnClick="AcceptUsageTerms">
+                                                Akzeptieren und fortfahren
+                                            </MudButton>
+                                        </div>
                                     }
                                     else if (_user.Status != AccountOwnerStatus.Active)
                                     {
-                                        <AccountOwnerActions AccountOwner="@_accountOwner" />
+                                        <AccountOwnerActions User="@_user" />
                                     }
                                     else
                                     {
@@ -130,21 +131,13 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = await Identity.FromPrincipal(authState.User);
-
-        if (_user != null && _user.Status != AccountOwnerStatus.Active)
-        {
-            _accountOwner = await AccountOwners.GetByEmailAsync(_user.Email);
-        }
     }
 
     private async Task AcceptUsageTerms()
     {
-        _accountOwner = await AccountOwners.GetByEmailAsync(_user!.Email);
-
-        if (_accountOwner != null)
+        if (_user != null)
         {
-            _accountOwner.TermsAcceptedOn = DateTimeOffset.UtcNow;
-            _accountOwner = await AccountOwners.UpdateAsync(_accountOwner);
+            await UsageTerms.Accept(_user);
 
             Navigation.NavigateTo("/", true);
         }

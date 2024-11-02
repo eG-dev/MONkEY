@@ -217,11 +217,6 @@ else
 
     private async Task UpdateBalance(double amount, string? comment)
     {
-        if (User == null || !User.IsKnown)
-        {
-            return;
-        }
-
         _isUpdating = true;
         StateHasChanged();
 

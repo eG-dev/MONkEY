@@ -21,42 +21,44 @@ namespace MONkEY.WebApp.Services
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var model = await AccountOwners.GetByEmailAsync(user.Email);
+            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
 
-            if (model == null)
+            if (accountOwner == null)
             {
-                model = await AccountOwners.AddAsync(new()
+                accountOwner = await AccountOwners.AddAsync(new()
                 {
                     PartitionKey = user.Email,
                     RowKey = Guid.NewGuid().ToString(),
-                    Status = AccountOwnerStatus.Active,
+                    Status = AccountOwnerStatus.New,
                     Role = AccountOwnerRole.Manager,
                 });
             }
 
-            return model;
+            return accountOwner;
         }
 
         public async Task AcceptInvitation(Identity user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var model = await AccountOwners.GetByEmailAsync(user.Email);
+            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
 
-            if (model != null)
+            if (accountOwner != null)
             {
-                if (model.Status != AccountOwnerStatus.Invited)
+                if (accountOwner.Status != AccountOwnerStatus.Invited)
                 {
                     throw new InvalidOperationException($"Status '{nameof(AccountOwnerStatus.Invited)}' is required!");
                 }
-                if (string.IsNullOrEmpty(model.TenantKey))
+                if (string.IsNullOrEmpty(accountOwner.TenantKey))
                 {
                     throw new InvalidOperationException($"Tenant key is required!");
                 }
 
-                model.Status = AccountOwnerStatus.Active;
+                accountOwner.Status = accountOwner.Role == AccountOwnerRole.Member
+                    ? AccountOwnerStatus.Active // Members are automatically activated
+                    : AccountOwnerStatus.New;
 
-                await AccountOwners.UpdateAsync(model);
+                await AccountOwners.UpdateAsync(accountOwner);
             }
         }
 
@@ -64,18 +66,18 @@ namespace MONkEY.WebApp.Services
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var model = await AccountOwners.GetByEmailAsync(user.Email);
+            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
 
-            if (model != null)
+            if (accountOwner != null)
             {
-                if (model.Status != AccountOwnerStatus.Invited)
+                if (accountOwner.Status != AccountOwnerStatus.Invited)
                 {
                     throw new InvalidOperationException($"Status '{nameof(AccountOwnerStatus.Invited)}' is required!");
                 }
 
-                var tenantKey = model.TenantKey;
+                var tenantKey = accountOwner.TenantKey;
 
-                await AccountOwners.DeleteAsync(model.Email);
+                await AccountOwners.DeleteAsync(accountOwner.Email);
 
                 if (!string.IsNullOrEmpty(tenantKey))
                 {
@@ -93,6 +95,22 @@ namespace MONkEY.WebApp.Services
                         }
                     }
                 }
+            }
+        }
+
+        public async Task ActivateUser(Identity user, AccountOwnerPreferences preferences)
+        {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            ArgumentNullException.ThrowIfNull(preferences, nameof(preferences));
+
+            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
+
+            if (accountOwner != null)
+            {
+                accountOwner.Preferences = preferences;
+                accountOwner.Status = AccountOwnerStatus.Active;
+
+                await AccountOwners.UpdateAsync(accountOwner);
             }
         }
     }

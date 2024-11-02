@@ -39,6 +39,7 @@ namespace MONkEY.WebApp
 
             services.AddScoped<AccountManagementService>();
             services.AddScoped<TenantManagementService>();
+            services.AddScoped<UsageTermsService>();
 
             return services;
         }

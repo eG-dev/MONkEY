@@ -59,7 +59,9 @@ namespace MONkEY.Functions
             var owners = await _owners.GetAllAsync();
 
             var recipientGroups = owners
-                .Where(x => x.Role != AccountOwnerRole.Member)
+                .Where(x =>
+                    x.Role >= AccountOwnerRole.Manager &&
+                    x.Status == AccountOwnerStatus.Active)
                 .GroupBy(x => x.TenantKey);
 
             foreach (var emailGroup in recipientGroups)
@@ -123,38 +125,46 @@ namespace MONkEY.Functions
 
                     await _reports.AddAsync(report);
 
-                    var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
+                    var emailRecipients = emailGroup
+                        .Where(x => x.Preferences.IsMonthlyReportingEnabled)
+                        .Select(x => x.Email)
+                        .ToList();
 
-                    string transactionEntries = string.Empty;
-                    if (reportPayload.Transactions.Count > 0)
+                    if (emailRecipients.Count > 0)
                     {
-                        transactionEntries += "<ul>";
+                        var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
 
-                        foreach (var transaction in reportPayload.Transactions)
+                        string transactionEntries = string.Empty;
+                        if (reportPayload.Transactions.Count > 0)
                         {
-                            transactionEntries += string.Format(
-                                "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
-                                transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                                transaction.Amount.ToString("+0.##;-0.##"),
-                                transaction.TriggeredOn,
-                                transaction.TriggeredBy);
+                            transactionEntries += "<ul>";
+
+                            foreach (var transaction in reportPayload.Transactions)
+                            {
+                                transactionEntries += string.Format(
+                                    "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
+                                    transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
+                                    transaction.Amount.ToString("+0.##;-0.##"),
+                                    transaction.TriggeredOn,
+                                    transaction.TriggeredBy);
+                            }
+
+                            transactionEntries += "</ul>";
+                        }
+                        else
+                        {
+                            transactionEntries = "<p>Es gab keine Transaktionen.</p>";
                         }
 
-                        transactionEntries += "</ul>";
-                    }
-                    else
-                    {
-                        transactionEntries = "<p>Es gab keine Transaktionen.</p>";
-                    }
+                        var emailBody = _email
+                            .GetTemplate("body_monthly_report")
+                            .Replace("{{ACCOUNT_NAME}}", reportPayload.AccountName)
+                            .Replace("{{CLOSING_BALANCE}}", reportPayload.ClosingBalance.ToString())
+                            .Replace("{{STARTING_BALANCE}}", reportPayload.StartingBalance.ToString())
+                            .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries, StringComparison.Ordinal);
 
-                    var emailBody = _email
-                        .GetTemplate("body_monthly_report")
-                        .Replace("{{ACCOUNT_NAME}}", reportPayload.AccountName)
-                        .Replace("{{CLOSING_BALANCE}}", reportPayload.ClosingBalance.ToString())
-                        .Replace("{{STARTING_BALANCE}}", reportPayload.StartingBalance.ToString())
-                        .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries, StringComparison.Ordinal);
-
-                    await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
+                        await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
+                    }
                 }
             }
         }
