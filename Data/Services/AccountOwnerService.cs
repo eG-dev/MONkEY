@@ -27,6 +27,9 @@ namespace MONkEY.Data.Services
         {
             ValidateModel(model);
 
+            // Force lower-case for the email address
+            model.PartitionKey = model.PartitionKey.ToLowerInvariant();
+
             var response = await _tableClient.AddEntityAsync(model);
 
             if (response.IsError)
