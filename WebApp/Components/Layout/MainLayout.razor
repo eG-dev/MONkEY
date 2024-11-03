@@ -97,7 +97,7 @@
                                     {
                                         <PageLoader />
                                     }
-                                    else if (!UsageTerms.HasAcceptedUsageTerms(_user))
+                                    else if (_user.Status != AccountOwnerStatus.Undefined && !UsageTerms.HasAcceptedUsageTerms(_user))
                                     {
                                         <UsageTermsView />
 
