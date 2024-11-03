@@ -29,7 +29,7 @@ namespace MONkEY.WebApp.Services
                 {
                     PartitionKey = user.Email,
                     RowKey = Guid.NewGuid().ToString(),
-                    Status = AccountOwnerStatus.New,
+                    Status = AccountOwnerStatus.Pending,
                     Role = AccountOwnerRole.Manager,
                 });
             }
@@ -91,7 +91,7 @@ namespace MONkEY.WebApp.Services
                 accountOwner.Status = accountOwner.Role == AccountOwnerRole.Member
                     // Members are automatically activated, because they don't get emails anyways
                     ? AccountOwnerStatus.Active
-                    : AccountOwnerStatus.New;
+                    : AccountOwnerStatus.Pending;
 
                 await AccountOwners.UpdateAsync(accountOwner);
             }

@@ -21,7 +21,7 @@ namespace MONkEY.Data
         [IgnoreDataMember]
         public string TenantKey { get => RowKey; }
 
-        public AccountOwnerStatus Status { get; set; } = AccountOwnerStatus.New;
+        public AccountOwnerStatus Status { get; set; } = AccountOwnerStatus.Pending;
 
         public AccountOwnerRole Role { get; set; } = AccountOwnerRole.Manager;
 

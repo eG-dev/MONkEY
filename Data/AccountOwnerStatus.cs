@@ -6,7 +6,7 @@
 
         Invited = 1,
 
-        New = 10,
+        Pending = 10,
 
         Active = 100,
 
