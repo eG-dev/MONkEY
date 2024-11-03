@@ -13,7 +13,7 @@
                              Format="N2"
                              Immediate="true"
                              Adornment="Adornment.Start"
-                             AdornmentIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)"
+                             AdornmentIcon="@(PayOut ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add)"
                              AdornmentColor="@(PayOut ? Color.Error : Color.Success)" />
         </MudFocusTrap>
 
@@ -29,7 +29,7 @@
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="@(PayOut ? Color.Error : Color.Success)"
-                   StartIcon="@(PayOut ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)"
+                   StartIcon="@(PayOut ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add)"
                    OnClick="Submit">
             @(PayOut ? "Auszahlen" : "Einzahlen")
         </MudButton>

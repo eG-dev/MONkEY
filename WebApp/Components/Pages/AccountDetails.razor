@@ -10,8 +10,8 @@
 @inject AccountManagementService AccountManagement
 @inject IAccountService Accounts
 @inject ITransactionService Transactions
-@inject ISnackbar Snackbar
 @inject IDialogService Dialog
+@inject ISnackbar Snackbar
 
 <PageTitle>POCKET MONkEY - Kontodetails</PageTitle>
 
@@ -35,7 +35,7 @@ else if (_account != null)
 
         @if (User.IsAllowedToManage)
         {
-            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
+            <MudIconButton Icon="@Icons.Material.TwoTone.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
         }
     </div>
 

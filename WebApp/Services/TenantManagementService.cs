@@ -37,33 +37,60 @@ namespace MONkEY.WebApp.Services
             return accountOwner;
         }
 
+        public async Task ActivateUser(Identity user, AccountOwnerPreferences preferences)
+        {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            ArgumentNullException.ThrowIfNull(preferences, nameof(preferences));
+
+            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
+
+            if (accountOwner != null)
+            {
+                accountOwner.Preferences = preferences;
+                accountOwner.Status = AccountOwnerStatus.Active;
+
+                await AccountOwners.UpdateAsync(accountOwner);
+            }
+        }
+
         public async Task InviteUser(Identity user, string email, AccountOwnerRole role)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
             if (string.IsNullOrEmpty(user.TenantKey))
             {
-                throw new InvalidOperationException("User is not assigned to a tenant!");
+                throw new InvalidOperationException("Inviting user is not assigned to a tenant!");
+            }
+            if (user.Role < AccountOwnerRole.Manager)
+            {
+                throw new InvalidOperationException("Inviting user is not allowed to manage the tenant!");
             }
 
             ArgumentException.ThrowIfNullOrEmpty("Email is required!", nameof(email));
 
             if (role == AccountOwnerRole.Undefined || role == AccountOwnerRole.GlobalAdmin)
             {
-                throw new ArgumentException("Invalid role provided!");
+                throw new ArgumentException($"The role {role} can't be assigned!");
             }
 
             var accountOwner = await AccountOwners.GetByEmailAsync(email);
 
             if (accountOwner != null)
             {
-                throw new InvalidOperationException("User has already an account!");
+                if (accountOwner.TenantKey == user.TenantKey)
+                {
+                    throw new InvalidOperationException("User is already part of the tenant!");
+                }
+                else
+                {
+                    throw new InvalidOperationException("User is already part of an another tenant!");
+                }
             }
             else
             {
                 await AccountOwners.AddAsync(new()
                 {
-                    PartitionKey = user.Email,
+                    PartitionKey = email,
                     RowKey = user.TenantKey,
                     Status = AccountOwnerStatus.Invited,
                     Role = role,
@@ -133,20 +160,24 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task ActivateUser(Identity user, AccountOwnerPreferences preferences)
+        public async Task DeleteUser(Identity user, string email)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
-            ArgumentNullException.ThrowIfNull(preferences, nameof(preferences));
 
-            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
-
-            if (accountOwner != null)
+            if (string.IsNullOrEmpty(user.TenantKey))
             {
-                accountOwner.Preferences = preferences;
-                accountOwner.Status = AccountOwnerStatus.Active;
-
-                await AccountOwners.UpdateAsync(accountOwner);
+                throw new InvalidOperationException("Inviting user is not assigned to a tenant!");
             }
+            if (user.Role < AccountOwnerRole.Manager)
+            {
+                throw new InvalidOperationException("Inviting user is not allowed to manage the tenant!");
+            }
+            if (user.Email == email)
+            {
+                throw new InvalidOperationException($"User must not delete own account!");
+            }
+
+            await AccountOwners.DeleteAsync(email);
         }
     }
 }

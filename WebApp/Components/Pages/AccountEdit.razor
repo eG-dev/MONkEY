@@ -63,7 +63,7 @@
         <div class="mt-1">
             <MudButton Variant="Variant.Filled"
             Color="Color.Primary"
-            StartIcon="@Icons.Material.Filled.Edit"
+            StartIcon="@Icons.Material.TwoTone.Edit"
             Style="min-width: 150px"
             OnClick="InitiateImageUpdate">
                 Bild ändern
@@ -73,7 +73,7 @@
         <div class="mt-6">
             <MudButton Variant="Variant.Text"
             Color="Color.Error"
-            StartIcon="@Icons.Material.Filled.Delete"
+            StartIcon="@Icons.Material.TwoTone.Delete"
             Style="min-width: 150px"
             OnClick="InitiateDeletion">
                 Konto löschen
@@ -134,7 +134,7 @@ else
                     "Bearbeiten",
                     $"/account/{_account.TenantKey}/{_account.AccountKey}/edit",
                     false,
-                    Icons.Material.Filled.Edit));
+                    Icons.Material.TwoTone.Edit));
             }
         }
 

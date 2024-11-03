@@ -10,6 +10,7 @@
 @inject TenantManagementService TenantManagement
 @inject IAccountOwnerService AccountOwners
 @inject IDialogService Dialog
+@inject ISnackbar Snackbar
 
 <PageTitle>POCKET MONkEY - Mein Bereich</PageTitle>
 
@@ -31,34 +32,63 @@ else
                   Dense="true"
                   Striped="true"
                   Breakpoint="Breakpoint.Sm"
-                  Loading="@_isLoading"
+                  Loading="@_isUpdating"
                   LoadingProgressColor="Color.Info">
 
             <HeaderContent>
                 <MudTh>Email</MudTh>
                 <MudTh>Rolle</MudTh>
                 <MudTh>Status</MudTh>
+                <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Email"><b>@context.Email</b></MudTd>
+                <MudTd DataLabel="Email">
+                    @if (context.Email == User.Email)
+                    {
+                        <b>@context.Email</b>
+                    }
+                    else
+                    {
+                        @context.Email
+                    }
+                </MudTd>
                 <MudTd DataLabel="Rolle">@_roles[context.Role]</MudTd>
                 <MudTd DataLabel="Status">@_statuus[context.Status]</MudTd>
+                <MudTd>
+                    @if (context.Email != User.Email)
+                    {
+                        <div class="d-flex flex-row justify-end">
+                            @* <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Edit" /> *@
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Delete" OnClick="() => InitiateUserDeletion(context.Email)" />
+                        </div>
+                    }
+                </MudTd>
             </RowTemplate>
         </MudTable>
     </div>
 
-@*     if (User.IsAllowedToManage)
+    if (User.IsAllowedToManage)
     {
-        <div class="mt-6">
+        <div class="mt-1">
             <MudButton Variant="Variant.Text"
-            Color="Color.Error"
-            StartIcon="@Icons.Material.Filled.Delete"
-            Style="min-width: 150px"
-            OnClick="InitiateDeletion">
-                Bereich löschen
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.TwoTone.Add"
+                       Style="min-width: 150px"
+                       OnClick="InitiateUserInvitation">
+                Nutzer hinzufügen
             </MudButton>
         </div>
-    } *@
+
+@*         <div class="mt-6">
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Error"
+                       StartIcon="@Icons.Material.TwoTone.Delete"
+                       Style="min-width: 150px"
+                       OnClick="InitiateTenantDeletion">
+                Bereich löschen
+            </MudButton>
+        </div> *@
+    }
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -75,7 +105,7 @@ else
     private Dictionary<AccountOwnerRole, string> _roles = new()
     {
         { AccountOwnerRole.Undefined, "Ungültig" },
-        { AccountOwnerRole.Member, "Mitglied" },
+        { AccountOwnerRole.Member, "Nutzer" },
         { AccountOwnerRole.Manager, "Verwalter" },
         { AccountOwnerRole.GlobalAdmin, "Administrator" },
     };
@@ -94,15 +124,12 @@ else
         new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
     };
 
-    private bool _isLoading = true;
     private bool _isUpdating = false;
 
     private List<AccountOwner>? _accountOwners = null;
 
     protected async override Task OnInitializedAsync()
     {
-        _isLoading = true;
-
         if (_accountOwners == null)
         {
             if (!string.IsNullOrWhiteSpace(TenantKey))
@@ -120,7 +147,96 @@ else
                 false,
                 Icons.Material.TwoTone.AdminPanelSettings));
         }
+    }
 
-        _isLoading = false;
+    private async Task InitiateUserInvitation()
+    {
+        var dialog = await Dialog.ShowAsync<InvitationDialog>(
+            "Nutzer hinzufügen",
+            new DialogParameters<InvitationDialog>(),
+            new DialogOptions()
+                {
+                    MaxWidth = MaxWidth.Small,
+                });
+
+        var result = await dialog.Result;
+
+        if (result != null &&
+            result.Data is InvitationDialogModel model &&
+            !string.IsNullOrWhiteSpace(model.Email))
+        {
+            _isUpdating = true;
+
+            var existingOwner = await AccountOwners.GetByEmailAsync(model.Email);
+
+            if (existingOwner != null)
+            {
+                Snackbar.Add(existingOwner.TenantKey == User.TenantKey
+                    ? $"Der Nutzer '{model.Email}' ist bereits Teil des Bereichs!"
+                    : $"Der Nutzer '{model.Email}' ist bereits einem anderen Bereich zugewiesen!",
+                    Severity.Error);
+            }
+            else
+            {
+                try
+                {
+                    AccountOwnerRole role = model.AssignManagerRole
+                        ? AccountOwnerRole.Manager
+                        : AccountOwnerRole.Member;
+
+                    await TenantManagement.InviteUser(User, model.Email, role);
+
+                    _accountOwners = await AccountOwners.GetTenantOwnersAsync(TenantKey);
+
+                    Snackbar.Add($"Der Nutzer '{model.Email}' wurde zum Bereich hinzugefügt.", Severity.Success);
+                }
+                catch
+                {
+                    Snackbar.Add($"Der Nutzer '{model.Email}' konnte nicht zum Bereich hinzugefügt werden!", Severity.Error);
+                }
+                finally
+                {
+                    _isUpdating = false;
+                }
+            }
+        }
+    }
+
+    private async Task InitiateUserDeletion(string email)
+    {
+        var dialog = await Dialog.ShowAsync<AccountDeletionDialog>(
+            "Nutzer entfernen",
+            new DialogParameters<AccountDeletionDialog>()
+                {
+                    { x => x.AccountName, email }
+                },
+            new DialogOptions()
+                {
+                    MaxWidth = MaxWidth.Small,
+                });
+
+        var result = await dialog.Result;
+
+        if (result?.Data != null && (bool)result.Data == true)
+        {
+            _isUpdating = true;
+
+            try
+            {
+                await TenantManagement.DeleteUser(User, email);
+
+                _accountOwners = await AccountOwners.GetTenantOwnersAsync(TenantKey);
+
+                Snackbar.Add($"Der Nutzer '{email}' wurde aus dem Bereich entfernt.", Severity.Success);
+            }
+            catch
+            {
+                Snackbar.Add($"Der Nutzer konnte nicht entfernt werden!", Severity.Error);
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
+        }
     }
 }

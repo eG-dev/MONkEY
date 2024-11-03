@@ -47,7 +47,7 @@ else if (User.Status == AccountOwnerStatus.Active)
                         <CardHeaderActions>
                             @if (User.IsAllowedToManage)
                             {
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" OnClick="accountEditAction" />
+                                <MudIconButton Icon="@Icons.Material.TwoTone.Edit" Color="Color.Default" OnClick="accountEditAction" />
                             }
                         </CardHeaderActions>
                     </MudCardHeader>
@@ -95,7 +95,7 @@ else if (User.Status == AccountOwnerStatus.Active)
         <div class="d-flex flex-column align-center mt-6">
             <MudButton Variant="Variant.Text"
                        Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.Add"
+                       StartIcon="@Icons.Material.TwoTone.Add"
                        Style="min-width: 150px"
                        OnClick="AddAccount">
                 Konto hinzufügen

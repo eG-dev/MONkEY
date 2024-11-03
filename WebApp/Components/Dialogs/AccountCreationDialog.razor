@@ -6,7 +6,7 @@
 
         <MudTextField T="string"
                       Class="mt-6"
-                      Label="Name"
+                      Label="Email"
                       Variant="Variant.Outlined"
                       @bind-Value="@AccountName"
                       MaxLength="25"
@@ -19,7 +19,7 @@
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.Add"
+                   StartIcon="@Icons.Material.TwoTone.Add"
                    OnClick="Submit">
             Konto hinzufügen
         </MudButton>
