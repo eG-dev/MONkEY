@@ -25,6 +25,19 @@
 else if (_accountOwners.Count > 0)
 {
     <MudText Typo="Typo.h6">Nutzer</MudText>
+    
+    @if (User.IsAllowedToManage)
+    {
+        <div class="mb-1 d-flex flex-row justify-end">
+            <MudButton Variant="Variant.Text"
+            Color="Color.Primary"
+            StartIcon="@Icons.Material.TwoTone.Add"
+            Style="min-width: 150px"
+            OnClick="InitiateUserInvitation">
+                Nutzer hinzufügen
+            </MudButton>
+        </div>
+    }
 
     <div class="pb-3">
         <MudTable Items="@_accountOwners"
@@ -66,19 +79,9 @@ else if (_accountOwners.Count > 0)
         </MudTable>
     </div>
 
-    if (User.IsAllowedToManage)
+@*     if (User.IsAllowedToManage)
     {
-        <div class="mt-1">
-            <MudButton Variant="Variant.Text"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.TwoTone.Add"
-                       Style="min-width: 150px"
-                       OnClick="InitiateUserInvitation">
-                Nutzer hinzufügen
-            </MudButton>
-        </div>
-
-@*         <div class="mt-6">
+        <div class="mt-6">
             <MudButton Variant="Variant.Text"
                        Color="Color.Error"
                        StartIcon="@Icons.Material.TwoTone.Delete"
@@ -86,8 +89,8 @@ else if (_accountOwners.Count > 0)
                        OnClick="InitiateTenantDeletion">
                 Bereich löschen
             </MudButton>
-        </div> *@
-    }
+        </div>
+    } *@
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
