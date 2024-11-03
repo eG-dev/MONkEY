@@ -1,5 +1,4 @@
 ﻿using Azure.Data.Tables;
-using System.Text.Json;
 
 namespace MONkEY.Data.Services
 {
@@ -76,7 +75,7 @@ namespace MONkEY.Data.Services
         public async Task<AccountOwner?> GetByEmailAsync(string email)
         {
             var queryResult = _tableClient.QueryAsync<AccountOwner>(e =>
-                e.PartitionKey == email);
+                e.PartitionKey == email.ToLowerInvariant());
 
             AccountOwner? model = null;
             await foreach (var entry in queryResult)

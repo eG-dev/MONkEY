@@ -177,6 +177,8 @@ else
 
             if (existingOwner != null)
             {
+                _isUpdating = false;
+
                 Snackbar.Add(existingOwner.TenantKey == User.TenantKey
                     ? $"Der Nutzer '{model.Email}' ist bereits Teil des Bereichs!"
                     : $"Der Nutzer '{model.Email}' ist bereits einem anderen Bereich zugewiesen!",
