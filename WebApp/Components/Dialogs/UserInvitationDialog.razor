@@ -1,5 +1,6 @@
-﻿@using MONkEY.WebApp.DTO
-@using System.Net.Mail
+﻿@using System.Net.Mail
+
+@using MONkEY.WebApp.DTO
 
 <MudDialog>
     <DialogContent>
@@ -8,13 +9,12 @@
         </MudAlert>
 
         <MudFocusTrap>
-            <MudTextField Class="mt-3"
+            <MudTextField @ref="_emailInput"
+                          @bind-Value="_model.Email"
+                          Class="mt-3"
                           T="string"
-                          @ref="_emailInput"
                           Label="E-Mail"
                           Variant="Variant.Outlined"
-                          Mask="@_emailMask"
-                          @bind-Value="_model.Email"
                           OnlyValidateIfDirty="true"
                           Validation="@(new Func<string, IEnumerable<string>>(ValidateEmail))" />
         </MudFocusTrap>
@@ -34,6 +34,7 @@
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.TwoTone.Add"
+                   Disabled="_emailInput?.HasErrors ?? true"
                    OnClick="Submit">
             Nutzer hinzufügen
         </MudButton>
@@ -43,8 +44,6 @@
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = default!;
-
-    private readonly IMask _emailMask = RegexMask.Email();
 
     private readonly InvitationDialogModel _model = new();
 
@@ -77,7 +76,7 @@
     {
         await _emailInput.Validate();
 
-        if (_emailInput.ValidationErrors.Count == 0)
+        if (!_emailInput.HasErrors)
         {
             MudDialog.Close(DialogResult.Ok(_model));
         }

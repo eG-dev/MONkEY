@@ -3,7 +3,8 @@
 <MudDialog>
     <DialogContent>
         <MudFocusTrap>
-            <MudNumericField @bind-Value="_model.Amount"
+            <MudNumericField @ref="@_amountInput"
+                             @bind-Value="_model.Amount"
                              Label="Betrag"
                              Variant="Variant.Text"
                              Style="@(PayOut ? "color: var(--mud-palette-error)" : "color: var(--mud-palette-success)")"
@@ -14,7 +15,9 @@
                              Immediate="true"
                              Adornment="Adornment.Start"
                              AdornmentIcon="@(PayOut ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add)"
-                             AdornmentColor="@(PayOut ? Color.Error : Color.Success)" />
+                             AdornmentColor="@(PayOut ? Color.Error : Color.Success)"
+                             OnlyValidateIfDirty="true"
+                             Validation="@(new Func<double?, IEnumerable<string>>(ValidateAmount))" />
         </MudFocusTrap>
 
         <MudTextField T="string"
@@ -30,6 +33,7 @@
         <MudButton Variant="Variant.Filled"
                    Color="@(PayOut ? Color.Error : Color.Success)"
                    StartIcon="@(PayOut ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add)"
+                   Disabled="_amountInput?.HasErrors ?? true"
                    OnClick="Submit">
             @(PayOut ? "Auszahlen" : "Einzahlen")
         </MudButton>
@@ -43,18 +47,30 @@
     [Parameter]
     public bool PayOut { get; set; } = false;
 
+    private MudNumericField<double?> _amountInput = default!;
+
     private TransactionDialogModel _model = new();
 
-    private void Submit()
+    private IEnumerable<string> ValidateAmount(double? amount)
     {
-        _model.Amount = Math.Round(_model.Amount ?? 0.0, 2);
-
-        if (_model.Amount == 0.0)
+        if (amount == null)
         {
-            MudDialog.Cancel();
+            yield return "Ein gültiger Betrag wird benötigt!";
         }
-        else
+        else if (amount == 0.0)
         {
+            yield return "Der Betrag darf nicht 0 sein!";
+        }
+    }
+
+    private async Task Submit()
+    {
+        await _amountInput.Validate();
+
+        if (!_amountInput.HasErrors)
+        {
+            _model.Amount = Math.Round(_model.Amount ?? 0.0, 2);
+
             if (PayOut)
             {
                 _model.Amount = 0 - _model.Amount;

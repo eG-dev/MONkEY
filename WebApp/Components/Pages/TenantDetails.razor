@@ -22,7 +22,7 @@
 {
     <PageLoader />
 }
-else
+else if (_accountOwners.Count > 0)
 {
     <MudText Typo="Typo.h6">Nutzer</MudText>
 
@@ -32,7 +32,6 @@ else
                   Dense="true"
                   Striped="true"
                   Breakpoint="Breakpoint.Sm"
-                  Loading="@_isUpdating"
                   LoadingProgressColor="Color.Info">
 
             <HeaderContent>
@@ -94,6 +93,10 @@ else
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 }
+else
+{
+    <MudAlert Severity="Severity.Error">Der Bereich ist nicht bekannt!</MudAlert>
+}
 
 @code {
     [CascadingParameter]
@@ -151,9 +154,9 @@ else
 
     private async Task InitiateUserInvitation()
     {
-        var dialog = await Dialog.ShowAsync<InvitationDialog>(
+        var dialog = await Dialog.ShowAsync<UserInvitationDialog>(
             "Nutzer hinzufügen",
-            new DialogParameters<InvitationDialog>(),
+            new DialogParameters<UserInvitationDialog>(),
             new DialogOptions()
                 {
                     MaxWidth = MaxWidth.Small,
@@ -204,11 +207,12 @@ else
 
     private async Task InitiateUserDeletion(string email)
     {
-        var dialog = await Dialog.ShowAsync<AccountDeletionDialog>(
-            "Nutzer entfernen",
-            new DialogParameters<AccountDeletionDialog>()
+
+        var dialog = await Dialog.ShowAsync<UserDeletionDialog>(
+            "Nutzer löschen",
+            new DialogParameters<UserDeletionDialog>()
                 {
-                    { x => x.AccountName, email }
+                    { x => x.Email, email }
                 },
             new DialogOptions()
                 {
@@ -227,11 +231,11 @@ else
 
                 _accountOwners = await AccountOwners.GetTenantOwnersAsync(TenantKey);
 
-                Snackbar.Add($"Der Nutzer '{email}' wurde aus dem Bereich entfernt.", Severity.Success);
+                Snackbar.Add($"Der Nutzer '{email}' wurde erfolgreich gelöscht.", Severity.Success);
             }
             catch
             {
-                Snackbar.Add($"Der Nutzer konnte nicht entfernt werden!", Severity.Error);
+                Snackbar.Add($"Der Nutzer konnte nicht gelöscht werden!", Severity.Error);
             }
             finally
             {

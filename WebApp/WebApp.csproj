@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Components\Dialogs\InvitationDialog.razor">
+    <Content Update="Components\Dialogs\UserInvitationDialog.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Components\Dialogs\AccountCreationDialog.razor">
