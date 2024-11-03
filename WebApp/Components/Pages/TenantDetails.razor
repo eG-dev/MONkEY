@@ -79,7 +79,7 @@ else if (_accountOwners.Count > 0)
         </MudTable>
     </div>
 
-@*     if (User.IsAllowedToManage)
+    if (User.IsAllowedToManage)
     {
         <div class="mt-6">
             <MudButton Variant="Variant.Text"
@@ -90,7 +90,7 @@ else if (_accountOwners.Count > 0)
                 Bereich löschen
             </MudButton>
         </div>
-    } *@
+    }
 
     <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -212,7 +212,6 @@ else
 
     private async Task InitiateUserDeletion(string email)
     {
-
         var dialog = await Dialog.ShowAsync<UserDeletionDialog>(
             "Nutzer löschen",
             new DialogParameters<UserDeletionDialog>()
@@ -245,6 +244,39 @@ else
             finally
             {
                 _isUpdating = false;
+            }
+        }
+    }
+
+    private async Task InitiateTenantDeletion()
+    {
+        var dialog = await Dialog.ShowAsync<TenantDeletionDialog>(
+            "Uh-oh, immer mit der Ruhe!",
+            new DialogParameters<TenantDeletionDialog>(),
+            new DialogOptions()
+                {
+                    MaxWidth = MaxWidth.Small,
+                });
+
+        var result = await dialog.Result;
+
+        if (result?.Data != null && (bool)result.Data == true)
+        {
+            _isUpdating = true;
+
+            try
+            {
+                await TenantManagement.DeleteTenant(User);
+            }
+            catch
+            {
+                Snackbar.Add($"Der Bereich konnte nicht gelöscht werden!", Severity.Error);
+            }
+            finally
+            {
+                _isUpdating = false;
+
+                Navigation.NavigateTo("/", true);
             }
         }
     }

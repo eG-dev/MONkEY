@@ -124,6 +124,27 @@ namespace MONkEY.WebApp.Services
             }
         }
 
+        public async Task DeleteAll(Identity user)
+        {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (!user.IsAllowedToManage)
+            {
+                throw new InvalidOperationException("User is not allowed to delete accounts!");
+            }
+
+            var accounts = await Accounts.GetAllAsync(user.TenantKey);
+
+            foreach (var account in accounts)
+            {
+                await Delete(user, account.AccountKey);
+            }
+        }
+
         public string GetImageSrc(Account account)
         {
             return !string.IsNullOrEmpty(account?.Image)

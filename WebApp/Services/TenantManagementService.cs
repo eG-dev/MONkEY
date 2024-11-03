@@ -7,14 +7,14 @@ namespace MONkEY.WebApp.Services
     {
         private IAccountOwnerService AccountOwners { get; }
 
-        private IAccountService Accounts { get; }
+        private AccountManagementService AccountManagement { get; }
 
         public TenantManagementService(
             IAccountOwnerService accountOwnerService,
-            IAccountService accountService)
+            AccountManagementService accountManagementService)
         {
             AccountOwners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
-            Accounts = accountService ?? throw new ArgumentNullException(nameof(accountService));
+            AccountManagement = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));
         }
 
         public async Task<AccountOwner?> CreateTenant(Identity user)
@@ -35,6 +35,36 @@ namespace MONkEY.WebApp.Services
             }
 
             return accountOwner;
+        }
+
+        public async Task DeleteTenant(Identity user)
+        {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (user.Role < AccountOwnerRole.Manager)
+            {
+                throw new InvalidOperationException("User is not allowed to manage the tenant!");
+            }
+
+            var tenantKey = user.TenantKey;
+
+            await AccountOwners.DeleteAsync(user.Email);
+
+            if (!string.IsNullOrEmpty(tenantKey))
+            {
+                var otherOwners = await AccountOwners.GetTenantOwnersAsync(tenantKey);
+
+                foreach (var owner in otherOwners)
+                {
+                    await AccountOwners.DeleteAsync(owner.Email);
+                }
+
+                await AccountManagement.DeleteAll(user);
+            }
         }
 
         public async Task ActivateUser(Identity user, AccountOwnerPreferences preferences)
@@ -59,11 +89,11 @@ namespace MONkEY.WebApp.Services
 
             if (string.IsNullOrEmpty(user.TenantKey))
             {
-                throw new InvalidOperationException("Inviting user is not assigned to a tenant!");
+                throw new InvalidOperationException("User is not assigned to a tenant!");
             }
             if (user.Role < AccountOwnerRole.Manager)
             {
-                throw new InvalidOperationException("Inviting user is not allowed to manage the tenant!");
+                throw new InvalidOperationException("User is not allowed to manage the tenant!");
             }
 
             ArgumentException.ThrowIfNullOrEmpty("Email is required!", nameof(email));
@@ -102,19 +132,19 @@ namespace MONkEY.WebApp.Services
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (user.Status != AccountOwnerStatus.Invited)
+            {
+                throw new InvalidOperationException($"User must be in '{nameof(AccountOwnerStatus.Invited)}' status!");
+            }
+
             var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
 
             if (accountOwner != null)
             {
-                if (accountOwner.Status != AccountOwnerStatus.Invited)
-                {
-                    throw new InvalidOperationException($"Status '{nameof(AccountOwnerStatus.Invited)}' is required!");
-                }
-                if (string.IsNullOrEmpty(accountOwner.TenantKey))
-                {
-                    throw new InvalidOperationException($"Tenant key is required!");
-                }
-
                 accountOwner.Status = accountOwner.Role == AccountOwnerRole.Member
                     // Members are automatically activated, because they don't get emails anyways
                     ? AccountOwnerStatus.Active
@@ -128,34 +158,28 @@ namespace MONkEY.WebApp.Services
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
-
-            if (accountOwner != null)
+            if (string.IsNullOrEmpty(user.TenantKey))
             {
-                if (accountOwner.Status != AccountOwnerStatus.Invited)
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+            if (user.Status != AccountOwnerStatus.Invited)
+            {
+                throw new InvalidOperationException($"User must be in '{nameof(AccountOwnerStatus.Invited)}' status!");
+            }
+
+            var tenantKey = user.TenantKey;
+
+            await AccountOwners.DeleteAsync(user.Email);
+
+            if (!string.IsNullOrEmpty(tenantKey))
+            {
+                // This is an edge-case if the user who invited the person has deleted their account in the meantime.
+                // In this case we need to clean up the data.
+                var otherOwners = await AccountOwners.GetTenantOwnersAsync(tenantKey);
+
+                if (otherOwners.Count == 0)
                 {
-                    throw new InvalidOperationException($"Status '{nameof(AccountOwnerStatus.Invited)}' is required!");
-                }
-
-                var tenantKey = accountOwner.TenantKey;
-
-                await AccountOwners.DeleteAsync(accountOwner.Email);
-
-                if (!string.IsNullOrEmpty(tenantKey))
-                {
-                    // This is an edge-case if the user who invited the person has deleted their account in the meantime.
-                    // In this case we need to clean up the data.
-                    var otherOwners = await AccountOwners.GetTenantOwnersAsync(tenantKey);
-
-                    if (otherOwners.Count == 0)
-                    {
-                        var accounts = await Accounts.GetAllAsync(tenantKey);
-
-                        foreach (var account in accounts)
-                        {
-                            await Accounts.DeleteAsync(account.TenantKey, account.AccountKey);
-                        }
-                    }
+                    await AccountManagement.DeleteAll(user);
                 }
             }
         }
@@ -166,11 +190,11 @@ namespace MONkEY.WebApp.Services
 
             if (string.IsNullOrEmpty(user.TenantKey))
             {
-                throw new InvalidOperationException("Inviting user is not assigned to a tenant!");
+                throw new InvalidOperationException("User is not assigned to a tenant!");
             }
             if (user.Role < AccountOwnerRole.Manager)
             {
-                throw new InvalidOperationException("Inviting user is not allowed to manage the tenant!");
+                throw new InvalidOperationException("User is not allowed to manage the tenant!");
             }
             if (user.Email == email)
             {
