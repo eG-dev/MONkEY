@@ -19,7 +19,11 @@
     <MudBreadcrumbs Items="_breadcrumbs" Separator=">"></MudBreadcrumbs>
 </div>
 
-@if (_account != null)
+@if (_isLoading)
+{
+    <PageLoader />
+}
+else if (_account != null)
 {
     var accountImageSrc = AccountManagement.GetImageSrc(_account);
 
@@ -98,10 +102,6 @@
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 }
-else if (_isLoading)
-{
-    <PageLoader />
-}
 else
 {
     <MudAlert Severity="Severity.Error">Das Konto ist nicht bekannt!</MudAlert>
@@ -124,7 +124,7 @@ else
         new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
     };
 
-    private bool _isLoading = true;
+    private bool _isLoading = false;
     private bool _isUpdating = false;
 
     private Account? _account = null;
@@ -134,10 +134,10 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        _isLoading = true;
-
         if (!string.IsNullOrWhiteSpace(TenantKey) && !string.IsNullOrWhiteSpace(AccountKey))
         {
+            _isLoading = true;
+
             _account = await Accounts.GetAsync(TenantKey, AccountKey);
 
             if (_account != null)
@@ -155,9 +155,9 @@ else
                     POCKET_MONEY_TRANSACTION_TRIGGER_NAME);
                 _pocketMoneyTransaction = transactions.FirstOrDefault();
             }
-        }
 
-        _isLoading = false;
+            _isLoading = false;
+        }
     }
 
     private void GotoAccountEdit()

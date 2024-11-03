@@ -15,11 +15,11 @@
 
 <PageTitle>POCKET MONkEY</PageTitle>
 
-@if (_isLoading)
+@if (_accounts == null)
 {
     <PageLoader />
 }
-else if (User?.Status == AccountOwnerStatus.Active)
+else if (User.Status == AccountOwnerStatus.Active)
 {
     <MudGrid Spacing="6" Justify="Justify.Center">
         @foreach (var account in _accounts)
@@ -108,13 +108,11 @@ else if (User?.Status == AccountOwnerStatus.Active)
     [CascadingParameter]
     private Identity User { get; set; } = default!;
 
-    private bool _isLoading = true;
-
     private readonly Dictionary<string, Transaction?> _lastTransactions = new();
 
-    private List<Account> _accounts = new();
+    private List<Account>? _accounts = null;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (User?.Status == AccountOwnerStatus.Active)
         {
@@ -125,8 +123,10 @@ else if (User?.Status == AccountOwnerStatus.Active)
                 _lastTransactions[account.AccountKey] = await Transactions.GetLatestAsync(User.TenantKey, account.AccountKey);
             }
         }
-
-        _isLoading = false;
+        else
+        {
+            _accounts = new();
+        };
     }
 
     private async Task AddAccount()

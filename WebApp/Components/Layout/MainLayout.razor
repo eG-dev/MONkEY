@@ -46,7 +46,8 @@
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">@_user</MudText>
             </MudDrawerHeader>
-
+            <MudButton StartIcon="@Icons.Material.TwoTone.AdminPanelSettings" Color="Color.Inherit" Href="@($"/tenant/{_user.TenantKey}")">Mein Bereich</MudButton>
+            <MudDivider DividerType="DividerType.Middle" />
             <MudButton StartIcon="@Icons.Material.TwoTone.Logout" Color="Color.Secondary" Href="MicrosoftIdentity/Account/SignOut">Abmelden</MudButton>
             <MudDivider DividerType="DividerType.Middle" />
             <MudSpacer />
@@ -125,12 +126,14 @@
     private bool _drawerOpen = false;
 
     private Identity? _user = default!;
-    private AccountOwner? _accountOwner = null;
 
     protected async override Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _user = await Identity.FromPrincipal(authState.User);
+        if (_user == null)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _user = await Identity.FromPrincipal(authState.User);
+        }
     }
 
     private async Task AcceptUsageTerms()

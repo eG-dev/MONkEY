@@ -1,0 +1,126 @@
+﻿@page "/tenant/{TenantKey}"
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+@using MONkEY.WebApp.DTO
+@using MONkEY.Data
+@using MONkEY.Data.Services
+
+@inject NavigationManager Navigation
+@inject TenantManagementService TenantManagement
+@inject IAccountOwnerService AccountOwners
+@inject IDialogService Dialog
+
+<PageTitle>POCKET MONkEY - Mein Bereich</PageTitle>
+
+<div>
+    <MudBreadcrumbs Items="_breadcrumbs" Separator=">" MaxItems="2"></MudBreadcrumbs>
+</div>
+
+@if (_accountOwners == null)
+{
+    <PageLoader />
+}
+else
+{
+    <MudText Typo="Typo.h6">Nutzer</MudText>
+
+    <div class="pb-3">
+        <MudTable Items="@_accountOwners"
+                  Hover="true"
+                  Dense="true"
+                  Striped="true"
+                  Breakpoint="Breakpoint.Sm"
+                  Loading="@_isLoading"
+                  LoadingProgressColor="Color.Info">
+
+            <HeaderContent>
+                <MudTh>Email</MudTh>
+                <MudTh>Rolle</MudTh>
+                <MudTh>Status</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Email"><b>@context.Email</b></MudTd>
+                <MudTd DataLabel="Rolle">@_roles[context.Role]</MudTd>
+                <MudTd DataLabel="Status">@_statuus[context.Status]</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
+
+@*     if (User.IsAllowedToManage)
+    {
+        <div class="mt-6">
+            <MudButton Variant="Variant.Text"
+            Color="Color.Error"
+            StartIcon="@Icons.Material.Filled.Delete"
+            Style="min-width: 150px"
+            OnClick="InitiateDeletion">
+                Bereich löschen
+            </MudButton>
+        </div>
+    } *@
+
+    <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+}
+
+@code {
+    [CascadingParameter]
+    private Identity User { get; set; } = default!;
+
+    [Parameter]
+    public string TenantKey { get; set; } = default!;
+
+    private Dictionary<AccountOwnerRole, string> _roles = new()
+    {
+        { AccountOwnerRole.Undefined, "Ungültig" },
+        { AccountOwnerRole.Member, "Mitglied" },
+        { AccountOwnerRole.Manager, "Verwalter" },
+        { AccountOwnerRole.GlobalAdmin, "Administrator" },
+    };
+
+    private Dictionary<AccountOwnerStatus, string> _statuus = new()
+    {
+        { AccountOwnerStatus.Undefined, "Ungültig" },
+        { AccountOwnerStatus.Invited, "Eingeladen" },
+        { AccountOwnerStatus.New, "Neu" },
+        { AccountOwnerStatus.Active, "Aktiv" },
+        { AccountOwnerStatus.Disabled, "Gesperrt" },
+    };
+
+    private List<BreadcrumbItem> _breadcrumbs = new()
+    {
+        new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
+    };
+
+    private bool _isLoading = true;
+    private bool _isUpdating = false;
+
+    private List<AccountOwner>? _accountOwners = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _isLoading = true;
+
+        if (_accountOwners == null)
+        {
+            if (!string.IsNullOrWhiteSpace(TenantKey))
+            {
+                _accountOwners = await AccountOwners.GetTenantOwnersAsync(TenantKey);
+            }
+            else
+            {
+                _accountOwners = new();
+            }
+
+            _breadcrumbs.Add(new BreadcrumbItem(
+                "Mein Bereich",
+                $"/tenant/{TenantKey}",
+                false,
+                Icons.Material.TwoTone.AdminPanelSettings));
+        }
+
+        _isLoading = false;
+    }
+}

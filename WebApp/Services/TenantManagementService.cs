@@ -37,6 +37,40 @@ namespace MONkEY.WebApp.Services
             return accountOwner;
         }
 
+        public async Task InviteUser(Identity user, string email, AccountOwnerRole role)
+        {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+            if (string.IsNullOrEmpty(user.TenantKey))
+            {
+                throw new InvalidOperationException("User is not assigned to a tenant!");
+            }
+
+            ArgumentException.ThrowIfNullOrEmpty("Email is required!", nameof(email));
+
+            if (role == AccountOwnerRole.Undefined || role == AccountOwnerRole.GlobalAdmin)
+            {
+                throw new ArgumentException("Invalid role provided!");
+            }
+
+            var accountOwner = await AccountOwners.GetByEmailAsync(email);
+
+            if (accountOwner != null)
+            {
+                throw new InvalidOperationException("User has already an account!");
+            }
+            else
+            {
+                await AccountOwners.AddAsync(new()
+                {
+                    PartitionKey = user.Email,
+                    RowKey = user.TenantKey,
+                    Status = AccountOwnerStatus.Invited,
+                    Role = role,
+                });
+            }
+        }
+
         public async Task AcceptInvitation(Identity user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
@@ -55,7 +89,8 @@ namespace MONkEY.WebApp.Services
                 }
 
                 accountOwner.Status = accountOwner.Role == AccountOwnerRole.Member
-                    ? AccountOwnerStatus.Active // Members are automatically activated
+                    // Members are automatically activated, because they don't get emails anyways
+                    ? AccountOwnerStatus.Active
                     : AccountOwnerStatus.New;
 
                 await AccountOwners.UpdateAsync(accountOwner);
