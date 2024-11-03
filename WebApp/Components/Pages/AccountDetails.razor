@@ -49,14 +49,14 @@ else if (_account != null)
             Color="Color.Success"
             StartIcon="@Icons.Material.TwoTone.Add"
             Style="min-width: 150px"
-            OnClick="() => InitiateTransaction(false)">
+            OnClick="() => InitiateTransaction(false, _account.Balance)">
                 Einzahlen
             </MudButton>
             <MudButton Variant="Variant.Filled"
             Color="Color.Error"
             StartIcon="@Icons.Material.TwoTone.Remove"
             Style="min-width: 150px"
-            OnClick="() => InitiateTransaction(true)">
+            OnClick="() => InitiateTransaction(true, _account.Balance)">
                 Auszahlen
             </MudButton>
             <br />
@@ -165,13 +165,14 @@ else
         Navigation.NavigateTo($"/account/{_account!.TenantKey}/{_account.AccountKey}/edit");
     }
 
-    private async Task InitiateTransaction(bool payOut)
+    private async Task InitiateTransaction(bool payOut, double currentBalance)
     {
         var dialog = await Dialog.ShowAsync<TransactionDialog>(
             payOut ? "Guthaben auszahlen" : "Guthaben einzahlen",
             new DialogParameters<TransactionDialog>
             {
                 { x => x.PayOut, payOut },
+                { x => x.CurrentBalance, currentBalance }
             },
             new DialogOptions()
             {

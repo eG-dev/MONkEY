@@ -2,6 +2,11 @@
 
 <MudDialog>
     <DialogContent>
+        <MudText Typo="Typo.subtitle1">Aktuelles Guthaben</MudText>
+        <MudText Typo="Typo.body1" Class="mb-6">
+            <Amount Value="@CurrentBalance" Unit="€" IsBold="true" />
+        </MudText>
+
         <MudFocusTrap>
             <MudNumericField @ref="@_amountInput"
                              @bind-Value="_model.Amount"
@@ -46,6 +51,9 @@
 
     [Parameter]
     public bool PayOut { get; set; } = false;
+
+    [Parameter]
+    public double CurrentBalance { get; set; }
 
     private MudNumericField<double?> _amountInput = default!;
 
