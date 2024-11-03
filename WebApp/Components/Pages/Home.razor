@@ -47,7 +47,9 @@ else if (User.Status == AccountOwnerStatus.Active)
                         <CardHeaderActions>
                             @if (User.IsAllowedToManage)
                             {
-                                <MudIconButton Icon="@Icons.Material.TwoTone.Edit" Color="Color.Default" OnClick="accountEditAction" />
+                                <MudIconButton Icon="@Icons.Material.TwoTone.Edit"
+                                               Color="Color.Default"
+                                               OnClick="accountEditAction" />
                             }
                         </CardHeaderActions>
                     </MudCardHeader>
@@ -55,10 +57,15 @@ else if (User.Status == AccountOwnerStatus.Active)
                                   Class="cursor-pointer"
                                   @onclick="accountDetailsAction" />
                     <MudCardContent>
-                        <MudText Typo="Typo.body1">Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" /></MudText>
+                        <MudText Typo="Typo.body1">
+                            Aktuelles Guthaben <Amount Value="@account.Balance" Unit="€" IsBold="true" />
+                        </MudText>
+
                         @if (transaction != null)
                         {
-                            <MudText Typo="Typo.caption">Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" /></MudText>
+                            <MudText Typo="Typo.caption">
+                                Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" />
+                            </MudText>
                         }
                         else
                         {
