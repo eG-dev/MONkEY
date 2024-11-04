@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 using MONkEY.WebApp.Utils;
 
-namespace MONkEY.WebApp.Components
+namespace MONkEY.WebApp.Components.Timezone
 {
     public sealed class InitializeTimeZone : ComponentBase
     {

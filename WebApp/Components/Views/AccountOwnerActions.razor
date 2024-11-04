@@ -1,6 +1,4 @@
-﻿@using MONkEY.Data
-
-@inject TenantManagementService TenantManagement
+﻿@inject TenantManagementService TenantManagement
 @inject NavigationManager Navigation
 
 @if (User.Status == AccountOwnerStatus.Undefined)
@@ -92,7 +90,7 @@ else if (User.Status == AccountOwnerStatus.Disabled)
 
 @code {
     [Parameter]
-    public Identity User { get; set; } = default!;
+    public User User { get; set; } = default!;
 
     private readonly AccountOwnerPreferences accountOwnerSettings = new();
 

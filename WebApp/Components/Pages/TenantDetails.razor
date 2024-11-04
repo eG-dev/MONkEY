@@ -2,10 +2,6 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 
-@using MONkEY.WebApp.DTO
-@using MONkEY.Data
-@using MONkEY.Data.Services
-
 @inject NavigationManager Navigation
 @inject TenantManagementService TenantManagement
 @inject IAccountOwnerService AccountOwners
@@ -103,7 +99,7 @@ else
 
 @code {
     [CascadingParameter]
-    private Identity User { get; set; } = default!;
+    private User User { get; set; } = default!;
 
     [Parameter]
     public string TenantKey { get; set; } = default!;

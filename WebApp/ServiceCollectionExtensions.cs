@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs;
 
 using MONkEY.Data.Services;
+using MONkEY.Identity.Services;
 using MONkEY.WebApp.Services;
 using MONkEY.WebApp.Utils;
 
@@ -29,7 +30,7 @@ namespace MONkEY.WebApp
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddScoped<IAccountOwnerService, AccountOwnerService>();
-            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();

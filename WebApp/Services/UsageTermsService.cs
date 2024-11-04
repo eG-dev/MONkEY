@@ -1,5 +1,6 @@
 ﻿using MONkEY.Data;
 using MONkEY.Data.Services;
+using MONkEY.Identity;
 
 namespace MONkEY.WebApp.Services
 {
@@ -15,14 +16,14 @@ namespace MONkEY.WebApp.Services
             AccountOwners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
         }
 
-        public bool HasAcceptedUsageTerms(Identity user)
+        public bool HasAcceptedUsageTerms(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
             return user.TermsAcceptedOn.GetValueOrDefault() > USAGE_TERMS_VALID_FROM;
         }
 
-        public async Task<AccountOwner?> Accept(Identity user)
+        public async Task<AccountOwner?> Accept(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 

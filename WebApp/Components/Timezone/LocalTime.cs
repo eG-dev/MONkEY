@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 using MONkEY.WebApp.Utils;
 
-namespace MONkEY.WebApp.Components
+namespace MONkEY.WebApp.Components.Timezone
 {
     public static class TimeProviderExtensions
     {

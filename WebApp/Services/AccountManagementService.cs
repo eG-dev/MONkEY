@@ -1,6 +1,7 @@
 ﻿using MONkEY.Data;
 using MONkEY.Data.Services;
 using MONkEY.Support;
+using MONkEY.Identity;
 
 namespace MONkEY.WebApp.Services
 {
@@ -26,7 +27,7 @@ namespace MONkEY.WebApp.Services
             Blobs = blobService ?? throw new ArgumentNullException(nameof(blobService));
         }
 
-        public async Task<Account?> UpdateImage(Identity user, string accountKey, string imageDataBase64)
+        public async Task<Account?> UpdateImage(User user, string accountKey, string imageDataBase64)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -64,7 +65,7 @@ namespace MONkEY.WebApp.Services
             return account;
         }
 
-        public async Task<Account?> Create(Identity user, string accountName)
+        public async Task<Account?> Create(User user, string accountName)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -90,7 +91,7 @@ namespace MONkEY.WebApp.Services
             return account;
         }
 
-        public async Task Delete(Identity user, string accountKey)
+        public async Task Delete(User user, string accountKey)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -124,7 +125,7 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task DeleteAll(Identity user)
+        public async Task DeleteAll(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 

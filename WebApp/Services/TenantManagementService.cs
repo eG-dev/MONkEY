@@ -1,5 +1,6 @@
 ﻿using MONkEY.Data;
 using MONkEY.Data.Services;
+using MONkEY.Identity;
 
 namespace MONkEY.WebApp.Services
 {
@@ -17,7 +18,7 @@ namespace MONkEY.WebApp.Services
             AccountManagement = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));
         }
 
-        public async Task<AccountOwner?> CreateTenant(Identity user)
+        public async Task<AccountOwner?> CreateTenant(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -37,7 +38,7 @@ namespace MONkEY.WebApp.Services
             return accountOwner;
         }
 
-        public async Task DeleteTenant(Identity user)
+        public async Task DeleteTenant(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -67,7 +68,7 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task ActivateUser(Identity user, AccountOwnerPreferences preferences)
+        public async Task ActivateUser(User user, AccountOwnerPreferences preferences)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             ArgumentNullException.ThrowIfNull(preferences, nameof(preferences));
@@ -83,7 +84,7 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task InviteUser(Identity user, string email, AccountOwnerRole role)
+        public async Task InviteUser(User user, string email, AccountOwnerRole role)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -128,7 +129,7 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task AcceptInvitation(Identity user)
+        public async Task AcceptInvitation(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -154,7 +155,7 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task DeclineInvitation(Identity user)
+        public async Task DeclineInvitation(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -184,7 +185,7 @@ namespace MONkEY.WebApp.Services
             }
         }
 
-        public async Task DeleteUser(Identity user, string email)
+        public async Task DeleteUser(User user, string email)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 

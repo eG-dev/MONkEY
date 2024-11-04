@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 
-namespace MONkEY.Data
+using MONkEY.Data;
+
+namespace MONkEY.Identity
 {
     [DebuggerDisplay("{Name}, {Email}")]
-    public class Identity
+    public class User
     {
         public string Name { get; init; } = string.Empty;
 

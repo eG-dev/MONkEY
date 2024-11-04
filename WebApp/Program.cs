@@ -72,6 +72,8 @@ builder.Services
 
 builder.Services.AddCropper();
 
+builder.Services.AddMemoryCache();
+
 builder.Services
     .AddBrowserTimeSupport()
     .AddCustomAzureStorage(builder.Configuration)

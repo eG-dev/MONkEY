@@ -1,13 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 
-@using MONkEY.Data
-@using MONkEY.Data.Services
-
 @inherits LayoutComponentBase
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigation
-@inject IIdentityService Identity
+@inject IUserService UserService
 @inject UsageTermsService UsageTerms
 
 <InitializeTimeZone />
@@ -168,7 +165,7 @@
 
     private bool _drawerOpen = false;
 
-    private Identity? _user = default!;
+    private User? _user = default!;
 
     private bool IsOldDomain { get => Navigation.Uri.Contains("monkey-app.de"); }
 
@@ -177,7 +174,7 @@
         if (_user == null)
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _user = await Identity.FromPrincipal(authState.User);
+            _user = await UserService.FromPrincipal(authState.User);
         }
     }
 

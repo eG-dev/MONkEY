@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using MONkEY.Data.Services;
+using MONkEY.Identity.Services;
 
 namespace MONkEY.WebApp.Controllers
 {
@@ -10,11 +11,11 @@ namespace MONkEY.WebApp.Controllers
     [ApiController]
     public class ImageController : Controller
     {
-        private readonly IIdentityService _identityService;
+        private readonly IUserService _identityService;
         private readonly IBlobService _blobService;
 
         public ImageController(
-            IIdentityService userService,
+            IUserService userService,
             IBlobService blobService)
         {
             _identityService = userService ?? throw new ArgumentNullException(nameof(userService));
