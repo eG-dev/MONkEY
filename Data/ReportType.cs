@@ -1,7 +1,9 @@
 ﻿namespace MONkEY.Data
 {
-    public static class ReportTypes
+    public enum ReportType
     {
-        public static string Monthly { get; } = "Monthly";
+        Undefined = 0,
+
+        Monthly = 1,
     }
 }

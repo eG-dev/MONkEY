@@ -19,7 +19,7 @@ namespace MONkEY.Data
 
         public DateTimeOffset? ReportedPeriod { get; init; }
 
-        public string? Type { get; init; }
+        public ReportType Type { get; init; }
 
         public string SerializedPayload { get; init; } = default!;
 

@@ -1,13 +1,14 @@
 using Azure.Data.Tables;
+using Azure.Storage.Queues;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
 
 using MONkEY.Data.Services;
 using MONkEY.Functions.DTO;
 using MONkEY.Functions.Services;
-using System.Globalization;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -28,8 +29,10 @@ var host = new HostBuilder()
         if (!string.IsNullOrEmpty(storageConnectionString))
         {
             TableServiceClient tableServiceClient = new(storageConnectionString);
-
             services.AddSingleton(sp => tableServiceClient);
+
+            QueueServiceClient queueServiceClient = new QueueServiceClient(storageConnectionString);
+            services.AddSingleton(sp => queueServiceClient);
 
             services.AddScoped<IAccountOwnerService, AccountOwnerService>();
 

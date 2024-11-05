@@ -19,17 +19,18 @@ namespace MONkEY.Functions
         private readonly ITransactionService _transactions;
 
         public PocketMoney(
-            ILoggerFactory loggerFactory,
             IAccountOwnerService owners,
             IAccountService accounts,
-            ITransactionService transactions)
+            ITransactionService transactions,
+            ILogger<PocketMoney> logger)
         {
-            _logger = loggerFactory.CreateLogger<PocketMoney>();
 
             _owners = owners ?? throw new ArgumentNullException(nameof(owners));
 
             _accounts = accounts ?? throw new ArgumentNullException(nameof(accounts));
             _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [Function("PocketMoney")]

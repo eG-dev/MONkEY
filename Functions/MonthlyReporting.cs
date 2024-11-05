@@ -1,18 +1,20 @@
+using Azure.Storage.Queues;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using System.Text;
 using System.Text.Json;
 
 using MONkEY.Data;
 using MONkEY.Data.Services;
-using MONkEY.Functions.DTO;
 using MONkEY.Support;
-using MONkEY.Functions.Services;
 
 namespace MONkEY.Functions
 {
     public class MonthlyReporting
     {
         private const string TIMEZONE_ID = "Central Europe Standard Time";
+
+        private readonly TimeZoneInfo _timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
 
         private readonly ILogger _logger;
 
@@ -22,25 +24,26 @@ namespace MONkEY.Functions
         private readonly ITransactionService _transactions;
         private readonly IReportService _reports;
 
-        private readonly IEmailService _email;
+        private readonly QueueClient _emailsQueue;
 
         public MonthlyReporting(
-            ILoggerFactory loggerFactory,
             IAccountOwnerService owners,
             IAccountService accounts,
             ITransactionService transactions,
             IReportService reports,
-            IEmailService emailService)
+            QueueServiceClient queueServiceClient,
+            ILogger<MonthlyReporting> logger)
         {
-            _logger = loggerFactory.CreateLogger<MonthlyReporting>();
-
             _owners = owners ?? throw new ArgumentNullException(nameof(owners));
 
             _accounts = accounts ?? throw new ArgumentNullException(nameof(accounts));
             _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
             _reports = reports ?? throw new ArgumentNullException(nameof(reports));
 
-            _email = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            ArgumentNullException.ThrowIfNull(queueServiceClient, nameof(queueServiceClient));
+            _emailsQueue = queueServiceClient.GetQueueClient("emails");
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [Function("MonthlyReporting")]
@@ -49,11 +52,7 @@ namespace MONkEY.Functions
         {
             _logger.LogInformation($"Executing monthly reporting service");
 
-            var utcNow = DateTimeOffset.UtcNow;
-
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TIMEZONE_ID);
-
-            var reportedPeriod = utcNow.StartOfMonth().SubtractMonth();
+            var reportedPeriod = DateTimeOffset.UtcNow.StartOfMonth().SubtractMonth();
             var reportedPeriodEnd = reportedPeriod.AddMonth();
 
             var owners = await _owners.GetAllAsync();
@@ -90,12 +89,12 @@ namespace MONkEY.Functions
                     }
 
                     double startingBalance = previosReport?.SerializedPayload != null
-                        ? JsonSerializer.Deserialize<MonthyReport>(previosReport.SerializedPayload)!.StartingBalance
+                        ? JsonSerializer.Deserialize<MonthlyReportPayload>(previosReport.SerializedPayload)!.StartingBalance
                         : 0;
 
                     double closingBalance = startingBalance + transactions.Sum(t => t.Amount);
 
-                    var reportPayload = new MonthyReport()
+                    var reportPayload = new MonthlyReportPayload()
                     {
                         AccountName = account.Name,
                         ReportedPeriodName = reportedPeriod.ToString("Y"),
@@ -103,7 +102,7 @@ namespace MONkEY.Functions
                         ClosingBalance = closingBalance,
                         Transactions = transactions.Select(x =>
                         {
-                            var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, timeZone).LocalDateTime.ToString("g");
+                            var triggeredOn = TimeZoneInfo.ConvertTime(x.TriggeredOn, _timeZone).LocalDateTime.ToString("g");
 
                             return new ReportTransaction()
                             {
@@ -119,54 +118,38 @@ namespace MONkEY.Functions
                         PartitionKey = account.TenantKey,
                         AccountKey = account.AccountKey,
                         ReportedPeriod = reportedPeriod,
-                        Type = ReportTypes.Monthly,
+                        Type = ReportType.Monthly,
                         SerializedPayload = JsonSerializer.Serialize(reportPayload)
                     };
 
-                    await _reports.AddAsync(report);
+                    //await _reports.AddAsync(report);
 
                     var emailRecipients = emailGroup
                         .Where(x => x.Preferences.IsMonthlyReportingEnabled)
                         .Select(x => x.Email)
-                        .ToList();
+                        .ToArray();
 
-                    if (emailRecipients.Count > 0)
+                    if (emailRecipients.Length > 0)
                     {
-                        var emailSubject = $"{reportPayload.AccountName} - Bericht für {reportPayload.ReportedPeriodName}";
-
-                        string transactionEntries = string.Empty;
-                        if (reportPayload.Transactions.Count > 0)
-                        {
-                            transactionEntries += "<ul>";
-
-                            foreach (var transaction in reportPayload.Transactions)
-                            {
-                                transactionEntries += string.Format(
-                                    "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
-                                    transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                                    transaction.Amount.ToString("+0.##;-0.##"),
-                                    transaction.TriggeredOn,
-                                    transaction.TriggeredBy);
-                            }
-
-                            transactionEntries += "</ul>";
-                        }
-                        else
-                        {
-                            transactionEntries = "<p>Es gab keine Transaktionen.</p>";
-                        }
-
-                        var emailBody = _email
-                            .GetTemplate("body_monthly_report")
-                            .Replace("{{ACCOUNT_NAME}}", reportPayload.AccountName)
-                            .Replace("{{CLOSING_BALANCE}}", reportPayload.ClosingBalance.ToString())
-                            .Replace("{{STARTING_BALANCE}}", reportPayload.StartingBalance.ToString())
-                            .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries, StringComparison.Ordinal);
-
-                        await _email.Send(emailGroup.Select(x => x.Email), emailSubject, emailBody);
+                        await TriggerEmail(emailRecipients, report.SerializedPayload);
                     }
                 }
             }
+        }
+
+        public async Task TriggerEmail(string[] recipients, string serializedReportPayload)
+        {
+            var emailTrigger = new EmailTriggerForReport()
+            {
+                Recipients = recipients,
+                EmailType = EmailType.Report,
+                ReportType = ReportType.Monthly,
+                Payload = serializedReportPayload,
+            };
+
+            byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(emailTrigger));
+
+            await _emailsQueue.SendMessageAsync(Convert.ToBase64String(buffer));
         }
     }
 }

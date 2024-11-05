@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MONkEY.Functions.DTO
+namespace MONkEY.Data
 {
     [DebuggerDisplay("{Amount}, {TriggeredOn}, {TriggeredBy}")]
     public class ReportTransaction

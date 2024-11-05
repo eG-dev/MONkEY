@@ -1,6 +1,6 @@
-﻿namespace MONkEY.Functions.DTO
+﻿namespace MONkEY.Data
 {
-    public class MonthyReport
+    public class MonthlyReportPayload
     {
         public string? AccountName { get; set; }
 
