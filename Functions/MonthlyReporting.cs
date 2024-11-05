@@ -122,7 +122,7 @@ namespace MONkEY.Functions
                         SerializedPayload = JsonSerializer.Serialize(reportPayload)
                     };
 
-                    //await _reports.AddAsync(report);
+                    await _reports.AddAsync(report);
 
                     var emailRecipients = emailGroup
                         .Where(x => x.Preferences.IsMonthlyReportingEnabled)
