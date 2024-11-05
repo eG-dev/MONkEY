@@ -96,7 +96,7 @@ namespace MONkEY.Functions
 
         private async Task SendMonthlyReport(string[] recipients, MonthlyReportPayload report)
         {
-            var emailSubject = $"{report.AccountName} - Bericht für {report.ReportedPeriodName}";
+            var emailSubject = $"{report.AccountName} - Bericht fÃ¼r {report.ReportedPeriodName}";
 
             string transactionEntries = string.Empty;
             if (report.Transactions.Count > 0)
@@ -106,7 +106,7 @@ namespace MONkEY.Functions
                 foreach (var transaction in report.Transactions)
                 {
                     transactionEntries += string.Format(
-                        "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
+                        "<li><p><b style=\"color: {0}\">{1}â‚¬</b> am {2} durch {3}<p></li>",
                         transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
                         transaction.Amount.ToString("+0.##;-0.##"),
                         transaction.TriggeredOn,
