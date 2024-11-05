@@ -90,19 +90,7 @@
                     }
                     else if (IsOldDomain)
                     {
-                        <div class="d-flex flex-column align-center">
-                            <MudAlert Severity="Severity.Info">
-                                Du findest den Service nun unter <strong>pocket-monkey.de</strong>
-                            </MudAlert>
-
-                            <MudButton Class="mt-3"
-                                       Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.TwoTone.Navigation"
-                                       Color="Color.Primary"
-                                       Href="https://pocket-monkey.de">
-                                Zur neuen Adresse wechseln
-                            </MudButton>
-                        </div>
+                        <NewDomainInfo />
                     }
                     else
                     {
