@@ -3,9 +3,9 @@ using MONkEY.Data.Services;
 using MONkEY.Support;
 using MONkEY.Identity;
 
-namespace MONkEY.WebApp.Services
+namespace MONkEY.BusinessLogic.Services
 {
-    public class AccountManagementService
+    public class AccountManagementService : IAccountManagementService
     {
         private IAccountService Accounts { get; }
 

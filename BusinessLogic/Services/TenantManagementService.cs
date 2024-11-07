@@ -2,17 +2,17 @@
 using MONkEY.Data.Services;
 using MONkEY.Identity;
 
-namespace MONkEY.WebApp.Services
+namespace MONkEY.BusinessLogic.Services
 {
-    public class TenantManagementService
+    public class TenantManagementService : ITenantManagementService
     {
         private IAccountOwnerService AccountOwners { get; }
 
-        private AccountManagementService AccountManagement { get; }
+        private IAccountManagementService AccountManagement { get; }
 
         public TenantManagementService(
             IAccountOwnerService accountOwnerService,
-            AccountManagementService accountManagementService)
+            IAccountManagementService accountManagementService)
         {
             AccountOwners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
             AccountManagement = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));

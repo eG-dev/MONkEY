@@ -2,9 +2,9 @@
 using MONkEY.Data.Services;
 using MONkEY.Identity;
 
-namespace MONkEY.WebApp.Services
+namespace MONkEY.BusinessLogic.Services
 {
-    public class UsageTermsService
+    public class UsageTermsService : IUsageTermsService
     {
         private readonly DateTimeOffset USAGE_TERMS_VALID_FROM = DateTimeOffset.Parse("2024-10-31");
 

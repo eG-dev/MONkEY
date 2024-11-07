@@ -1,9 +1,9 @@
 ﻿using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 
+using MONkEY.BusinessLogic.Services;
 using MONkEY.Data.Services;
 using MONkEY.Identity.Services;
-using MONkEY.WebApp.Services;
 using MONkEY.WebApp.Utils;
 
 namespace MONkEY.WebApp
@@ -39,9 +39,9 @@ namespace MONkEY.WebApp
 
             services.AddScoped<IImageService, ImageService>();
 
-            services.AddScoped<AccountManagementService>();
-            services.AddScoped<TenantManagementService>();
-            services.AddScoped<UsageTermsService>();
+            services.AddScoped<IAccountManagementService, AccountManagementService>();
+            services.AddScoped<ITenantManagementService, TenantManagementService>();
+            services.AddScoped<IUsageTermsService, UsageTermsService>();
 
             return services;
         }
