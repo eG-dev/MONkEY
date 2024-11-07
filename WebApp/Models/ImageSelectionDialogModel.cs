@@ -1,4 +1,4 @@
-﻿namespace MONkEY.WebApp.DTO
+﻿namespace MONkEY.WebApp.Models
 {
     public class ImageSelectionDialogModel
     {
