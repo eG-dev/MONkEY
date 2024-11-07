@@ -1,12 +1,11 @@
-using Azure.Storage.Queues;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System.Text;
 using System.Text.Json;
 
 using MONkEY.Data;
 using MONkEY.Data.Services;
 using MONkEY.Support;
+using MONkEY.Notifications.Email.Services;
 
 namespace MONkEY.Functions
 {
@@ -24,26 +23,25 @@ namespace MONkEY.Functions
         private readonly ITransactionService _transactions;
         private readonly IReportService _reports;
 
-        private readonly QueueClient _emailsQueue;
+        private readonly IEmailTriggerService _emails;
 
         public MonthlyReporting(
-            IAccountOwnerService owners,
-            IAccountService accounts,
-            ITransactionService transactions,
-            IReportService reports,
-            QueueServiceClient queueServiceClient,
+            IAccountOwnerService accountOwnerService,
+            IAccountService accountService,
+            ITransactionService transactionService,
+            IReportService reportService,
+            IEmailTriggerService emailTriggerService,
             ILogger<MonthlyReporting> logger)
         {
-            _owners = owners ?? throw new ArgumentNullException(nameof(owners));
-
-            _accounts = accounts ?? throw new ArgumentNullException(nameof(accounts));
-            _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
-            _reports = reports ?? throw new ArgumentNullException(nameof(reports));
-
-            ArgumentNullException.ThrowIfNull(queueServiceClient, nameof(queueServiceClient));
-            _emailsQueue = queueServiceClient.GetQueueClient("emails");
-
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _owners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
+
+            _accounts = accountService ?? throw new ArgumentNullException(nameof(accountService));
+            _transactions = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
+            _reports = reportService ?? throw new ArgumentNullException(nameof(reportService));
+
+            _emails = emailTriggerService ?? throw new ArgumentNullException(nameof(emailTriggerService));
         }
 
         [Function("MonthlyReporting")]
@@ -131,25 +129,10 @@ namespace MONkEY.Functions
 
                     if (emailRecipients.Length > 0)
                     {
-                        await TriggerEmail(emailRecipients, report.SerializedPayload);
+                        await _emails.TriggerMonthlyReport(emailRecipients, report.SerializedPayload);
                     }
                 }
             }
-        }
-
-        public async Task TriggerEmail(string[] recipients, string serializedReportPayload)
-        {
-            var emailTrigger = new EmailTriggerForReport()
-            {
-                Recipients = recipients,
-                EmailType = EmailType.Report,
-                ReportType = ReportType.Monthly,
-                Payload = serializedReportPayload,
-            };
-
-            byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(emailTrigger));
-
-            await _emailsQueue.SendMessageAsync(Convert.ToBase64String(buffer));
         }
     }
 }

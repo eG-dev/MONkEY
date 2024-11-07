@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Support", "Support\Support.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Identity\Identity.csproj", "{FA3A6BD3-E235-47DA-A818-B12ECF53F4B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Email", "Notifications.Email\Notifications.Email.csproj", "{D5024BE2-8FD5-4C19-BEDB-17D7CFB7BE27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FA3A6BD3-E235-47DA-A818-B12ECF53F4B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA3A6BD3-E235-47DA-A818-B12ECF53F4B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA3A6BD3-E235-47DA-A818-B12ECF53F4B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5024BE2-8FD5-4C19-BEDB-17D7CFB7BE27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5024BE2-8FD5-4C19-BEDB-17D7CFB7BE27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5024BE2-8FD5-4C19-BEDB-17D7CFB7BE27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5024BE2-8FD5-4C19-BEDB-17D7CFB7BE27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

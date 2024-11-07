@@ -4,26 +4,27 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 using MONkEY.Data;
-using MONkEY.Functions.Services;
+using MONkEY.Notifications.Email;
+using MONkEY.Notifications.Email.Services;
 
 namespace MONkEY.Functions
 {
-    public class EmailSending
+    public class EmailQueueProcessing
     {
-        private readonly ILogger<EmailSending> _logger;
+        private readonly ILogger<EmailQueueProcessing> _logger;
 
-        private readonly IEmailService _email;
+        private readonly IEmailSenderService _email;
 
-        public EmailSending(
-            IEmailService emailService,
-            ILogger<EmailSending> logger)
+        public EmailQueueProcessing(
+            IEmailSenderService emailService,
+            ILogger<EmailQueueProcessing> logger)
         {
-            _email = emailService ?? throw new ArgumentNullException(nameof(emailService));
-
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _email = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
-        [Function(nameof(EmailSending))]
+        [Function(nameof(EmailQueueProcessing))]
         public async Task Run([QueueTrigger("emails", Connection = "STORAGE_CONNECTION_STRING")] QueueMessage message)
         {
             _logger.LogInformation("Processing queue message with ID '{0}' triggered at '{1}'", message.MessageId, message.InsertedOn);
@@ -36,7 +37,7 @@ namespace MONkEY.Functions
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to deserialize email trigger because of: {0}", ex.Message);
+                _logger.LogError("Failed to deserialize email trigger!\n{0}", ex.Message);
             }
 
             if (trigger != null)
@@ -71,7 +72,7 @@ namespace MONkEY.Functions
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to deserialize email report trigger because of: {0}", ex.Message);
+                _logger.LogError("Failed to deserialize email report trigger!\n{0}", ex.Message);
             }
 
             if (trigger != null)
@@ -87,7 +88,7 @@ namespace MONkEY.Functions
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError("Failed to deserialize monthly report payload because of: {0}", ex.Message);
+                            _logger.LogError("Failed to deserialize monthly report payload!\n{0}", ex.Message);
                         }
                         break;
                 }

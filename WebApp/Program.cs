@@ -7,10 +7,10 @@ using Microsoft.Identity.Web.UI;
 using MudBlazor;
 using MudBlazor.Services;
 using MudBlazor.Translations;
+using System.Globalization;
 
 using MONkEY.WebApp;
 using MONkEY.WebApp.Components;
-using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 

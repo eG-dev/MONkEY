@@ -6,19 +6,19 @@ using MimeKit.Text;
 using MimeKit;
 using System.Reflection;
 
-using MONkEY.Functions.DTO;
-
-namespace MONkEY.Functions.Services
+namespace MONkEY.Notifications.Email.Services
 {
-    public class EmailService : IEmailService
+    public class EmailSenderService : IEmailSenderService
     {
         private readonly ILogger _logger;
 
         private readonly SmtpSettings _smtpSettings;
 
-        public EmailService(ILoggerFactory loggerFactory, IOptions<SmtpSettings> smtpSettings)
+        public EmailSenderService(
+            ILogger<EmailSenderService> logger, 
+            IOptions<SmtpSettings> smtpSettings)
         {
-            _logger = loggerFactory.CreateLogger<EmailService>();
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _smtpSettings = smtpSettings.Value;
         }
@@ -60,7 +60,7 @@ namespace MONkEY.Functions.Services
         public string GetTemplate(string templateName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"MONkEY.Functions.EmailTemplates.{templateName}.html";
+            var resourceName = $"MONkEY.Notifications.Email.Templates.{templateName}.html";
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
             using StreamReader reader = new(stream!);

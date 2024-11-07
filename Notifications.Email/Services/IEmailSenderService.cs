@@ -1,6 +1,6 @@
-﻿namespace MONkEY.Functions.Services
+﻿namespace MONkEY.Notifications.Email.Services
 {
-    public interface IEmailService
+    public interface IEmailSenderService
     {
         Task Send(IEnumerable<string> recipients, string subject, string emailBody);
 

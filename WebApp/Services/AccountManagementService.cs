@@ -13,13 +13,13 @@ namespace MONkEY.WebApp.Services
 
         private IReportService Reports { get; }
 
-        private IBlobService Blobs { get; }
+        private IImageService Blobs { get; }
 
         public AccountManagementService(
             IAccountService accountService,
             ITransactionService transactions,
             IReportService reports,
-            IBlobService blobService)
+            IImageService blobService)
         {
             Accounts = accountService ?? throw new ArgumentNullException(nameof(accountService));
             Transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));

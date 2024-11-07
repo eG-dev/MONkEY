@@ -12,11 +12,11 @@ namespace MONkEY.WebApp.Controllers
     public class ImageController : Controller
     {
         private readonly IUserService _identityService;
-        private readonly IBlobService _blobService;
+        private readonly IImageService _blobService;
 
         public ImageController(
             IUserService userService,
-            IBlobService blobService)
+            IImageService blobService)
         {
             _identityService = userService ?? throw new ArgumentNullException(nameof(userService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));

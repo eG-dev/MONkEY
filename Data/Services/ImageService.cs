@@ -4,18 +4,21 @@ using Azure.Storage.Blobs.Specialized;
 
 namespace MONkEY.Data.Services
 {
-    public class BlobService : IBlobService
+    public class ImageService : IImageService
     {
-        private readonly BlobContainerClient _blobClient;
+        private readonly BlobContainerClient _blobs;
 
-        public BlobService(BlobContainerClient blobClient)
+        public ImageService(
+            BlobServiceClient blobClient)
         {
-            _blobClient = blobClient ?? throw new ArgumentNullException(nameof(blobClient));
+             ArgumentNullException.ThrowIfNull(blobClient, nameof(blobClient));
+
+            _blobs = blobClient.GetBlobContainerClient("images");
         }
 
         public async Task<Stream?> GetFileStreamAsync(string fileName)
         {
-            var blockBlockClient = _blobClient.GetBlockBlobClient(fileName);
+            var blockBlockClient = _blobs.GetBlockBlobClient(fileName);
             var response = await blockBlockClient.DownloadStreamingAsync();
 
             if (response.GetRawResponse().Status == 200)
@@ -28,7 +31,7 @@ namespace MONkEY.Data.Services
 
         public async Task UploadFileAsync(string fileName, Stream stream)
         {
-            await _blobClient.UploadBlobAsync(fileName, stream);
+            await _blobs.UploadBlobAsync(fileName, stream);
         }
 
         public async Task UploadFileAsync(string fileName, byte[] fileData)
@@ -41,7 +44,7 @@ namespace MONkEY.Data.Services
         {
             try
             {
-                await _blobClient.DeleteBlobAsync(fileName);
+                await _blobs.DeleteBlobAsync(fileName);
             }
             catch (RequestFailedException ex)
             {

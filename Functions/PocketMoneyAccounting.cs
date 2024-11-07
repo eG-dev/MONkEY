@@ -7,7 +7,7 @@ using MONkEY.Support;
 
 namespace MONkEY.Functions
 {
-    public class PocketMoney
+    public class PocketMoneyAccounting
     {
         private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
 
@@ -18,19 +18,18 @@ namespace MONkEY.Functions
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
 
-        public PocketMoney(
+        public PocketMoneyAccounting(
             IAccountOwnerService owners,
             IAccountService accounts,
             ITransactionService transactions,
-            ILogger<PocketMoney> logger)
+            ILogger<PocketMoneyAccounting> logger)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _owners = owners ?? throw new ArgumentNullException(nameof(owners));
 
             _accounts = accounts ?? throw new ArgumentNullException(nameof(accounts));
             _transactions = transactions ?? throw new ArgumentNullException(nameof(transactions));
-
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [Function("PocketMoney")]

@@ -1,4 +1,4 @@
-﻿namespace MONkEY.Functions.DTO
+﻿namespace MONkEY.Notifications.Email
 {
     public class SmtpSettings
     {
