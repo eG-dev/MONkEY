@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.Identity.Web" Version="3.3.1" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.3.1" />
     <PackageReference Include="MudBlazor" Version="7.15.0" />
-    <PackageReference Include="MudBlazor.Translations" Version="1.4.0" />
+    <PackageReference Include="MudBlazor.Translations" Version="1.5.1" />
   </ItemGroup>
 
   <ItemGroup>
