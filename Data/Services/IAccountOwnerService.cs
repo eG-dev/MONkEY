@@ -15,5 +15,7 @@
         Task<List<AccountOwner>> GetAllAsync();
 
         Task<List<AccountOwner>> GetTenantOwnersAsync(string tenantKey);
+
+        Task UpdatePreferencesAsync(string email, AccountOwnerPreferences preferences);
     }
 }

@@ -21,7 +21,7 @@
 else if (_accountOwners.Count > 0)
 {
     <MudText Typo="Typo.h6">Nutzer</MudText>
-    
+
     @if (User.IsAllowedToManage)
     {
         <div class="mb-1 d-flex flex-row justify-end">
@@ -37,11 +37,11 @@ else if (_accountOwners.Count > 0)
 
     <div class="pb-3">
         <MudTable Items="@_accountOwners"
-                  Hover="true"
-                  Dense="true"
-                  Striped="true"
-                  Breakpoint="Breakpoint.Sm"
-                  LoadingProgressColor="Color.Info">
+        Hover="true"
+        Dense="true"
+        Striped="true"
+        Breakpoint="Breakpoint.Sm"
+        LoadingProgressColor="Color.Info">
 
             <HeaderContent>
                 <MudTh>Email</MudTh>
@@ -75,14 +75,20 @@ else if (_accountOwners.Count > 0)
         </MudTable>
     </div>
 
+    <MudText Class="mt-6" Typo="Typo.h6">Berichte</MudText>
+
+    <MudCheckBox T="bool" Value="_receiveMonthlyReports" ValueChanged="UpdateMonthlyReportSettings">
+        Ich möchte monatliche Berichte über meine Konten per E-Mail zugeschickt bekommen.
+    </MudCheckBox>
+
     if (User.IsAllowedToManage)
     {
         <div class="mt-6">
             <MudButton Variant="Variant.Text"
-                       Color="Color.Error"
-                       StartIcon="@Icons.Material.TwoTone.Delete"
-                       Style="min-width: 150px"
-                       OnClick="InitiateTenantDeletion">
+            Color="Color.Error"
+            StartIcon="@Icons.Material.TwoTone.Delete"
+            Style="min-width: 150px"
+            OnClick="InitiateTenantDeletion">
                 Bereich löschen
             </MudButton>
         </div>
@@ -130,8 +136,12 @@ else
 
     private List<AccountOwner>? _accountOwners = null;
 
+    private bool _receiveMonthlyReports = false;
+
     protected async override Task OnInitializedAsync()
     {
+        _receiveMonthlyReports = User.Preferences.IsMonthlyReportingEnabled;
+
         if (_accountOwners == null)
         {
             if (!string.IsNullOrWhiteSpace(TenantKey))
@@ -274,6 +284,31 @@ else
 
                 Navigation.NavigateTo("/", true);
             }
+        }
+    }
+
+    private async Task UpdateMonthlyReportSettings(bool receiveMonthlyReports)
+    {
+        _isUpdating = true;
+
+        try 
+        {
+            _receiveMonthlyReports = receiveMonthlyReports;
+
+            var preferences = User.Preferences;
+            preferences.IsMonthlyReportingEnabled = receiveMonthlyReports;
+
+            await AccountOwners.UpdatePreferencesAsync(User.Email, preferences);
+
+            User.Preferences.IsMonthlyReportingEnabled = _receiveMonthlyReports;
+        }
+        catch
+        {
+            Snackbar.Add($"Die Einstellung konnte nicht geändert werden!", Severity.Error);
+        }
+        finally
+        {
+            _isUpdating = false;
         }
     }
 }

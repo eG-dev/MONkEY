@@ -114,6 +114,20 @@ namespace MONkEY.Data.Services
             return [.. result.OrderBy(e => e.Email)];
         }
 
+        public async Task UpdatePreferencesAsync(string email, AccountOwnerPreferences preferences)
+        {
+            var model = await GetByEmailAsync(email);
+
+            if (model == null)
+            {
+                throw new InvalidOperationException($"Failed to find the {nameof(AccountOwner)} entry by the specified email '{email}'!");
+            }
+
+            model.Preferences = preferences;
+
+            await UpdateAsync(model);
+        }
+
         private static void ValidateModel(AccountOwner model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
