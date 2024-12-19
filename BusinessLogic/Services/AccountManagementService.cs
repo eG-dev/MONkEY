@@ -119,7 +119,7 @@ namespace MONkEY.BusinessLogic.Services
 
                 await Reports.DeleteAllAsync(user.TenantKey, accountKey);
 
-                await Transactions.DeleteAllAsync(user.TenantKey, accountKey);
+                await Transactions.DeleteAllForAccountAsync(user.TenantKey, accountKey);
 
                 await Accounts.DeleteAsync(user.TenantKey, accountKey);
             }

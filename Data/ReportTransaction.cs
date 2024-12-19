@@ -10,5 +10,7 @@ namespace MONkEY.Data
         public string? TriggeredOn { get; set; }
 
         public string? TriggeredBy { get; set; }
+
+        public string? Comment { get; set; }
     }
 }

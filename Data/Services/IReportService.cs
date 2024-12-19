@@ -8,6 +8,6 @@
 
         Task DeleteAllAsync(string tenantKey, string accountKey);
 
-        Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod);
+        Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod, ReportType type);
     }
 }

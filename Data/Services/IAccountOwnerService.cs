@@ -10,6 +10,8 @@
 
         Task DeleteAsync(string email);
 
+        Task<List<string>> GetAllTenantKeysAsync();
+
         Task<AccountOwner?> GetByEmailAsync(string email);
 
         Task<List<AccountOwner>> GetAllAsync();

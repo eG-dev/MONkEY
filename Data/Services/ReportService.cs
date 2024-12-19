@@ -45,7 +45,7 @@ namespace MONkEY.Data.Services
             }
         }
 
-        public async Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod)
+        public async Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod, ReportType type)
         {
             var queryResult = _tableClient.QueryAsync<Report>(e =>
                 e.PartitionKey == tenantKey &&
@@ -55,8 +55,11 @@ namespace MONkEY.Data.Services
             Report? model = null;
             await foreach (var entry in queryResult)
             {
-                model = entry;
-                break;
+                if (entry.Type == type)
+                {
+                    model = entry;
+                    break;
+                }
             }
 
             return model;

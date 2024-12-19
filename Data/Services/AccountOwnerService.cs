@@ -72,6 +72,18 @@ namespace MONkEY.Data.Services
             }
         }
 
+        public async Task<List<string>> GetAllTenantKeysAsync()
+        {
+            var allOwners = await GetAllAsync();
+
+            var tenantKeys = allOwners
+                .DistinctBy(x => x.TenantKey)
+                .Select(x => x.TenantKey)
+                .ToList();
+
+            return tenantKeys;
+        }
+
         public async Task<AccountOwner?> GetByEmailAsync(string email)
         {
             var queryResult = _tableClient.QueryAsync<AccountOwner>(e =>

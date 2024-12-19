@@ -18,6 +18,21 @@
             return new DateTimeOffset(year, month, 1, value.Hour, value.Minute, value.Second, value.Millisecond, value.Microsecond, value.Offset);
         }
 
+        public static DateTimeOffset SubtractMonths(this DateTimeOffset value, int monthsAmount)
+        {
+            if (monthsAmount <= 0)
+            {
+                throw new InvalidOperationException("Months amount must be greater than 0!");
+            }
+
+            for (int i = 0; i < monthsAmount; i++)
+            {
+                value = value.SubtractMonth();
+            }
+
+            return value;
+        }
+
         public static DateTimeOffset StartOfMonth(this DateTimeOffset value)
         {
             return new DateTimeOffset(value.Year, value.Month, 1, 0, 0, 0, value.Offset);

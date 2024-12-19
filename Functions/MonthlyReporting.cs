@@ -18,7 +18,6 @@ namespace MONkEY.Functions
         private readonly ILogger _logger;
 
         private readonly IAccountOwnerService _owners;
-
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
         private readonly IReportService _reports;
@@ -36,7 +35,6 @@ namespace MONkEY.Functions
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _owners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
-
             _accounts = accountService ?? throw new ArgumentNullException(nameof(accountService));
             _transactions = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
             _reports = reportService ?? throw new ArgumentNullException(nameof(reportService));
@@ -45,7 +43,7 @@ namespace MONkEY.Functions
         }
 
         [Function("MonthlyReporting")]
-        // Runs every day at 0:35
+        // Runs every day at 12:35 AM
         public async Task Run([TimerTrigger("0 35 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing monthly reporting service");
@@ -69,13 +67,13 @@ namespace MONkEY.Functions
 
                 foreach (var account in accounts)
                 {
-                    var existingReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod);
+                    var existingReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod, ReportType.Monthly);
                     if (existingReport != null)
                     {
                         continue;
                     }
 
-                    var previosReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod.SubtractMonth());
+                    var previosReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod.SubtractMonth(), ReportType.Monthly);
 
                     var transactions = await _transactions.GetBetweenAsync(tenantKey, account.AccountKey, reportedPeriod, reportedPeriodEnd);
 
@@ -107,6 +105,7 @@ namespace MONkEY.Functions
                                 Amount = x.Amount,
                                 TriggeredOn = triggeredOn,
                                 TriggeredBy = x.TriggeredBy,
+                                Comment = x.Comment,
                             };
                         }).ToList()
                     };

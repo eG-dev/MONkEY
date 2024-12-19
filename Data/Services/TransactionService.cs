@@ -41,11 +41,23 @@ namespace MONkEY.Data.Services
             await _tableClient.AddEntityAsync(model);
         }
 
-        public async Task DeleteAllAsync(string tenantKey, string accountKey)
+        public async Task DeleteAllForAccountAsync(string tenantKey, string accountKey)
         {
             var queryResult = _tableClient.QueryAsync<Transaction>(e =>
                 e.PartitionKey == tenantKey &&
                 e.AccountKey == accountKey);
+
+            await foreach (var entry in queryResult)
+            {
+                await _tableClient.DeleteEntityAsync(entry);
+            }
+        }
+
+        public async Task DeleteOlderThanAsync(string tenantKey, DateTimeOffset olderThan)
+        {
+            var queryResult = _tableClient.QueryAsync<Transaction>(e =>
+                e.PartitionKey == tenantKey &&
+                e.TriggeredOn < olderThan);
 
             await foreach (var entry in queryResult)
             {

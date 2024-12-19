@@ -33,7 +33,7 @@ namespace MONkEY.Functions
         }
 
         [Function("PocketMoney")]
-        // Runs every day at 0:30
+        // Runs every day at 12:30 AM
         public async Task Run([TimerTrigger("0 30 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             _logger.LogInformation($"Executing pocket money service");
