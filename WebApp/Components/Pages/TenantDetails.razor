@@ -83,12 +83,14 @@ else if (_accountOwners.Count > 0)
 
     if (User.IsAllowedToManage)
     {
-        <div class="mt-6">
+        <MudText Class="mt-12" Typo="Typo.h6" Color="Color.Error">Risikozone</MudText>
+
+        <div Class="mt-3" >
             <MudButton Variant="Variant.Text"
-            Color="Color.Error"
-            StartIcon="@Icons.Material.TwoTone.Delete"
-            Style="min-width: 150px"
-            OnClick="InitiateTenantDeletion">
+                       Color="Color.Error"
+                       StartIcon="@Icons.Material.TwoTone.Delete"
+                       Style="min-width: 150px"
+                       OnClick="InitiateTenantDeletion">
                 Bereich löschen
             </MudButton>
         </div>
@@ -304,7 +306,7 @@ else
         }
         catch
         {
-            Snackbar.Add($"Die Einstellung konnte nicht geändert werden!", Severity.Error);
+            Snackbar.Add($"Die Aktion konnte nicht durchgeführt werden!", Severity.Error);
         }
         finally
         {
