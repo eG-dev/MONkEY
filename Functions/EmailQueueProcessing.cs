@@ -27,7 +27,7 @@ namespace MONkEY.Functions
         [Function(nameof(EmailQueueProcessing))]
         public async Task Run([QueueTrigger("emails", Connection = "STORAGE_CONNECTION_STRING")] QueueMessage message)
         {
-            _logger.LogInformation("Processing queue message with ID '{0}' triggered at '{1}'", message.MessageId, message.InsertedOn);
+            _logger.LogInformation("Processing queue message with ID {MessageId} triggered at {InsertedOn}", message.MessageId, message.InsertedOn);
 
             EmailTrigger? trigger = null;
 
@@ -37,18 +37,18 @@ namespace MONkEY.Functions
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to deserialize email trigger!\n{0}", ex.Message);
+                _logger.LogError("Failed to deserialize email trigger!\n{Message}", ex.Message);
             }
 
             if (trigger != null)
             {
                 if (trigger.Recipients == null || trigger.Recipients.Length == 0)
                 {
-                    _logger.LogError($"Got email trigger without any recipient!");
+                    _logger.LogError("Got email trigger without any recipient!");
                 }
                 else if (string.IsNullOrEmpty(trigger.Payload))
                 {
-                    _logger.LogError($"Got email trigger with an empty body!");
+                    _logger.LogError("Got email trigger with an empty body!");
                 }
                 else
                 {
@@ -72,7 +72,7 @@ namespace MONkEY.Functions
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to deserialize email report trigger!\n{0}", ex.Message);
+                _logger.LogError("Failed to deserialize email report trigger!\n{Message}", ex.Message);
             }
 
             if (trigger != null)
@@ -88,7 +88,7 @@ namespace MONkEY.Functions
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError("Failed to deserialize monthly report payload!\n{0}", ex.Message);
+                            _logger.LogError("Failed to deserialize monthly report payload!\n{Message}", ex.Message);
                         }
                         break;
                 }

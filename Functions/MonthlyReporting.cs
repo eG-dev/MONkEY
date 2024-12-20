@@ -46,7 +46,7 @@ namespace MONkEY.Functions
         // Runs every day at 12:35 AM
         public async Task Run([TimerTrigger("0 35 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
-            _logger.LogInformation($"Executing monthly reporting service");
+            _logger.LogInformation("Executing monthly reporting service");
 
             var reportedPeriod = DateTimeOffset.UtcNow.StartOfMonth().SubtractMonth();
             var reportedPeriodEnd = reportedPeriod.AddMonth();
@@ -63,6 +63,8 @@ namespace MONkEY.Functions
             {
                 var tenantKey = emailGroup.Key;
 
+                _logger.LogInformation("Running monthly reporting for tenant {tenantKey}", tenantKey);
+
                 var accounts = await _accounts.GetAllAsync(tenantKey);
 
                 foreach (var account in accounts)
@@ -72,6 +74,9 @@ namespace MONkEY.Functions
                     {
                         continue;
                     }
+
+                    _logger.LogInformation("Starting creation of monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod}",
+                        account.AccountKey, tenantKey, reportedPeriod);
 
                     var previosReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod.SubtractMonth(), ReportType.Monthly);
 
@@ -121,6 +126,9 @@ namespace MONkEY.Functions
 
                     await _reports.AddAsync(report);
 
+                    _logger.LogInformation("Successfully created monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod}",
+                        account.AccountKey, tenantKey, reportedPeriod);
+
                     var emailRecipients = emailGroup
                         .Where(x => x.Preferences.IsMonthlyReportingEnabled)
                         .Select(x => x.Email)
@@ -128,6 +136,8 @@ namespace MONkEY.Functions
 
                     if (emailRecipients.Length > 0)
                     {
+                        _logger.LogInformation("Sending out email to {Length} recipients in the tenant {tenantKey}", emailRecipients.Length, tenantKey);
+
                         await _emails.TriggerMonthlyReport(emailRecipients, report.SerializedPayload);
                     }
                 }

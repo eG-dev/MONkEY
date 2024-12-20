@@ -7,7 +7,7 @@ using MONkEY.Support;
 
 namespace MONkEY.Functions
 {
-    public class PocketMoneyAccounting
+    public class PocketMoneyCredit
     {
         private const string TRANSACTION_TRIGGER_NAME = "Taschengeld-Service";
 
@@ -18,11 +18,11 @@ namespace MONkEY.Functions
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
 
-        public PocketMoneyAccounting(
+        public PocketMoneyCredit(
             IAccountOwnerService owners,
             IAccountService accounts,
             ITransactionService transactions,
-            ILogger<PocketMoneyAccounting> logger)
+            ILogger<PocketMoneyCredit> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -36,7 +36,7 @@ namespace MONkEY.Functions
         // Runs every day at 12:30 AM
         public async Task Run([TimerTrigger("0 30 0 * * *", RunOnStartup = true)] TimerInfo timer)
         {
-            _logger.LogInformation($"Executing pocket money service");
+            _logger.LogInformation("Executing pocket money service");
 
             var firstOfMonth = DateTimeOffset.UtcNow.StartOfMonth();
 
@@ -44,6 +44,8 @@ namespace MONkEY.Functions
             foreach (var ownersGroup in owners.GroupBy(x => x.TenantKey))
             {
                 var tenantKey = ownersGroup.Key;
+
+                _logger.LogInformation("Running pocket money credit for tenant {tenantKey}",  tenantKey);
 
                 var accounts = await _accounts.GetAllAsync(tenantKey);
 
@@ -55,6 +57,9 @@ namespace MONkEY.Functions
 
                         if (pocketMoneyTransactions.Count == 0)
                         {
+                            _logger.LogInformation("Starting credit {Value}€ pocket money to the account {AccountKey} ({tenantKey})",
+                                account.PocketMoney.Value, account.AccountKey, tenantKey);
+
                             var amount = account.PocketMoney.Value;
 
                             await _transactions.AddAsync(new Transaction()
@@ -69,6 +74,9 @@ namespace MONkEY.Functions
                             account.Balance += amount;
 
                             await _accounts.UpdateAsync(account);
+
+                            _logger.LogInformation("Successfully credited pocket money to account {AccountKey} ({tenantKey})",
+                                account.AccountKey, tenantKey);
                         }
                     }
                 }
