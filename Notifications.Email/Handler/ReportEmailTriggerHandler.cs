@@ -36,17 +36,28 @@ namespace MONkEY.Notifications.Email.Handler
                 foreach (var transaction in report.Transactions)
                 {
                     transactionEntries += string.Format(
-                        "<tr><td>{0}</td><td><p><b style=\"color: {1}\">{2}€</b></td><td>{3}</td><td><i>{4}</i></td></tr>",
+                        "<tr><td>{0} - {1}</td></tr>",
                         transaction.TriggeredOn,
+                        transaction.TriggeredBy);
+
+                    transactionEntries += string.Format(
+                        "<tr><td><b style=\"color: {0}\">{1}€</b></td></tr>",
                         transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                        transaction.Amount.ToString("+0.##;-0.##"),
-                        transaction.TriggeredBy,
-                        transaction.Comment ?? string.Empty);
+                        transaction.Amount.ToString("+0.##;-0.##"));
+
+                    if (!string.IsNullOrWhiteSpace(transaction.Comment))
+                    {
+                        transactionEntries += string.Format(
+                            "<tr><td><i>{0}</i></td></tr>",
+                            transaction.Comment);
+                    }
+
+                    transactionEntries += "<tr style=\"height: 10px\"></tr>";
                 }
             }
             else
             {
-                transactionEntries = "<p>Es gab keine Transaktionen.</p>";
+                transactionEntries = "<tr><td><p>Es gab keine Transaktionen.</p></td></tr>";
             }
 
             var emailBody = emailSender
