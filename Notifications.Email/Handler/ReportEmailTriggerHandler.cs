@@ -36,7 +36,7 @@ namespace MONkEY.Notifications.Email.Handler
                 foreach (var transaction in report.Transactions)
                 {
                     transactionEntries += string.Format(
-                        "<tr><td>{0} - {1}</td></tr>",
+                        "<tr style=\"font-size: small\"><td>{0} - {1}</td></tr>",
                         transaction.TriggeredOn,
                         transaction.TriggeredBy);
 
@@ -48,7 +48,7 @@ namespace MONkEY.Notifications.Email.Handler
                     if (!string.IsNullOrWhiteSpace(transaction.Comment))
                     {
                         transactionEntries += string.Format(
-                            "<tr><td><i>{0}</i></td></tr>",
+                            "<tr style=\"font-size: x-small\"><td><i>{0}</i></td></tr>",
                             transaction.Comment);
                     }
 
