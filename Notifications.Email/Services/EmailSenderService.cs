@@ -25,7 +25,7 @@ namespace MONkEY.Notifications.Email.Services
 
         public async Task Send(IEnumerable<string> recipients, string subject, string content)
         {
-            _logger.LogInformation($"Sending email with subject '{subject}' to {recipients.Count()} recipients.");
+            _logger.LogInformation("Sending email with subject '{subject}' to {Count} recipients.", subject, recipients.Count());
 
             MimeMessage email = new();
 
