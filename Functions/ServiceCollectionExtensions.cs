@@ -3,7 +3,9 @@ using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
 
 using MONkEY.Data.Services;
+using MONkEY.Notifications.Email.Handler;
 using MONkEY.Notifications.Email.Services;
+using MONkEY.Notifications.Email.Triggers;
 
 namespace MONkEY.Functions
 {
@@ -32,6 +34,8 @@ namespace MONkEY.Functions
 
             services.AddScoped<IEmailTriggerService, EmailTriggerService>();
             services.AddScoped<IEmailSenderService, EmailSenderService>();
+
+            services.AddScoped<IEmailTriggerHandler<ReportEmailTrigger>, ReportEmailTriggerHandler>();
 
             return services;
         }

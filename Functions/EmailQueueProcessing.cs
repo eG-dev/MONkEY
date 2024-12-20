@@ -3,9 +3,10 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-using MONkEY.Data;
 using MONkEY.Notifications.Email;
+using MONkEY.Notifications.Email.Handler;
 using MONkEY.Notifications.Email.Services;
+using MONkEY.Notifications.Email.Triggers;
 
 namespace MONkEY.Functions
 {
@@ -15,13 +16,18 @@ namespace MONkEY.Functions
 
         private readonly IEmailSenderService _email;
 
+        private readonly IEmailTriggerHandler<ReportEmailTrigger> _reportHandler;
+
         public EmailQueueProcessing(
-            IEmailSenderService emailService,
+            IEmailSenderService emailSender,
+            IEmailTriggerHandler<ReportEmailTrigger> reportHandler,
             ILogger<EmailQueueProcessing> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            _email = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            _email = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+
+            _reportHandler = reportHandler ?? throw new ArgumentNullException(nameof(reportHandler));
         }
 
         [Function(nameof(EmailQueueProcessing))]
@@ -44,11 +50,11 @@ namespace MONkEY.Functions
             {
                 if (trigger.Recipients == null || trigger.Recipients.Length == 0)
                 {
-                    _logger.LogError("Got email trigger without any recipient!");
+                    _logger.LogError("Got an email trigger without any recipient!");
                 }
                 else if (string.IsNullOrEmpty(trigger.Payload))
                 {
-                    _logger.LogError("Got email trigger with an empty body!");
+                    _logger.LogError("Got an email trigger with an empty body!");
                 }
                 else
                 {
@@ -64,11 +70,11 @@ namespace MONkEY.Functions
 
         private async Task HandleReportTrigger(QueueMessage message)
         {
-            EmailTriggerForReport? trigger = null;
+            ReportEmailTrigger? trigger = null;
 
             try
             {
-                trigger = JsonSerializer.Deserialize<EmailTriggerForReport>(message.MessageText);
+                trigger = JsonSerializer.Deserialize<ReportEmailTrigger>(message.MessageText);
             }
             catch (Exception ex)
             {
@@ -77,58 +83,15 @@ namespace MONkEY.Functions
 
             if (trigger != null)
             {
-                switch (trigger.ReportType)
+                try
                 {
-                    case ReportType.Monthly:
-                        try
-                        {
-                            var reportPayload = JsonSerializer.Deserialize<MonthlyReportPayload>(trigger.Payload);
-
-                            await SendMonthlyReport(trigger.Recipients, reportPayload!);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError("Failed to deserialize monthly report payload!\n{Message}", ex.Message);
-                        }
-                        break;
+                    await _reportHandler.HandleTrigger(trigger, _email);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Failed to handle report trigger!\n{Message}", ex.Message);
                 }
             }
-        }
-
-        private async Task SendMonthlyReport(string[] recipients, MonthlyReportPayload report)
-        {
-            var emailSubject = $"{report.AccountName} - Bericht für {report.ReportedPeriodName}";
-
-            string transactionEntries = string.Empty;
-            if (report.Transactions.Count > 0)
-            {
-                transactionEntries += "<ul>";
-
-                foreach (var transaction in report.Transactions)
-                {
-                    transactionEntries += string.Format(
-                        "<li><p><b style=\"color: {0}\">{1}€</b> am {2} durch {3}<p></li>",
-                        transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                        transaction.Amount.ToString("+0.##;-0.##"),
-                        transaction.TriggeredOn,
-                        transaction.TriggeredBy);
-                }
-
-                transactionEntries += "</ul>";
-            }
-            else
-            {
-                transactionEntries = "<p>Es gab keine Transaktionen.</p>";
-            }
-
-            var emailBody = _email
-                .GetTemplate("body_monthly_report")
-                .Replace("{{ACCOUNT_NAME}}", report.AccountName)
-                .Replace("{{CLOSING_BALANCE}}", report.ClosingBalance.ToString())
-                .Replace("{{STARTING_BALANCE}}", report.StartingBalance.ToString())
-                .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries, StringComparison.Ordinal);
-
-            await _email.Send(recipients, emailSubject, emailBody);
         }
     }
 }

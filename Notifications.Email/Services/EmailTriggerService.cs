@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text;
 
 using MONkEY.Data;
+using MONkEY.Notifications.Email.Triggers;
 
 namespace MONkEY.Notifications.Email.Services
 {
@@ -27,7 +28,7 @@ namespace MONkEY.Notifications.Email.Services
         {
             _logger.LogInformation("Triggering monthly report email");
 
-            var emailTrigger = new EmailTriggerForReport()
+            var emailTrigger = new ReportEmailTrigger()
             {
                 Recipients = recipients,
                 EmailType = EmailType.Report,

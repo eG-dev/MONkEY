@@ -1,4 +1,4 @@
-﻿namespace MONkEY.Notifications.Email
+﻿namespace MONkEY.Notifications.Email.Triggers
 {
     public class EmailTrigger
     {
