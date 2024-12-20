@@ -18,21 +18,7 @@
     private bool _isActive = true;
 
     [Parameter]
-    public bool IsActive
-    {
-        get => _isActive;
-        set
-        {
-            if (value != _isActive)
-            {
-                _isActive = value;
-                if (IsActiveChanged.HasDelegate)
-                {
-                    IsActiveChanged.InvokeAsync(_isActive);
-                }
-            }
-        }
-    }
+    public bool IsActive { get; set; }
 
     [Parameter]
     public EventCallback<bool> IsActiveChanged { get; set; }
@@ -42,4 +28,19 @@
 
     [Parameter]
     public Color IndicatorColor { get; set; } = Color.Primary;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_isActive != IsActive)
+        {
+            _isActive = IsActive;
+
+            if (IsActiveChanged.HasDelegate)
+            {
+                IsActiveChanged.InvokeAsync(_isActive);
+            }
+        }
+    }
 }
