@@ -72,8 +72,6 @@ namespace MONkEY.Functions
                     var existingReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod, ReportType.Monthly);
                     if (existingReport != null)
                     {
-                        await _emails.TriggerMonthlyReport(["e.klerner@outlook.com"], existingReport.SerializedPayload);
-
                         continue;
                     }
 

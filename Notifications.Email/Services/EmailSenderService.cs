@@ -53,7 +53,7 @@ namespace MONkEY.Notifications.Email.Services
             await smtp.ConnectAsync(_smtpSettings.Host, _smtpSettings.Port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_smtpSettings.User, _smtpSettings.Password);
 
-#if !DEBUG || true
+#if !DEBUG
             await smtp.SendAsync(email);
 #endif
 

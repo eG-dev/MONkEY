@@ -39,18 +39,18 @@ namespace MONkEY.Notifications.Email.Handler
                         "<tr style=\"font-size: small\"><td>{0} - {1}</td></tr>",
                         transaction.TriggeredOn,
                         transaction.TriggeredBy);
-
-                    transactionEntries += string.Format(
-                        "<tr><td><b style=\"color: {0}\">{1}€</b></td></tr>",
-                        transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                        transaction.Amount.ToString("+0.##;-0.##"));
-
+                    
                     if (!string.IsNullOrWhiteSpace(transaction.Comment))
                     {
                         transactionEntries += string.Format(
                             "<tr style=\"font-size: x-small\"><td><i>{0}</i></td></tr>",
                             transaction.Comment);
                     }
+
+                    transactionEntries += string.Format(
+                        "<tr><td><b style=\"color: {0}\">{1}€</b></td></tr>",
+                        transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
+                        transaction.Amount.ToString("+0.##;-0.##"));
 
                     transactionEntries += "<tr style=\"height: 10px\"></tr>";
                 }
