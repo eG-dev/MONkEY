@@ -117,7 +117,7 @@ namespace MONkEY.BusinessLogic.Services
                     await Blobs.DeleteFileAsync($"{user.TenantKey}/{account.Image}");
                 }
 
-                await Reports.DeleteAllAsync(user.TenantKey, accountKey);
+                await Reports.DeleteForAccountAsync(user.TenantKey, accountKey);
 
                 await Transactions.DeleteAllForAccountAsync(user.TenantKey, accountKey);
 

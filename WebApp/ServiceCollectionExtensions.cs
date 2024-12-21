@@ -1,9 +1,10 @@
 ﻿using Azure.Data.Tables;
 using Azure.Storage.Blobs;
-
+using Azure.Storage.Queues;
 using MONkEY.BusinessLogic.Services;
 using MONkEY.Data.Services;
 using MONkEY.Identity.Services;
+using MONkEY.Notifications.Email.Services;
 using MONkEY.WebApp.Utils;
 
 namespace MONkEY.WebApp
@@ -25,6 +26,9 @@ namespace MONkEY.WebApp
             BlobServiceClient blobServiceClient = new(storageConnectionString);
             services.AddSingleton(sp => blobServiceClient);
 
+            QueueServiceClient queueServiceClient = new(storageConnectionString);
+            services.AddSingleton(sp => queueServiceClient);
+
             return services;
         }
 
@@ -42,6 +46,8 @@ namespace MONkEY.WebApp
             services.AddScoped<IAccountManagementService, AccountManagementService>();
             services.AddScoped<ITenantManagementService, TenantManagementService>();
             services.AddScoped<IUsageTermsService, UsageTermsService>();
+
+            services.AddScoped<IEmailTriggerService, EmailTriggerService>();
 
             return services;
         }

@@ -28,7 +28,7 @@ namespace MONkEY.Notifications.Email.Handler
 
         private static async Task SendMonthlyReport(IEmailSenderService emailSender, ReportEmailTrigger trigger, MonthlyReportPayload report)
         {
-            var emailSubject = $"{report.AccountName} - Bericht für {report.ReportedPeriodName}";
+            var emailSubject = $"{report.AccountName} - Monatsbericht für {report.ReportedPeriodName}";
 
             string transactionEntries = string.Empty;
             if (report.Transactions.Count > 0)
@@ -63,6 +63,7 @@ namespace MONkEY.Notifications.Email.Handler
             var emailBody = emailSender
                 .GetTemplate("body_monthly_report")
                 .Replace("{{ACCOUNT_NAME}}", report.AccountName)
+                .Replace("{{REPORTED_PERIOD_NAME}}", report.ReportedPeriodName)
                 .Replace("{{CLOSING_BALANCE}}", report.ClosingBalance.ToString())
                 .Replace("{{STARTING_BALANCE}}", report.StartingBalance.ToString())
                 .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries);

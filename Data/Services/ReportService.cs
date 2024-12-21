@@ -1,4 +1,6 @@
-﻿using Azure.Data.Tables;
+﻿using Azure;
+using Azure.Data.Tables;
+using MONkEY.Support;
 
 namespace MONkEY.Data.Services
 {
@@ -33,7 +35,7 @@ namespace MONkEY.Data.Services
             await _tableClient.AddEntityAsync(model);
         }
 
-        public async Task DeleteAllAsync(string tenantKey, string accountKey)
+        public async Task DeleteForAccountAsync(string tenantKey, string accountKey)
         {
             var queryResult = _tableClient.QueryAsync<Report>(e =>
                 e.PartitionKey == tenantKey &&
@@ -45,24 +47,57 @@ namespace MONkEY.Data.Services
             }
         }
 
-        public async Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod, ReportType type)
+        public async Task<List<Report>> GetAsync(string tenantKey, ReportType type, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
-            var queryResult = _tableClient.QueryAsync<Report>(e =>
-                e.PartitionKey == tenantKey &&
-                e.AccountKey == accountKey &&
-                e.ReportedPeriod == reportedPeriod);
+            AsyncPageable<Report> queryResult;
 
-            Report? model = null;
+            if (olderThan == null)
+            {
+                queryResult = _tableClient.QueryAsync<Report>(e =>
+                        e.PartitionKey == tenantKey,
+                    pageSize);
+            }
+            else
+            {
+                queryResult = _tableClient.QueryAsync<Report>(e =>
+                        e.PartitionKey == tenantKey &&
+                        e.ReportedPeriod < olderThan.Value.StartOfMonth(),
+                    pageSize);
+            }
+
+            List<Report> result = [];
             await foreach (var entry in queryResult)
             {
                 if (entry.Type == type)
                 {
-                    model = entry;
+                    result.Add(entry);
+                }
+
+                if (pageSize != null && result.Count == pageSize)
+                {
                     break;
                 }
             }
 
-            return model;
+            return [.. result.OrderByDescending(e => e.ReportedPeriod)];
+        }
+
+        public async Task<List<Report>> GetForPeriodAsync(string tenantKey, DateTimeOffset reportedPeriod, ReportType type)
+        {
+            var queryResult = _tableClient.QueryAsync<Report>(e =>
+                e.PartitionKey == tenantKey &&
+                e.ReportedPeriod == reportedPeriod.StartOfMonth());
+
+            List<Report> result = [];
+            await foreach (var entry in queryResult)
+            {
+                if (entry.Type == type)
+                {
+                    result.Add(entry);
+                }
+            }
+
+            return result;
         }
 
         private static void ValidateModel(Report model)

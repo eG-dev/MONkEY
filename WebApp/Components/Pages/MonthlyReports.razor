@@ -1,0 +1,156 @@
+﻿@page "/tenant/{TenantKey}/monthlyreports"
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject NavigationManager Navigation
+@inject IReportService Reports
+@inject IAccountOwnerService AccountOwners
+@inject IEmailTriggerService EmailTriggers
+@inject IDialogService Dialog
+@inject ISnackbar Snackbar
+
+<PageTitle>POCKET MONkEY - Berichte</PageTitle>
+
+<div>
+    <MudBreadcrumbs Items="_breadcrumbs" Separator=">" MaxItems="2"></MudBreadcrumbs>
+</div>
+
+@if (_reports == null)
+{
+    <PageLoader />
+}
+else
+{
+    <MudCheckBox T="bool" Value="_receiveMonthlyReports" ValueChanged="UpdateMonthlyReportSettings">
+        Ich möchte Monatsberichte automatisch per E-Mail zugeschickt bekommen.
+    </MudCheckBox>
+
+    <MudText Class="mt-6" Typo="Typo.h6">Monatsberichte</MudText>
+
+    <div class="pb-3">
+        <MudTable T="Report" Items="@_reports"
+        Hover="true"
+        Dense="true"
+        Striped="true"
+        Breakpoint="Breakpoint.Sm"
+        LoadingProgressColor="Color.Info">
+
+            <HeaderContent>
+                <MudTh>Zeitraum</MudTh>
+                <MudTh>Konto</MudTh>
+                <MudTh>Startguthaben</MudTh>
+                <MudTh>Abschlussguthaben</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Zeitraum">@_monthlyReportPayloads![context.RowKey].ReportedPeriodName</MudTd>
+                <MudTd DataLabel="Konto">@_monthlyReportPayloads![context.RowKey].AccountName</MudTd>
+                <MudTd DataLabel="Startguthaben">@_monthlyReportPayloads![context.RowKey].StartingBalance</MudTd>
+                <MudTd DataLabel="Abschlussguthaben">@_monthlyReportPayloads![context.RowKey].ClosingBalance</MudTd>
+                <MudTd>
+                    <div class="d-flex flex-row justify-end">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Email" OnClick="() => TriggerEmailDelivery(context)" />
+                    </div>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
+
+    <MudOverlay @bind-Visible="_isUpdating" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+}
+
+@code {
+    [CascadingParameter]
+    private User User { get; set; } = default!;
+
+    [Parameter]
+    public string TenantKey { get; set; } = default!;
+
+    private List<BreadcrumbItem> _breadcrumbs = new()
+    {
+        new BreadcrumbItem("Übersicht", "/", false, Icons.Material.TwoTone.Home)
+    };
+
+    private bool _isUpdating = false;
+
+    private List<Report>? _reports = null;
+    private Dictionary<string, MonthlyReportPayload>? _monthlyReportPayloads = null;
+
+    private bool _receiveMonthlyReports = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _receiveMonthlyReports = User.Preferences.IsMonthlyReportingEnabled;
+
+        if (_reports == null)
+        {
+            if (!string.IsNullOrWhiteSpace(TenantKey))
+            {
+                _reports = await Reports.GetAsync(TenantKey, ReportType.Monthly);
+
+                _monthlyReportPayloads = _reports.ToDictionary(
+                    r => r.RowKey,
+                    r => System.Text.Json.JsonSerializer.Deserialize<MonthlyReportPayload>(r.SerializedPayload))!;
+            }
+            else
+            {
+                _reports = new();
+                _monthlyReportPayloads = new();
+            }
+
+            _breadcrumbs.Add(new BreadcrumbItem(
+                "Monatsberichte",
+                $"/tenant/{TenantKey}/monthlyreports",
+                false,
+                Icons.Custom.FileFormats.FileDocument));
+        }
+    }
+
+    private async Task UpdateMonthlyReportSettings(bool receiveMonthlyReports)
+    {
+        _isUpdating = true;
+
+        try
+        {
+            _receiveMonthlyReports = receiveMonthlyReports;
+
+            var preferences = User.Preferences;
+            preferences.IsMonthlyReportingEnabled = receiveMonthlyReports;
+
+            await AccountOwners.UpdatePreferencesAsync(User.Email, preferences);
+
+            User.Preferences.IsMonthlyReportingEnabled = _receiveMonthlyReports;
+        }
+        catch
+        {
+            Snackbar.Add($"Die Aktion konnte nicht durchgeführt werden!", Severity.Error);
+        }
+        finally
+        {
+            _isUpdating = false;
+        }
+    }
+
+    private async Task TriggerEmailDelivery(Report report)
+    {
+        _isUpdating = true;
+
+        try
+        {
+            await EmailTriggers.TriggerMonthlyReport([User.Email], report.SerializedPayload);
+
+            // Virtual delay to prevent misusage (e.g. spamming)
+            await Task.Delay(1000);
+        }
+        catch
+        {
+            Snackbar.Add($"Die Aktion konnte nicht durchgeführt werden!", Severity.Error);
+        }
+        finally
+        {
+            _isUpdating = false;
+        }
+    }
+}

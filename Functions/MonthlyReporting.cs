@@ -53,24 +53,31 @@ namespace MONkEY.Functions
 
             var owners = await _owners.GetAllAsync();
 
-            var recipientGroups = owners
+            var tenantMemberGroups = owners
                 .Where(x =>
                     x.Role >= AccountOwnerRole.Manager &&
                     x.Status == AccountOwnerStatus.Active)
                 .GroupBy(x => x.TenantKey);
 
-            foreach (var emailGroup in recipientGroups)
+            foreach (var tenantMembers in tenantMemberGroups)
             {
-                var tenantKey = emailGroup.Key;
+                var tenantKey = tenantMembers.Key;
 
                 _logger.LogInformation("Running monthly reporting for tenant {tenantKey}", tenantKey);
 
+                var existingReports = await _reports.GetForPeriodAsync(tenantKey, reportedPeriod, ReportType.Monthly);
+
                 var accounts = await _accounts.GetAllAsync(tenantKey);
+                if (accounts.All(accounts => existingReports.Any(x => x.AccountKey == accounts.AccountKey)))
+                {
+                    continue;
+                }
+
+                var previousReports = await _reports.GetForPeriodAsync(tenantKey, reportedPeriod.SubtractMonth(), ReportType.Monthly);
 
                 foreach (var account in accounts)
                 {
-                    var existingReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod, ReportType.Monthly);
-                    if (existingReport != null)
+                    if (existingReports.Any(x => x.AccountKey == account.AccountKey))
                     {
                         continue;
                     }
@@ -78,19 +85,18 @@ namespace MONkEY.Functions
                     _logger.LogInformation("Starting creation of monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod}",
                         account.AccountKey, tenantKey, reportedPeriod);
 
-                    var previosReport = await _reports.GetForPeriodAsync(tenantKey, account.AccountKey, reportedPeriod.SubtractMonth(), ReportType.Monthly);
-
                     var transactions = await _transactions.GetBetweenAsync(tenantKey, account.AccountKey, reportedPeriod, reportedPeriodEnd);
 
-                    if (previosReport == null && transactions.Count == 0)
+                    var previousReport = previousReports.FirstOrDefault(x => x.AccountKey == account.AccountKey);
+                    if (previousReport == null && transactions.Count == 0)
                     {
                         // There is no need to generate a report if there were no transactions or any previously created report.
                         // This is normally the case when the application went live in this month.
                         continue;
                     }
 
-                    double startingBalance = previosReport?.SerializedPayload != null
-                        ? JsonSerializer.Deserialize<MonthlyReportPayload>(previosReport.SerializedPayload)!.StartingBalance
+                    double startingBalance = previousReport?.SerializedPayload != null
+                        ? JsonSerializer.Deserialize<MonthlyReportPayload>(previousReport.SerializedPayload)!.StartingBalance
                         : 0;
 
                     double closingBalance = startingBalance + transactions.Sum(t => t.Amount);
@@ -129,7 +135,7 @@ namespace MONkEY.Functions
                     _logger.LogInformation("Successfully created monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod}",
                         account.AccountKey, tenantKey, reportedPeriod);
 
-                    var emailRecipients = emailGroup
+                    var emailRecipients = tenantMembers
                         .Where(x => x.Preferences.IsMonthlyReportingEnabled)
                         .Select(x => x.Email)
                         .ToArray();

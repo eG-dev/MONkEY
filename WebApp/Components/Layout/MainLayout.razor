@@ -60,6 +60,12 @@
                        OnClick="ToggleDrawer">
                 Mein Bereich
             </MudButton>
+            <MudButton StartIcon="@Icons.Custom.FileFormats.FileDocument"
+                       Color="Color.Inherit"
+                       Href="@($"/tenant/{_user.TenantKey}/monthlyreports")"
+                       OnClick="ToggleDrawer">
+                Monatsberichte
+            </MudButton>
             <MudDivider Class="my-3" DividerType="DividerType.Middle" />
             <MudButton StartIcon="@Icons.Material.TwoTone.Logout"
                        Color="Color.Secondary"

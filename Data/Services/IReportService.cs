@@ -6,8 +6,10 @@
 
         Task AddAsync(Report model);
 
-        Task DeleteAllAsync(string tenantKey, string accountKey);
+        Task DeleteForAccountAsync(string tenantKey, string accountKey);
 
-        Task<Report?> GetForPeriodAsync(string tenantKey, string accountKey, DateTimeOffset reportedPeriod, ReportType type);
+        Task<List<Report>> GetAsync(string tenantKey, ReportType type, int? pageSize = null, DateTimeOffset? olderThan = null);
+
+        Task<List<Report>> GetForPeriodAsync(string tenantKey, DateTimeOffset reportedPeriod, ReportType type);
     }
 }

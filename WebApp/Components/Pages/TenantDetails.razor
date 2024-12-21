@@ -75,12 +75,6 @@ else if (_accountOwners.Count > 0)
         </MudTable>
     </div>
 
-    <MudText Class="mt-6" Typo="Typo.h6">Berichte</MudText>
-
-    <MudCheckBox T="bool" Value="_receiveMonthlyReports" ValueChanged="UpdateMonthlyReportSettings">
-        Ich möchte monatliche Berichte über meine Konten per E-Mail zugeschickt bekommen.
-    </MudCheckBox>
-
     if (User.IsAllowedToManage)
     {
         <MudText Class="mt-12" Typo="Typo.h6" Color="Color.Error">Risikozone</MudText>
@@ -138,12 +132,8 @@ else
 
     private List<AccountOwner>? _accountOwners = null;
 
-    private bool _receiveMonthlyReports = false;
-
     protected async override Task OnInitializedAsync()
     {
-        _receiveMonthlyReports = User.Preferences.IsMonthlyReportingEnabled;
-
         if (_accountOwners == null)
         {
             if (!string.IsNullOrWhiteSpace(TenantKey))
@@ -286,31 +276,6 @@ else
 
                 Navigation.NavigateTo("/", true);
             }
-        }
-    }
-
-    private async Task UpdateMonthlyReportSettings(bool receiveMonthlyReports)
-    {
-        _isUpdating = true;
-
-        try 
-        {
-            _receiveMonthlyReports = receiveMonthlyReports;
-
-            var preferences = User.Preferences;
-            preferences.IsMonthlyReportingEnabled = receiveMonthlyReports;
-
-            await AccountOwners.UpdatePreferencesAsync(User.Email, preferences);
-
-            User.Preferences.IsMonthlyReportingEnabled = _receiveMonthlyReports;
-        }
-        catch
-        {
-            Snackbar.Add($"Die Aktion konnte nicht durchgeführt werden!", Severity.Error);
-        }
-        finally
-        {
-            _isUpdating = false;
         }
     }
 }
