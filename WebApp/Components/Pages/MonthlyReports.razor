@@ -5,7 +5,7 @@
 @inject NavigationManager Navigation
 @inject IReportService Reports
 @inject IAccountOwnerService AccountOwners
-@inject IEmailTriggerService EmailTriggers
+@inject IEmailTriggerService Emails
 @inject IDialogService Dialog
 @inject ISnackbar Snackbar
 
@@ -34,21 +34,23 @@ else
         Striped="true"
         Breakpoint="Breakpoint.Sm"
         LoadingProgressColor="Color.Info">
-
+            <NoRecordsContent>
+                Keine Transaktionen vorhanden...
+            </NoRecordsContent>
             <HeaderContent>
                 <MudTh>Zeitraum</MudTh>
                 <MudTh>Konto</MudTh>
-                <MudTh>Startguthaben</MudTh>
-                <MudTh>Abschlussguthaben</MudTh>
+                <MudTh>Ausgangsbilanz</MudTh>
+                <MudTh>Abschlussbilanz</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Zeitraum">@_monthlyReportPayloads![context.RowKey].ReportedPeriodName</MudTd>
                 <MudTd DataLabel="Konto">@_monthlyReportPayloads![context.RowKey].AccountName</MudTd>
-                <MudTd DataLabel="Startguthaben">
+                <MudTd DataLabel="Ausgangsbilanz">
                     <Amount Value="@_monthlyReportPayloads![context.RowKey].StartingBalance" Unit="€" />
                 </MudTd>
-                <MudTd DataLabel="Abschlussguthaben">
+                <MudTd DataLabel="Abschlussbilanz">
                     <Amount Value="@_monthlyReportPayloads![context.RowKey].ClosingBalance" Unit="€" />
                 </MudTd>
                 <MudTd>
@@ -145,7 +147,7 @@ else
 
         try
         {
-            await EmailTriggers.TriggerMonthlyReport([User.Email], report.SerializedPayload);
+            await Emails.TriggerMonthlyReport([User.Email], report.SerializedPayload);
 
             // Virtual delay to prevent misusage (e.g. spamming)
             await Task.Delay(1000);
