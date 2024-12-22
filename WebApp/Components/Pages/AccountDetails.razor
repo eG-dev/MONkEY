@@ -31,7 +31,9 @@ else if (_account != null)
 
         @if (User.IsAllowedToManage)
         {
-            <MudIconButton Icon="@Icons.Material.TwoTone.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
+            <MudTooltip Text="Konto bearbeiten">
+                <MudIconButton Icon="@Icons.Material.TwoTone.Edit" Color="Color.Default" OnClick="() => GotoAccountEdit()" />
+            </MudTooltip>
         }
     </div>
 

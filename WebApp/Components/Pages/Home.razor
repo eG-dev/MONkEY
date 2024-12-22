@@ -44,9 +44,11 @@ else if (User.Status == AccountOwnerStatus.Active)
                         <CardHeaderActions>
                             @if (User.IsAllowedToManage)
                             {
-                                <MudIconButton Icon="@Icons.Material.TwoTone.Edit"
-                                               Color="Color.Default"
-                                               OnClick="accountEditAction" />
+                                <MudTooltip Text="Konto bearbeiten">
+                                    <MudIconButton Icon="@Icons.Material.TwoTone.Edit"
+                                                   Color="Color.Default"
+                                                   OnClick="accountEditAction" />
+                                </MudTooltip>
                             }
                         </CardHeaderActions>
                     </MudCardHeader>

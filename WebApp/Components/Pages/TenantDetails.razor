@@ -67,7 +67,9 @@ else if (_accountOwners.Count > 0)
                     {
                         <div class="d-flex flex-row justify-end">
                             @* <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Edit" /> *@
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Delete" OnClick="() => InitiateUserDeletion(context.Email)" />
+                            <MudTooltip Text="Nutzer entfernen">
+                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Delete" OnClick="() => InitiateUserDeletion(context.Email)" />
+                            </MudTooltip>
                         </div>
                     }
                 </MudTd>

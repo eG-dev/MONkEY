@@ -45,11 +45,17 @@ else
             <RowTemplate>
                 <MudTd DataLabel="Zeitraum">@_monthlyReportPayloads![context.RowKey].ReportedPeriodName</MudTd>
                 <MudTd DataLabel="Konto">@_monthlyReportPayloads![context.RowKey].AccountName</MudTd>
-                <MudTd DataLabel="Startguthaben">@_monthlyReportPayloads![context.RowKey].StartingBalance</MudTd>
-                <MudTd DataLabel="Abschlussguthaben">@_monthlyReportPayloads![context.RowKey].ClosingBalance</MudTd>
+                <MudTd DataLabel="Startguthaben">
+                    <Amount Value="@_monthlyReportPayloads![context.RowKey].StartingBalance" Unit="€" />
+                </MudTd>
+                <MudTd DataLabel="Abschlussguthaben">
+                    <Amount Value="@_monthlyReportPayloads![context.RowKey].ClosingBalance" Unit="€" />
+                </MudTd>
                 <MudTd>
                     <div class="d-flex flex-row justify-end">
-                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.Email" OnClick="() => TriggerEmailDelivery(context)" />
+                        <MudTooltip Text="Per E-Mail zusenden">
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.ForwardToInbox" OnClick="() => TriggerEmailDelivery(context)" />
+                        </MudTooltip>
                     </div>
                 </MudTd>
             </RowTemplate>
