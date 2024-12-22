@@ -49,22 +49,54 @@ else
                 <MudTd DataLabel="Zeitraum">
                     @context.ReportedPeriod!.Value.ToString("d") - @context.ReportedPeriod!.Value.EndOfMonth().ToString("d")
                 </MudTd>
-                <MudTd DataLabel="Konto">@_monthlyReportPayloads![context.RowKey].AccountName</MudTd>
-                <MudTd DataLabel="Name">@_monthlyReportPayloads![context.RowKey].ReportedPeriodName</MudTd>
+                <MudTd DataLabel="Konto">@_reportPayloads![context.RowKey].AccountName</MudTd>
+                <MudTd DataLabel="Name">@_reportPayloads![context.RowKey].ReportedPeriodName</MudTd>
                 <MudTd DataLabel="Abschlussbilanz">
-                    <Amount Value="@_monthlyReportPayloads![context.RowKey].ClosingBalance" Unit="€" IsBold="true" />
+                    <Amount Value="@_reportPayloads![context.RowKey].ClosingBalance" Unit="€" IsBold="true" />
                 </MudTd>
                 <MudTd DataLabel="Ausgangsbilanz">
-                    <Amount Value="@_monthlyReportPayloads![context.RowKey].StartingBalance" Unit="€" />
+                    <Amount Value="@_reportPayloads![context.RowKey].StartingBalance" Unit="€" />
                 </MudTd>
                 <MudTd>
                     <div class="d-flex flex-row justify-end">
-                        <MudTooltip Text="Details ansehen">
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.TwoTone.ReadMore" OnClick="() => ShowReportDetails(context)" />
-                        </MudTooltip>
+                        <MudButton Size="@Size.Small"
+                                   Variant="Variant.Outlined"
+                                   StartIcon="@Icons.Material.TwoTone.ReadMore"
+                                   OnClick="() => ToggleReportDetails(context)">
+                            Details
+                        </MudButton>
                     </div>
                 </MudTd>
             </RowTemplate>
+            <ChildRowContent>
+                @if (context.RowKey == _detailsRowKey)
+                {
+                    <MudTr>
+                        <td colspan="6" style="padding: 6px 12px">
+                            <div style="display: flex; justify-content: flex-end">
+                                <MudButton StartIcon="@Icons.Material.TwoTone.ForwardToInbox"
+                                           OnClick="() => TriggerEmailDelivery(context)">
+                                    Per E-Mail zusenden
+                                </MudButton>
+                            </div>
+                        </td>
+                    </MudTr>
+                    <MudTr>
+                        <td colspan="6" style="padding: 0 12px 6px 6px">
+                            @foreach (var transaction in _reportPayloads![context.RowKey].Transactions)
+                            {
+                                <div style="font-size: smaller; margin-top: 12px">
+                                    @transaction.TriggeredOn - @transaction.TriggeredBy
+                                </div>
+                                <Amount Value="@transaction.Amount" Unit="€" />
+                                <div style="font-size: smaller">
+                                    <i>@transaction.Comment</i>
+                                </div>
+                            }
+                        </td>
+                    </MudTr>
+                }
+            </ChildRowContent>
         </MudTable>
     </div>
 
@@ -88,9 +120,11 @@ else
     private bool _isUpdating = false;
 
     private List<Report>? _reports = null;
-    private Dictionary<string, MonthlyReportPayload>? _monthlyReportPayloads = null;
+    private Dictionary<string, MonthlyReportPayload>? _reportPayloads = null;
 
     private bool _receiveMonthlyReports = false;
+
+    private string? _detailsRowKey = null;
 
     protected async override Task OnInitializedAsync()
     {
@@ -102,14 +136,14 @@ else
             {
                 _reports = await Reports.GetAsync(TenantKey, ReportType.Monthly);
 
-                _monthlyReportPayloads = _reports.ToDictionary(
+                _reportPayloads = _reports.ToDictionary(
                     r => r.RowKey,
                     r => System.Text.Json.JsonSerializer.Deserialize<MonthlyReportPayload>(r.SerializedPayload))!;
             }
             else
             {
                 _reports = new();
-                _monthlyReportPayloads = new();
+                _reportPayloads = new();
             }
 
             _breadcrumbs.Add(new BreadcrumbItem(
@@ -145,24 +179,15 @@ else
         }
     }
 
-    private async Task ShowReportDetails(Report report)
+    private void ToggleReportDetails(Report report)
     {
-        var dialog = await Dialog.ShowAsync<ReportDialog>(
-            $"Monatsbericht für {_monthlyReportPayloads![report.RowKey].ReportedPeriodName}",
-            new DialogParameters<ReportDialog>
-                {
-                    { x => x.Report, report },
-                },
-            new DialogOptions()
-                {
-                    MaxWidth = MaxWidth.Medium,
-                });
-
-        var result = await dialog.Result;
-
-        if (result != null && !result.Canceled && result.Data is true)
+        if (_detailsRowKey == report.RowKey)
         {
-            await TriggerEmailDelivery(report);
+            _detailsRowKey = null;
+        }
+        else
+        {
+            _detailsRowKey = report.RowKey;
         }
     }
 
