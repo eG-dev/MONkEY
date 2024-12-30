@@ -21,9 +21,12 @@
 }
 else
 {
-    <MudCheckBox T="bool" Value="_receiveMonthlyReports" ValueChanged="UpdateMonthlyReportSettings">
-        Ich möchte die Monatsberichte automatisch per E-Mail zugesendet bekommen
-    </MudCheckBox>
+    if (User.Role >= AccountOwnerRole.Manager)
+    {
+        <MudCheckBox T="bool" Value="_receiveMonthlyReports" ValueChanged="UpdateMonthlyReportSettings">
+            Ich möchte die Monatsberichte automatisch per E-Mail zugesendet bekommen
+        </MudCheckBox>
+    }
 
     <MudText Class="mt-6" Typo="Typo.h6">Monatsberichte</MudText>
 
