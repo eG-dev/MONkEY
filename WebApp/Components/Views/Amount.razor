@@ -1,8 +1,9 @@
 ﻿@if (Value.HasValue)
 {
     var value = Value.GetValueOrDefault();
+    var cssClass = string.IsNullOrWhiteSpace(Class) ? "" : Class;
 
-    <span style="@GetStyle()">
+    <span class="@cssClass" style="@GetStyle()">
         @(value == 0 ? 0 : value.ToString("+0.##;-0.##"))@Unit
     </span>
 }
@@ -17,6 +18,12 @@
     [Parameter]
     public bool IsBold { get; set; } = false;
 
+    [Parameter]
+    public string Class { get; set; } = default!;
+
+    [Parameter]
+    public string Style { get; set; } = default!;
+
     private string GetStyle()
     {
         var value = Value.GetValueOrDefault();
@@ -29,6 +36,13 @@
 
         var fontWeight = IsBold ? "font-weight: bold;" : "";
 
-        return $"color: var({color}); {fontWeight}";
+        var style = $"color: var({color}); {fontWeight};";
+
+        if (string.IsNullOrWhiteSpace(Style))
+        {
+            style += $" {Style}";
+        }
+
+        return style;
     }
 }

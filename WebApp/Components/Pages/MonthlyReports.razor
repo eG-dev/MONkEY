@@ -75,15 +75,20 @@ else
                 @if (context.RowKey == _detailsRowKey)
                 {
                     <MudTr>
-                        <td colspan="6" style="padding: 0 12px 6px 6px">
+                        <td colspan="6" style="padding: 0 6px 12px 6px">
                             @foreach (var transaction in _reportPayloads![context.RowKey].Transactions)
                             {
-                                <div style="font-size: smaller; margin-top: 12px">
-                                    @transaction.TriggeredOn - @transaction.TriggeredBy
-                                </div>
-                                <Amount Value="@transaction.Amount" Unit="€" />
-                                <div style="font-size: smaller">
-                                    <i>@transaction.Comment</i>
+                                <div class="mt-3">
+                                    <Amount Value="@transaction.Amount" Unit="€" />
+                                    <div style="font-size: smaller">
+                                        <span>@transaction.TriggeredOn - @transaction.TriggeredBy</span>
+                                        
+                                        @if (!string.IsNullOrWhiteSpace(transaction.Comment))
+                                        {
+                                            <span> - </span>
+                                            <span><i>@transaction.Comment</i></span>
+                                        }
+                                    </div>
                                 </div>
                             }
                         </td>
