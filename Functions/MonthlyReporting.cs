@@ -95,11 +95,15 @@ namespace MONkEY.Functions
                         continue;
                     }
 
-                    double startingBalance = previousReport?.SerializedPayload != null
-                        ? JsonSerializer.Deserialize<MonthlyReportPayload>(previousReport.SerializedPayload)!.StartingBalance
-                        : 0;
+                    double startingBalance = 0;
+                    if (!string.IsNullOrEmpty(previousReport?.SerializedPayload))
+                    {
+                        var previousPayload = JsonSerializer.Deserialize<MonthlyReportPayload>(previousReport.SerializedPayload);
+                        startingBalance = previousPayload!.ClosingBalance;
+                    }
 
-                    double closingBalance = startingBalance + transactions.Sum(t => t.Amount);
+                    double monthlyIncome = transactions.Sum(x => x.Amount);
+                    double closingBalance = startingBalance + monthlyIncome;
 
                     var reportPayload = new MonthlyReportPayload()
                     {
