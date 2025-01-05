@@ -45,7 +45,7 @@ else
                 <MudTh>Konto</MudTh>
                 <MudTh>Name</MudTh>
                 <MudTh>Abschlussbilanz</MudTh>
-                <MudTh>Ausgangsbilanz</MudTh>
+                <MudTh>Startbilanz</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -57,7 +57,7 @@ else
                 <MudTd DataLabel="Abschlussbilanz">
                     <Amount Value="@_reportPayloads![context.RowKey].ClosingBalance" Unit="€" IsBold="true" />
                 </MudTd>
-                <MudTd DataLabel="Ausgangsbilanz">
+                <MudTd DataLabel="Startbilanz">
                     <Amount Value="@_reportPayloads![context.RowKey].StartingBalance" Unit="€" />
                 </MudTd>
                 <MudTd>
@@ -79,16 +79,18 @@ else
                             @foreach (var transaction in _reportPayloads![context.RowKey].Transactions)
                             {
                                 <div class="mt-3">
-                                    <Amount Value="@transaction.Amount" Unit="€" />
-                                    <div style="font-size: smaller">
+                                    <div>
                                         <span>@transaction.TriggeredOn - @transaction.TriggeredBy</span>
-                                        
-                                        @if (!string.IsNullOrWhiteSpace(transaction.Comment))
-                                        {
-                                            <span> - </span>
-                                            <span><i>@transaction.Comment</i></span>
-                                        }
                                     </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(transaction.Comment))
+                                    {
+                                        <div style="font-size: smaller">
+                                            <span><i>@transaction.Comment</i></span>
+                                        </div>
+                                    }
+
+                                    <Amount Value="@transaction.Amount" Unit="€" IsBold="true" />
                                 </div>
                             }
                         </td>
