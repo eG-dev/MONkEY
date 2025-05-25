@@ -4,7 +4,7 @@
     var cssClass = string.IsNullOrWhiteSpace(Class) ? "" : Class;
 
     <span class="@cssClass" style="@GetStyle()">
-        @(value == 0 ? 0 : value.ToString("+0.##;-0.##"))@Unit
+        @FormatValue(value)@Unit
     </span>
 }
 
@@ -44,5 +44,17 @@
         }
 
         return style;
+    }
+
+    private string FormatValue(double value)
+    {
+        if (value == 0)
+        {
+            return "0";
+        }
+
+        return value % 1 == 0 
+            ? value.ToString("+0;-0") 
+            : value.ToString("+0.00;-0.00");
     }
 }
