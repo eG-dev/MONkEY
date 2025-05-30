@@ -95,7 +95,7 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+app.MapStaticAssets();
 
 app.UseAntiforgery();
 
