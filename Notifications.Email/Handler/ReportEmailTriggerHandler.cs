@@ -3,6 +3,7 @@
 using MONkEY.Data;
 using MONkEY.Notifications.Email.Services;
 using MONkEY.Notifications.Email.Triggers;
+using MONkEY.Support;
 
 namespace MONkEY.Notifications.Email.Handler
 {
@@ -50,7 +51,7 @@ namespace MONkEY.Notifications.Email.Handler
                     transactionEntries += string.Format(
                         "<tr><td><b style=\"color: {0}\">{1}€</b></td></tr>",
                         transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                        transaction.Amount.ToString("+0.##;-0.##"));
+                        AmountUtils.FormatValue(transaction.Amount));
 
                     transactionEntries += "<tr style=\"height: 10px\"></tr>";
                 }
@@ -64,8 +65,8 @@ namespace MONkEY.Notifications.Email.Handler
                 .GetTemplate("body_monthly_report")
                 .Replace("{{ACCOUNT_NAME}}", report.AccountName)
                 .Replace("{{REPORTED_PERIOD_NAME}}", report.ReportedPeriodName)
-                .Replace("{{CLOSING_BALANCE}}", report.ClosingBalance.ToString())
-                .Replace("{{STARTING_BALANCE}}", report.StartingBalance.ToString())
+                .Replace("{{CLOSING_BALANCE}}", AmountUtils.FormatValue(report.ClosingBalance))
+                .Replace("{{STARTING_BALANCE}}", AmountUtils.FormatValue(report.StartingBalance))
                 .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries);
 
             await emailSender.Send(trigger.Recipients, emailSubject, emailBody);
