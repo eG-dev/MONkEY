@@ -21,8 +21,8 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.8" />
-    <PackageVersion Include="Microsoft.Identity.Web" Version="3.13.1" />
-    <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.13.1" />
+    <PackageVersion Include="Microsoft.Identity.Web" Version="3.13.2" />
+    <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.13.2" />
     <PackageVersion Include="MudBlazor" Version="8.11.0" />
     <PackageVersion Include="MudBlazor.Translations" Version="2.6.0" />
   </ItemGroup>
