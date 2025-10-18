@@ -11,6 +11,7 @@ using System.Globalization;
 
 using MONkEY.WebApp;
 using MONkEY.WebApp.Components;
+using MONkEY.WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,9 +76,10 @@ builder.Services.AddCropper();
 builder.Services.AddMemoryCache();
 
 builder.Services
-    .AddBrowserTimeSupport()
-    .AddCustomAzureStorage(builder.Configuration)
-    .AddCustomServices();
+.AddBrowserTimeSupport()
+.AddCustomAzureStorage(builder.Configuration)
+.AddCustomServices()
+.AddScoped<ITimeZoneService, TimeZoneService>();
 
 var app = builder.Build();
 

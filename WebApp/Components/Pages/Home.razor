@@ -63,7 +63,7 @@ else if (User.Status == AccountOwnerStatus.Active)
                         @if (transaction != null)
                         {
                             <MudText Typo="Typo.caption">
-                                Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" Format="g" />
+                                Letzte Transaktion am <LocalTime DateTime="@transaction.Timestamp!.Value.UtcDateTime" />
                             </MudText>
                         }
                         else

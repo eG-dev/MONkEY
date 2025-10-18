@@ -2,31 +2,15 @@
 using Microsoft.AspNetCore.Components;
 
 using MONkEY.WebApp.Utils;
+using MONkEY.WebApp.Services;
 
 namespace MONkEY.WebApp.Components.Timezone
 {
-    public static class TimeProviderExtensions
-    {
-        public static DateTime ToLocalDateTime(this BrowserTimeProvider timeProvider, DateTime dateTime)
-        {
-            return dateTime.Kind switch
-            {
-                DateTimeKind.Unspecified => throw new InvalidOperationException("Unable to convert unspecified DateTime to local time"),
-                DateTimeKind.Local => dateTime,
-                _ => DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeProvider.LocalTimeZone), DateTimeKind.Local),
-            };
-        }
-
-        public static DateTime ToLocalDateTime(this BrowserTimeProvider timeProvider, DateTimeOffset dateTime)
-        {
-            var local = TimeZoneInfo.ConvertTimeFromUtc(dateTime.UtcDateTime, timeProvider.LocalTimeZone);
-            local = DateTime.SpecifyKind(local, DateTimeKind.Local);
-            return local;
-        }
-    }
-
     public sealed class LocalTime : ComponentBase, IDisposable
     {
+        [Inject]
+        public ITimeZoneService TimeZoneService { get; set; } = default!;
+
         [Inject]
         public BrowserTimeProvider BrowserTimeProvider { get; set; } = default!;
 
@@ -47,11 +31,11 @@ namespace MONkEY.WebApp.Components.Timezone
             {
                 if (!string.IsNullOrEmpty(Format))
                 {
-                    builder.AddContent(0, BrowserTimeProvider.ToLocalDateTime(DateTime.Value).ToString(Format));
+                    builder.AddContent(0, TimeZoneService.Format(DateTime.Value, Format));
                 }
                 else
                 {
-                    builder.AddContent(0, BrowserTimeProvider.ToLocalDateTime(DateTime.Value));
+                    builder.AddContent(0, TimeZoneService.Format(DateTime.Value, "g"));
                 }
             }
         }
