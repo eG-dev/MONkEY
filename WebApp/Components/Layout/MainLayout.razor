@@ -25,9 +25,7 @@
 <MudLayout Class="page">
     @if (_isInitializing)
     {
-        <MudOverlay Absolute="true" Visible="true">
-            <MudText Typo="Typo.h6">Initialisierung...</MudText>
-        </MudOverlay>
+        <PageLoader />
     }
     else
     {
