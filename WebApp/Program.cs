@@ -12,6 +12,7 @@ using System.Globalization;
 using MONkEY.WebApp;
 using MONkEY.WebApp.Components;
 using MONkEY.WebApp.Services;
+using MONkEY.WebApp.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 

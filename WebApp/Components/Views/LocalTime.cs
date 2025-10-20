@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Components;
 
 using MONkEY.WebApp.Utils;
-using MONkEY.WebApp.Services;
+using MONkEY.WebApp.Types;
 
-namespace MONkEY.WebApp.Components.Timezone
+namespace MONkEY.WebApp.Components.Views
 {
     public sealed class LocalTime : ComponentBase, IDisposable
     {

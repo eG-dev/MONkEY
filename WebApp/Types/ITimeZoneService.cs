@@ -1,6 +1,6 @@
 using System;
 
-namespace MONkEY.WebApp.Services
+namespace MONkEY.WebApp.Types
 {
     public interface ITimeZoneService
     {

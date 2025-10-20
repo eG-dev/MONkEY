@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using MONkEY.WebApp.Types;
 using MONkEY.WebApp.Utils;
 
 namespace MONkEY.WebApp.Services
@@ -22,8 +23,7 @@ namespace MONkEY.WebApp.Services
             {
                 try
                 {
-                    await using var module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/timezone.js");
-                    var timeZone = await module.InvokeAsync<string>("getBrowserTimeZone");
+                    var timeZone = await _jsRuntime.InvokeAsync<string>("clientLocalization.getTimeZone");
 
                     _timeProvider.SetBrowserTimeZone(timeZone);
                 }
