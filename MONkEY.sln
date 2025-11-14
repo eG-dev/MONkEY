@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35312.102
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{B588515B-8482-4A8D-A2AC-3F556A869298}"
 EndProject
@@ -20,6 +20,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5E718857-C4F3-4111-B9E0-56644A082969}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{818B29AC-6519-4134-A9A0-4E205EECE03F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{079A9B91-1B7B-4408-B882-C7A27E758E25}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish-monkey-functions.yml = .github\workflows\publish-monkey-functions.yml
+		.github\workflows\publish-monkey-webapp.yml = .github\workflows\publish-monkey-webapp.yml
 	EndProjectSection
 EndProject
 Global
@@ -59,6 +67,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{818B29AC-6519-4134-A9A0-4E205EECE03F} = {5E718857-C4F3-4111-B9E0-56644A082969}
+		{079A9B91-1B7B-4408-B882-C7A27E758E25} = {818B29AC-6519-4134-A9A0-4E205EECE03F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3277B199-B5EA-427F-B1BB-15ABD55B7463}
