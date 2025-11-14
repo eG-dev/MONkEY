@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: 9.0.x
+  DOTNET_VERSION: 10.0.x
   AZURE_WEBAPP_NAME: monkey-webapp
   WORKING_DIRECTORY: WebApp
   OUTPUT_DIRECTORY: output
