@@ -1,6 +1,10 @@
 ﻿@using Cropper.Blazor.Components
+@using Cropper.Blazor.Exceptions
 @using Cropper.Blazor.Extensions
 @using Cropper.Blazor.Models
+@using Cropper.Blazor.Services
+
+@inject IUrlImageInterop UrlImageInterop
 
 <MudDialog>
     <DialogContent>
@@ -99,7 +103,7 @@
             StateHasChanged();
 
             var oldSrc = Src;
-            Src = await CropperComponent!.GetImageUsingStreamingAsync(imageFile, imageFile.Size);
+            Src = await UrlImageInterop.GetImageUsingStreamingAsync(imageFile, imageFile.Size);
 
             Destroy(oldSrc);
 
@@ -112,38 +116,43 @@
         if (!string.IsNullOrEmpty(imageSrc))
         {
             CropperComponent?.Destroy();
-            CropperComponent?.RevokeObjectUrlAsync(imageSrc);
+            UrlImageInterop?.RevokeObjectUrlAsync(imageSrc);
         }
     }
 
     private async Task Submit()
     {
-        decimal imageWidth = 512;
-        decimal imageHeight = 512;
-
-        float imageQuality = 1;
-        string imageType = "image/png";
-
-        var croppedCanvasDataURL = await CropperComponent!.GetCroppedCanvasDataURLAsync(
+        var imageReceiver = await CropperComponent!.GetCroppedCanvasDataInBackgroundAsync(
             new GetCroppedCanvasOptions()
-                {
-                    Width = imageWidth,
-                    Height = imageHeight,
-                    FillColor = "white"
-                },
-            imageType,
-            imageQuality
+            {
+                Width = 512,
+                Height = 512,
+                FillColor = "white"
+            },
+            "image/png",
+            1 // quality
         );
 
-        var imageData = croppedCanvasDataURL.Decode();
-
-        ImageSelectionDialogModel model = new()
+        try
         {
-            ImageDataBase64 = imageData.base64ImageData,
-            MediaType = imageData.mediaType,
-        };
+            using MemoryStream croppedCanvasDataStream = await imageReceiver.GetImageChunkStreamAsync();
+            byte[] croppedCanvasData = croppedCanvasDataStream.ToArray();
 
-        MudDialog.Close(DialogResult.Ok(model));
+            var croppedCanvasDataURL = "data:image/png;base64," + Convert.ToBase64String(croppedCanvasData);
+            var imageData = croppedCanvasDataURL.Decode();
+
+            ImageSelectionDialogModel model = new()
+            {
+                ImageDataBase64 = imageData.base64ImageData,
+                MediaType = imageData.mediaType,
+            };
+
+            MudDialog.Close(DialogResult.Ok(model));
+        }
+        catch (ImageProcessingException ex)
+        {
+            throw ex;
+        }
     }
 
     private void Cancel() => MudDialog.Cancel();
