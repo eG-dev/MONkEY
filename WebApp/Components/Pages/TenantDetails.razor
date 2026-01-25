@@ -2,11 +2,11 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 
-@inject NavigationManager Navigation
 @inject ITenantManagementService TenantManagement
 @inject ITenantMemberService AccountOwners
-@inject IDialogService Dialog
+@inject IDialogService Dialogs
 @inject ISnackbar Snackbar
+@inject IJSRuntime JS
 
 <PageTitle>POCKET MONkEY - Mein Bereich</PageTitle>
 
@@ -159,7 +159,7 @@ else
 
     private async Task InitiateUserInvitation()
     {
-        var dialog = await Dialog.ShowAsync<UserInvitationDialog>(
+        var dialog = await Dialogs.ShowAsync<UserInvitationDialog>(
             "Nutzer hinzufügen",
             new DialogParameters<UserInvitationDialog>(),
             new DialogOptions()
@@ -214,7 +214,7 @@ else
 
     private async Task InitiateUserDeletion(string email)
     {
-        var dialog = await Dialog.ShowAsync<UserDeletionDialog>(
+        var dialog = await Dialogs.ShowAsync<UserDeletionDialog>(
             "Nutzer löschen",
             new DialogParameters<UserDeletionDialog>()
                 {
@@ -252,7 +252,7 @@ else
 
     private async Task InitiateTenantDeletion()
     {
-        var dialog = await Dialog.ShowAsync<TenantDeletionDialog>(
+        var dialog = await Dialogs.ShowAsync<TenantDeletionDialog>(
             "Uh-oh, immer mit der Ruhe!",
             new DialogParameters<TenantDeletionDialog>(),
             new DialogOptions()
@@ -269,6 +269,9 @@ else
             try
             {
                 await TenantManagement.DeleteTenant(User);
+
+                // Hard reload bypassing cache, because the tenant context is cached in the MainLayout
+                await JS.InvokeVoidAsync("location.reload", true);
             }
             catch
             {
@@ -277,8 +280,6 @@ else
             finally
             {
                 _isUpdating = false;
-
-                Navigation.NavigateTo("/", true);
             }
         }
     }
