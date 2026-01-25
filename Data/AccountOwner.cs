@@ -7,23 +7,23 @@ using System.Text.Json;
 namespace MONkEY.Data
 {
     [DebuggerDisplay("{TenantKey}, {Email}")]
-    public class AccountOwner : ITableEntity
+    public class TenantMember : ITableEntity
     {
-        private AccountOwnerPreferences? _preferences = null;
+        private TenantMemberPreferences? _preferences = null;
 
         public string PartitionKey { get; set; } = default!;
 
         public string RowKey { get; set; } = default!;
 
         [IgnoreDataMember]
-        public string Email { get => PartitionKey; }
+        public string TenantKey { get => PartitionKey; }
 
         [IgnoreDataMember]
-        public string TenantKey { get => RowKey; }
+        public string Email { get => RowKey; }
 
-        public AccountOwnerStatus Status { get; set; } = AccountOwnerStatus.Pending;
+        public TenantMemberStatus Status { get; set; } = TenantMemberStatus.Pending;
 
-        public AccountOwnerRole Role { get; set; } = AccountOwnerRole.Manager;
+        public TenantMemberRole Role { get; set; } = TenantMemberRole.Manager;
 
         public DateTimeOffset? LastLoggedOn { get; set; }
 
@@ -32,16 +32,16 @@ namespace MONkEY.Data
         public string? StoredPreferences { get; set; }
 
         [IgnoreDataMember]
-        public AccountOwnerPreferences Preferences
+        public TenantMemberPreferences Preferences
         {
             get
             {
                 if (_preferences == null && !string.IsNullOrEmpty(StoredPreferences))
                 {
-                    _preferences = JsonSerializer.Deserialize<AccountOwnerPreferences>(StoredPreferences);
+                    _preferences = JsonSerializer.Deserialize<TenantMemberPreferences>(StoredPreferences);
                 }
 
-                _preferences ??= new AccountOwnerPreferences();
+                _preferences ??= new TenantMemberPreferences();
 
                 return _preferences;
             }

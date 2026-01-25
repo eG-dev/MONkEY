@@ -1,41 +1,46 @@
 ﻿using MONkEY.Data;
 using MONkEY.Data.Services;
 using MONkEY.Identity;
+using MONkEY.Identity.Services;
 
 namespace MONkEY.BusinessLogic.Services
 {
     public class TenantManagementService : ITenantManagementService
     {
-        private IAccountOwnerService AccountOwners { get; }
+        private ITenantMemberService TenantMembers { get; }
 
         private IAccountManagementService AccountManagement { get; }
 
+        private IUserService Users { get; }
+
         public TenantManagementService(
-            IAccountOwnerService accountOwnerService,
-            IAccountManagementService accountManagementService)
+            ITenantMemberService tenantMemberService,
+            IAccountManagementService accountManagementService,
+            IUserService userService)
         {
-            AccountOwners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
+            TenantMembers = tenantMemberService ?? throw new ArgumentNullException(nameof(tenantMemberService));
             AccountManagement = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));
+            Users = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public async Task<AccountOwner?> CreateTenant(User user)
+        public async Task<TenantMember?> CreateTenant(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
-            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
+            var tenantMember = await TenantMembers.GetByEmailAsync(user.Email);
 
-            if (accountOwner == null)
+            if (tenantMember == null)
             {
-                accountOwner = await AccountOwners.AddAsync(new()
+                tenantMember = await TenantMembers.AddAsync(new()
                 {
-                    PartitionKey = user.Email,
-                    RowKey = Guid.NewGuid().ToString(),
-                    Status = AccountOwnerStatus.Pending,
-                    Role = AccountOwnerRole.Manager,
+                    PartitionKey = Guid.NewGuid().ToString(),
+                    RowKey = user.Email,
+                    Status = TenantMemberStatus.Pending,
+                    Role = TenantMemberRole.Manager,
                 });
             }
 
-            return accountOwner;
+            return tenantMember;
         }
 
         public async Task DeleteTenant(User user)
@@ -46,45 +51,47 @@ namespace MONkEY.BusinessLogic.Services
             {
                 throw new InvalidOperationException("User is not assigned to a tenant!");
             }
-            if (user.Role < AccountOwnerRole.Manager)
+            if (user.Role < TenantMemberRole.Manager)
             {
                 throw new InvalidOperationException("User is not allowed to manage the tenant!");
             }
 
             var tenantKey = user.TenantKey;
 
-            await AccountOwners.DeleteAsync(user.Email);
+            await TenantMembers.DeleteAsync(user.Email);
 
             if (!string.IsNullOrEmpty(tenantKey))
             {
-                var otherOwners = await AccountOwners.GetTenantOwnersAsync(tenantKey);
+                var otherMembers = await TenantMembers.GetTenantMembersAsync(tenantKey);
 
-                foreach (var owner in otherOwners)
+                foreach (var member in otherMembers)
                 {
-                    await AccountOwners.DeleteAsync(owner.Email);
+                    await TenantMembers.DeleteAsync(member.Email);
                 }
 
                 await AccountManagement.DeleteAll(user);
+
+                Users.InvalidateCache(user.Email);
             }
         }
 
-        public async Task ActivateUser(User user, AccountOwnerPreferences preferences)
+        public async Task ActivateUser(User user, TenantMemberPreferences preferences)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
             ArgumentNullException.ThrowIfNull(preferences, nameof(preferences));
 
-            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
+            var accountOwner = await TenantMembers.GetByEmailAsync(user.Email);
 
             if (accountOwner != null)
             {
                 accountOwner.Preferences = preferences;
-                accountOwner.Status = AccountOwnerStatus.Active;
+                accountOwner.Status = TenantMemberStatus.Active;
 
-                await AccountOwners.UpdateAsync(accountOwner);
+                await TenantMembers.UpdateAsync(accountOwner);
             }
         }
 
-        public async Task InviteUser(User user, string email, AccountOwnerRole role)
+        public async Task InviteUser(User user, string email, TenantMemberRole role)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 
@@ -92,19 +99,19 @@ namespace MONkEY.BusinessLogic.Services
             {
                 throw new InvalidOperationException("User is not assigned to a tenant!");
             }
-            if (user.Role < AccountOwnerRole.Manager)
+            if (user.Role < TenantMemberRole.Manager)
             {
                 throw new InvalidOperationException("User is not allowed to manage the tenant!");
             }
 
             ArgumentException.ThrowIfNullOrEmpty("Email is required!", nameof(email));
 
-            if (role == AccountOwnerRole.Undefined || role == AccountOwnerRole.GlobalAdmin)
+            if (role == TenantMemberRole.Undefined || role == TenantMemberRole.GlobalAdmin)
             {
                 throw new ArgumentException($"The role {role} can't be assigned!");
             }
 
-            var accountOwner = await AccountOwners.GetByEmailAsync(email);
+            var accountOwner = await TenantMembers.GetByEmailAsync(email);
 
             if (accountOwner != null)
             {
@@ -119,11 +126,11 @@ namespace MONkEY.BusinessLogic.Services
             }
             else
             {
-                await AccountOwners.AddAsync(new()
+                await TenantMembers.AddAsync(new()
                 {
                     PartitionKey = email,
                     RowKey = user.TenantKey,
-                    Status = AccountOwnerStatus.Invited,
+                    Status = TenantMemberStatus.Invited,
                     Role = role,
                 });
             }
@@ -137,21 +144,21 @@ namespace MONkEY.BusinessLogic.Services
             {
                 throw new InvalidOperationException("User is not assigned to a tenant!");
             }
-            if (user.Status != AccountOwnerStatus.Invited)
+            if (user.Status != TenantMemberStatus.Invited)
             {
-                throw new InvalidOperationException($"User must be in '{nameof(AccountOwnerStatus.Invited)}' status!");
+                throw new InvalidOperationException($"User must be in '{nameof(TenantMemberStatus.Invited)}' status!");
             }
 
-            var accountOwner = await AccountOwners.GetByEmailAsync(user.Email);
+            var accountOwner = await TenantMembers.GetByEmailAsync(user.Email);
 
             if (accountOwner != null)
             {
-                accountOwner.Status = accountOwner.Role == AccountOwnerRole.Member
+                accountOwner.Status = accountOwner.Role == TenantMemberRole.Member
                     // Members are automatically activated, because they don't get emails anyways
-                    ? AccountOwnerStatus.Active
-                    : AccountOwnerStatus.Pending;
+                    ? TenantMemberStatus.Active
+                    : TenantMemberStatus.Pending;
 
-                await AccountOwners.UpdateAsync(accountOwner);
+                await TenantMembers.UpdateAsync(accountOwner);
             }
         }
 
@@ -163,20 +170,20 @@ namespace MONkEY.BusinessLogic.Services
             {
                 throw new InvalidOperationException("User is not assigned to a tenant!");
             }
-            if (user.Status != AccountOwnerStatus.Invited)
+            if (user.Status != TenantMemberStatus.Invited)
             {
-                throw new InvalidOperationException($"User must be in '{nameof(AccountOwnerStatus.Invited)}' status!");
+                throw new InvalidOperationException($"User must be in '{nameof(TenantMemberStatus.Invited)}' status!");
             }
 
             var tenantKey = user.TenantKey;
 
-            await AccountOwners.DeleteAsync(user.Email);
+            await TenantMembers.DeleteAsync(user.Email);
 
             if (!string.IsNullOrEmpty(tenantKey))
             {
                 // This is an edge-case if the user who invited the person has deleted their account in the meantime.
                 // In this case we need to clean up the data.
-                var otherOwners = await AccountOwners.GetTenantOwnersAsync(tenantKey);
+                var otherOwners = await TenantMembers.GetTenantMembersAsync(tenantKey);
 
                 if (otherOwners.Count == 0)
                 {
@@ -193,7 +200,7 @@ namespace MONkEY.BusinessLogic.Services
             {
                 throw new InvalidOperationException("User is not assigned to a tenant!");
             }
-            if (user.Role < AccountOwnerRole.Manager)
+            if (user.Role < TenantMemberRole.Manager)
             {
                 throw new InvalidOperationException("User is not allowed to manage the tenant!");
             }
@@ -202,7 +209,9 @@ namespace MONkEY.BusinessLogic.Services
                 throw new InvalidOperationException($"User must not delete own account!");
             }
 
-            await AccountOwners.DeleteAsync(email);
+            await TenantMembers.DeleteAsync(email);
+
+            Users.InvalidateCache(email);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MONkEY.Data
 {
-    public class AccountOwnerPreferences
+    public class TenantMemberPreferences
     {
         public bool IsMonthlyReportingEnabled { get; set; } = false;
     }

@@ -17,7 +17,7 @@ namespace MONkEY.Functions
 
         private readonly ILogger _logger;
 
-        private readonly IAccountOwnerService _owners;
+        private readonly ITenantMemberService _owners;
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
         private readonly IReportService _reports;
@@ -25,7 +25,7 @@ namespace MONkEY.Functions
         private readonly IEmailTriggerService _emails;
 
         public MonthlyReporting(
-            IAccountOwnerService accountOwnerService,
+            ITenantMemberService accountOwnerService,
             IAccountService accountService,
             ITransactionService transactionService,
             IReportService reportService,
@@ -55,8 +55,8 @@ namespace MONkEY.Functions
 
             var tenantMemberGroups = owners
                 .Where(x =>
-                    x.Role >= AccountOwnerRole.Manager &&
-                    x.Status == AccountOwnerStatus.Active)
+                    x.Role >= TenantMemberRole.Manager &&
+                    x.Status == TenantMemberStatus.Active)
                 .GroupBy(x => x.TenantKey);
 
             foreach (var tenantMembers in tenantMemberGroups)

@@ -2,13 +2,13 @@
 
 namespace MONkEY.Data.Services
 {
-    public class AccountOwnerService : IAccountOwnerService
+    public class TenantMemberService : ITenantMemberService
     {
-        private const string TABLE_NAME = "accountOwners";
+        private const string TABLE_NAME = "tenantMembers";
 
         private readonly TableClient _tableClient;
 
-        public AccountOwnerService(TableServiceClient tableServiceClient)
+        public TenantMemberService(TableServiceClient tableServiceClient)
         {
             ArgumentNullException.ThrowIfNull(tableServiceClient, nameof(tableServiceClient));
 
@@ -22,18 +22,18 @@ namespace MONkEY.Data.Services
             await _tableClient.CreateIfNotExistsAsync();
         }
 
-        public async Task<AccountOwner?> AddAsync(AccountOwner model)
+        public async Task<TenantMember?> AddAsync(TenantMember model)
         {
             ValidateModel(model);
 
             // Force lower-case for the email address
-            model.PartitionKey = model.PartitionKey.ToLowerInvariant();
+            model.RowKey = model.Email.ToLowerInvariant();
 
             var response = await _tableClient.AddEntityAsync(model);
 
             if (response.IsError)
             {
-                throw new InvalidOperationException($"Failed to add the {nameof(AccountOwner)} entry!");
+                throw new InvalidOperationException($"Failed to add the {nameof(TenantMember)} entry!");
             }
 
             var updatedModel = await GetByEmailAsync(model.Email);
@@ -41,7 +41,7 @@ namespace MONkEY.Data.Services
             return updatedModel;
         }
 
-        public async Task<AccountOwner?> UpdateAsync(AccountOwner model)
+        public async Task<TenantMember?> UpdateAsync(TenantMember model)
         {
             ValidateModel(model);
 
@@ -49,7 +49,7 @@ namespace MONkEY.Data.Services
 
             if (response.IsError)
             {
-                throw new InvalidOperationException($"Failed to update the {nameof(AccountOwner)} entry!");
+                throw new InvalidOperationException($"Failed to update the {nameof(TenantMember)} entry!");
             }
 
             var updatedModel = await GetByEmailAsync(model.Email);
@@ -63,11 +63,11 @@ namespace MONkEY.Data.Services
 
             if (model != null)
             {
-                var response = await _tableClient.DeleteEntityAsync(email, model.RowKey);
+                var response = await _tableClient.DeleteEntityAsync(model.PartitionKey, model.RowKey);
 
                 if (response.IsError)
                 {
-                    throw new InvalidOperationException($"Failed to delete the {nameof(AccountOwner)} entry with partion key {model.PartitionKey}!");
+                    throw new InvalidOperationException($"Failed to delete the {nameof(TenantMember)} entry with partion key {model.PartitionKey}!");
                 }
             }
         }
@@ -84,12 +84,12 @@ namespace MONkEY.Data.Services
             return tenantKeys;
         }
 
-        public async Task<AccountOwner?> GetByEmailAsync(string email)
+        public async Task<TenantMember?> GetByEmailAsync(string email)
         {
-            var queryResult = _tableClient.QueryAsync<AccountOwner>(e =>
-                e.PartitionKey == email.ToLowerInvariant());
+            var queryResult = _tableClient.QueryAsync<TenantMember>(e =>
+                e.RowKey == email.ToLowerInvariant());
 
-            AccountOwner? model = null;
+            TenantMember? model = null;
             await foreach (var entry in queryResult)
             {
                 model = entry;
@@ -99,25 +99,25 @@ namespace MONkEY.Data.Services
             return model;
         }
 
-        public async Task<List<AccountOwner>> GetAllAsync()
+        public async Task<List<TenantMember>> GetAllAsync()
         {
-            var queryResult = _tableClient.QueryAsync<AccountOwner>(e => true);
+            var queryResult = _tableClient.QueryAsync<TenantMember>(e => true);
 
-            List<AccountOwner> result = [];
+            List<TenantMember> result = [];
             await foreach (var entry in queryResult)
             {
                 result.Add(entry);
             }
 
-            return [.. result.OrderBy(e => e.PartitionKey)];
+            return [.. result.OrderBy(e => e.TenantKey).ThenBy(e => e.Email)];
         }
 
-        public async Task<List<AccountOwner>> GetTenantOwnersAsync(string tenantKey)
+        public async Task<List<TenantMember>> GetTenantMembersAsync(string tenantKey)
         {
-            var queryResult = _tableClient.QueryAsync<AccountOwner>(e =>
-                e.RowKey == tenantKey);
+            var queryResult = _tableClient.QueryAsync<TenantMember>(e =>
+                e.PartitionKey == tenantKey);
 
-            List<AccountOwner> result = [];
+            List<TenantMember> result = [];
             await foreach (var entry in queryResult)
             {
                 result.Add(entry);
@@ -126,13 +126,13 @@ namespace MONkEY.Data.Services
             return [.. result.OrderBy(e => e.Email)];
         }
 
-        public async Task UpdatePreferencesAsync(string email, AccountOwnerPreferences preferences)
+        public async Task UpdatePreferencesAsync(string email, TenantMemberPreferences preferences)
         {
             var model = await GetByEmailAsync(email);
 
             if (model == null)
             {
-                throw new InvalidOperationException($"Failed to find the {nameof(AccountOwner)} entry by the specified email '{email}'!");
+                throw new InvalidOperationException($"Failed to find the {nameof(TenantMember)} entry by the specified email '{email}'!");
             }
 
             model.Preferences = preferences;
@@ -140,7 +140,7 @@ namespace MONkEY.Data.Services
             await UpdateAsync(model);
         }
 
-        private static void ValidateModel(AccountOwner model)
+        private static void ValidateModel(TenantMember model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
 

@@ -13,13 +13,13 @@ namespace MONkEY.Functions
 
         private readonly ILogger _logger;
 
-        private readonly IAccountOwnerService _owners;
+        private readonly ITenantMemberService _owners;
 
         private readonly IAccountService _accounts;
         private readonly ITransactionService _transactions;
 
         public PocketMoneyCredit(
-            IAccountOwnerService owners,
+            ITenantMemberService owners,
             IAccountService accounts,
             ITransactionService transactions,
             ILogger<PocketMoneyCredit> logger)

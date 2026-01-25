@@ -5,7 +5,7 @@ namespace MONkEY.BusinessLogic.Services
 {
     public interface IUsageTermsService
     {
-        Task<AccountOwner?> Accept(User user);
+        Task<TenantMember?> Accept(User user);
 
         bool HasAcceptedUsageTerms(User user);
     }

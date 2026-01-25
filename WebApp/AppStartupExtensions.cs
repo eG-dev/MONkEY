@@ -8,8 +8,8 @@ namespace MONkEY.WebApp
         {
             var scope = app.Services.CreateScope();
 
-            var accountOwnerService = scope.ServiceProvider.GetService<IAccountOwnerService>()!;
-            await accountOwnerService.InitAsync();
+            var tenantMemberService = scope.ServiceProvider.GetService<ITenantMemberService>()!;
+            await tenantMemberService.InitAsync();
 
             var accountService = scope.ServiceProvider.GetService<IAccountService>()!;
             await accountService.InitAsync();

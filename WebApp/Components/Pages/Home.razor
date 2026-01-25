@@ -16,7 +16,7 @@
 {
     <PageLoader />
 }
-else if (User.Status == AccountOwnerStatus.Active)
+else if (User.Status == TenantMemberStatus.Active)
 {
     <MudGrid Spacing="6" Justify="Justify.Center">
         @foreach (var account in _accounts)
@@ -91,7 +91,7 @@ else if (User.Status == AccountOwnerStatus.Active)
             
             @if (User.IsAllowedToManage)
             {
-                <MudText Typo="Typo.body1">Wir sollten als allererstes ein neues Konto hinzufügen.</MudText>
+                <MudText Typo="Typo.body1">Wir sollten zunächst ein Konto hinzufügen.</MudText>
             }
         </div>
     }
@@ -120,7 +120,7 @@ else if (User.Status == AccountOwnerStatus.Active)
 
     protected override async Task OnInitializedAsync()
     {
-        if (User?.Status == AccountOwnerStatus.Active)
+        if (User?.Status == TenantMemberStatus.Active)
         {
             _accounts = await Accounts.GetAllAsync(User.TenantKey);
 

@@ -17,15 +17,15 @@ namespace MONkEY.Identity
 
         public DateTimeOffset? TermsAcceptedOn { get; init; }
 
-        public AccountOwnerStatus Status { get; init; }
+        public TenantMemberStatus Status { get; init; }
 
-        public AccountOwnerRole Role { get; init; }
+        public TenantMemberRole Role { get; init; }
 
-        public required AccountOwnerPreferences Preferences { get; init; }
+        public required TenantMemberPreferences Preferences { get; init; }
 
-        public bool IsGlobalAdmin { get => Role == AccountOwnerRole.GlobalAdmin; }
+        public bool IsGlobalAdmin { get => Role == TenantMemberRole.GlobalAdmin; }
 
-        public bool IsAllowedToManage { get => Role >= AccountOwnerRole.Manager; }
+        public bool IsAllowedToManage { get => Role >= TenantMemberRole.Manager; }
 
         public override string ToString()
         {

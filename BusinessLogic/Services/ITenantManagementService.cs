@@ -7,9 +7,9 @@ namespace MONkEY.BusinessLogic.Services
     {
         Task AcceptInvitation(User user);
 
-        Task ActivateUser(User user, AccountOwnerPreferences preferences);
+        Task ActivateUser(User user, TenantMemberPreferences preferences);
 
-        Task<AccountOwner?> CreateTenant(User user);
+        Task<TenantMember?> CreateTenant(User user);
 
         Task DeclineInvitation(User user);
 
@@ -17,6 +17,6 @@ namespace MONkEY.BusinessLogic.Services
 
         Task DeleteUser(User user, string email);
 
-        Task InviteUser(User user, string email, AccountOwnerRole role);
+        Task InviteUser(User user, string email, TenantMemberRole role);
     }
 }

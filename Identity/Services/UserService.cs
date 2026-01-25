@@ -9,37 +9,52 @@ namespace MONkEY.Identity.Services
     public class UserService : IUserService
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly IAccountOwnerService _accountOwners;
+        private readonly ITenantMemberService _tenantMembers;
 
         public UserService(
             IMemoryCache memoryCache,
-            IAccountOwnerService accountOwnerService)
+            ITenantMemberService tenantMemberService)
         {
-            ArgumentNullException.ThrowIfNull(memoryCache, nameof(memoryCache));
-            ArgumentNullException.ThrowIfNull(accountOwnerService, nameof(accountOwnerService));
-
-            _memoryCache = memoryCache;
-            _accountOwners = accountOwnerService;
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _tenantMembers = tenantMemberService ?? throw new ArgumentNullException(nameof(tenantMemberService));
         }
 
-        private Task<AccountOwner?> GetAccountOwner(string email)
+        private Task<TenantMember?> GetTenantMemberAsync(string email)
         {
             return _memoryCache.GetOrCreateAsync(email, async e =>
             {
-                e.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+                var owner = await _tenantMembers.GetByEmailAsync(email);
 
-                var owner = await _accountOwners.GetByEmailAsync(email);
-
-                var utcNow = DateTimeOffset.UtcNow;
-                if (owner != null && (owner.LastLoggedOn == null || owner.LastLoggedOn.Value.Date != utcNow.Date))
+                if (owner != null)
                 {
-                    owner.LastLoggedOn = utcNow;
-                    owner = await _accountOwners.UpdateAsync(owner);
+                    if (owner.Status == TenantMemberStatus.Active)
+                    {
+                        e.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+                    }
+                    else
+                    {
+                        // Non-active members should not be cached
+                        e.SetAbsoluteExpiration(TimeSpan.FromMicroseconds(1));
+                    }
+
+                    var utcNow = DateTimeOffset.UtcNow;
+                    if (owner.LastLoggedOn == null || owner.LastLoggedOn.Value.Date != utcNow.Date)
+                    {
+                        owner.LastLoggedOn = utcNow;
+                        owner = await _tenantMembers.UpdateAsync(owner);
+                    }
+                }
+                else
+                {
+                    // Unknown members should not be cached
+                    e.SetAbsoluteExpiration(TimeSpan.FromMicroseconds(1));
                 }
 
                 return owner;
             });
         }
+
+
 
         public async Task<User?> FromPrincipal(ClaimsPrincipal principal)
         {
@@ -48,22 +63,27 @@ namespace MONkEY.Identity.Services
                 var name = principal.FindFirst("name")?.Value ?? string.Empty;
                 var email = principal.Identity.Name;
 
-                var owner = await GetAccountOwner(email);
+                var member = await GetTenantMemberAsync(email);
 
                 return new()
                 {
                     Name = name,
                     Email = email,
-                    TenantKey = owner?.TenantKey ?? string.Empty,
-                    LastLoggedOn = owner?.LastLoggedOn,
-                    TermsAcceptedOn = owner?.TermsAcceptedOn,
-                    Status = owner?.Status ?? AccountOwnerStatus.Undefined,
-                    Role = owner?.Role ?? AccountOwnerRole.Undefined,
-                    Preferences = owner?.Preferences ?? new()
+                    TenantKey = member?.TenantKey ?? string.Empty,
+                    LastLoggedOn = member?.LastLoggedOn,
+                    TermsAcceptedOn = member?.TermsAcceptedOn,
+                    Status = member?.Status ?? TenantMemberStatus.Undefined,
+                    Role = member?.Role ?? TenantMemberRole.Undefined,
+                    Preferences = member?.Preferences ?? new()
                 };
             }
 
             return null;
+        }
+
+        public void InvalidateCache(string email)
+        {
+            _memoryCache.Remove(email);
         }
     }
 }

@@ -12,11 +12,11 @@ namespace MONkEY.Functions
 
         private readonly ILogger<StorageCleaning> _logger;
 
-        private readonly IAccountOwnerService _owners;
+        private readonly ITenantMemberService _owners;
         private readonly ITransactionService _transactions;
 
         public StorageCleaning(
-            IAccountOwnerService accountOwnerService,
+            ITenantMemberService accountOwnerService,
             ITransactionService transactionService, 
             ILogger<StorageCleaning> logger)
         {

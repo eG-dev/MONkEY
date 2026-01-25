@@ -1,6 +1,6 @@
 ﻿namespace MONkEY.Data
 {
-    public enum AccountOwnerRole
+    public enum TenantMemberRole
     {
         Undefined = 0,
 

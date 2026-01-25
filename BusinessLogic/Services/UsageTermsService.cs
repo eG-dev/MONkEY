@@ -8,10 +8,10 @@ namespace MONkEY.BusinessLogic.Services
     {
         private readonly DateTimeOffset USAGE_TERMS_VALID_FROM = DateTimeOffset.Parse("2024-10-31");
 
-        private IAccountOwnerService AccountOwners { get; }
+        private ITenantMemberService AccountOwners { get; }
 
         public UsageTermsService(
-            IAccountOwnerService accountOwnerService)
+            ITenantMemberService accountOwnerService)
         {
             AccountOwners = accountOwnerService ?? throw new ArgumentNullException(nameof(accountOwnerService));
         }
@@ -23,7 +23,7 @@ namespace MONkEY.BusinessLogic.Services
             return user.TermsAcceptedOn.GetValueOrDefault() > USAGE_TERMS_VALID_FROM;
         }
 
-        public async Task<AccountOwner?> Accept(User user)
+        public async Task<TenantMember?> Accept(User user)
         {
             ArgumentNullException.ThrowIfNull(user, nameof(user));
 

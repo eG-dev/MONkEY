@@ -26,7 +26,7 @@ namespace MONkEY.Functions
 
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
-            services.AddScoped<IAccountOwnerService, AccountOwnerService>();
+            services.AddScoped<ITenantMemberService, TenantMemberService>();
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();

@@ -4,7 +4,7 @@
 
 @inject NavigationManager Navigation
 @inject IReportService Reports
-@inject IAccountOwnerService AccountOwners
+@inject ITenantMemberService TenantMembers
 @inject IEmailTriggerService Emails
 @inject IDialogService Dialog
 @inject ISnackbar Snackbar
@@ -25,7 +25,7 @@ else if (string.IsNullOrEmpty(TenantKey))
 }
 else
 {
-    if (User.Role >= AccountOwnerRole.Manager)
+    if (User.Role >= TenantMemberRole.Manager)
     {
         <MudCheckBox T="bool" Value="_receiveMonthlyReports" ValueChanged="UpdateMonthlyReportSettings">
             Ich möchte die Monatsberichte automatisch per E-Mail zugesendet bekommen
@@ -180,7 +180,7 @@ else
             var preferences = User.Preferences;
             preferences.IsMonthlyReportingEnabled = receiveMonthlyReports;
 
-            await AccountOwners.UpdatePreferencesAsync(User.Email, preferences);
+            await TenantMembers.UpdatePreferencesAsync(User.Email, preferences);
 
             User.Preferences.IsMonthlyReportingEnabled = _receiveMonthlyReports;
         }

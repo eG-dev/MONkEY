@@ -34,7 +34,7 @@ namespace MONkEY.WebApp
 
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
-            services.AddScoped<IAccountOwnerService, AccountOwnerService>();
+            services.AddScoped<ITenantMemberService, TenantMemberService>();
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IAccountService, AccountService>();

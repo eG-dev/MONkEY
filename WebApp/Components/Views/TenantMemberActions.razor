@@ -1,7 +1,7 @@
 ﻿@inject ITenantManagementService TenantManagement
 @inject NavigationManager Navigation
 
-@if (User.Status == AccountOwnerStatus.Undefined)
+@if (User.Status == TenantMemberStatus.Undefined)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudImage Class="mb-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
@@ -25,14 +25,14 @@
         </div>
     </div>
 }
-else if (User.Status == AccountOwnerStatus.Pending)
+else if (User.Status == TenantMemberStatus.Pending)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudText Typo="Typo.h5">Wunderbar, wir sind fast fertig!</MudText>
         <MudImage Class="my-6" Src="images/monkey_face.png" Width="256" Height="256"></MudImage>
         <MudText Typo="Typo.body1" Align="Align.Center">Lass uns noch schnell die Einrichtung deines Kontos abschließen.</MudText>
 
-        <MudCheckBox @bind-Value="accountOwnerSettings.IsMonthlyReportingEnabled">
+        <MudCheckBox @bind-Value="preferences.IsMonthlyReportingEnabled">
             Ich möchte monatliche Berichte per E-Mail erhalten.
         </MudCheckBox>
 
@@ -50,7 +50,7 @@ else if (User.Status == AccountOwnerStatus.Pending)
         </div>
     </div>
 }
-else if (User.Status == AccountOwnerStatus.Invited)
+else if (User.Status == TenantMemberStatus.Invited)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudText Typo="Typo.h5">Du wurdest zu POCKET MONkEY eingeladen!</MudText>
@@ -80,7 +80,7 @@ else if (User.Status == AccountOwnerStatus.Invited)
         </div>
     </div>
 }
-else if (User.Status == AccountOwnerStatus.Disabled)
+else if (User.Status == TenantMemberStatus.Disabled)
 {
     <div class="d-flex flex-column align-center mt-6">
         <MudText Typo="Typo.h5">Dein Nutzer wurde vom Administrator gesperrt!</MudText>
@@ -92,7 +92,7 @@ else if (User.Status == AccountOwnerStatus.Disabled)
     [Parameter]
     public User User { get; set; } = default!;
 
-    private readonly AccountOwnerPreferences accountOwnerSettings = new();
+    private readonly TenantMemberPreferences preferences = new();
 
     private async Task CreateTenant()
     {
@@ -103,7 +103,7 @@ else if (User.Status == AccountOwnerStatus.Disabled)
 
     private async Task ActivateUser()
     {
-        await TenantManagement.ActivateUser(User!, accountOwnerSettings);
+        await TenantManagement.ActivateUser(User!, preferences);
 
         Navigation.NavigateTo("/", true);
     }
