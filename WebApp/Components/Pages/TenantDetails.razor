@@ -1,4 +1,4 @@
-﻿@page "/tenant/{TenantKey}"
+﻿@page "/tenant/{TenantKey?}"
 
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -143,17 +143,17 @@ else
             if (!string.IsNullOrWhiteSpace(TenantKey))
             {
                 _accountOwners = await AccountOwners.GetTenantOwnersAsync(TenantKey);
+
+                _breadcrumbs.Add(new BreadcrumbItem(
+                    "Mein Bereich",
+                    $"/tenant/{TenantKey}",
+                    false,
+                    Icons.Material.TwoTone.AdminPanelSettings));
             }
             else
             {
                 _accountOwners = new();
             }
-
-            _breadcrumbs.Add(new BreadcrumbItem(
-                "Mein Bereich",
-                $"/tenant/{TenantKey}",
-                false,
-                Icons.Material.TwoTone.AdminPanelSettings));
         }
     }
 

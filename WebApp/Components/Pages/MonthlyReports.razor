@@ -1,4 +1,4 @@
-﻿@page "/tenant/{TenantKey}/monthlyreports"
+﻿@page "/tenant/{TenantKey?}/monthlyreports"
 
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -18,6 +18,10 @@
 @if (_reports == null)
 {
     <PageLoader />
+}
+else if (string.IsNullOrEmpty(TenantKey))
+{
+    <MudAlert Severity="Severity.Error">Der Bereich ist nicht bekannt!</MudAlert>
 }
 else
 {
@@ -150,18 +154,18 @@ else
                 _reportPayloads = _reports.ToDictionary(
                     r => r.RowKey,
                     r => System.Text.Json.JsonSerializer.Deserialize<MonthlyReportPayload>(r.SerializedPayload))!;
+
+                _breadcrumbs.Add(new BreadcrumbItem(
+                    "Monatsberichte",
+                    $"/tenant/{TenantKey}/monthlyreports",
+                    false,
+                    Icons.Material.TwoTone.ReceiptLong));
             }
             else
             {
                 _reports = new();
                 _reportPayloads = new();
             }
-
-            _breadcrumbs.Add(new BreadcrumbItem(
-                "Monatsberichte",
-                $"/tenant/{TenantKey}/monthlyreports",
-                false,
-                Icons.Material.TwoTone.ReceiptLong));
         }
     }
 
