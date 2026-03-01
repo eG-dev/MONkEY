@@ -15,7 +15,7 @@
                              Max="1000"
                              Step="1"
                              Format="N2"
-                             Immediate="true"
+                             Immediate="false"
                              Adornment="Adornment.Start"
                              AdornmentIcon="@(PayOut ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add)"
                              AdornmentColor="@(PayOut ? Color.Error : Color.Success)"
@@ -28,7 +28,7 @@
                       Variant="Variant.Outlined"
                       @bind-Value="@_model.Comment"
                       MaxLines="5"
-                      AutoGrow="true"
+                      Sizing="InputSizing.Auto"
                       MaxLength="100" />
     </DialogContent>
     <DialogActions>
@@ -71,19 +71,20 @@
 
     private async Task Submit()
     {
-        await _amountInput.Validate();
-
-        if (!_amountInput.HasErrors)
+        await _amountInput.ValidateAsync();
+        if (_amountInput.HasErrors)
         {
-            _model.Amount = Math.Round(_model.Amount ?? 0.0, 2);
-
-            if (PayOut)
-            {
-                _model.Amount = 0 - _model.Amount;
-            }
-
-            MudDialog.Close(DialogResult.Ok(_model));
+            return;
         }
+
+        _model.Amount = Math.Round(_model.Amount ?? 0.0, 2);
+
+        if (PayOut)
+        {
+            _model.Amount = 0 - _model.Amount;
+        }
+
+        MudDialog.Close(DialogResult.Ok(_model));
     }
 
     private void Cancel() => MudDialog.Cancel();

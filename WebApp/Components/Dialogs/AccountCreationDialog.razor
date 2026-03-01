@@ -9,9 +9,9 @@
                       @bind-Value="@AccountName"
                       MaxLength="25"
                       Counter="25"
+                      Immediate="false"
                       OnlyValidateIfDirty="true"
-                      Validation="@(new Func<string, IEnumerable<string>>(ValidateName))"
-                      Immediate="true" />
+                      Validation="@(new Func<string, IEnumerable<string>>(ValidateName))" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
@@ -25,6 +25,8 @@
 </MudDialog>
 
 @code {
+    private MudTextField<string?> _accountNameInput = default!;
+
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
 
@@ -39,12 +41,15 @@
         }
     }
 
-    private void Submit()
+    private async Task Submit()
     {
-        if (!string.IsNullOrWhiteSpace(AccountName))
+        await _accountNameInput.ValidateAsync();
+        if (_accountNameInput.HasErrors)
         {
-            MudDialog.Close(DialogResult.Ok(AccountName));
+            return;
         }
+
+        MudDialog.Close(DialogResult.Ok(AccountName));
     }
 
     private void Cancel() => MudDialog.Cancel();

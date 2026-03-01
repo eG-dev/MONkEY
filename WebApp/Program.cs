@@ -1,13 +1,16 @@
-using Cropper.Blazor.Extensions;
+using System.Globalization;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+
+using Cropper.Blazor.Extensions;
+
 using MudBlazor;
 using MudBlazor.Services;
 using MudBlazor.Translations;
-using System.Globalization;
 
 using MONkEY.WebApp;
 using MONkEY.WebApp.Components;
@@ -18,25 +21,27 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration);
 
-builder.Services.AddControllersWithViews(options =>
-{
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-
-    options.CacheProfiles.Add("Images", new CacheProfile()
+builder.Services
+    .AddControllersWithViews(options =>
     {
-        Duration = 2592000,
-        Location = ResponseCacheLocation.Any
-    });
-    options.CacheProfiles.Add("NoCache", new CacheProfile()
-    {
-        Location = ResponseCacheLocation.None,
-        NoStore = true
-    });
+        var policy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .Build();
 
-    options.Filters.Add(new AuthorizeFilter(policy));
-}).AddMicrosoftIdentityUI();
+        options.CacheProfiles.Add("Images", new CacheProfile()
+        {
+            Duration = 2592000,
+            Location = ResponseCacheLocation.Any
+        });
+        options.CacheProfiles.Add("NoCache", new CacheProfile()
+        {
+            Location = ResponseCacheLocation.None,
+            NoStore = true
+        });
+
+        options.Filters.Add(new AuthorizeFilter(policy));
+    })
+    .AddMicrosoftIdentityUI();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
@@ -77,10 +82,10 @@ builder.Services.AddCropper();
 builder.Services.AddMemoryCache();
 
 builder.Services
-.AddBrowserTimeSupport()
-.AddCustomAzureStorage(builder.Configuration)
-.AddCustomServices()
-.AddScoped<ITimeZoneService, TimeZoneService>();
+    .AddBrowserTimeSupport()
+    .AddCustomAzureStorage(builder.Configuration)
+    .AddCustomServices()
+    .AddScoped<ITimeZoneService, TimeZoneService>();
 
 var app = builder.Build();
 

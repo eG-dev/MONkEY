@@ -72,12 +72,13 @@
 
     private async Task Submit()
     {
-        await _emailInput.Validate();
-
-        if (!_emailInput.HasErrors)
+        await _emailInput.ValidateAsync();
+        if (_emailInput.HasErrors)
         {
-            MudDialog.Close(DialogResult.Ok(_model));
+            return;
         }
+
+        MudDialog.Close(DialogResult.Ok(_model));
     }
 
     private void Cancel() => MudDialog.Cancel();

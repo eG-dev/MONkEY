@@ -7,7 +7,8 @@
         </MudAlert>
 
         <MudFocusTrap>
-            <MudNumericField Label="Monatliches Taschengeld"
+            <MudNumericField @ref="_amountInput"
+                             Label="Monatliches Taschengeld"
                              Class="mt-6"
                              Variant="Variant.Text"
                              Min="0"
@@ -15,7 +16,7 @@
                              Step="1"
                              Format="N2"
                              @bind-Value="PocketMoney"
-                             Immediate="true"
+                             Immediate="false"
                              Adornment="Adornment.Start"
                              AdornmentIcon="@Icons.Material.Filled.Wallet" />
         </MudFocusTrap>
@@ -32,14 +33,22 @@
 </MudDialog>
 
 @code {
+    private MudNumericField<double?> _amountInput = default!;
+
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
 
     [Parameter]
     public double? PocketMoney { get; set; } = default!;
 
-    private void Submit()
+    private async Task Submit()
     {
+        await _amountInput.ValidateAsync();
+        if (_amountInput.HasErrors)
+        {
+            return;
+        }
+
         var amount = Math.Round(PocketMoney ?? 0.0, 2);
 
         MudDialog.Close(DialogResult.Ok(amount));
