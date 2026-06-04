@@ -91,7 +91,10 @@ namespace MONkEY.Functions
                     if (previousReport == null && transactions.Count == 0)
                     {
                         // There is no need to generate a report if there were no transactions or any previously created report.
-                        // This is normally the case when the application went live in this month.
+                        // This is normally the case when the account was created in the current month.
+                        _logger.LogInformation("Skipped monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod} as nothing has changed",
+                            account.AccountKey, tenantKey, reportedPeriod);
+
                         continue;
                     }
 
