@@ -47,6 +47,18 @@ namespace MONkEY.Data.Services
             }
         }
 
+        public async Task DeleteOlderThanAsync(string tenantKey, DateTimeOffset olderThan)
+        {
+            var queryResult = _tableClient.QueryAsync<Report>(e =>
+                e.PartitionKey == tenantKey &&
+                e.ReportedPeriod < olderThan.StartOfMonth());
+
+            await foreach (var entry in queryResult)
+            {
+                await _tableClient.DeleteEntityAsync(entry);
+            }
+        }
+
         public async Task<List<Report>> GetAsync(string tenantKey, ReportType type, int? pageSize = null, DateTimeOffset? olderThan = null)
         {
             AsyncPageable<Report> queryResult;
