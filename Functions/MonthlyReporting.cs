@@ -68,8 +68,17 @@ namespace MONkEY.Functions
                 var existingReports = await _reports.GetForPeriodAsync(tenantKey, reportedPeriod, ReportType.Monthly);
 
                 var accounts = await _accounts.GetAllAsync(tenantKey);
+                if (accounts.Count == 0)
+                {
+                    _logger.LogInformation("Skipped monthly report creation for tenant {tenantKey} for the period {reportedPeriod}. No accounts found.",
+                        tenantKey, reportedPeriod);
+                    continue;
+                }
+
                 if (accounts.All(accounts => existingReports.Any(x => x.AccountKey == accounts.AccountKey)))
                 {
+                    _logger.LogInformation("Skipped monthly report creation for tenant {tenantKey} for the period {reportedPeriod}. All reports already exist.",
+                        tenantKey, reportedPeriod);
                     continue;
                 }
 
@@ -79,6 +88,8 @@ namespace MONkEY.Functions
                 {
                     if (existingReports.Any(x => x.AccountKey == account.AccountKey))
                     {
+                        _logger.LogInformation("Skipped monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod}. Report already exists.",
+                            account.AccountKey, tenantKey, reportedPeriod);
                         continue;
                     }
 
@@ -92,9 +103,8 @@ namespace MONkEY.Functions
                     {
                         // There is no need to generate a report if there were no transactions or any previously created report.
                         // This is normally the case when the account was created in the current month.
-                        _logger.LogInformation("Skipped monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod} as nothing has changed",
+                        _logger.LogInformation("Skipped monthly report for {AccountKey} ({tenantKey}) for the period {reportedPeriod}. Nothing has changed.",
                             account.AccountKey, tenantKey, reportedPeriod);
-
                         continue;
                     }
 
