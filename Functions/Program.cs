@@ -1,18 +1,20 @@
-using Microsoft.Azure.Functions.Worker;
+using Azure.Monitor.OpenTelemetry.Exporter;
+using Microsoft.Azure.Functions.Worker.OpenTelemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Globalization;
 
-using MONkEY.Notifications.Email;
 using MONkEY.Functions;
+using MONkEY.Notifications.Email;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices(services =>
     {
-        services.AddApplicationInsightsTelemetryWorkerService();
-        services.ConfigureFunctionsApplicationInsights();
+        services.AddOpenTelemetry()
+            .UseFunctionsWorkerDefaults()
+            .UseAzureMonitorExporter();
 
         services.AddOptions<SmtpSettings>()
             .Configure<IConfiguration>((settings, configuration) =>
