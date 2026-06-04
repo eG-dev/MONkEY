@@ -6,12 +6,15 @@
 </tr>
 {{
   func get_amount_color(amount)
-    if amount | regex.match "^-"
-      ret "#388E3C"
-    else if amount | string.starts_with "0"
-      ret "black"
-    else
+    # Check if amount is negative (starts with minus sign)
+    if amount | string.starts_with "-"
       ret "#B71C1C"
+    # Check if amount is zero (either "0" or "0,00")
+    else if amount == "0" || amount == "0,00"
+      ret "black"
+    # Otherwise positive
+    else
+      ret "#388E3C"
     end
   end
 }}
