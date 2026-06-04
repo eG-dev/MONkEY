@@ -100,6 +100,27 @@ namespace MONkEY.Data.Services
             return result;
         }
 
+        public async Task<Report?> GetLatestAsync(string tenantKey, string accountKey, ReportType type)
+        {
+            var queryResult = _tableClient.QueryAsync<Report>(e =>
+                e.PartitionKey == tenantKey &&
+                e.AccountKey == accountKey);
+
+            Report? latest = null;
+            await foreach (var entry in queryResult)
+            {
+                if (entry.Type == type)
+                {
+                    if (latest == null || entry.ReportedPeriod > latest.ReportedPeriod)
+                    {
+                        latest = entry;
+                    }
+                }
+            }
+
+            return latest;
+        }
+
         private static void ValidateModel(Report model)
         {
             ArgumentNullException.ThrowIfNull(model, nameof(model));
