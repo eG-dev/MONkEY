@@ -4,38 +4,49 @@
 <tr>
   <td><h3>Monatsbericht für {{ reported_period_name }}</h3></td>
 </tr>
+{{
+  func get_amount_color(amount)
+    if amount | regex.match "^-"
+      ret "#388E3C"
+    else if amount | string.starts_with "0"
+      ret "black"
+    else
+      ret "#B71C1C"
+    end
+  end
+}}
 <tr>
   <td><h4>Abschlussbilanz</h4></td>
 </tr>
 <tr>
   <td>
-    <p style="font-size: xx-large; font-weight: bold">{{ closing_balance }}€</p>
+    <p style="font-size: xx-large; font-weight: bold; color: {{ get_amount_color closing_balance }}">{{ closing_balance }}€</p>
   </td>
 </tr>
 <tr>
   <td><h5>Startbilanz</h5></td>
 </tr>
 <tr>
-  <td><p style="font-size: large">{{ starting_balance }}€</p></td>
+  <td><p style="font-size: large; color: {{ get_amount_color starting_balance }}">{{ starting_balance }}€</p></td>
 </tr>
 <tr>
   <td><h4>Transaktionen</h4></td>
 </tr>
 {{ if transactions.size > 0 }}
-  {{ for transaction in transactions }}
-    <tr style="font-size: small">
-      <td>{{ transaction.triggered_on }} - {{ transaction.triggered_by }}</td>
-    </tr>
-    {{ if transaction.comment }}
-      <tr style="font-size: x-small">
-        <td><i>{{ transaction.comment }}</i></td>
-      </tr>
-    {{ end }}
-    <tr>
-      <td><b style="color: {{ transaction.amount_color }}">{{ transaction.amount_formatted }}€</b></td>
-    </tr>
-    <tr style="height: 10px"></tr>
-  {{ end }}
+{{ for transaction in transactions }}
+<tr style="font-size: small">
+  <td>{{ transaction.triggered_on }} - {{ transaction.triggered_by }}</td>
+</tr>
+{{ if transaction.comment }}
+<tr style="font-size: x-small">
+  <td><i>{{ transaction.comment }}</i></td>
+</tr>
+{{ end }}
+<tr>
+  <td><b style="color: {{ get_amount_color transaction.amount }}">{{ transaction.amount }}€</b></td>
+</tr>
+<tr style="height: 10px"></tr>
+{{ end }}
 {{ else }}
-    <tr><td><p>Es gab keine Transaktionen.</p></td></tr>
+<tr><td><p>Es gab keine Transaktionen.</p></td></tr>
 {{ end }}

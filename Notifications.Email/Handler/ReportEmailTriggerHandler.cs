@@ -10,6 +10,13 @@ namespace MONkEY.Notifications.Email.Handler
 {
     public class ReportEmailTriggerHandler : IEmailTriggerHandler<ReportEmailTrigger>
     {
+        private readonly ITemplateRenderer _templateRenderer;
+
+        public ReportEmailTriggerHandler(ITemplateRenderer templateRenderer)
+        {
+            _templateRenderer = templateRenderer ?? throw new ArgumentNullException(nameof(templateRenderer));
+        }
+
         public async Task HandleTrigger(ReportEmailTrigger trigger, IEmailSenderService emailSender)
         {
             ArgumentNullException.ThrowIfNull(trigger, nameof(trigger));
@@ -28,7 +35,7 @@ namespace MONkEY.Notifications.Email.Handler
             }
         }
 
-        private static async Task SendMonthlyReport(IEmailSenderService emailSender, ReportEmailTrigger trigger, MonthlyReportPayload report)
+        private async Task SendMonthlyReport(IEmailSenderService emailSender, ReportEmailTrigger trigger, MonthlyReportPayload report)
         {
             var emailSubject = $"{report.AccountName} - Monatsbericht für {report.ReportedPeriodName}";
 
@@ -37,10 +44,8 @@ namespace MONkEY.Notifications.Email.Handler
             {
                 TriggeredOn = transaction.TriggeredOn ?? string.Empty,
                 TriggeredBy = transaction.TriggeredBy ?? string.Empty,
-                Amount = transaction.Amount,
-                Comment = transaction.Comment,
-                AmountFormatted = AmountUtils.FormatValue(transaction.Amount),
-                AmountColor = transaction.Amount < 0 ? "#B71C1C" : "#388E3C"
+                Amount = AmountUtils.FormatValue(transaction.Amount),
+                Comment = transaction.Comment
             });
 
             var emailModel = new MonthlyReportEmailModel
@@ -53,7 +58,7 @@ namespace MONkEY.Notifications.Email.Handler
             };
 
             // Render template with model
-            var emailBody = await emailSender.RenderTemplate("body_monthly_report", emailModel);
+            var emailBody = await _templateRenderer.RenderAsync("body_monthly_report", emailModel);
 
             await emailSender.Send(trigger.Recipients, emailSubject, emailBody);
         }

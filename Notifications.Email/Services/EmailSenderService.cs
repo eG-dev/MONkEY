@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit.Text;
 using MimeKit;
-using System.Reflection;
 
 namespace MONkEY.Notifications.Email.Services
 {
@@ -46,10 +45,10 @@ namespace MONkEY.Notifications.Email.Services
 
             email.Subject = subject;
 
-            var template = GetTemplate("default").Replace("{{EMAIL_BODY}}", content);
+            var renderedTemplate = await _templateRenderer.RenderAsync("default", new { email_body = content });
             var body = new TextPart(TextFormat.Html)
             {
-                Text = template,
+                Text = renderedTemplate,
             };
 
             email.Body = body;
@@ -58,35 +57,11 @@ namespace MONkEY.Notifications.Email.Services
             await smtp.ConnectAsync(_smtpSettings.Host, _smtpSettings.Port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_smtpSettings.User, _smtpSettings.Password);
 
-#if !DEBUG
+#if !DEBUG || true
             await smtp.SendAsync(email);
 #endif
 
             await smtp.DisconnectAsync(true);
-        }
-
-        public async Task<string> RenderTemplate(string templateName, object model)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(templateName);
-            ArgumentNullException.ThrowIfNull(model);
-
-            var contentTemplate = await _templateRenderer.RenderAsync(templateName, model);
-            var defaultTemplate = GetTemplate("default").Replace("{{ email_body }}", contentTemplate);
-
-            return defaultTemplate;
-        }
-
-        public string GetTemplate(string templateName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"MONkEY.Notifications.Email.Templates.{templateName}.html";
-
-            using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-            using StreamReader reader = new(stream!);
-
-            string template = reader.ReadToEnd();
-
-            return template;
         }
     }
 }
