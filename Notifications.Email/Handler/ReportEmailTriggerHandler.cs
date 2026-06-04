@@ -3,6 +3,7 @@
 using MONkEY.Data;
 using MONkEY.Notifications.Email.Services;
 using MONkEY.Notifications.Email.Triggers;
+using MONkEY.Notifications.Email.ViewModels;
 using MONkEY.Support;
 
 namespace MONkEY.Notifications.Email.Handler
@@ -31,43 +32,28 @@ namespace MONkEY.Notifications.Email.Handler
         {
             var emailSubject = $"{report.AccountName} - Monatsbericht für {report.ReportedPeriodName}";
 
-            string transactionEntries = string.Empty;
-            if (report.Transactions.Count > 0)
+            // Build view model for template rendering
+            var transactionModels = report.Transactions.ConvertAll(transaction => new TransactionEntryModel
             {
-                foreach (var transaction in report.Transactions)
-                {
-                    transactionEntries += string.Format(
-                        "<tr style=\"font-size: small\"><td>{0} - {1}</td></tr>",
-                        transaction.TriggeredOn,
-                        transaction.TriggeredBy);
-                    
-                    if (!string.IsNullOrWhiteSpace(transaction.Comment))
-                    {
-                        transactionEntries += string.Format(
-                            "<tr style=\"font-size: x-small\"><td><i>{0}</i></td></tr>",
-                            transaction.Comment);
-                    }
+                TriggeredOn = transaction.TriggeredOn ?? string.Empty,
+                TriggeredBy = transaction.TriggeredBy ?? string.Empty,
+                Amount = transaction.Amount,
+                Comment = transaction.Comment,
+                AmountFormatted = AmountUtils.FormatValue(transaction.Amount),
+                AmountColor = transaction.Amount < 0 ? "#B71C1C" : "#388E3C"
+            });
 
-                    transactionEntries += string.Format(
-                        "<tr><td><b style=\"color: {0}\">{1}€</b></td></tr>",
-                        transaction.Amount < 0 ? "#B71C1C" : "#388E3C",
-                        AmountUtils.FormatValue(transaction.Amount));
-
-                    transactionEntries += "<tr style=\"height: 10px\"></tr>";
-                }
-            }
-            else
+            var emailModel = new MonthlyReportEmailModel
             {
-                transactionEntries = "<tr><td><p>Es gab keine Transaktionen.</p></td></tr>";
-            }
+                AccountName = report.AccountName ?? string.Empty,
+                ReportedPeriodName = report.ReportedPeriodName ?? string.Empty,
+                ClosingBalance = AmountUtils.FormatValue(report.ClosingBalance),
+                StartingBalance = AmountUtils.FormatValue(report.StartingBalance),
+                Transactions = transactionModels
+            };
 
-            var emailBody = emailSender
-                .GetTemplate("body_monthly_report")
-                .Replace("{{ACCOUNT_NAME}}", report.AccountName)
-                .Replace("{{REPORTED_PERIOD_NAME}}", report.ReportedPeriodName)
-                .Replace("{{CLOSING_BALANCE}}", AmountUtils.FormatValue(report.ClosingBalance))
-                .Replace("{{STARTING_BALANCE}}", AmountUtils.FormatValue(report.StartingBalance))
-                .Replace("{{TRANSACTION_ENTRIES}}", transactionEntries);
+            // Render template with model
+            var emailBody = await emailSender.RenderTemplate("body_monthly_report", emailModel);
 
             await emailSender.Send(trigger.Recipients, emailSubject, emailBody);
         }

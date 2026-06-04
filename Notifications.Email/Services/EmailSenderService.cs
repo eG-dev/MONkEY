@@ -14,13 +14,18 @@ namespace MONkEY.Notifications.Email.Services
 
         private readonly SmtpSettings _smtpSettings;
 
+        private readonly ITemplateRenderer _templateRenderer;
+
         public EmailSenderService(
             ILogger<EmailSenderService> logger, 
-            IOptions<SmtpSettings> smtpSettings)
+            IOptions<SmtpSettings> smtpSettings,
+            ITemplateRenderer templateRenderer)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _smtpSettings = smtpSettings.Value;
+
+            _templateRenderer = templateRenderer ?? throw new ArgumentNullException(nameof(templateRenderer));
         }
 
         public async Task Send(IEnumerable<string> recipients, string subject, string content)
@@ -58,6 +63,17 @@ namespace MONkEY.Notifications.Email.Services
 #endif
 
             await smtp.DisconnectAsync(true);
+        }
+
+        public async Task<string> RenderTemplate(string templateName, object model)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(templateName);
+            ArgumentNullException.ThrowIfNull(model);
+
+            var contentTemplate = await _templateRenderer.RenderAsync(templateName, model);
+            var defaultTemplate = GetTemplate("default").Replace("{{ email_body }}", contentTemplate);
+
+            return defaultTemplate;
         }
 
         public string GetTemplate(string templateName)

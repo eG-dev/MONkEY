@@ -32,6 +32,7 @@ namespace MONkEY.Functions
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IReportService, ReportService>();
 
+            services.AddScoped<ITemplateRenderer, TemplateRenderer>();
             services.AddScoped<IEmailTriggerService, EmailTriggerService>();
             services.AddScoped<IEmailSenderService, EmailSenderService>();
 
