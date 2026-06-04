@@ -33,20 +33,22 @@
   <td><h4>Transaktionen</h4></td>
 </tr>
 {{ if transactions.size > 0 }}
-{{ for transaction in transactions }}
-<tr style="font-size: small">
-  <td>{{ transaction.triggered_on }} - {{ transaction.triggered_by }}</td>
-</tr>
-{{ if transaction.comment }}
-<tr style="font-size: x-small">
-  <td><i>{{ transaction.comment }}</i></td>
-</tr>
-{{ end }}
-<tr>
-  <td><b style="color: {{ get_amount_color transaction.amount }}">{{ transaction.amount }}€</b></td>
-</tr>
-<tr style="height: 10px"></tr>
-{{ end }}
+  {{ for transaction in transactions }}
+    <tr style="font-size: small">
+      <td>{{ transaction.triggered_on }} - {{ transaction.triggered_by }}</td>
+    </tr>
+    {{ if transaction.comment }}
+      <tr style="font-size: x-small">
+        <td><i>{{ transaction.comment }}</i></td>
+      </tr>
+    {{ end }}
+    <tr>
+      <td><b style="color: {{ get_amount_color transaction.amount }}">{{ transaction.amount }}€</b></td>
+    </tr>
+    <tr style="height: 10px"></tr>
+  {{ end }}
 {{ else }}
-<tr><td><p>Es gab keine Transaktionen.</p></td></tr>
+  <tr>
+    <td><p>Es gab keine Transaktionen.</p></td>
+  </tr>
 {{ end }}
