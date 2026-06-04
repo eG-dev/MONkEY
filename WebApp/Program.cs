@@ -1,10 +1,12 @@
 using System.Globalization;
 
+using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using OpenTelemetry.Extensions.Hosting;
 
 using Cropper.Blazor.Extensions;
 
@@ -20,6 +22,9 @@ using MONkEY.WebApp.Types;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration);
+
+builder.Services.AddOpenTelemetry()
+    .UseAzureMonitorExporter();
 
 builder.Services
     .AddControllersWithViews(options =>
@@ -42,8 +47,6 @@ builder.Services
         options.Filters.Add(new AuthorizeFilter(policy));
     })
     .AddMicrosoftIdentityUI();
-
-builder.Services.AddApplicationInsightsTelemetry();
 
 // Add services to the container.
 builder.Services
