@@ -35,7 +35,7 @@
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="@(PayOut ? Color.Error : Color.Success)"
-                   StartIcon="@(PayOut ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add)"
+                   StartIcon="@Icons.Material.TwoTone.Check"
                    Disabled="_amountInput?.HasErrors ?? true"
                    OnClick="Submit">
             @(PayOut ? "Auszahlen" : "Einzahlen")

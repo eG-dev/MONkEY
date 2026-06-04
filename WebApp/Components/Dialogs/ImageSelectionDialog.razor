@@ -11,11 +11,14 @@
         <div class="image-selector">
             <div class="image-selector-buttons">
                 <MudFileUpload T="IBrowserFile" Accept=".png, .jpg, .jpeg" FilesChanged="LoadImageAsync" MaximumFileCount="1">
-                    <ActivatorContent>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.TwoTone.FileOpen">
+                    <CustomContent>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.TwoTone.Image"
+                                   OnClick="@context.OpenFilePickerAsync">
                             Bild auswählen
                         </MudButton>
-                    </ActivatorContent>
+                    </CustomContent>
                 </MudFileUpload>
             </div>
             <div class="image-selector-container my-3">
@@ -67,7 +70,7 @@
         <MudButton OnClick="Cancel">Abbrechen</MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Material.TwoTone.Edit"
+                   StartIcon="@Icons.Material.TwoTone.Check"
                    OnClick="Submit">
             Bild ändern
         </MudButton>
