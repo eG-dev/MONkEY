@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 namespace MONkEY.Data
 {
-    [DebuggerDisplay("{TenantKey}, {Name}, {Balance}, {PocketMoney}")]
+    [DebuggerDisplay("{TenantKey}, {Name}, {Balance}, {Allowance}")]
     public class Account : ITableEntity
     {
         public string PartitionKey { get; set; } = default!;
@@ -24,7 +24,7 @@ namespace MONkEY.Data
 
         public double Balance { get; set; }
 
-        public double? PocketMoney { get; set; }
+        public double? Allowance { get; set; }
 
         public ETag ETag { get; set; } = default!;
 

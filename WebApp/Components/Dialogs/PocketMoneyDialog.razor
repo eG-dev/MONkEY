@@ -15,7 +15,7 @@
                              Max="1000"
                              Step="1"
                              Format="N2"
-                             @bind-Value="PocketMoney"
+                             @bind-Value="Allowance"
                              Immediate="false"
                              Adornment="Adornment.Start"
                              AdornmentIcon="@Icons.Material.Filled.Wallet" />
@@ -39,7 +39,7 @@
     private IMudDialogInstance MudDialog { get; set; } = default!;
 
     [Parameter]
-    public double? PocketMoney { get; set; } = default!;
+    public double? Allowance { get; set; } = default!;
 
     private async Task Submit()
     {
@@ -49,7 +49,7 @@
             return;
         }
 
-        var amount = Math.Round(PocketMoney ?? 0.0, 2);
+        var amount = Math.Round(Allowance ?? 0.0, 2);
 
         MudDialog.Close(DialogResult.Ok(amount));
     }

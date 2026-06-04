@@ -51,27 +51,27 @@ namespace MONkEY.Functions
 
                 foreach (var account in accounts)
                 {
-                    if (account.PocketMoney.HasValue && account.PocketMoney.Value > 0)
+                    var allowance = account.Allowance.GetValueOrDefault();
+
+                    if (allowance > 0)
                     {
                         var pocketMoneyTransactions = await _transactions.GetSinceAsync(account.TenantKey, account.AccountKey, firstOfMonth, TRANSACTION_TRIGGER_NAME);
 
                         if (pocketMoneyTransactions.Count == 0)
                         {
                             _logger.LogInformation("Starting credit {Value}€ pocket money to the account {AccountKey} ({tenantKey})",
-                                account.PocketMoney.Value, account.AccountKey, tenantKey);
-
-                            var amount = account.PocketMoney.Value;
+                                allowance, account.AccountKey, tenantKey);
 
                             await _transactions.AddAsync(new Transaction()
                             {
                                 PartitionKey = account.TenantKey,
                                 AccountKey = account.AccountKey,
                                 TriggeredBy = TRANSACTION_TRIGGER_NAME,
-                                Amount = amount,
+                                Amount = allowance,
                                 Comment = "Monatliches Taschengeld",
                             });
 
-                            account.Balance += amount;
+                            account.Balance += allowance;
 
                             await _accounts.UpdateAsync(account);
 

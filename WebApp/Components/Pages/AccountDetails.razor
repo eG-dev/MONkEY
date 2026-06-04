@@ -62,9 +62,9 @@ else if (_account != null)
     }
 
     <div class="mt-6">
-        @if (_account.PocketMoney.GetValueOrDefault() > 0)
+        @if (_account.Allowance.GetValueOrDefault() > 0)
         {
-            <MudText Typo="Typo.subtitle1">@_account.Name bekommt monatlich <Amount Value="@_account.PocketMoney" Unit="€" IsBold="true" /> Taschengeld.</MudText>
+            <MudText Typo="Typo.subtitle1">@_account.Name bekommt monatlich <Amount Value="@_account.Allowance" Unit="€" IsBold="true" /> Taschengeld.</MudText>
         }
         else
         {
@@ -197,7 +197,7 @@ else
             "Taschengeld festlegen",
             new DialogParameters<PocketMoneyDialog>
             {
-                { x => x.PocketMoney, _account!.PocketMoney },
+                { x => x.Allowance, _account!.Allowance },
             },
             new DialogOptions()
             {
@@ -206,11 +206,11 @@ else
 
         var result = await dialog.Result;
 
-        if (result != null && !result.Canceled && result.Data is double amount)
+        if (result != null && !result.Canceled && result.Data is double allowance)
         {
-            if (!double.IsNaN(amount) && amount >= 0)
+            if (!double.IsNaN(allowance) && allowance >= 0)
             {
-                await AdjustPocketMoney(amount);
+                await AdjustPocketMoney(allowance);
             }
         }
     }
@@ -257,8 +257,10 @@ else
         }
     }
 
-    private async Task AdjustPocketMoney(double amount)
+    private async Task AdjustPocketMoney(double allowance)
     {
+        allowance = Math.Round(Math.Max(0, allowance), 2);
+
         _isUpdating = true;
         StateHasChanged();
 
@@ -268,19 +270,19 @@ else
 
             if (account != null)
             {
-                account.PocketMoney = amount;
+                account.Allowance = allowance;
 
                 await Accounts.UpdateAsync(account);
 
                 _account = account;
 
-                if (amount == 0)
+                if (allowance == 0)
                 {
                     Snackbar.Add($"{_account.Name} bekommt zukünftig kein Taschengeld!", Severity.Success);
                 }
                 else
                 {
-                    Snackbar.Add($"{_account.Name} bekommt zukünftig {amount}€ Taschengeld im Monat!", Severity.Success);
+                    Snackbar.Add($"{_account.Name} bekommt zukünftig {allowance}€ Taschengeld im Monat!", Severity.Success);
                 }
             }
         }
