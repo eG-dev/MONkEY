@@ -1,5 +1,8 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using MONkEY.Data.Entities;
+using MONkEY.Data.Types;
+using MONkEY.Data.Types.Reporting;
 using MONkEY.Support;
 
 namespace MONkEY.Data.Services

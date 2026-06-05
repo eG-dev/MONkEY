@@ -4,8 +4,31 @@
 <tr>
   <td><h3>Monatsbericht für {{ reported_period_name }}</h3></td>
 </tr>
-{{
-  func get_amount_color(amount)
+<tr>
+  <td><h4>Abschlussbilanz</h4></td>
+</tr>
+<tr>
+  <td>
+    <p style="font-size: xx-large; font-weight: bold; color: {{ get_amount_color closing_balance }}">
+      {{ closing_balance }}€
+    </p>
+  </td>
+</tr>
+<tr>
+  <td><h5>Startbilanz</h5></td>
+</tr>
+<tr>
+  <td>
+    <p style="font-size: large; color: {{ get_amount_color starting_balance }}">
+      {{ starting_balance }}€
+    </p>
+  </td>
+</tr>
+<tr>
+  <td><h4>Transaktionen</h4></td>
+</tr>
+
+{{ func get_amount_color(amount)
     # Check if amount is negative (starts with minus sign)
     if amount | string.starts_with "-"
       ret "#B71C1C"
@@ -18,23 +41,7 @@
     end
   end
 }}
-<tr>
-  <td><h4>Abschlussbilanz</h4></td>
-</tr>
-<tr>
-  <td>
-    <p style="font-size: xx-large; font-weight: bold; color: {{ get_amount_color closing_balance }}">{{ closing_balance }}€</p>
-  </td>
-</tr>
-<tr>
-  <td><h5>Startbilanz</h5></td>
-</tr>
-<tr>
-  <td><p style="font-size: large; color: {{ get_amount_color starting_balance }}">{{ starting_balance }}€</p></td>
-</tr>
-<tr>
-  <td><h4>Transaktionen</h4></td>
-</tr>
+
 {{ if transactions.size > 0 }}
   {{ for transaction in transactions }}
     <tr style="font-size: small">

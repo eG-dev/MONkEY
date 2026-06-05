@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
+using MONkEY.Data.Types;
 
 namespace MONkEY.Data.Services
 {

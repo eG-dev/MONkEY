@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.Extensions.Caching.Memory;
-
-using MONkEY.Data;
-using MONkEY.Data.Services;
+using MONkEY.Data.Entities;
+using MONkEY.Data.Types;
+using MONkEY.Identity.Types;
 
 namespace MONkEY.Identity.Services
 {

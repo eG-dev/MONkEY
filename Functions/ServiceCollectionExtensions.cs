@@ -3,9 +3,10 @@ using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
 
 using MONkEY.Data.Services;
-using MONkEY.Notifications.Email.Handler;
+using MONkEY.Data.Types;
 using MONkEY.Notifications.Email.Services;
-using MONkEY.Notifications.Email.Triggers;
+using MONkEY.Notifications.Email.Types;
+using MONkEY.Notifications.Email.Types.Triggers;
 
 namespace MONkEY.Functions
 {

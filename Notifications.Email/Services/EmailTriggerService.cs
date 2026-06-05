@@ -3,8 +3,9 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text;
 
-using MONkEY.Data;
-using MONkEY.Notifications.Email.Triggers;
+using MONkEY.Data.Types.Reporting;
+using MONkEY.Notifications.Email.Types;
+using MONkEY.Notifications.Email.Types.Triggers;
 
 namespace MONkEY.Notifications.Email.Services
 {
@@ -28,17 +29,38 @@ namespace MONkEY.Notifications.Email.Services
         {
             _logger.LogInformation("Triggering monthly report email");
 
-            var emailTrigger = new ReportEmailTrigger()
+            try
             {
-                Recipients = recipients,
-                EmailType = EmailType.Report,
-                ReportType = ReportType.Monthly,
-                Payload = serializedReportPayload,
-            };
+                if (recipients == null || recipients.Length == 0)
+                {
+                    _logger.LogError("Recipients list is null or empty.");
+                    return;
+                }
 
-            byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(emailTrigger));
+                var report = JsonSerializer.Deserialize<MonthlyReportPayload>(serializedReportPayload);
 
-            await _emailsQueue.SendMessageAsync(Convert.ToBase64String(buffer));
+                if (report == null)
+                {
+                    _logger.LogError("Deserialized monthly report payload is null. Payload: {Payload}", serializedReportPayload);
+                    return;
+                }
+
+                var emailTrigger = new ReportEmailTrigger()
+                {
+                    Recipients = recipients,
+                    EmailType = EmailType.Report,
+                    ReportType = ReportType.Monthly,
+                    Payload = serializedReportPayload,
+                };
+
+                byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(emailTrigger));
+
+                await _emailsQueue.SendMessageAsync(Convert.ToBase64String(buffer));
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize monthly report payload. Payload: {Payload}", serializedReportPayload);
+            }
         }
     }
 }

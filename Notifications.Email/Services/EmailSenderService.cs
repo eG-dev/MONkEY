@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit.Text;
 using MimeKit;
+using MONkEY.Notifications.Email.Types;
+using MONkEY.Notifications.Email.Configuration;
 
 namespace MONkEY.Notifications.Email.Services
 {
@@ -22,6 +24,7 @@ namespace MONkEY.Notifications.Email.Services
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+            ArgumentNullException.ThrowIfNull(smtpSettings);
             _smtpSettings = smtpSettings.Value;
 
             _templateRenderer = templateRenderer ?? throw new ArgumentNullException(nameof(templateRenderer));
@@ -57,7 +60,7 @@ namespace MONkEY.Notifications.Email.Services
             await smtp.ConnectAsync(_smtpSettings.Host, _smtpSettings.Port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_smtpSettings.User, _smtpSettings.Password);
 
-#if !DEBUG || true
+#if !DEBUG
             await smtp.SendAsync(email);
 #endif
 

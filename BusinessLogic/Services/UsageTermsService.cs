@@ -1,6 +1,7 @@
-﻿using MONkEY.Data;
-using MONkEY.Data.Services;
-using MONkEY.Identity;
+﻿using MONkEY.BusinessLogic.Types;
+using MONkEY.Data.Entities;
+using MONkEY.Data.Types;
+using MONkEY.Identity.Types;
 
 namespace MONkEY.BusinessLogic.Services
 {

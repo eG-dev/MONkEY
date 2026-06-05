@@ -1,3 +1,4 @@
+using MONkEY.Notifications.Email.Types;
 using Scriban;
 using System.Reflection;
 
@@ -38,8 +39,11 @@ namespace MONkEY.Notifications.Email.Services
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = $"MONkEY.Notifications.Email.Templates.{templateName}.html";
 
-            using Stream stream = assembly.GetManifestResourceStream(resourceName)
-                ?? throw new FileNotFoundException($"Template resource not found: {resourceName}");
+            using Stream? stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                throw new FileNotFoundException($"Template resource not found: {resourceName}");
+            }
 
             using StreamReader reader = new(stream);
             return reader.ReadToEnd();

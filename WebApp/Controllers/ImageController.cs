@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using MONkEY.Data.Services;
-using MONkEY.Identity.Services;
+using MONkEY.Data.Types;
+using MONkEY.Identity.Types;
 
 namespace MONkEY.WebApp.Controllers
 {

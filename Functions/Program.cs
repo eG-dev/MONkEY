@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using System.Globalization;
 
 using MONkEY.Functions;
-using MONkEY.Notifications.Email;
+using MONkEY.Notifications.Email.Configuration;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
