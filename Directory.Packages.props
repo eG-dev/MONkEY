@@ -29,7 +29,7 @@
     <PackageVersion Include="MudBlazor" Version="9.5.0" />
     <PackageVersion Include="MudBlazor.Translations" Version="3.3.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.16.0" />
     <PackageVersion Include="Scriban" Version="7.2.5" />
   </ItemGroup>
 </Project>
