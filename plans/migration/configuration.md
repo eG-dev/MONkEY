@@ -1,0 +1,42 @@
+# Docker environment configuration
+
+Status: proposed deployment contract. Implement during [stack foundation](01-stack-foundation.md)
+and apply through [operations and cutover](04-operations-cutover.md).
+
+## Environment contract
+
+The business timezone is configured through Docker ENV. The remaining settings
+below are a proposed deployment contract, to be implemented in this milestone.
+Read configuration at startup and validate it before readiness succeeds.
+
+| Variable | Proposed default | Purpose |
+| --- | --- | --- |
+| `TZ` | `UTC` | IANA business timezone, for example `Europe/Berlin`; shared by Node and .NET. |
+| `MONKEY_DATA_PATH` | `/data` | Absolute container path containing all persistent application state. |
+| `MONKEY_PUBLIC_URL` | Required in production | Public origin, for example `https://monkey.home.example`; used for redirects and origin validation. |
+| `MONKEY_LOG_LEVEL` | `Information` | Shared application log level, mapped explicitly to both runtime logging systems. |
+| `MONKEY_DEFAULT_LOCALE` | `de-DE` | Instance fallback presentation locale; German and English are initially supported. Users may override it without changing timezone or currency. |
+| `MONKEY_TRUSTED_PROXIES` | Empty: trust none | Explicit proxy IP addresses or CIDRs allowed to supply forwarded headers. |
+
+## Configuration rules
+
+- The backend reads `TZ` explicitly for business rules; setting the OS timezone alone is not the scheduling implementation.
+- Include timezone data and required globalization support in the image. Verify the configured IANA ID in both runtimes and fail startup on invalid values.
+- Persist timestamps in UTC; derive allowance months and report boundaries in the configured business timezone, not the browser timezone.
+- Timezone changes require a restart and a deliberate policy for existing schedules/periods. Never silently reinterpret closed reports or duplicate credits.
+- Derive `monkey.db`, `images/`, and `keys/` beneath `MONKEY_DATA_PATH`; do not expose independent path variables until a real need exists.
+- The host bind-mount path is a Docker/Compose setting, not an application variable. For example, mount `/srv/monkey` on the host to `/data` in the container; no `MONKEY_DATA_PATH` override is needed.
+- Validate that the data path is absolute, private, and writable by the non-root backend. Do not fall back silently to ephemeral container storage if the configured path is invalid.
+- Keep the public container port fixed initially; select the host port through Docker port publishing. Keep the internal backend address server-only.
+- Do not disable Secure cookies based on a configurable public URL; production requires HTTPS. Restrict forwarded-header trust to the configured proxies.
+- Keep passwords, bootstrap credentials, and signing keys out of ordinary ENV values; use protected secret files or an operator command for sensitive setup.
+- Document defaults and expose only safe browser configuration. Do not forward the full server environment to Angular.
+
+Language selection follows the [localization plan](localization.md); it does not
+change business periods or stored financial values.
+
+## Acceptance gate
+
+- [ ] Non-default `TZ` and data-root settings work; invalid timezone/path/proxy settings fail startup clearly.
+- [ ] Node and .NET agree on timezone behavior, including daylight saving boundaries.
+- [ ] Non-root runtime can write mounted paths and reports actionable permission errors.

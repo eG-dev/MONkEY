@@ -1,0 +1,107 @@
+# On-prem migration plan
+
+Status: proposed implementation sequence; no implementation has started.
+
+## Confirmed scope
+
+- Small household/group deployment, accessible over LAN or VPN.
+- One instance, multiple users, no tenancy.
+- Managers administer users and accounts and perform financial writes.
+- Members can read all accounts; no account assignments are required.
+- Angular SSR with Taiga UI and locally packaged Lucide icon fonts/assets.
+- German and English are available from the first release; localization must support additional community-contributed languages.
+- Intended publication as a GitHub open-source project; document how to contribute translations and choose the project license explicitly before publication.
+- Builds and verification run through GitHub Actions; versioned distributions are published as GitHub Releases, with a Docker image as the primary runtime artifact.
+- ASP.NET Core backend; retaining .NET for business logic is acceptable.
+- Prefer one application container, with persistent storage outside its writable layer.
+- Self-contained local authentication. OIDC integration is optional, not required for the first release.
+- No email functionality, SMTP dependency, email queue, or email-based recovery.
+- No import of existing Azure data. The new instance starts with a clean database.
+- Incremental development, not a big-bang rewrite or deployment.
+- Business timezone is set through Docker ENV (`TZ`, using an IANA timezone ID).
+- E2E-first testing: extensive real-application browser coverage, focused integration tests where useful, and no routine unit-test requirement. Unit tests may be absent entirely.
+- Key decisions are documented during migration in Markdown ADRs under `/docs/ADR`, with Mermaid diagrams where useful. Initial ADRs are created during Step 0, not during planning.
+
+## Target architecture
+
+Browser -> Angular SSR / Web-BFF -> ASP.NET Core API / application services
+
+The backend owns identity, authorization, business rules, database access, images,
+and scheduled jobs. The BFF owns rendering and browser-facing transport, not
+financial rules. Both API requests and SSR data reads require backend authorization.
+
+Initially package Node and ASP.NET Core in one image as two supervised processes.
+Expose only the web-facing port; bind the backend to loopback in that deployment.
+Keep the internal API explicit so two containers remain possible without rewriting
+business logic. SSR does not imply that every route must use server rendering.
+
+Use SQLite on a local-disk Docker volume for structured data and a directory in
+that volume for images. Only the backend accesses the database. Persist ASP.NET
+Core Data Protection keys there as well. No Redis, message broker, or database
+server is required for the initial single-instance deployment.
+
+HTTPS must be supplied by the host/reverse proxy or explicitly configured in the
+application deployment. One application container does not mean zero host setup.
+Internet connectivity and an external identity provider must not be required at runtime.
+
+## Milestones
+
+| Order | Plan | Outcome |
+| --- | --- | --- |
+| 1 | [Stack foundation](01-stack-foundation.md) | Runnable .NET + Angular SSR + storage in Docker |
+| 2 | [Authentication and authorization](02-authentication-authorization.md) | Local users, sessions, and enforced roles |
+| 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Small, tested end-to-end feature slices |
+| 4 | [Operations and cutover](04-operations-cutover.md) | Restorable, upgradeable deployment and deliberate Azure retirement |
+
+Each milestone has an acceptance gate. Work may be demonstrated before feature
+parity, but the replacement is not the production system until its release gates
+pass. Add foundational operational checks in milestone 1; do not postpone all
+deployment validation until milestone 4.
+
+Every phase also adds or resolves the relevant ADRs before its acceptance gate is
+complete. Follow the [ADR lifecycle](00-guardrails.md#architecture-decision-records)
+established during Step 0; proposed choices in these plans are not automatically
+accepted decisions.
+
+## Supporting plans
+
+These plans keep cross-cutting requirements separate from the milestone sequence:
+
+| Plan | When to apply |
+| --- | --- |
+| [Step 0: implementation guardrails](00-guardrails.md) | Before scaffolding; refine after the foundation spike |
+| [Docker environment configuration](configuration.md) | Establish in milestone 1; maintain through deployment and recovery |
+| [Localization](localization.md) | Establish in milestone 1; deliver German/English with every feature |
+| [E2E-first testing](testing.md) | Establish in milestone 1; grow through all subsequent milestones |
+| [GitHub builds and releases](builds-releases.md) | Establish CI in milestone 1; complete release publishing before production cutover |
+
+## Incremental repository strategy
+
+- Leave the current WebApp and Functions deployable while building the replacement.
+- Suggested home: `revamp/` with a separate .NET solution, Angular workspace, and container files. Confirm names before scaffolding.
+- Reuse reviewed C# rules and helpers selectively; do not share Azure Table entities as the new domain model.
+- Extract behavior currently implemented in Razor pages into backend application services.
+- Do not modify existing Azure publish workflows until new CI can run independently. Ensure new paths do not accidentally trigger old deployment workflows.
+- No dual writes, Azure/local synchronization, or data import is planned.
+- Do not remove old projects or cloud resources merely because an early milestone works.
+
+## Current implementation anchors
+
+- [Web startup](../../WebApp/Program.cs): Blazor Server, Microsoft identity, Azure telemetry.
+- [Service registration](../../WebApp/ServiceCollectionExtensions.cs): Azure Tables, Blobs, and Queues.
+- [Account details](../../WebApp/Components/Pages/AccountDetails.razor): transaction and allowance behavior embedded in UI code.
+- [Account management](../../BusinessLogic/Services/AccountManagementService.cs): account/image operations and tenant-dependent checks.
+- [Tenant management](../../BusinessLogic/Services/TenantManagementService.cs): user and tenant lifecycle currently combined.
+- [Workers](../../Functions/Workers): allowance credits, monthly reporting, cleanup, and email delivery.
+
+## Decisions to close during implementation
+
+- Currency, precision, negative balances, and whether the current nine-account UI limit is intentional.
+- Deployment timezone value via `TZ`, monthly allowance due date, catch-up after downtime, and handling timezone changes after initial use.
+- Financial-history retention and archive versus permanent deletion semantics.
+- Manager recovery process and whether MFA is needed for the first release.
+- HTTPS termination, backup location, restore objectives, and supported host architectures.
+- Which authenticated routes benefit from SSR versus client rendering.
+
+Defaults proposed in the milestone plans are not silently accepted requirements.
+Resolve behavior-changing decisions before implementing the affected feature.
