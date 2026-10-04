@@ -1,9 +1,10 @@
-# On-prem migration plan
+# POCKET MONkEY migration plan
 
-Status: proposed implementation sequence; no implementation has started.
+Status: Step 0 pre-scaffolding guardrails are implemented and validated; application scaffolding has not started.
 
 ## Confirmed scope
 
+- Application name: **POCKET MONkEY**, with a lowercase `k`, for managing pocket money.
 - Small household/group deployment, accessible over LAN or VPN.
 - One instance, multiple users, no tenancy.
 - Managers administer users and accounts and perform financial writes.
@@ -20,7 +21,7 @@ Status: proposed implementation sequence; no implementation has started.
 - Incremental development, not a big-bang rewrite or deployment.
 - Business timezone is set through Docker ENV (`TZ`, using an IANA timezone ID).
 - E2E-first testing: extensive real-application browser coverage, focused integration tests where useful, and no routine unit-test requirement. Unit tests may be absent entirely.
-- Key decisions are documented during migration in Markdown ADRs under `/docs/ADR`, with Mermaid diagrams where useful. Initial ADRs are created during Step 0, not during planning.
+- Key decisions are documented during migration in Markdown ADRs under `/docs/ADR`, with Mermaid diagrams where useful. [ADR-0001](../../docs/ADR/ADR-0001-architecture-decision-records.md) establishes the concise greenfield format; the [ADR index](../../docs/ADR/README.md) lists the initial records created during Step 0. Extend them in each phase; revamping history and execution sequencing stay in these plans.
 
 ## Target architecture
 
@@ -29,6 +30,9 @@ Browser -> Angular SSR / Web-BFF -> ASP.NET Core API / application services
 The backend owns identity, authorization, business rules, database access, images,
 and scheduled jobs. The BFF owns rendering and browser-facing transport, not
 financial rules. Both API requests and SSR data reads require backend authorization.
+
+The following concrete packaging/storage choices are proposals to validate in
+the foundation spike, not decisions accepted by the initial ADRs.
 
 Initially package Node and ASP.NET Core in one image as two supervised processes.
 Expose only the web-facing port; bind the backend to loopback in that deployment.
@@ -78,10 +82,10 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 ## Incremental repository strategy
 
 - Leave the current WebApp and Functions deployable while building the replacement.
-- Suggested home: `revamp/` with a separate .NET solution, Angular workspace, and container files. Confirm names before scaffolding.
+- Confirmed home: `revamp/`, with `web/`, `backend/`, `tests/e2e/`, `tests/integration/`, and `deploy/`. Use a separate .NET solution and Angular workspace; confirm backend project subdivisions during scaffolding.
 - Reuse reviewed C# rules and helpers selectively; do not share Azure Table entities as the new domain model.
 - Extract behavior currently implemented in Razor pages into backend application services.
-- Do not modify existing Azure publish workflows until new CI can run independently. Ensure new paths do not accidentally trigger old deployment workflows.
+- Do not modify existing Azure publish workflows until new CI can run independently. Their current triggers also deploy for replacement/docs changes; see the [foundation handoff](00-guardrails.md#foundation-handoff). Deliberately isolate their filters in milestone 1 before pushing replacement work to the default branch.
 - No dual writes, Azure/local synchronization, or data import is planned.
 - Do not remove old projects or cloud resources merely because an early milestone works.
 
