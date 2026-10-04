@@ -1,7 +1,8 @@
 # Localization foundation
 
-Status: not started. Establish during [stack foundation](01-stack-foundation.md)
-and extend throughout [UI and business logic](03-ui-business-logic.md).
+Status: foundation implemented and locally verified. Extend throughout
+[UI and business logic](03-ui-business-logic.md); see [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
+and the [foundation guide](../../revamp/README.md).
 
 ## Requirements
 
@@ -9,12 +10,12 @@ German (`de`) and English (`en`) are first-release languages, not a later UI
 polish task. Translation catalogs, locale formatting, and Taiga component language
 resources must be packaged locally and work without an external translation service.
 
-- Proposed approach: a maintained Angular runtime translation library such as Transloco, subject to the milestone's SSR/Taiga compatibility check. Avoid separate container builds per language and a custom translation engine.
+- Selected approach: Transloco with its MessageFormat integration, verified with Angular SSR/Taiga. Catalogs under `revamp/web/public/i18n/{de,en}/` are bundled locally through the central registry. Avoid separate container builds per language and a custom translation engine.
 - Use stable semantic translation keys and version-controlled JSON catalogs grouped by feature. Do not use German strings as keys or concatenate translated sentence fragments.
-- Use English as the proposed source catalog and missing-key fallback; this is separate from the German instance default. CI must require complete German and English catalogs for release rather than relying on that fallback.
+- Use English as the selected source catalog and missing-key fallback; this is separate from the German instance default. CI requires complete German and English catalogs rather than relying on that fallback.
 - Support interpolation and locale-aware pluralization through the library's supported message-format tooling. Include validation errors, notifications, tooltips, accessibility labels, page titles, empty states, and authentication screens.
 - Maintain one language registry mapping language IDs to display names, formatting locales, catalog resources, Taiga language resources, and text direction. Adding a language must not require scattered language-specific conditionals.
-- Proposed selection order: saved user preference, explicit language-choice cookie, supported `Accept-Language` negotiation, then `MONKEY_DEFAULT_LOCALE`. Only consider the saved preference for an authenticated user and allow language switching before login.
+- Selected selection order: saved user preference, explicit language-choice cookie, supported `Accept-Language` negotiation, then `MONKEY_DEFAULT_LOCALE`. Anonymous negotiation/switching is implemented; saved authenticated preferences arrive with authentication. Cookie values are registered language IDs.
 - Normalize BCP 47 locale tags to registered language/formatting combinations. Validate the ENV default at startup; unsupported request preferences fall back deterministically rather than selecting arbitrary resource paths.
 - Persist signed-in users' language choices as personal preferences. Members may change their own language without receiving business-write permissions. A cookie carries the explicit choice for anonymous requests and SSR.
 - Resolve language per request before SSR, load the required catalogs and Taiga resources, set document `lang`/`dir`, and hydrate with the same resolved language. Never mutate process-wide culture or a shared translation instance based on one user.
@@ -33,7 +34,7 @@ OSS contribution documentation is completed in
 
 ## Acceptance gate
 
-- [ ] The shell renders in German and English, with matching Taiga resources and hydration language.
-- [ ] Language negotiation, explicit switching, and unsupported-language fallback work without outbound access.
-- [ ] Concurrent SSR requests in different languages remain isolated; document language and formatting are correct.
-- [ ] Catalog checks catch missing/extra keys, incompatible interpolation placeholders, and invalid plural/message syntax.
+- [x] The shell renders in German and English, with matching Taiga resources and hydration language.
+- [x] Language negotiation, explicit switching, and unsupported-language fallback work without outbound access.
+- [x] Concurrent SSR requests in different languages remain isolated; document language and formatting are correct.
+- [x] Catalog checks catch missing/extra keys, incompatible interpolation placeholders, and invalid plural/message syntax.

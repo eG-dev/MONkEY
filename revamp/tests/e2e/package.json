@@ -1,0 +1,21 @@
+{
+  "name": "pocket-monkey-e2e",
+  "private": true,
+  "engines": {
+    "node": ">=24.15.0 <25"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "playwright test",
+    "test:shell": "playwright test shell.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.1",
+    "jsdom": "26.1.0",
+    "mermaid": "11.17.2",
+    "minimatch": "9.0.9",
+    "typescript": "6.0.2",
+    "yaml": "2.9.1"
+  }
+}

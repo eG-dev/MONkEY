@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="backend/PocketMonkey.Api/PocketMonkey.Api.csproj" />
+  <Project Path="tests/integration/RuntimeChecks/RuntimeChecks.csproj" />
+</Solution>

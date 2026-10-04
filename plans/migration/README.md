@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 pre-scaffolding guardrails are implemented and validated; application scaffolding has not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Hosted CI, publishing rehearsal, and the real deployment host remain open. Authentication/business implementation has not started.
 
 ## Confirmed scope
 
@@ -31,8 +31,9 @@ The backend owns identity, authorization, business rules, database access, image
 and scheduled jobs. The BFF owns rendering and browser-facing transport, not
 financial rules. Both API requests and SSR data reads require backend authorization.
 
-The following concrete packaging/storage choices are proposals to validate in
-the foundation spike, not decisions accepted by the initial ADRs.
+The following packaging/storage choices are now implemented and evaluated locally
+in [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). See the
+[foundation guide](../../revamp/README.md) for verified commands and remaining gates.
 
 Initially package Node and ASP.NET Core in one image as two supervised processes.
 Expose only the web-facing port; bind the backend to loopback in that deployment.
@@ -85,7 +86,7 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 - Confirmed home: `revamp/`, with `web/`, `backend/`, `tests/e2e/`, `tests/integration/`, and `deploy/`. Use a separate .NET solution and Angular workspace; confirm backend project subdivisions during scaffolding.
 - Reuse reviewed C# rules and helpers selectively; do not share Azure Table entities as the new domain model.
 - Extract behavior currently implemented in Razor pages into backend application services.
-- Do not modify existing Azure publish workflows until new CI can run independently. Their current triggers also deploy for replacement/docs changes; see the [foundation handoff](00-guardrails.md#foundation-handoff). Deliberately isolate their filters in milestone 1 before pushing replacement work to the default branch.
+- Keep existing Azure publish workflows independent. Milestone 1 added narrow replacement/docs exclusions and tested that owning/shared runtime changes still trigger deployment; see the [foundation handoff](00-guardrails.md#foundation-handoff). The new verification workflow does not deploy or require Azure secrets.
 - No dual writes, Azure/local synchronization, or data import is planned.
 - Do not remove old projects or cloud resources merely because an early milestone works.
 

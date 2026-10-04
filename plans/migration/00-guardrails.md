@@ -55,10 +55,10 @@ Use the [configuration](configuration.md), [localization](localization.md), and
 
 ## Confirmed replacement paths
 
-The user confirmed `revamp/` as the independent replacement root. No application
-directories/projects are scaffolded in this phase; scope checks use representative
-future paths. Backend project subdivisions and the solution filename are decided
-during foundation work.
+The user confirmed `revamp/` as the independent replacement root. Step 0 used
+representative future paths; foundation work has now created the independent
+`PocketMonkey.slnx`, backend API, Angular SSR workspace, E2E tooling, test-only
+runtime probe, and deployment files. See the [foundation guide](../../revamp/README.md).
 
 | Area | Planned paths | Instructions |
 | --- | --- | --- |
@@ -76,25 +76,28 @@ together. Do not broaden the patterns to legacy WebApp or Data projects.
 
 The [ADR index](../../docs/ADR/README.md) lists the initial greenfield records for
 application boundaries, shared access, language/timezone, E2E-first verification,
-and GitHub delivery. Concrete storage/authentication/translation libraries, image
-registry, runtime versions, process supervision, financial precision/policies,
-and retention remain decisions for the responsible phases.
+and GitHub delivery. [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
+records the locally evaluated storage, runtime, supervision, translation, and test
+stack. [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md) selects public
+GHCR distribution. Authentication/bootstrap/recovery, publishing policies,
+financial policies, and retention remain decisions for the responsible phases.
 
 ## Foundation handoff
 
-- Root `Directory.Packages.props` is inherited by nested .NET projects. Isolate replacement package configuration deliberately before adding backend projects; do not change legacy versions implicitly.
+- Root `Directory.Packages.props` would be inherited by nested .NET projects. Foundation work added replacement-local package/build/source configuration; legacy package versions are unchanged.
 - Root `.editorconfig` disables primary constructors for C# and does not set `root = true`. Respect that preference and inspect any ancestor rules when setting up formatting.
-- There is no repository `global.json` or `Directory.Build.props/targets`. Pin a supported replacement toolchain during scaffolding rather than assuming an SDK is selected already.
-- Both Azure workflows currently deploy on default-branch changes outside their single ignored application folder. Replacement-only changes would trigger both deployments. Address those filters explicitly in milestone 1 before pushing replacement work to the default branch; Step 0 does not modify them.
-- Application build/test/container commands do not exist yet. Record and validate them during the foundation spike; document checks in this phase are not application verification.
+- The initial root audit found no `global.json` or `Directory.Build.props/targets`. The replacement now pins its own SDK and build configuration without changing the root's legacy behavior.
+- The initial audit found both Azure workflows deployed on replacement/docs changes. Foundation work added narrow exclusions and verified that owning/shared runtime changes and manual triggers remain intact. Step 0 itself did not modify them.
+- The [foundation guide](../../revamp/README.md) now records actual application build/test/container commands and local results. Step 0's original document checks are still not evidence of runtime behavior.
 
 ## Verification record
 
-Run from the repository root with Node.js and npm available. The parser packages
-are temporary validation tooling, not replacement application dependencies.
+Run from the repository root with Node.js and npm available. Foundation work now
+locks the parser packages in the separate test toolchain; the original Step 0
+validation used temporary tooling outside the repository.
 
 ```powershell
-npm install --prefix "$env:TEMP\pocket-monkey-guardrail-tools" --no-save --package-lock=false yaml@2 minimatch@9 mermaid@11 jsdom@26
+npm --prefix .\revamp\tests\e2e ci --ignore-scripts
 node .\plans\migration\verify-guardrails.mjs
 ```
 
@@ -104,10 +107,10 @@ ADR headings/greenfield wording, and parses Mermaid syntax. Instruction-content
 consistency was also reviewed against the confirmed scope and ADR-0001; automated
 syntax checks do not prove that instructions are followed by an agent.
 
-Editor diagnostics reported no errors in the affected instructions, ADRs, or plans.
-No replacement build, E2E/integration suite, container, or CI checks were run:
-those projects do not exist yet. Mermaid syntax is checked locally; the diagram
-still needs a GitHub rendering preview when the documents are published.
+Step 0 editor diagnostics reported no errors in the affected instructions, ADRs,
+or plans. No application/runtime checks existed during that phase; foundation
+builds and real-image checks are now recorded separately. GitHub-hosted execution
+and Mermaid rendering preview remain unverified.
 
 ## Acceptance gate
 
@@ -118,7 +121,8 @@ still needs a GitHub rendering preview when the documents are published.
 - [x] Instructions reference existing plans, have valid metadata, and contain no contradictory or duplicated requirements.
 - [x] Concrete validation commands are recorded as tooling becomes available; unavailable checks are identified rather than claimed as passed.
 - [ ] Critical invariants are backed by tests/CI as their features arrive; instructions alone are not enforcement.
-- [ ] Tooling-specific rules are refined after the foundation spike confirms compatibility.
+- [x] Tooling-specific rules are refined against the locally verified foundation stack; hosted/deployment gates remain explicit in milestone 1.
 
-The final two items are ongoing delivery gates, not claims that Step 0 has
-implemented runtime enforcement or chosen the application toolchain.
+Feature-specific enforcement remains an ongoing delivery gate. The foundation
+subset is covered locally and in the CI definition; this does not claim financial
+invariants or authentication exist, or that GitHub-hosted verification has run.

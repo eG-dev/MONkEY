@@ -11,4 +11,5 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0003](ADR-0003-shared-instance-access.md) | Shared accounts and local Manager/Member access |
 | [ADR-0004](ADR-0004-language-and-timezone.md) | Extensible German/English UI and separate business timezone |
 | [ADR-0005](ADR-0005-e2e-first-verification.md) | E2E-first application verification |
-| [ADR-0006](ADR-0006-github-delivery.md) | GitHub Actions verification and GitHub Releases |
+| [ADR-0006](ADR-0006-github-delivery.md) | GitHub Actions verification, GitHub Releases, and public GHCR images |
+| [ADR-0007](ADR-0007-application-foundation.md) | Evaluated runtime, SQLite, supervised image, localization, and verification tooling |

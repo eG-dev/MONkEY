@@ -1,0 +1,69 @@
+:host {
+  display: block;
+}
+header,
+main {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid var(--tui-border-normal);
+}
+h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+h2 {
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+select {
+  padding: 0.5rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 4px;
+  background: var(--tui-background-base);
+  color: inherit;
+  font: inherit;
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #08745c;
+}
+.error {
+  color: #a12734;
+}
+dl {
+  margin: 1.5rem 0;
+}
+dl > div {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--tui-border-normal);
+}
+dt {
+  color: var(--tui-text-secondary);
+}
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+@media (max-width: 480px) {
+  dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+}

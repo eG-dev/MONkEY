@@ -6,6 +6,13 @@ on:
       - main
     paths-ignore:
       - "Functions/**"
+      - "revamp/**"
+      - "plans/migration/**"
+      - "docs/ADR/**"
+      - ".github/instructions/revamp-*.instructions.md"
+      - ".github/copilot-instructions.md"
+      - ".github/workflows/revamp-*.yml"
+      - ".github/workflows/revamp-*.yaml"
 
   workflow_dispatch:
 

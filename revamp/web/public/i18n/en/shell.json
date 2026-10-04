@@ -1,0 +1,11 @@
+{
+  "system": "System",
+  "language": "Language",
+  "ready": "Ready",
+  "unavailable": "Connection failed",
+  "sample": "{count, plural, one {Persisted sample} other {Persisted samples}}",
+  "initialized": "Initialized (UTC)",
+  "timezone": "Timezone",
+  "reload": "Reload",
+  "download": "Download file"
+}

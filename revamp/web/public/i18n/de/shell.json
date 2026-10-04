@@ -1,0 +1,11 @@
+{
+  "system": "System",
+  "language": "Sprache",
+  "ready": "Bereit",
+  "unavailable": "Verbindung fehlgeschlagen",
+  "sample": "{count, plural, one {Gespeicherter Testwert} other {Gespeicherte Testwerte}}",
+  "initialized": "Initialisiert (UTC)",
+  "timezone": "Zeitzone",
+  "reload": "Neu laden",
+  "download": "Datei herunterladen"
+}

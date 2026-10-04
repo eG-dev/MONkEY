@@ -6,15 +6,20 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const require = createRequire(path.join(os.tmpdir(), 'pocket-monkey-guardrail-tools', 'package.json'));
+const testTools = path.join(root, 'revamp/tests/e2e');
+const toolingRoot = fs.existsSync(path.join(testTools, 'node_modules/yaml/package.json'))
+  ? testTools : path.join(os.tmpdir(), 'pocket-monkey-guardrail-tools');
+const require = createRequire(path.join(toolingRoot, 'package.json'));
 const YAML = require('yaml');
 const { minimatch } = require('minimatch');
 const expected = {
-  'revamp-web.instructions.md': ['revamp/web/src/app/account.ts', 'revamp/web/public/i18n/de/accounts.json'],
-  'revamp-backend.instructions.md': ['revamp/backend/Api/Program.cs', 'revamp/backend/Api/Api.csproj'],
-  'revamp-tests.instructions.md': ['revamp/tests/e2e/accounts.spec.ts', 'revamp/tests/integration/LedgerTests.cs'],
-  'revamp-deployment.instructions.md': ['revamp/deploy/Dockerfile', '.github/workflows/revamp-build.yml', '.github/workflows/revamp-release.yaml'],
-  'revamp-translations.instructions.md': ['revamp/web/public/i18n/de/accounts.json', 'revamp/web/public/i18n/en/accounts.json'],
+  'revamp-web.instructions.md': ['revamp/web/src/app/app.ts', 'revamp/web/public/i18n/de/shell.json'],
+  'revamp-backend.instructions.md': ['revamp/backend/PocketMonkey.Api/Program.cs', 'revamp/backend/PocketMonkey.Api/PocketMonkey.Api.csproj'],
+  'revamp-csharp.instructions.md': ['revamp/backend/PocketMonkey.Api/Program.cs', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
+  'revamp-typescript.instructions.md': ['revamp/web/src/foundation-server.ts', 'revamp/web/scripts/dev.mjs', 'revamp/tests/e2e/specs/shell.spec.ts'],
+  'revamp-tests.instructions.md': ['revamp/tests/e2e/specs/shell.spec.ts', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
+  'revamp-deployment.instructions.md': ['revamp/deploy/Dockerfile', '.github/workflows/revamp-foundation.yml', '.github/workflows/revamp-release.yaml'],
+  'revamp-translations.instructions.md': ['revamp/web/public/i18n/de/shell.json', 'revamp/web/public/i18n/en/shell.json'],
 };
 const legacy = [
   'WebApp/Program.cs',
@@ -43,11 +48,60 @@ for (const [name, fixtures] of Object.entries(expected)) {
     matches++;
   }
   for (const filename of legacy) assert(!applies(filename), `${name}: must exclude ${filename}`);
+  if (name === 'revamp-csharp.instructions.md') {
+    for (const filename of ['revamp/web/src/app/app.ts', 'revamp/tests/e2e/specs/shell.spec.ts']) {
+      assert(!applies(filename), `${name}: must exclude non-C# ${filename}`);
+    }
+  }
+  if (name === 'revamp-typescript.instructions.md') {
+    for (const filename of ['revamp/backend/PocketMonkey.Api/Program.cs', 'revamp/web/public/i18n/de/shell.json']) {
+      assert(!applies(filename), `${name}: must exclude unrelated language ${filename}`);
+    }
+  }
 }
 console.log(`PASS: YAML metadata; ${matches} intended path matches; ${legacy.length * Object.keys(expected).length} legacy exclusions`);
 
+const replacementChanges = [
+  'revamp/web/src/app/app.ts',
+  'revamp/backend/PocketMonkey.Api/Program.cs',
+  'revamp/deploy/Dockerfile',
+  'plans/migration/01-stack-foundation.md',
+  'docs/ADR/ADR-0002-application-boundaries.md',
+  '.github/instructions/revamp-web.instructions.md',
+  '.github/copilot-instructions.md',
+  '.github/workflows/revamp-foundation.yml',
+];
+for (const [name, own, other] of [
+  ['publish-monkey-webapp.yml', 'WebApp/Program.cs', 'Functions/Program.cs'],
+  ['publish-monkey-functions.yml', 'Functions/Program.cs', 'WebApp/Program.cs'],
+]) {
+  const workflow = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows', name), 'utf8'));
+  const ignores = workflow.on.push['paths-ignore'];
+  const triggers = files => files.some(filename => !ignores.some(pattern => minimatch(filename, pattern, { dot: true })));
+  assert(!triggers(replacementChanges), `${name}: replacement-only changes trigger Azure`);
+  assert(triggers([own]), `${name}: owning application must trigger`);
+  assert(!triggers([other]), `${name}: other application must stay excluded`);
+  for (const shared of ['Directory.Packages.props', 'Support/AmountUtils.cs', 'docs/terms/usage_terms_v1_0.md']) {
+    assert(triggers([...replacementChanges, shared]), `${name}: shared runtime change ${shared} must trigger`);
+  }
+  assert(Object.hasOwn(workflow.on, 'workflow_dispatch'), `${name}: keep manual deployment available`);
+}
+const foundation = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/revamp-foundation.yml'), 'utf8'));
+assert(Object.hasOwn(foundation.on, 'pull_request'));
+assert(!foundation.on.pull_request?.paths && !foundation.on.pull_request?.['paths-ignore']);
+assert(!Object.hasOwn(foundation.on, 'pull_request_target'));
+assert.deepEqual(foundation.permissions, { contents: 'read' });
+for (const job of Object.values(foundation.jobs)) {
+  for (const step of job.steps) {
+    if (step.uses) assert(/^actions\/[a-z-]+@[a-f0-9]{40}$/.test(step.uses), `Unpinned action: ${step.uses}`);
+  }
+}
+assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verification must not require secrets');
+console.log('PASS: Azure trigger isolation preserves legacy/shared changes; foundation PR checks are read-only, unfiltered, secret-free, and SHA-pinned');
+
 const directories = ['.github/instructions', 'docs/ADR', 'plans/migration'];
 const markdown = ['.github/copilot-instructions.md'];
+if (fs.existsSync(path.join(root, 'revamp/README.md'))) markdown.push('revamp/README.md');
 for (const directory of directories) {
   for (const name of fs.readdirSync(path.join(root, directory))) {
     if (name.endsWith('.md')) markdown.push(`${directory}/${name}`);
@@ -85,7 +139,8 @@ for (const name of records) {
   assert(/^## Context\s*$/m.test(source), `${name}: missing Context`);
   assert(/^## Decision\s*$/m.test(source), `${name}: missing Decision`);
   assert(!/^#{1,6}\s+(Status|Reviewers)\b/im.test(source), `${name}: disallowed section`);
-  assert(!/\b(revamp|migration|legacy|Step 0)\b/i.test(source), `${name}: not greenfield`);
+  const prose = source.replace(/\]\([^)]+\)/g, ']');
+  assert(!/\b(revamp|migration|legacy|Step 0)\b/i.test(prose), `${name}: not greenfield`);
 }
 console.log(`PASS: all ${records.length} ADRs follow required headings and greenfield wording`);
 

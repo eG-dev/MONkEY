@@ -1,14 +1,19 @@
 # GitHub builds and releases
 
-Status: not started. Establish builds during [stack foundation](01-stack-foundation.md)
-and complete production publishing during [operations and cutover](04-operations-cutover.md).
+Status: independent build/E2E workflow implemented with an optional non-publishing
+image export. GitHub-hosted/fork execution and publishing rehearsal remain unverified.
+See the [foundation guide](../../revamp/README.md); complete production publishing
+during [operations and cutover](04-operations-cutover.md).
 
 ## Goal
 
 Build and test the project on GitHub-hosted runners and create versioned GitHub
 Releases. Contributors must not need Azure credentials or access to the original
 developer's machine. Docker is the primary distribution format; GHCR is the
-proposed image registry, with anonymous public pulls verified before release.
+selected primary public image registry, as recorded in
+[ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md). Anonymous public
+pulls must be verified before release; no registry publishing has been implemented
+or performed yet. Confirm the owner/image namespace during publishing setup.
 
 ## Build and verification workflows
 
@@ -39,6 +44,11 @@ Publishing jobs use narrowly scoped GitHub token permissions such as
 `contents: write` and `packages: write`, with additional attestation permissions
 only if that mechanism is chosen. Ordinary PR jobs never receive these privileges.
 Protect release tags and define which maintainers may approve/publish releases.
+
+Use the publishing job's `GITHUB_TOKEN` for GHCR rather than a separate registry
+credential. Associate the package with its source repository and explicitly
+configure public package visibility; a public source repository alone is not proof
+of anonymous image access. Verify a pull without registry credentials.
 
 Make publishing reruns deliberate and safe: reconcile partial draft/image uploads,
 never silently overwrite a published version with a different digest, and do not

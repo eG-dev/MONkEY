@@ -1,13 +1,15 @@
 # E2E-first testing foundation
 
-Status: not started. Establish during [stack foundation](01-stack-foundation.md)
-and extend with each feature and operational milestone.
+Status: local foundation suite implemented and verified; GitHub-hosted execution
+remains pending. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
+and the [foundation guide](../../revamp/README.md). Extend with each feature.
 
 ## Strategy
 
 Browser end-to-end tests are the primary application verification, not a small
 smoke suite on top of a unit-test pyramid. Use Playwright as the proposed runner
-and add meaningful E2E scenarios with every feature slice. Unit tests are optional
+and add meaningful E2E scenarios with every feature slice. Playwright is selected
+and verified against the real image. Unit tests are optional
 exceptions and may be absent entirely; do not introduce a mandatory unit-coverage
 percentage or tests that merely duplicate E2E coverage.
 
@@ -35,6 +37,6 @@ are automated as the corresponding operational features become available.
 ## Foundation acceptance gate
 
 - [ ] A reproducible Playwright suite runs against the real stack locally and in CI without requiring unit tests.
-- [ ] E2E fixtures are isolated, reproducible, and unavailable as production backdoors; failed runs produce useful diagnostics.
-- [ ] SSR HTML is checked independently of browser JavaScript execution.
-- [ ] Smoke checks pass on desktop and mobile-sized viewports.
+- [x] E2E fixtures are isolated, reproducible, and unavailable as production backdoors; failed runs produce useful diagnostics.
+- [x] SSR HTML is checked independently of browser JavaScript execution.
+- [x] Smoke checks pass on desktop and mobile-sized viewports.

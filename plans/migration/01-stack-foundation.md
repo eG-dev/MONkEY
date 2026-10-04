@@ -1,6 +1,10 @@
 # Milestone 1: stack foundation
 
-Status: not started. Depends on agreement with the [overview](README.md).
+Status: in progress. The initial build/run/storage slice is implemented and verified locally on 2026-10-04. Hosted CI, publishing rehearsal, and the real host's HTTPS setup remain open.
+
+See the [foundation guide and verification record](../../revamp/README.md) and
+[ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). Authentication and
+business functionality have not started.
 
 ## Goal
 
@@ -57,19 +61,19 @@ requirements and acceptance checks live in those documents.
 
 ## Acceptance gate
 
-- [ ] The [guardrail acceptance gate](00-guardrails.md#acceptance-gate) is satisfied for the replacement workspace.
-- [ ] The [configuration](configuration.md#acceptance-gate), [localization](localization.md#acceptance-gate), and [testing](testing.md#foundation-acceptance-gate) foundation gates are satisfied.
-- [ ] Key milestone decisions and their rationale are recorded in `/docs/ADR`; evaluated proposals have explicit outcomes.
-- [ ] Local builds and container builds succeed from a clean checkout.
+- [x] The [guardrail acceptance gate](00-guardrails.md#acceptance-gate) is satisfied for the current foundation scope; feature-specific enforcement continues as features arrive.
+- [ ] The [configuration](configuration.md#acceptance-gate), [localization](localization.md#acceptance-gate), and [testing](testing.md#foundation-acceptance-gate) foundation gates are satisfied. Local checks pass; GitHub-hosted execution remains pending.
+- [x] Key local stack/storage/lifecycle/localization/testing decisions and their rationale are recorded in `/docs/ADR`; publishing/host decisions remain explicit pending gates.
+- [ ] Local builds and container builds succeed from a clean checkout. Locked local builds and an isolated Docker build pass; clean GitHub checkout execution remains pending.
 - [ ] GitHub-hosted CI builds and runs the current E2E suite, including fork contributions, without Azure secrets; a release publishing dry run or foundation prerelease is verified.
-- [ ] Angular SSR works with Taiga components, Lucide fonts, and hydration.
-- [ ] Fonts/icons load with outbound networking disabled; no runtime CDN dependency exists.
-- [ ] Database and files persist across restart and container replacement.
-- [ ] Only the intended public port is reachable externally.
-- [ ] Either child process crashing causes an observable failed container lifecycle.
-- [ ] Docker stop terminates both processes within a bounded shutdown period.
-- [ ] Readiness includes backend/storage availability, not just a listening Node port.
-- [ ] The existing Azure application still builds without depending on the replacement.
+- [x] Angular SSR works with Taiga components, Lucide fonts, and hydration.
+- [x] Fonts/icons load with outbound networking disabled; no runtime CDN dependency exists.
+- [x] Database and files persist across restart and container replacement.
+- [x] Only the intended public port is published; the backend binds to loopback in the tested image.
+- [x] Either child process crashing causes an observable failed container lifecycle.
+- [x] Docker stop terminates both processes within a bounded shutdown period.
+- [x] Readiness includes backend/storage availability, not just a listening Node port.
+- [x] The existing Azure application still builds without depending on the replacement, with the documented local public-feed override for generated worker extensions.
 
 ## Decisions and limits
 

@@ -1,0 +1,19 @@
+services:
+  app:
+    image: pocket-monkey:foundation
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      TZ: ${TZ:-UTC}
+      MONKEY_PUBLIC_URL: ${MONKEY_PUBLIC_URL:?Set the HTTPS origin supplied by your reverse proxy}
+      MONKEY_DEFAULT_LOCALE: ${MONKEY_DEFAULT_LOCALE:-de-DE}
+      MONKEY_TRUSTED_PROXIES: ${MONKEY_TRUSTED_PROXIES:-}
+    volumes:
+      - monkey-data:/data
+    restart: on-failure
+    stop_grace_period: 25s
+volumes:
+  monkey-data:

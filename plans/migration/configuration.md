@@ -1,15 +1,16 @@
 # Docker environment configuration
 
-Status: proposed deployment contract. Implement during [stack foundation](01-stack-foundation.md)
-and apply through [operations and cutover](04-operations-cutover.md).
+Status: implemented and locally verified in [stack foundation](01-stack-foundation.md).
+Real host HTTPS/mount configuration remains an operational gate; see the
+[foundation guide](../../revamp/README.md) and [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md).
 
 ## Environment contract
 
 The business timezone is configured through Docker ENV. The remaining settings
-below are a proposed deployment contract, to be implemented in this milestone.
+below are the implemented deployment contract.
 Read configuration at startup and validate it before readiness succeeds.
 
-| Variable | Proposed default | Purpose |
+| Variable | Default | Purpose |
 | --- | --- | --- |
 | `TZ` | `UTC` | IANA business timezone, for example `Europe/Berlin`; shared by Node and .NET. |
 | `MONKEY_DATA_PATH` | `/data` | Absolute container path containing all persistent application state. |
@@ -37,6 +38,6 @@ change business periods or stored financial values.
 
 ## Acceptance gate
 
-- [ ] Non-default `TZ` and data-root settings work; invalid timezone/path/proxy settings fail startup clearly.
-- [ ] Node and .NET agree on timezone behavior, including daylight saving boundaries.
-- [ ] Non-root runtime can write mounted paths and reports actionable permission errors.
+- [x] Non-default `TZ` and data-root settings work; invalid timezone/path/proxy settings fail startup clearly.
+- [x] Node and .NET agree on timezone behavior, including daylight saving boundaries.
+- [x] Non-root runtime can write mounted paths and reports actionable permission errors.
