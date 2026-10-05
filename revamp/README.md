@@ -11,7 +11,7 @@ by this work. Follow [ADR-0007](../docs/ADR/ADR-0007-application-foundation.md).
 | Component | Verified version |
 | --- | --- |
 | .NET SDK / runtime / EF Core | 10.0.401 / 10.0.12 / 10.0.12 |
-| Node / Angular SSR | 24.19.0 / 22.2.1 |
+| Node / Angular SSR | 24.21.0 / 22.2.1 |
 | Taiga / universal Web APIs | 5.26.0 / 5.4.0 |
 | Transloco / MessageFormat integration | 8.4.0 / 8.4.0 |
 | Lucide static font | 1.52.0 |
@@ -164,6 +164,11 @@ Docker engine:
 - Node/.NET agreement at both Berlin DST transitions, with English/German globalization in the actual runtime image.
 - Catalog key/placeholder/ICU validation, negative fixtures, instruction/workflow scopes, local links, and Mermaid syntax.
 - Legacy WebApp builds using existing restore assets. Legacy Functions also builds, but its generated worker-extension restore needs a command-only public-source override on this machine: `dotnet build ../Functions/Functions.csproj --no-restore -p:RestoreSources=https://api.nuget.org/v3/index.json`.
+
+On 2026-10-05, the Node 24.21.0 update passed the production image build, runtime
+version check, all 20 desktop/mobile and lifecycle tests, and repository guardrails.
+The CI runner is now configured as Ubuntu 26.04; execution on that GitHub-hosted
+runner has not been verified locally.
 
 The [foundation workflow](../.github/workflows/revamp-foundation.yml) defines locked,
 read-only PR verification with pinned official actions. Its optional manual export

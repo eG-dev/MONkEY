@@ -31,7 +31,7 @@ concurrency:
 
 jobs:
   foundation:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 25
     defaults:
       run:
@@ -44,7 +44,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: "24.19.0"
+          node-version: "24.21.0"
           cache: npm
           cache-dependency-path: |
             revamp/web/package-lock.json
