@@ -6,6 +6,7 @@ import httpProxy from 'http-proxy';
 import { join } from 'node:path';
 
 import { isLanguage, LANGUAGES } from './app/languages';
+import { isSessionUser } from './app/session-user';
 
 const backendUrl = process.env['MONKEY_BACKEND_URL'] ?? 'http://127.0.0.1:5080';
 const backend = new URL(backendUrl);
@@ -97,10 +98,15 @@ proxy.on('error', (_error, _request, response) => {
 });
 
 app.use('/api', (request, response) => {
-  if (
-    !['GET', 'HEAD'].includes(request.method) ||
-    !['/api/foundation', '/api/foundation/file'].includes(request.originalUrl.split('?')[0])
-  ) {
+  const path = request.originalUrl.split('?')[0];
+  const allowed = ['GET', 'HEAD'].includes(request.method)
+    ? ['/api/foundation', '/api/foundation/file', '/api/auth/csrf', '/api/auth/me', '/api/users'].includes(path)
+    : request.method === 'POST'
+      ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users'].includes(path) ||
+        /^\/api\/users\/[\w-]+\/password$/.test(path)
+      : request.method === 'PUT' && (path === '/api/auth/language' || /^\/api\/users\/[\w-]+$/.test(path));
+
+  if (!allowed) {
     response.status(404).json({ status: 404, code: 'not_found' });
     return;
   }
@@ -130,18 +136,38 @@ app.use(express.static(join(import.meta.dirname, '../browser'), { maxAge: '1y', 
 
 const angularApp = new AngularNodeAppEngine({ allowedHosts: [publicUrl.hostname, 'localhost', '127.0.0.1'] });
 
-app.use((request, response, next) => {
+app.use(async (request, response, next) => {
+  let session = null;
+
+  if (request.headers.cookie) {
+    try {
+      const result = await fetch(`${backendUrl}/api/auth/me`, {
+        headers: { cookie: request.headers.cookie },
+        signal: AbortSignal.timeout(5000),
+      });
+
+      if (result.ok) {
+        const profile: unknown = await result.json();
+        session = isSessionUser(profile) ? profile : null;
+      }
+    } catch {
+      log('Error', 'session_unavailable');
+    }
+  }
+
   const preference = request.cookies['monkey-language'];
   const negotiated = new Negotiator(request).language(Object.keys(LANGUAGES));
 
-  const language = isLanguage(preference)
-    ? preference
-    : isLanguage(negotiated)
-      ? negotiated
-      : defaultLanguage;
+  const language = session
+    ? session.language
+    : isLanguage(preference)
+      ? preference
+      : isLanguage(negotiated)
+        ? negotiated
+        : defaultLanguage;
 
   angularApp
-    .handle(request, { language, backendUrl })
+    .handle(request, { language, backendUrl, session })
     .then((result) => result
       ? writeResponseToNodeResponse(result, response)
       : next())

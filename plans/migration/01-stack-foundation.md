@@ -3,8 +3,10 @@
 Status: in progress. The initial build/run/storage slice is implemented and verified locally on 2026-10-04. Hosted CI, publishing rehearsal, and the real host's HTTPS setup remain open.
 
 See the [foundation guide and verification record](../../revamp/README.md) and
-[ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). Authentication and
-business functionality have not started.
+[ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). Local authentication
+and user administration are now implemented under
+[milestone 2](02-authentication-authorization.md); financial functionality has not
+started. This does not close the hosted/fork CI, publishing, or deployment-host gates.
 
 ## Goal
 

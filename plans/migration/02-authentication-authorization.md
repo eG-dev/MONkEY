@@ -1,6 +1,12 @@
 # Milestone 2: authentication and authorization
 
-Status: not started. Depends on [stack foundation](01-stack-foundation.md).
+Status: local authentication, operator bootstrap/recovery, cookie/CSRF transport,
+and manager user administration are implemented. Local verification is recorded in
+the [development guide](../../revamp/README.md). The user approved this work on the
+locally verified [stack foundation](01-stack-foundation.md); its hosted/fork CI,
+publishing, and deployment-host gates remain open, not waived.
+
+The approved choices are recorded in [ADR-0008](../../docs/ADR/ADR-0008-local-authentication.md).
 
 ## Goal
 
@@ -45,22 +51,36 @@ Do not build an embedded authorization server merely to label local login OAuth.
 
 ## Acceptance gate
 
-- [ ] A fresh instance can bootstrap one manager without default passwords or email.
-- [ ] Setup cannot be reused once initialized.
-- [ ] Login, logout, expiry, password change, and non-email recovery work.
-- [ ] Anonymous API requests fail even when bypassing Angular routes.
-- [ ] Member read requests succeed; direct member business-write requests fail.
-- [ ] The last active manager cannot be removed, even through concurrent requests.
-- [ ] Disabled users and revoked manager sessions lose access within the documented bound.
-- [ ] SSR uses the correct session and does not leak data between concurrent users.
-- [ ] CSRF attempts and forged identity/role headers are rejected.
-- [ ] Container restart has deliberate, tested session behavior.
-- [ ] No SMTP, external identity, or outbound network access is required.
+- [x] A fresh instance can bootstrap one manager without default passwords or email.
+- [x] Setup cannot be reused once initialized.
+- [x] Login, logout, expiry, password change, and non-email recovery work.
+- [x] Anonymous protected API requests fail even when bypassing Angular routes; harmless foundation diagnostics remain an explicit development exception.
+- [x] Members can read their session and manage personal preferences; direct member user-administration writes fail. Shared-account reads and financial writes must be verified with their milestone 3 contracts.
+- [x] The last active manager cannot be disabled or demoted, even through concurrent requests; user deletion is not exposed.
+- [x] Disabled users and revoked manager sessions lose access on the next authenticated request.
+- [x] SSR uses the correct session and does not leak data between concurrent users.
+- [x] CSRF attempts and forged identity/role headers are rejected.
+- [x] Container restart has deliberate, tested session behavior.
+- [x] No SMTP or external identity dependency is introduced; the offline runtime checks remain passing.
 
-## Deferred decisions
+These are local acceptance results, not a claim that hosted CI or production
+deployment is complete. On 2026-10-07 all 31 production-image acceptance cases
+passed. The web dependency audit remains blocked by a critical advisory in the
+existing development-only `concurrently` / `shell-quote` chain; foundation
+hosted/fork CI, publishing, and deployment-host gates also remain open.
 
-Decide whether MFA is needed, exact session durations, and whether members may
-change personal presentation preferences. Such preferences do not grant account
-write access. Separate host-operator powers from the in-application Manager role.
+## Session and recovery policy
+
+- Eight-hour absolute, non-persistent cookie sessions; no sliding expiry or remember-me option.
+- Per-request account/security-stamp validation. Password reset, disablement, and role changes revoke existing sessions on the next authenticated request.
+- Valid sessions survive container restart through persistent Data Protection keys.
+- Five failed password attempts cause a fifteen-minute lockout. Login also has an instance-wide twenty-attempt-per-minute limit; do not trust client IP headers as throttle identity.
+- Managers create/reset temporary passwords that require a change before ordinary application access. Host-only recovery also clears lockout and requires a password change.
+- Members may change their own password and German/English language preference. These operations do not grant business-write permissions.
+- MFA and OIDC are deferred. Host-operator powers remain separate from the in-application Manager role.
+
+The harmless read-only foundation diagnostics remain public during development.
+Financial routes do not exist yet; their Manager/Member access checks must be added
+with each milestone 3 feature, not inferred from frontend controls.
 
 Next: [incremental UI and business logic](03-ui-business-logic.md).

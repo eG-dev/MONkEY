@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PocketMonkey.Api.Configuration;
+using PocketMonkey.Api.Contracts.Foundation;
 using PocketMonkey.Api.Storage;
 
 namespace PocketMonkey.Api.Endpoints;
@@ -10,8 +11,10 @@ public static class FoundationEndpoints
     {
         ArgumentNullException.ThrowIfNull(app);
 
-        app
-            .MapGet("/api/foundation", async (FoundationDbContext database, InstanceSettings settings, CancellationToken cancellationToken) =>
+        app.MapGet("/api/foundation", async (
+            FoundationDbContext database,
+            InstanceSettings settings,
+            CancellationToken cancellationToken) =>
             {
                 var state = await database.FoundationStates
                     .AsNoTracking()
@@ -26,9 +29,8 @@ public static class FoundationEndpoints
             })
             .WithName("GetFoundation");
 
-        app
-            .MapGet("/api/foundation/file", (InstanceSettings x) =>
-                TypedResults.PhysicalFile(x.SampleFilePath, "text/plain", "foundation.txt"))
+        app.MapGet("/api/foundation/file", (InstanceSettings settings) =>
+            TypedResults.PhysicalFile(settings.SampleFilePath, "text/plain", "foundation.txt"))
             .WithName("GetFoundationFile");
     }
 }

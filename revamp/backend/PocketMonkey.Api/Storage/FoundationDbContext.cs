@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PocketMonkey.Api.Entities;
 
 namespace PocketMonkey.Api.Storage;
 
-public sealed class FoundationDbContext : DbContext
+public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 {
     public FoundationDbContext(DbContextOptions<FoundationDbContext> options) : base(options)
     {
@@ -10,19 +12,23 @@ public sealed class FoundationDbContext : DbContext
 
     public DbSet<FoundationState> FoundationStates => Set<FoundationState>();
 
+    public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<FoundationState>(x =>
-            {
-                x
-                    .HasKey(sta => sta.Id);
-                x
-                    .Property(sta => sta.SampleId)
-                    .HasMaxLength(36)
-                    .IsRequired();
-                x
-                    .ToTable("FoundationState", tbl => tbl.HasCheckConstraint("CK_FoundationState_Singleton", "Id = 1"));
-            });
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<FoundationState>(stateEntity =>
+        {
+            stateEntity.HasKey(x => x.Id);
+
+            stateEntity
+                .Property(x => x.SampleId)
+                .HasMaxLength(36)
+                .IsRequired();
+
+            stateEntity.ToTable("FoundationState", table =>
+                table.HasCheckConstraint("CK_FoundationState_Singleton", "Id = 1"));
+        });
     }
 }

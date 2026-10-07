@@ -5,10 +5,13 @@ test('SSR languages stay isolated and explicit preference wins', async ({ reques
 
   expect(german.status()).toBe(200);
   expect(english.status()).toBe(200);
+
   expect(await german.text()).toContain('lang="de"');
   expect(await german.text()).toContain('Gespeicherter Testwert');
+
   expect(await english.text()).toContain('lang="en"');
   expect(await english.text()).toContain('Persisted sample');
+
   expect(german.headers()['cache-control']).toBe('no-store');
   expect(await german.text()).not.toContain('http://127.0.0.1:5080');
 
@@ -44,20 +47,25 @@ test('hydrated shell switches language, persists state, and uses local assets', 
 
   await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('Ready');
+
   await expect(page.getByTestId('sample-id')).toHaveText(sample!);
 
   await page.getByRole('button', { name: 'Reload', exact: true }).click();
 
   await expect(page.getByRole('status')).toHaveText('Ready');
+
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('type', 'image/png');
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'favicon.png');
+
   expect(
     await page.evaluate(async () => {
       await document.fonts.ready;
       return [...document.fonts].some((font) => font.family === 'lucide' && font.status === 'loaded');
     }),
   ).toBe(true);
+
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
   expect(errors).toEqual([]);
   expect(external).toEqual([]);
 
@@ -73,8 +81,11 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
 
   expect(missing.status()).toBe(404);
   expect(write.status()).toBe(404);
+
   expect(await file.text()).toBe('POCKET MONkEY foundation file\n');
+
   expect(font.status()).toBe(200);
+
   expect(favicon.status()).toBe(200);
   expect(favicon.headers()['content-type']).toContain('image/png');
   expect((await favicon.body()).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
@@ -87,6 +98,7 @@ test('backend failure produces actionable UI and failed readiness', async ({ pag
   const failure = await request.get('/api/foundation');
 
   expect(readiness.status()).toBe(503);
+
   expect(failure.status()).toBe(502);
   expect((await failure.json()).code).toBe('backend_unavailable');
 

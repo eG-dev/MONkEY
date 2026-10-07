@@ -7,5 +7,39 @@
   "initialized": "Initialized (UTC)",
   "timezone": "Timezone",
   "reload": "Reload",
-  "download": "Download file"
+  "download": "Download file",
+  "auth": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "username": "Username",
+    "password": "Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePassword": "Change password",
+    "passwordChanged": "Password changed. Sign in again.",
+    "users": "Users",
+    "displayName": "Display name",
+    "role": "Role",
+    "Manager": "Manager",
+    "Member": "Member",
+    "active": "Active",
+    "disabled": "Disabled",
+    "createUser": "Create user",
+    "editUser": "Edit {name}",
+    "temporaryPassword": "Temporary password",
+    "resetPassword": "Reset password",
+    "save": "Save",
+    "saved": "Saved",
+    "errors": {
+      "invalid_user": "Check the username, name and password. The password needs at least 12 characters, uppercase and lowercase letters, and a digit.",
+      "invalid_password": "Check the current password. The new password needs at least 12 characters, uppercase and lowercase letters, and a digit.",
+      "last_manager": "The last active manager cannot be disabled or demoted.",
+      "csrf_invalid": "Your session changed. Reload and try again.",
+      "invalid_language": "Choose a supported language.",
+      "unauthorized": "Sign-in failed or the session expired. Check your credentials and sign in again.",
+      "forbidden": "You do not have permission for this action.",
+      "throttled": "Too many attempts. Try again later.",
+      "unavailable": "Connection failed. Try again."
+    }
+  }
 }

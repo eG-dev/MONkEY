@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Hosted CI, publishing rehearsal, and the real deployment host remain open. Authentication/business implementation has not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented under milestone 2. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; proceeding with local authentication does not close those gates. Financial functionality has not started.
 
 ## Confirmed scope
 

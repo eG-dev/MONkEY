@@ -1,33 +1,17 @@
-using System.Globalization;
-using System.Text.Json;
+using RuntimeChecks.Tests;
 
-var timezone = TimeZoneInfo.FindSystemTimeZoneById(Environment.GetEnvironmentVariable("TZ") ?? "UTC");
-var instants = new[]
+if (args is ["identity-upgrade"])
 {
-    "2026-03-29T00:59:59Z",
-    "2026-03-29T01:00:00Z",
-    "2026-10-25T00:59:59Z",
-    "2026-10-25T01:00:00Z"
-};
-var samples = instants
-    .Select(x =>
-    {
-        var utc = DateTimeOffset.Parse(x, CultureInfo.InvariantCulture);
-        var local = TimeZoneInfo.ConvertTime(utc, timezone);
+    await IdentityUpgradeCheck.RunAsync();
 
-        return new
-        {
-            instant = x,
-            local = local.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-            offsetMinutes = local.Offset.TotalMinutes
-        };
-    })
-    .ToArray();
+    return;
+}
 
-Console.WriteLine(JsonSerializer.Serialize(new
+if (args is ["expired-session"])
 {
-    timezone = timezone.Id,
-    samples,
-    englishMonth = CultureInfo.GetCultureInfo("en-GB").DateTimeFormat.MonthNames[2],
-    germanMonth = CultureInfo.GetCultureInfo("de-DE").DateTimeFormat.MonthNames[2]
-}));
+    SessionExpiryCheck.Run();
+
+    return;
+}
+
+GlobalizationCheck.Run();

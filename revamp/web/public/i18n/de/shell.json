@@ -7,5 +7,39 @@
   "initialized": "Initialisiert (UTC)",
   "timezone": "Zeitzone",
   "reload": "Neu laden",
-  "download": "Datei herunterladen"
+  "download": "Datei herunterladen",
+  "auth": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "currentPassword": "Aktuelles Passwort",
+    "newPassword": "Neues Passwort",
+    "changePassword": "Passwort ändern",
+    "passwordChanged": "Passwort geändert. Bitte erneut anmelden.",
+    "users": "Benutzer",
+    "displayName": "Anzeigename",
+    "role": "Rolle",
+    "Manager": "Manager",
+    "Member": "Mitglied",
+    "active": "Aktiv",
+    "disabled": "Deaktiviert",
+    "createUser": "Benutzer anlegen",
+    "editUser": "{name} bearbeiten",
+    "temporaryPassword": "Vorläufiges Passwort",
+    "resetPassword": "Passwort zurücksetzen",
+    "save": "Speichern",
+    "saved": "Gespeichert",
+    "errors": {
+      "invalid_user": "Benutzername, Name und Passwort prüfen. Das Passwort benötigt mindestens 12 Zeichen, Groß- und Kleinbuchstaben und eine Ziffer.",
+      "invalid_password": "Aktuelles Passwort prüfen. Das neue Passwort benötigt mindestens 12 Zeichen, Groß- und Kleinbuchstaben und eine Ziffer.",
+      "last_manager": "Der letzte aktive Manager kann nicht deaktiviert oder zum Mitglied geändert werden.",
+      "csrf_invalid": "Die Sitzung hat sich geändert. Neu laden und erneut versuchen.",
+      "invalid_language": "Eine unterstützte Sprache auswählen.",
+      "unauthorized": "Anmeldung fehlgeschlagen oder Sitzung abgelaufen. Zugangsdaten prüfen und erneut anmelden.",
+      "forbidden": "Für diese Aktion fehlt die Berechtigung.",
+      "throttled": "Zu viele Versuche. Bitte später erneut versuchen.",
+      "unavailable": "Verbindung fehlgeschlagen. Bitte erneut versuchen."
+    }
+  }
 }

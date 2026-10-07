@@ -1,0 +1,108 @@
+<section *transloco="let t" [attr.aria-busy]="busy()">
+  <fieldset [disabled]="!interactive() || busy()">
+    @if (auth.user(); as user) {
+      <div class="session">
+        <h2>{{ user.displayName }}</h2>
+        <button tuiButton appearance="secondary" size="m" type="button" [disabled]="busy()" (click)="logout()" [attr.aria-label]="t('auth.logout')" [title]="t('auth.logout')">
+          <span class="icon icon-log-out" aria-hidden="true"></span>
+        </button>
+      </div>
+      <details [open]="user.mustChangePassword">
+        <summary>{{ t('auth.changePassword') }}</summary>
+        <form (ngSubmit)="changePassword()">
+          <label
+            >{{ t('auth.currentPassword') }}
+            <input name="currentPassword" type="password" autocomplete="current-password" required maxlength="256" [(ngModel)]="currentPassword" />
+          </label>
+          <label
+            >{{ t('auth.newPassword') }}
+            <input name="newPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" [(ngModel)]="newPassword" />
+          </label>
+          <button tuiButton size="m" type="submit" [disabled]="busy()">{{ t('auth.changePassword') }}</button>
+        </form>
+      </details>
+      @if (user.role === 'Manager' && !user.mustChangePassword) {
+        <h3>{{ t('auth.users') }}</h3>
+        <ul class="users">
+          @for (account of accounts(); track account.user.id) {
+            <li>
+              <div>
+                <strong>{{ account.user.displayName }}</strong
+                ><span>{{ account.user.username }}</span>
+              </div>
+              <div class="metadata">
+                <span>{{ t('auth.' + account.user.role) }}</span>
+                <span>{{ t(account.isActive ? 'auth.active' : 'auth.disabled') }}</span>
+              </div>
+              <button
+                tuiButton
+                appearance="secondary"
+                size="s"
+                type="button"
+                (click)="selectUser(account)"
+                [attr.aria-label]="t('auth.editUser', { name: account.user.username })"
+                [title]="t('auth.editUser', { name: account.user.username })"
+              >
+                <span class="icon icon-pencil" aria-hidden="true"></span>
+              </button>
+            </li>
+          }
+        </ul>
+        @if (selected(); as account) {
+          <h3>{{ account.user.username }}</h3>
+          <form (ngSubmit)="updateUser()">
+            <label>{{ t('auth.displayName') }}<input name="displayName" required maxlength="100" [(ngModel)]="account.user.displayName" /></label>
+            <label
+              >{{ t('auth.role') }}
+              <select name="role" [(ngModel)]="account.user.role">
+                <option value="Member">{{ t('auth.Member') }}</option>
+                <option value="Manager">{{ t('auth.Manager') }}</option>
+              </select>
+            </label>
+            <label class="checkbox"><input name="active" type="checkbox" [(ngModel)]="account.isActive" />{{ t('auth.active') }}</label>
+            <button tuiButton size="m" type="submit" [disabled]="busy()">{{ t('auth.save') }}</button>
+          </form>
+          <form (ngSubmit)="resetUserPassword()">
+            <label
+              >{{ t('auth.temporaryPassword')
+              }}<input name="resetPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" [(ngModel)]="resetPassword"
+            /></label>
+            <button tuiButton appearance="secondary" size="m" type="submit" [disabled]="busy()">{{ t('auth.resetPassword') }}</button>
+          </form>
+        }
+        <details>
+          <summary>{{ t('auth.createUser') }}</summary>
+          <form (ngSubmit)="createUser()">
+            <label>{{ t('auth.username') }}<input name="createUsername" autocomplete="off" required maxlength="100" [(ngModel)]="createUsername" /></label>
+            <label>{{ t('auth.displayName') }}<input name="createDisplayName" required maxlength="100" [(ngModel)]="createDisplayName" /></label>
+            <label
+              >{{ t('auth.temporaryPassword')
+              }}<input name="createPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" [(ngModel)]="createPassword"
+            /></label>
+            <label
+              >{{ t('auth.role')
+              }}<select name="createRole" [(ngModel)]="createRole">
+                <option value="Member">{{ t('auth.Member') }}</option>
+                <option value="Manager">{{ t('auth.Manager') }}</option>
+              </select></label
+            >
+            <button tuiButton size="m" type="submit" [disabled]="busy()">{{ t('auth.createUser') }}</button>
+          </form>
+        </details>
+      }
+    } @else {
+      <h2>{{ t('auth.login') }}</h2>
+      <form (ngSubmit)="login()">
+        <label>{{ t('auth.username') }}<input name="username" autocomplete="username" required maxlength="100" [(ngModel)]="username" /></label>
+        <label>{{ t('auth.password') }}<input name="password" type="password" autocomplete="current-password" required maxlength="256" [(ngModel)]="password" /></label>
+        <button tuiButton size="m" type="submit" [disabled]="busy()">{{ t('auth.login') }}</button>
+      </form>
+    }
+    @if (error()) {
+      <p class="error" role="alert">{{ t(error()) }}</p>
+    }
+    @if (success()) {
+      <p aria-live="polite">{{ t(success()) }}</p>
+    }
+  </fieldset>
+</section>

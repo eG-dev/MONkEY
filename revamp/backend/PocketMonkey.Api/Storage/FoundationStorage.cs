@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PocketMonkey.Api.Configuration;
+using PocketMonkey.Api.Entities;
 
 namespace PocketMonkey.Api.Storage;
 
@@ -16,6 +18,16 @@ public static class FoundationStorage
 
         await database.Database.MigrateAsync(cancellationToken);
 
+        var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        foreach (var role in new[] { "Manager", "Member" })
+        {
+            if (!await roles.RoleExistsAsync(role) && !(await roles.CreateAsync(new IdentityRole(role))).Succeeded)
+            {
+                throw new InvalidOperationException("Identity role initialization failed.");
+            }
+        }
+
         if (!await database.FoundationStates.AnyAsync(cancellationToken))
         {
             database.FoundationStates.Add(new FoundationState
@@ -24,6 +36,7 @@ public static class FoundationStorage
                 SampleId = Guid.NewGuid().ToString(),
                 InitializedAtUtc = DateTimeOffset.UtcNow
             });
+
             await database.SaveChangesAsync(cancellationToken);
         }
 
@@ -32,7 +45,8 @@ public static class FoundationStorage
             await File.WriteAllTextAsync(settings.SampleFilePath, "POCKET MONkEY foundation file\n", cancellationToken);
         }
 
-        scope.ServiceProvider.GetRequiredService<IDataProtectionProvider>()
+        scope.ServiceProvider
+            .GetRequiredService<IDataProtectionProvider>()
             .CreateProtector("foundation-key-check")
             .Protect("foundation");
     }

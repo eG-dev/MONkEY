@@ -30,6 +30,7 @@ test('restart and container replacement preserve database, sample file, and priv
 
   expect(await (await fetch(`${instance.origin}/api/foundation`)).json()).toEqual(before);
   expect(await (await fetch(`${instance.origin}/api/foundation/file`)).text()).toBe('POCKET MONkEY foundation file\n');
+
   expect(docker('exec', instance.container, 'find', '/data/keys', '-type', 'f', '-printf', '%f\n')).toBe(keys);
 });
 
@@ -38,6 +39,7 @@ for (const process of ['backend', 'web']) {
     docker('exec', instance.container, 'supervisorctl', '-c', '/app/supervisord.conf', 'signal', 'KILL', process);
 
     await expect.poll(() => JSON.parse(docker('inspect', instance.container))[0].State.Running, { timeout: 25_000 }).toBe(false);
+
     expect(JSON.parse(docker('inspect', instance.container))[0].State.ExitCode).toBe(1);
   });
 }
@@ -60,8 +62,10 @@ for (const [variable, value] of [
       );
 
       await testInfo.attach('startup.log', { body: `${result.stdout ?? ''}${result.stderr ?? ''}`, contentType: 'text/plain' });
+
       expect(result.signal).toBeNull();
       expect(result.status).toBe(1);
+
       expect(`${result.stdout}${result.stderr}`).toContain(variable);
     } finally {
       spawnSync('docker', ['rm', '--force', '--volumes', name], { encoding: 'utf8', timeout: 10_000 });
@@ -113,9 +117,12 @@ for (const mode of ['readonly', 'public-permissions']) {
       );
 
       const logs = `${result.stdout ?? ''}${result.stderr ?? ''}`;
+
       await testInfo.attach('storage-startup.log', { body: logs, contentType: 'text/plain' });
+
       expect(result.signal).toBeNull();
       expect(result.status).toBe(1);
+
       expect(logs).toMatch(mode === 'readonly' ? /[Rr]ead-only file system/ : /owner-only permissions/);
     } finally {
       spawnSync('docker', ['rm', '--force', '--volumes', name], { encoding: 'utf8', timeout: 10_000 });
@@ -175,7 +182,9 @@ standalone('runtime works with networking disabled and no development executable
     );
 
     expect(language).toBe('');
+
     expect(docker('logs', name)).not.toContain('"event":"listening"');
+
     expect(docker('exec', name, 'dotnet', '--list-sdks')).toBe('');
     docker('exec', name, '/bin/sh', '-c', '! command -v npm && ! command -v ng && ! command -v playwright');
   } finally {
@@ -204,8 +213,10 @@ standalone('Linux Node and .NET agree at DST boundaries with German/English glob
   );
 
   expect(result.timezone).toBe('Europe/Berlin');
+
   expect(result.samples.map((sample: { local: string }) => sample.local)).toEqual(['2026-03-29 01:59:59', '2026-03-29 03:00:00', '2026-10-25 02:59:59', '2026-10-25 02:00:00']);
   expect(result.samples.map((sample: { offsetMinutes: number }) => sample.offsetMinutes)).toEqual([60, 120, 120, 60]);
+
   expect(result.englishMonth).toBe('March');
   expect(result.germanMonth).toBe('M\u00e4rz');
 

@@ -1,10 +1,11 @@
-# POCKET MONkEY Foundation
+# POCKET MONkEY Foundation and Authentication
 
-The first build/run/storage slice is implemented. This is a read-only foundation
-demonstration, not a production-ready application. Authentication, accounts,
-transactions, reports, and user administration have not been implemented.
+The build/run/storage foundation, local authentication, and manager user
+administration are implemented. This is not a production-ready application.
+Accounts, transactions, allowances, and reports have not been implemented.
 Use the independent [solution](PocketMonkey.slnx); the legacy solution is unchanged
 by this work. Follow [ADR-0007](../docs/ADR/ADR-0007-application-foundation.md).
+Authentication follows [ADR-0008](../docs/ADR/ADR-0008-local-authentication.md).
 
 ## Verified Stack
 
@@ -25,6 +26,31 @@ No ARM, Firefox, or WebKit compatibility claim is made yet.
 
 Application styles use SCSS, while the vendor Taiga theme retains its Less import.
 The PNG favicon in `web/public/` is bundled locally.
+
+## Backend Structure
+
+The [API project](backend/PocketMonkey.Api/PocketMonkey.Api.csproj) separates types
+and behavior by responsibility. Namespaces follow the folders:
+
+| Folder | Responsibility |
+| --- | --- |
+| Entities | Persisted domain and Identity entities, not API payloads |
+| Contracts/Authentication, Contracts/Users, Contracts/Foundation | Request/response models grouped by API feature |
+| Endpoints | HTTP routing, policies, and response mapping; authentication and user administration are separate |
+| Services | Application behavior, transactional user administration, and typed error outcomes |
+| Identity | Identity registration, cookie validation, policies, and claims |
+| Operations | Host-only manager bootstrap and recovery commands |
+| Storage | EF context, storage initialization, and readiness |
+| Configuration | Runtime options and validation |
+| Migrations | Generated schema history and model snapshot |
+
+Endpoints use contracts at the HTTP boundary; services operate on entities.
+Moving types between folders does not change routes, JSON contracts, or the schema.
+
+User administration returns `UserAdministrationError?`, with `null` indicating
+success. The enum and its shared `ToCode()` conversion live beside the service.
+HTTP and operator boundaries retain stable snake-case error strings; only the
+endpoint mapper assigns HTTP statuses.
 
 ## Build and Verify
 
@@ -59,8 +85,19 @@ Reports, screenshots, traces, and failure logs are beneath
 No core API/authentication/storage mocks or unit-coverage requirement are used.
 
 Browser cases live in `tests/e2e/specs/`; Playwright configuration and shared
-fixtures remain at the E2E project root. Test phases are separated into readable
-setup/action/assertion groups.
+fixtures remain at the E2E project root. C# runtime check implementations live in
+`tests/integration/RuntimeChecks/Tests/`; the project root contains the command
+dispatcher and project/configuration files, not check implementations.
+Test phases are separated into readable
+setup/action/assertion groups, including independent concerns within assertions.
+Multi-stage workflows repeat action/assertion groups rather than combining all
+actions into one block.
+
+Authentication fixtures use an ephemeral, loopback HTTPS reverse proxy and a
+test-only self-signed certificate so production Secure cookies are tested without
+weakening them. Certificate exceptions apply only to those isolated fixtures.
+The mounted runtime probe verifies initial-schema upgrades, cookie lifetime/expiry,
+and timezone contracts; it and all browser tooling remain outside the image.
 
 ## Local Development
 
@@ -80,6 +117,12 @@ at http://127.0.0.1:5180/openapi/v1.json. Ctrl+C stops both process trees. A chi
 exiting also stops the other process. Windows may report a nonzero cancellation
 status after Ctrl+C.
 
+Supervision uses Node's built-in process APIs and executable/argument arrays,
+without shell command strings or a concurrency package. Output retains backend/web
+prefixes. Windows cleanup uses `taskkill /T`; Linux signals process groups and
+forces termination after five seconds if necessary. An unexpected child exit or
+startup failure stops both applications and returns a failure status.
+
 The launcher sets development mode, empty trusted proxies, and a loopback public
 origin for both applications. `TZ` is inherited if set, otherwise Europe/Berlin.
 This is a local development environment, not production authentication.
@@ -93,6 +136,50 @@ npm --prefix revamp/web run dev -- --web-port 4182 --backend-port 5182
 
 An editor task can call the same npm command; startup configuration belongs in the
 launcher rather than being duplicated in editor-specific tasks.
+
+### First Manager and Recovery
+
+There is no public registration/setup route, default password, or email recovery.
+Run operator commands on the host; they prompt for a username and password without
+echoing the password or placing it in command arguments. Passwords require at least
+12 characters, uppercase/lowercase letters, and a digit.
+
+For Docker, with the container running:
+
+```text
+docker exec -it pocket-monkey-preview dotnet /app/backend/PocketMonkey.Api.dll bootstrap-manager
+docker exec -it pocket-monkey-preview dotnet /app/backend/PocketMonkey.Api.dll recover-manager
+```
+
+Bootstrap works only while there are no users. Recovery resets an existing
+manager's password, clears lockout, reactivates that manager, and requires a
+password change after login. Both operations create database audit events.
+Host access is a privileged operator capability, not an in-app Manager permission.
+
+For the development launcher, run from `revamp/` in another PowerShell terminal
+after the Release build. Use the same data path and public origin as the launcher:
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+$env:MONKEY_DATA_PATH = [System.IO.Path]::GetFullPath('.local/dev')
+$env:MONKEY_PUBLIC_URL = 'http://127.0.0.1:4180'
+dotnet backend/PocketMonkey.Api/bin/Release/net10.0/PocketMonkey.Api.dll bootstrap-manager
+```
+
+Use `recover-manager` in place of `bootstrap-manager` for recovery. Development
+HTTP cookies are local-only; production requires HTTPS and Secure cookies.
+
+### Sessions and Permissions
+
+- Managers create users, change roles/active status, and reset passwords. Temporary passwords require a change before user administration or ordinary protected access.
+- The last active manager cannot be disabled or demoted, including concurrent changes. Users are disabled rather than deleted; immutable actor IDs are retained.
+- Sessions expire after eight hours without sliding renewal or remember-me persistence. Valid cookies survive container restart, but password reset, role change, or disablement revokes them on the next request.
+- Unsafe requests require the backend-issued antiforgery token, including login/logout. The BFF forwards cookies/tokens and strips client identity/proxy headers; the backend decides access.
+- Five failed password attempts lock the account for fifteen minutes; login additionally permits twenty attempts per minute for the instance. Authentication failures use generic errors.
+- Members can change their own password/language. Future account reads and financial writes will use the existing backend policies as each business feature arrives.
+
+The harmless foundation diagnostics remain anonymous during development and must
+be restricted or removed before production release.
 
 ### Manual Built Preview
 
@@ -170,6 +257,35 @@ version check, all 20 desktop/mobile and lifecycle tests, and repository guardra
 The CI runner is now configured as Ubuntu 26.04; execution on that GitHub-hosted
 runner has not been verified locally.
 
+On 2026-10-07, local authentication and user administration passed:
+
+- Locked backend/integration builds, Angular SSR build, production image build, E2E typechecks, catalog validation, and editor diagnostics.
+- All 31 production-image acceptance cases, including desktop/mobile browser login, manager create/edit/reset controls, forced password change, language preference, and logout.
+- One-time bootstrap, CSRF and forged-header rejection, member authorization denials, concurrent SSR identity isolation, immediate revocation, lockout/recovery, restart sessions, absolute eight-hour expiry, and initial-schema upgrade without sample loss.
+- The test-tool audit's high-severity gate; two low-severity findings remain in existing Mermaid/KaTeX tooling.
+
+The responsibility-based backend organization and E2E readability cleanup also
+passed the locked solution build, production image build, E2E typecheck, and all
+31 acceptance cases. EF reported no pending model changes; the cleanup leaves
+schema history, routes, and JSON contracts unchanged.
+
+The subsequent typed-error refactor passed the locked solution and production
+image builds, E2E typecheck, and all 12 authentication cases. The new API regression
+checks preserve validation/not-found/conflict statuses and exact JSON codes;
+operator bootstrap rejection retains `already_initialized`.
+
+The initial web dependency audit failed because the development-only
+`concurrently` / `shell-quote` dependency chain had a critical advisory,
+[GHSA-pqg4-j6r4-53mv](https://github.com/advisories/GHSA-pqg4-j6r4-53mv).
+Removing that chain and replacing development supervision with Node's built-in
+APIs cleared the finding; the web audit now reports zero vulnerabilities.
+The native launcher passed real Windows startup/SSR, occupied-port isolation,
+Ctrl+C cleanup, peer-failure cleanup, and executable-start failure checks. Isolated
+Linux process fixtures verified SIGINT/SIGTERM, unexpected child exit, startup
+failure, and forced cleanup of descendants that ignore SIGTERM.
+A clean lockfile-based web install, production Angular/SSR build, catalog checks,
+and `npm --prefix web audit --audit-level=high` also passed after removal.
+
 The [foundation workflow](../.github/workflows/revamp-foundation.yml) defines locked,
 read-only PR verification with pinned official actions. Its optional manual export
 produces a tested image archive/checksums without registry or GitHub Release
@@ -184,5 +300,8 @@ legacy/shared runtime changes still trigger the appropriate existing deployments
 - Preview Mermaid rendering on GitHub. Syntax has been checked locally.
 - Restrict/remove harmless foundation diagnostics before production release; they are not a business authorization model.
 
-Complete the remaining [milestone 1 gates](../plans/migration/01-stack-foundation.md#acceptance-gate)
-before beginning authentication, then deliver business UI/rules in milestone 3.
+Local authentication work does not close the remaining
+[milestone 1 gates](../plans/migration/01-stack-foundation.md#acceptance-gate).
+Complete those delivery/host checks and the
+[authentication gate](../plans/migration/02-authentication-authorization.md#acceptance-gate)
+before claiming deployment readiness; deliver business UI/rules in milestone 3.

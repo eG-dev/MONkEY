@@ -9,6 +9,7 @@ applyTo: "revamp/tests/e2e/**,revamp/tests/integration/**"
 - Isolate mutable data/session state per test or worker, using separate instances/data roots where required. Avoid execution-order dependencies and arbitrary sleeps.
 - Prefer accessible role/label locators; use stable test IDs where needed, not Taiga implementation selectors. Assert persisted results and meaningful user outcomes.
 - Keep browser test cases beneath `revamp/tests/e2e/specs/`; configuration and shared fixtures/helpers live outside that folder. Include nested specs in TypeScript checks.
+- Keep C# runtime probe implementations beneath `revamp/tests/integration/RuntimeChecks/Tests/`, with namespaces matching the folder. Leave only command dispatch in `Program.cs` and keep project/configuration files at the project root.
 - Separate Arrange, Act, and Assert phases with blank lines. Multi-stage browser/lifecycle workflows may repeat action/assertion groups; do not force them into one oversized Act block or add comments that merely label obvious steps.
 - Cover manager/member behavior, direct API denials and CSRF attempts, invalid inputs, failure recovery, German/English workflows, and relevant desktop/mobile layouts.
 - Use focused integration checks for actual persistence rollback, constraints, concurrency, migrations, job retries, and deterministic period boundaries. Do not substitute mocked repositories for those guarantees.
