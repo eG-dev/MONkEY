@@ -30,6 +30,14 @@ export class AuthenticationService {
     this.user.set(user);
   }
 
+  clearSession(): void {
+    this.user.set(null);
+
+    if (this.context) {
+      this.transfer.set(sessionKey, null);
+    }
+  }
+
   async logout(): Promise<void> {
     await this.write('POST', '/api/auth/logout', {});
     this.user.set(null);

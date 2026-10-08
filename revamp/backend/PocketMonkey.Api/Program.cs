@@ -6,21 +6,33 @@ using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Endpoints;
 using PocketMonkey.Api.Identity;
 using PocketMonkey.Api.Operations;
+using PocketMonkey.Api.Services;
 using PocketMonkey.Api.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
+var isOperatorCommand = args.Length > 0 && args[0] is "bootstrap-manager" or "recover-manager";
 
 var settings = InstanceSettings.Read(builder.Configuration, builder.Environment);
 settings.PrepareStorage();
 
 builder.Logging.ClearProviders();
-builder.Logging.AddJsonConsole();
-builder.Logging.SetMinimumLevel(settings.LogLevel);
+
+if (isOperatorCommand)
+{
+	builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
+}
+else
+{
+	builder.Logging.AddJsonConsole();
+}
+
+builder.Logging.SetMinimumLevel(isOperatorCommand ? LogLevel.Warning : settings.LogLevel);
 
 builder.Services.AddSingleton(settings);
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddLocalIdentity(builder.Environment.IsDevelopment());
+builder.Services.AddScoped<AccountAdministration>();
 
 builder.Services.AddDbContext<FoundationDbContext>(options => options.UseSqlite(settings.ConnectionString));
 
@@ -53,7 +65,7 @@ app.Use(async (context, next) =>
 
 await FoundationStorage.InitializeAsync(app.Services, app.Lifetime.ApplicationStopping);
 
-if (args.Length > 0 && args[0] is "bootstrap-manager" or "recover-manager")
+if (isOperatorCommand)
 {
 	Environment.ExitCode = await OperatorCommands.RunAsync(app.Services, args[0], app.Lifetime.ApplicationStopping);
 
@@ -93,6 +105,7 @@ app.MapHealthChecks("/health/ready");
 app.MapFoundation();
 app.MapAuthentication();
 app.MapUsers();
+app.MapAccounts();
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented under milestone 2. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; proceeding with local authentication does not close those gates. Financial functionality has not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented under milestone 2. Step 3A shared accounts is locally implemented and verified. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Financial functionality has not started.
 
 ## Confirmed scope
 
@@ -58,8 +58,8 @@ Internet connectivity and an external identity provider must not be required at 
 | 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Eight separately gated backend/UI delivery steps |
 | 4 | [Operations and cutover](04-operations-cutover.md) | Restorable, upgradeable deployment and deliberate Azure retirement |
 
-Milestone 3 starts with [shared accounts](03a-accounts.md): text-only account
-listing, detail, creation, and editing. Financial posting, images, allowance
+Milestone 3's [shared accounts](03a-accounts.md) step is locally implemented:
+text-only account listing, detail, creation, and editing. Financial posting, images, allowance
 configuration/execution, reports, and lifecycle completion have separate plans;
 do not begin them as part of the first account implementation. Follow the
 [delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
@@ -107,7 +107,7 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 
 ## Decisions to close during implementation
 
-- Currency, precision, negative balances, and whether the current nine-account UI limit is intentional.
+- Currency, precision, negative balances, and opening-entry behavior. Account naming and the absence of a nine-account cap are recorded in [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
 - Deployment timezone value via `TZ`, monthly allowance due date, catch-up after downtime, and handling timezone changes after initial use.
 - Financial-history retention and archive versus permanent deletion semantics.
 - Manager recovery process and whether MFA is needed for the first release.

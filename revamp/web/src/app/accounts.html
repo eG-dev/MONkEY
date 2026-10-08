@@ -1,0 +1,70 @@
+<section *transloco="let t" [attr.aria-label]="t('accounts.title')">
+  <div class="page-heading">
+    <h2>{{ t('accounts.title') }}</h2>
+    <div class="page-actions">
+      <button
+        tuiButton
+        appearance="secondary"
+        size="s"
+        type="button"
+        [disabled]="loading() || busy() || !interactive()"
+        [attr.aria-label]="t('accounts.refresh')"
+        [title]="t('accounts.refresh')"
+        (click)="load()"
+      >
+        <span class="icon icon-refresh-cw" aria-hidden="true"></span>
+      </button>
+      @if (auth.user()?.role === 'Manager' && !creating()) {
+        <button tuiButton size="s" type="button" [disabled]="busy() || !interactive()" (click)="creating.set(true)">
+          <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.create') }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (creating()) {
+    <form (ngSubmit)="create()" [attr.aria-label]="t('accounts.create')">
+      <fieldset [disabled]="busy() || !interactive()">
+        <label for="new-account-name">{{ t('accounts.name') }}</label>
+        <input
+          id="new-account-name"
+          name="accountName"
+          [(ngModel)]="name"
+          maxlength="40"
+          required
+          autocomplete="off"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-describedby]="error() ? 'account-error' : null"
+        />
+        <div class="form-actions">
+          <button tuiButton size="s" type="submit">
+            <span class="icon icon-check" aria-hidden="true"></span>{{ t('accounts.create') }}
+          </button>
+          <button tuiButton appearance="secondary" size="s" type="button" (click)="cancel()">{{ t('accounts.cancel') }}</button>
+        </div>
+      </fieldset>
+    </form>
+  }
+
+  @if (error()) {
+    <p id="account-error" class="error" role="alert">{{ t(error()) }}</p>
+  }
+
+  @if (loading()) {
+    <p class="page-status" role="status">{{ t('accounts.loading') }}</p>
+  } @else if (accounts().length) {
+    <ul class="account-list">
+      @for (account of accounts(); track account.id) {
+        <li>
+          <a [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
+            <span class="icon icon-wallet" aria-hidden="true"></span>
+            <span class="account-name">{{ account.name }}</span>
+            <span class="icon icon-chevron-right" aria-hidden="true"></span>
+          </a>
+        </li>
+      }
+    </ul>
+  } @else if (!error()) {
+    <p class="page-status">{{ t('accounts.empty') }}</p>
+  }
+</section>

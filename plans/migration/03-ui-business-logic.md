@@ -1,6 +1,7 @@
 # Milestone 3: incremental UI and business logic
 
-Status: not started. Depends on [authentication and authorization](02-authentication-authorization.md).
+Status: in progress. Step 3A is locally implemented and verified on 2026-10-08;
+steps 3B-3H have not started. Depends on [authentication and authorization](02-authentication-authorization.md).
 
 ## Delivery model
 
@@ -43,7 +44,7 @@ delivery rather than accumulating incomplete backend-only or UI-only work.
 
 ## Decision boundaries
 
-- Before 3A: account naming/validation and whether the old nine-account UI limit remains relevant.
+- 3A resolved: trimmed names of 1-40 characters, case-insensitive uniqueness, and no nine-account cap; see [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
 - Before 3B: currency, precision, rounding, API money representation, negative balances, and opening-entry behavior.
 - Before 3C: manual-posting validation and correction/reversal behavior.
 - Before 3D: upload limits/formats and file/database failure recovery.

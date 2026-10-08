@@ -8,6 +8,31 @@
   "timezone": "Zeitzone",
   "reload": "Neu laden",
   "download": "Datei herunterladen",
+  "accounts": {
+    "title": "Konten",
+    "navigation": "Kontennavigation",
+    "detail": "Konto",
+    "name": "Kontoname",
+    "create": "Konto anlegen",
+    "edit": "Konto bearbeiten",
+    "save": "Speichern",
+    "saved": "Konto gespeichert",
+    "cancel": "Abbrechen",
+    "back": "Zurück zu den Konten",
+    "open": "{name} öffnen",
+    "refresh": "Konten neu laden",
+    "loading": "Konten werden geladen…",
+    "empty": "Noch keine Konten",
+    "errors": {
+      "invalid_account_name": "Einen Kontonamen mit 1–40 Zeichen eingeben.",
+      "account_name_taken": "Ein Konto mit diesem Namen existiert bereits.",
+      "not_found": "Dieses Konto existiert nicht.",
+      "csrf_invalid": "Die Sitzung hat sich geändert. Neu laden und erneut versuchen.",
+      "unauthorized": "Die Sitzung ist abgelaufen. Bitte erneut anmelden.",
+      "forbidden": "Für diese Aktion fehlt die Berechtigung.",
+      "unavailable": "Konten konnten nicht geladen oder gespeichert werden. Bitte erneut versuchen."
+    }
+  },
   "auth": {
     "login": "Anmelden",
     "logout": "Abmelden",

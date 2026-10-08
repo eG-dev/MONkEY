@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Contracts.Users;
 using PocketMonkey.Api.Entities;
 using PocketMonkey.Api.Services;
@@ -15,7 +16,9 @@ public static class OperatorCommands
         using var scope = services.CreateScope();
         var administration = scope.ServiceProvider.GetRequiredService<UserAdministration>();
         var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var settings = scope.ServiceProvider.GetRequiredService<InstanceSettings>();
 
+        Console.WriteLine($"Data directory: {settings.DataPath}");
         Console.Write("Username: ");
         var username = Console.ReadLine() ?? string.Empty;
 

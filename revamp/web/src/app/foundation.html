@@ -9,37 +9,61 @@
       </select>
     </header>
     <app-authentication />
+    @if (authentication.user() && !authentication.user()?.mustChangePassword) {
+      <nav [attr.aria-label]="t('accounts.navigation')">
+        <a routerLink="/accounts">{{ t('accounts.title') }}</a>
+      </nav>
+    }
     <main>
-      <h2>{{ t('system') }}</h2>
-      @if (foundation.state(); as state) {
-        <p class="status" role="status"><span class="icon icon-circle-check" aria-hidden="true"></span>{{ t('ready') }}</p>
-        <dl>
-          <div>
-            <dt>{{ t('sample', { count: 1 }) }}</dt>
-            <dd data-testid="sample-id">{{ state.sampleId }}</dd>
-          </div>
-          <div>
-            <dt>{{ t('initialized') }}</dt>
-            <dd>{{ state.initializedAtUtc | date: 'medium' : 'UTC' : language.locale() }}</dd>
-          </div>
-          <div>
-            <dt>{{ t('timezone') }}</dt>
-            <dd>{{ state.timezone }}</dd>
-          </div>
-        </dl>
+      @if (authentication.user() && !authentication.user()?.mustChangePassword) {
+        <router-outlet />
       } @else {
-        <p class="error" role="alert">{{ t('unavailable') }}</p>
-      }
-      <div class="actions">
-        <button tuiButton appearance="secondary" size="m" type="button" [attr.aria-label]="t('reload')" [title]="t('reload')" (click)="reload()">
-          <span class="icon icon-refresh-cw" aria-hidden="true"></span>
-        </button>
-        @if (foundation.state()) {
-          <a tuiButton appearance="secondary" size="m" href="/api/foundation/file" download [attr.aria-label]="t('download')" [title]="t('download')"
-            ><span class="icon icon-download" aria-hidden="true"></span
-          ></a>
+        <h2>{{ t('system') }}</h2>
+        @if (foundation.state(); as state) {
+          <p class="status" role="status"><span class="icon icon-circle-check" aria-hidden="true"></span>{{ t('ready') }}</p>
+          <dl>
+            <div>
+              <dt>{{ t('sample', { count: 1 }) }}</dt>
+              <dd data-testid="sample-id">{{ state.sampleId }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('initialized') }}</dt>
+              <dd>{{ state.initializedAtUtc | date: 'medium' : 'UTC' : language.locale() }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('timezone') }}</dt>
+              <dd>{{ state.timezone }}</dd>
+            </div>
+          </dl>
+        } @else {
+          <p class="error" role="alert">{{ t('unavailable') }}</p>
         }
-      </div>
+        <div class="actions">
+          <button
+            tuiButton
+            appearance="secondary"
+            size="m"
+            type="button"
+            [attr.aria-label]="t('reload')"
+            [title]="t('reload')"
+            (click)="reload()"
+          >
+            <span class="icon icon-refresh-cw" aria-hidden="true"></span>
+          </button>
+          @if (foundation.state()) {
+            <a
+              tuiButton
+              appearance="secondary"
+              size="m"
+              href="/api/foundation/file"
+              download
+              [attr.aria-label]="t('download')"
+              [title]="t('download')"
+              ><span class="icon icon-download" aria-hidden="true"></span
+            ></a>
+          }
+        </div>
+      }
     </main>
   </ng-container>
 </tui-root>

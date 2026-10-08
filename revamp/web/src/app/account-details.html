@@ -1,0 +1,73 @@
+<section *transloco="let t" [attr.aria-label]="t('accounts.detail')">
+  <a class="back-link" routerLink="/accounts"><span class="icon icon-arrow-left" aria-hidden="true"></span>{{ t('accounts.back') }}</a>
+  <div class="page-heading">
+    <h2>{{ t('accounts.detail') }}</h2>
+    <div class="page-actions">
+      <button
+        tuiButton
+        appearance="secondary"
+        size="s"
+        type="button"
+        [disabled]="loading() || busy() || !interactive()"
+        [attr.aria-label]="t('accounts.refresh')"
+        [title]="t('accounts.refresh')"
+        (click)="reload()"
+      >
+        <span class="icon icon-refresh-cw" aria-hidden="true"></span>
+      </button>
+      @if (account() && auth.user()?.role === 'Manager' && !editing()) {
+        <button
+          tuiButton
+          appearance="secondary"
+          size="s"
+          type="button"
+          [disabled]="busy() || !interactive()"
+          [attr.aria-label]="t('accounts.edit')"
+          [title]="t('accounts.edit')"
+          (click)="edit()"
+        >
+          <span class="icon icon-pencil" aria-hidden="true"></span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (error()) {
+    <p id="account-error" class="error" role="alert">{{ t(error()) }}</p>
+  }
+  @if (saved()) {
+    <p class="success" role="status">{{ t('accounts.saved') }}</p>
+  }
+  @if (loading()) {
+    <p class="page-status" role="status">{{ t('accounts.loading') }}</p>
+  } @else if (account(); as current) {
+    @if (editing()) {
+      <form (ngSubmit)="update()" [attr.aria-label]="t('accounts.edit')">
+        <fieldset [disabled]="busy() || !interactive()">
+          <label for="edit-account-name">{{ t('accounts.name') }}</label>
+          <input
+            id="edit-account-name"
+            name="accountName"
+            [(ngModel)]="name"
+            maxlength="40"
+            required
+            autocomplete="off"
+            [attr.aria-invalid]="error() ? 'true' : null"
+            [attr.aria-describedby]="error() ? 'account-error' : null"
+          />
+          <div class="form-actions">
+            <button tuiButton size="s" type="submit">
+              <span class="icon icon-check" aria-hidden="true"></span>{{ t('accounts.save') }}
+            </button>
+            <button tuiButton appearance="secondary" size="s" type="button" (click)="cancel()">{{ t('accounts.cancel') }}</button>
+          </div>
+        </fieldset>
+      </form>
+    } @else {
+      <dl class="account-properties">
+        <dt>{{ t('accounts.name') }}</dt>
+        <dd>{{ current.name }}</dd>
+      </dl>
+    }
+  }
+</section>

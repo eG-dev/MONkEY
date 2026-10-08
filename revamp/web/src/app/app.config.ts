@@ -16,6 +16,7 @@ import { FoundationService } from './foundation.service';
 import { BundledCatalogLoader } from './bundled-catalog.loader';
 import { LANGUAGES } from './languages';
 import { AuthenticationService } from './authentication.service';
+import { AccountsService } from './accounts.service';
 
 registerLocaleData(germanLocale);
 registerLocaleData(englishLocale);
@@ -53,9 +54,10 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       const language = inject(LanguageService);
       const foundation = inject(FoundationService);
+      const accounts = inject(AccountsService);
       inject(AuthenticationService).initialize();
 
-      return Promise.all([language.initialize(), foundation.initialize()]);
+      return Promise.all([language.initialize(), foundation.initialize(), accounts.initialize()]);
     }),
   ],
 };

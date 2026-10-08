@@ -1,11 +1,13 @@
-# POCKET MONkEY Foundation and Authentication
+# POCKET MONkEY Foundation, Authentication, and Accounts
 
-The build/run/storage foundation, local authentication, and manager user
-administration are implemented. This is not a production-ready application.
-Accounts, transactions, allowances, and reports have not been implemented.
+The build/run/storage foundation, local authentication, manager user
+administration, and shared text-only accounts are implemented. This is not a
+production-ready application. Transactions, images, allowances, and reports have
+not been implemented.
 Use the independent [solution](PocketMonkey.slnx); the legacy solution is unchanged
 by this work. Follow [ADR-0007](../docs/ADR/ADR-0007-application-foundation.md).
 Authentication follows [ADR-0008](../docs/ADR/ADR-0008-local-authentication.md).
+Accounts follow [ADR-0009](../docs/ADR/ADR-0009-shared-accounts.md).
 
 ## Verified Stack
 
@@ -35,9 +37,9 @@ and behavior by responsibility. Namespaces follow the folders:
 | Folder | Responsibility |
 | --- | --- |
 | Entities | Persisted domain and Identity entities, not API payloads |
-| Contracts/Authentication, Contracts/Users, Contracts/Foundation | Request/response models grouped by API feature |
-| Endpoints | HTTP routing, policies, and response mapping; authentication and user administration are separate |
-| Services | Application behavior, transactional user administration, and typed error outcomes |
+| Contracts/Authentication, Contracts/Users, Contracts/Accounts, Contracts/Foundation | Request/response models grouped by API feature |
+| Endpoints | Feature-specific HTTP routing, policies, and response mapping |
+| Services | Application behavior, transactional user/account administration, and typed error outcomes |
 | Identity | Identity registration, cookie validation, policies, and claims |
 | Operations | Host-only manager bootstrap and recovery commands |
 | Storage | EF context, storage initialization, and readiness |
@@ -93,11 +95,12 @@ setup/action/assertion groups, including independent concerns within assertions.
 Multi-stage workflows repeat action/assertion groups rather than combining all
 actions into one block.
 
-Authentication fixtures use an ephemeral, loopback HTTPS reverse proxy and a
+Authentication and account fixtures use an ephemeral, loopback HTTPS reverse proxy and a
 test-only self-signed certificate so production Secure cookies are tested without
 weakening them. Certificate exceptions apply only to those isolated fixtures.
 The mounted runtime probe verifies initial-schema upgrades, cookie lifetime/expiry,
-and timezone contracts; it and all browser tooling remain outside the image.
+account constraints/audit rollback, and timezone contracts; it and all browser
+tooling remain outside the image.
 
 ## Local Development
 
@@ -156,18 +159,28 @@ manager's password, clears lockout, reactivates that manager, and requires a
 password change after login. Both operations create database audit events.
 Host access is a privileged operator capability, not an in-app Manager permission.
 
-For the development launcher, run from `revamp/` in another PowerShell terminal
-after the Release build. Use the same data path and public origin as the launcher:
+For the development launcher, run from the repository root in another PowerShell
+terminal after the Release build. Resolve the replacement directory explicitly
+so the operator command cannot accidentally select a repository-root data folder.
+Use the same public origin as the launcher (change the port below if necessary):
 
 ```powershell
+$revampPath = (Resolve-Path './revamp').Path
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
-$env:MONKEY_DATA_PATH = [System.IO.Path]::GetFullPath('.local/dev')
+$env:MONKEY_DATA_PATH = Join-Path $revampPath '.local/dev'
 $env:MONKEY_PUBLIC_URL = 'http://127.0.0.1:4180'
-dotnet backend/PocketMonkey.Api/bin/Release/net10.0/PocketMonkey.Api.dll bootstrap-manager
+dotnet (Join-Path $revampPath 'backend/PocketMonkey.Api/bin/Release/net10.0/PocketMonkey.Api.dll') bootstrap-manager
 ```
 
 Use `recover-manager` in place of `bootstrap-manager` for recovery. Development
 HTTP cookies are local-only; production requires HTTPS and Secure cookies.
+
+Operator commands print their resolved `Data directory` before prompting. Check
+that it matches the launcher's `Persistent development data` path; success against
+a different database does not change the preview's users. Commands show concise
+warnings/errors instead of informational EF query logs, while application runtime
+logs retain their structured format and configured level. Enter passwords directly
+at the hidden terminal prompt, not as arguments or in chat.
 
 ### Sessions and Permissions
 
@@ -176,10 +189,29 @@ HTTP cookies are local-only; production requires HTTPS and Secure cookies.
 - Sessions expire after eight hours without sliding renewal or remember-me persistence. Valid cookies survive container restart, but password reset, role change, or disablement revokes them on the next request.
 - Unsafe requests require the backend-issued antiforgery token, including login/logout. The BFF forwards cookies/tokens and strips client identity/proxy headers; the backend decides access.
 - Five failed password attempts lock the account for fifteen minutes; login additionally permits twenty attempts per minute for the instance. Authentication failures use generic errors.
-- Members can change their own password/language. Future account reads and financial writes will use the existing backend policies as each business feature arrives.
+- Members can change their own password/language and read every account. Managers create/edit accounts; financial writes remain unimplemented.
 
 The harmless foundation diagnostics remain anonymous during development and must
 be restricted or removed before production release.
+
+### Shared Accounts
+
+Ready authenticated users see the shared account list at `/` or `/accounts`, and
+details at `/accounts/{id}`. Managers create/edit names; Members have read-only
+views. Anonymous or forced-password sessions see the authentication shell instead
+of private account content. Backend authorization remains authoritative.
+
+Names are trimmed and contain 1-40 characters. Invariant-uppercase normalized
+names have a unique database index, so case-insensitive conflicts return errors
+even during concurrent writes. IDs do not change on rename. There is no nine-account
+cap and no editable balance, media, or account deletion.
+
+The Web-BFF allowlists `GET /api/accounts`, `GET /api/accounts/{id}`,
+`POST /api/accounts`, and `PUT /api/accounts/{id}`. Successful responses expose
+only account IDs/names; errors retain stable `invalid_account_name`,
+`account_name_taken`, and `not_found` codes. Writes and their audit events commit
+atomically. Request-scoped SSR uses reviewed identity-bound hydration data, not
+shared private caches or automatic HTTP transfer caching.
 
 ### Manual Built Preview
 
@@ -285,6 +317,19 @@ Linux process fixtures verified SIGINT/SIGTERM, unexpected child exit, startup
 failure, and forced cleanup of descendants that ignore SIGTERM.
 A clean lockfile-based web install, production Angular/SSR build, catalog checks,
 and `npm --prefix web audit --audit-level=high` also passed after removal.
+
+On 2026-10-08, [Step 3A shared accounts](../plans/migration/03a-accounts.md) passed:
+
+- Locked backend/runtime-check builds, Angular SSR and production-image builds, E2E typechecking, and bilingual catalog validation. The generated account migration has no pending model changes.
+- All 40 production-image acceptance cases, including eight account cases and the existing authentication, SSR language, lifecycle, offline-runtime, and timezone checks.
+- Real-SQLite name-length enforcement, conflict rollback/atomic audit, concurrent and German-character case-insensitive duplicates, more than nine accounts, and restart persistence.
+- German/English desktop/mobile manager create/edit/reload and Member read-only workflows, empty/missing states, keyboard navigation, long-name wrapping, and immediate removal of a revoked Member's private view.
+- Authenticated list/detail SSR hydration, no-store responses, and concurrent authenticated/anonymous request isolation without leaking account names or session cookies.
+
+The subsequent operator-usability fix passed the locked API and production-image
+builds and the focused real-image lockout/recovery/login/restart case. That case
+also checks the resolved data-directory output and absence of EF query chatter;
+successful recovery still requires a password change after login.
 
 The [foundation workflow](../.github/workflows/revamp-foundation.yml) defines locked,
 read-only PR verification with pinned official actions. Its optional manual export

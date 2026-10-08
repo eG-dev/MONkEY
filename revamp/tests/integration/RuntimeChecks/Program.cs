@@ -1,5 +1,12 @@
 using RuntimeChecks.Tests;
 
+if (args is ["account-persistence"])
+{
+    await AccountPersistenceCheck.RunAsync();
+
+    return;
+}
+
 if (args is ["identity-upgrade"])
 {
     await IdentityUpgradeCheck.RunAsync();

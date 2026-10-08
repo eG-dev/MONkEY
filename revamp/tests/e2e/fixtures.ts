@@ -109,10 +109,11 @@ async function secureOrigin(instance: Instance) {
 
   return {
     origin: `https://127.0.0.1:${address.port}`,
-    close: () => new Promise<void>((resolve, reject) => {
-      server.closeAllConnections();
-      server.close((error) => error ? reject(error) : resolve());
-    }),
+    close: () =>
+      new Promise<void>((resolve, reject) => {
+        server.closeAllConnections();
+        server.close((error) => (error ? reject(error) : resolve()));
+      }),
   };
 }
 
@@ -127,7 +128,7 @@ export const test = base.extend<{ instance: Instance }>({
       await waitReady(origin);
       const instance = { origin, container: name, volume };
 
-      if (testInfo.file.endsWith('authentication.spec.ts')) {
+      if (testInfo.file.endsWith('authentication.spec.ts') || testInfo.file.endsWith('accounts.spec.ts')) {
         const proxy = await secureOrigin(instance);
         instance.origin = proxy.origin;
         closeProxy = proxy.close;
@@ -139,7 +140,10 @@ export const test = base.extend<{ instance: Instance }>({
       if (testInfo.status !== testInfo.expectedStatus) {
         const logs = spawnSync('docker', ['logs', name], { encoding: 'utf8', timeout: 10_000 });
         await testInfo.attach('application.log', { body: `${logs.stdout ?? ''}${logs.stderr ?? ''}`, contentType: 'text/plain' });
-        const runtime = spawnSync('docker', ['inspect', '--format', '{{json .State}} {{json .NetworkSettings.Ports}}', name], { encoding: 'utf8', timeout: 10_000 });
+        const runtime = spawnSync('docker', ['inspect', '--format', '{{json .State}} {{json .NetworkSettings.Ports}}', name], {
+          encoding: 'utf8',
+          timeout: 10_000,
+        });
         await testInfo.attach('container-state.txt', { body: runtime.stdout ?? '', contentType: 'text/plain' });
       }
       const cleanup = spawnSync('docker', ['rm', '--force', '--volumes', name], { encoding: 'utf8', timeout: 30_000 });

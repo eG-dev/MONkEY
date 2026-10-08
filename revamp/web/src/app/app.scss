@@ -2,10 +2,18 @@
   display: block;
 }
 header,
+nav,
 main {
   max-width: 60rem;
   margin: 0 auto;
   padding: 1.5rem;
+}
+nav {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+nav a {
+  color: var(--tui-text-action);
 }
 header {
   display: flex;

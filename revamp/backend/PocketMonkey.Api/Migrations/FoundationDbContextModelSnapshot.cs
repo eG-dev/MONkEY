@@ -145,7 +145,34 @@ namespace PocketMonkey.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PocketMonkey.Api.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("PocketMonkey.Api.Entities.Account", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("Accounts", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40");
+                        });
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -223,7 +250,7 @@ namespace PocketMonkey.Api.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("PocketMonkey.Api.Identity.AuditEvent", b =>
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AuditEvent", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -249,7 +276,7 @@ namespace PocketMonkey.Api.Migrations
                     b.ToTable("AuditEvents");
                 });
 
-            modelBuilder.Entity("PocketMonkey.Api.Storage.FoundationState", b =>
+            modelBuilder.Entity("PocketMonkey.Api.Entities.FoundationState", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -282,7 +309,7 @@ namespace PocketMonkey.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("PocketMonkey.Api.Identity.ApplicationUser", null)
+                    b.HasOne("PocketMonkey.Api.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -291,7 +318,7 @@ namespace PocketMonkey.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("PocketMonkey.Api.Identity.ApplicationUser", null)
+                    b.HasOne("PocketMonkey.Api.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -306,7 +333,7 @@ namespace PocketMonkey.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PocketMonkey.Api.Identity.ApplicationUser", null)
+                    b.HasOne("PocketMonkey.Api.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -315,7 +342,7 @@ namespace PocketMonkey.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("PocketMonkey.Api.Identity.ApplicationUser", null)
+                    b.HasOne("PocketMonkey.Api.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

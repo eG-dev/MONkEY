@@ -8,6 +8,31 @@
   "timezone": "Timezone",
   "reload": "Reload",
   "download": "Download file",
+  "accounts": {
+    "title": "Accounts",
+    "navigation": "Account navigation",
+    "detail": "Account",
+    "name": "Account name",
+    "create": "Create account",
+    "edit": "Edit account",
+    "save": "Save",
+    "saved": "Account saved",
+    "cancel": "Cancel",
+    "back": "Back to accounts",
+    "open": "Open {name}",
+    "refresh": "Refresh accounts",
+    "loading": "Loading accounts...",
+    "empty": "No accounts yet",
+    "errors": {
+      "invalid_account_name": "Enter an account name of 1-40 characters.",
+      "account_name_taken": "An account with this name already exists.",
+      "not_found": "This account does not exist.",
+      "csrf_invalid": "Your session changed. Reload and try again.",
+      "unauthorized": "Your session expired. Sign in again.",
+      "forbidden": "You do not have permission for this action.",
+      "unavailable": "Accounts could not be loaded or saved. Try again."
+    }
+  },
   "auth": {
     "login": "Sign in",
     "logout": "Sign out",

@@ -13,6 +13,11 @@ export default defineConfig({
   use: { locale: 'de-DE', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
-    { name: 'mobile', testMatch: ['shell.spec.ts', 'authentication.spec.ts'], grepInvert: /@api/, use: { ...devices['Pixel 8'], defaultBrowserType: 'chromium' } },
+    {
+      name: 'mobile',
+      testMatch: ['shell.spec.ts', 'authentication.spec.ts', 'accounts.spec.ts'],
+      grepInvert: /@api/,
+      use: { ...devices['Pixel 8'], defaultBrowserType: 'chromium' },
+    },
   ],
 });

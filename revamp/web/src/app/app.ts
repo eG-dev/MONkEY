@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { TuiButton, TuiRoot } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
@@ -10,7 +11,7 @@ import { Authentication } from './authentication';
 import { AuthenticationService } from './authentication.service';
 
 @Component({
-  imports: [TuiRoot, TuiButton, TranslocoDirective, DatePipe, Authentication],
+  imports: [TuiRoot, TuiButton, TranslocoDirective, DatePipe, Authentication, RouterLink, RouterOutlet],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './foundation.html',
@@ -19,7 +20,7 @@ export class App {
   protected readonly foundation = inject(FoundationService);
   protected readonly language = inject(LanguageService);
   protected readonly languages = Object.values(LANGUAGES);
-  private readonly authentication = inject(AuthenticationService);
+  protected readonly authentication = inject(AuthenticationService);
 
   protected async chooseLanguage(event: Event): Promise<void> {
     const value = (event.target as HTMLSelectElement).value;

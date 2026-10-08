@@ -100,11 +100,12 @@ proxy.on('error', (_error, _request, response) => {
 app.use('/api', (request, response) => {
   const path = request.originalUrl.split('?')[0];
   const allowed = ['GET', 'HEAD'].includes(request.method)
-    ? ['/api/foundation', '/api/foundation/file', '/api/auth/csrf', '/api/auth/me', '/api/users'].includes(path)
+    ? ['/api/foundation', '/api/foundation/file', '/api/auth/csrf', '/api/auth/me', '/api/users', '/api/accounts'].includes(path) ||
+      /^\/api\/accounts\/[\w-]+$/.test(path)
     : request.method === 'POST'
-      ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users'].includes(path) ||
+      ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users', '/api/accounts'].includes(path) ||
         /^\/api\/users\/[\w-]+\/password$/.test(path)
-      : request.method === 'PUT' && (path === '/api/auth/language' || /^\/api\/users\/[\w-]+$/.test(path));
+      : request.method === 'PUT' && (path === '/api/auth/language' || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path));
 
   if (!allowed) {
     response.status(404).json({ status: 404, code: 'not_found' });
@@ -158,19 +159,11 @@ app.use(async (request, response, next) => {
   const preference = request.cookies['monkey-language'];
   const negotiated = new Negotiator(request).language(Object.keys(LANGUAGES));
 
-  const language = session
-    ? session.language
-    : isLanguage(preference)
-      ? preference
-      : isLanguage(negotiated)
-        ? negotiated
-        : defaultLanguage;
+  const language = session ? session.language : isLanguage(preference) ? preference : isLanguage(negotiated) ? negotiated : defaultLanguage;
 
   angularApp
     .handle(request, { language, backendUrl, session })
-    .then((result) => result
-      ? writeResponseToNodeResponse(result, response)
-      : next())
+    .then((result) => (result ? writeResponseToNodeResponse(result, response) : next()))
     .catch(next);
 });
 

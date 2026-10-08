@@ -487,8 +487,12 @@ test('lockout recovery and restart session behavior are deliberate @api', async 
   expect((await csrfWrite(request, 'POST', '/api/auth/login', manager)).status()).toBe(401);
 
   const recovered = credentials(manager.username);
+  const recovery = operator(instance, 'recover-manager', recovered);
 
-  expect(operator(instance, 'recover-manager', recovered).status).toBe(0);
+  expect(recovery.status).toBe(0);
+  expect(recovery.stdout).toContain('Data directory: /data');
+  expect(recovery.stdout).toContain('operator_success');
+  expect(recovery.stdout + recovery.stderr).not.toContain('Microsoft.EntityFrameworkCore');
   expect((await login(request, recovered)).mustChangePassword).toBe(true);
 
   const permanent = credentials(manager.username);
