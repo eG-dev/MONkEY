@@ -15,6 +15,11 @@ The original fixed, immutable currency policy was replaced by configurable displ
 units in [ADR-0011](ADR-0011-currency-display-unit.md). This record describes the
 current ledger contract; the other exact-money decisions are unchanged.
 
+The original nonnegative-amount and nonnegative-balance policy below was replaced
+by signed openings, overdrafts, and manual transaction rules in
+[ADR-0012](ADR-0012-manual-transactions-and-signed-balances.md). The original
+restriction is retained here as decision history, not current validation policy.
+
 - Use one configurable display currency for the instance, independently of UI language and business timezone, following [ADR-0011](ADR-0011-currency-display-unit.md). Changing it only relabels amounts; it does not convert money or rewrite ledger history.
 - Persist and calculate money as signed 64-bit integer cents. Reject negative amounts/balances, values outside that representation, and arithmetic overflow. There is no additional product-specific monetary cap.
 - Exchange monetary values as decimal strings, not JSON numbers. Return canonical two-decimal strings. Reject input with more than two decimal places rather than silently rounding; never calculate money with binary floating-point.

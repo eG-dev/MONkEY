@@ -6,6 +6,8 @@ import { AccountPageState } from '../../models/accounts/account-page-state';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { SharedAccount } from '../../models/accounts/shared-account';
 import { OpeningEntry } from '../../models/accounts/opening-entry';
+import { LedgerEntry } from '../../models/accounts/ledger-entry';
+import { LedgerHistory } from '../../models/accounts/ledger-history';
 
 const accountPageKey = makeStateKey<AccountPageState | null>('monkey-account-page');
 
@@ -87,6 +89,31 @@ export class AccountsService {
     return this.auth.write<OpeningEntry>('POST', `/api/accounts/${encodeURIComponent(id)}/opening`, { amount, comment, idempotencyKey });
   }
 
+  postTransaction(
+    id: string,
+    source: 'deposit' | 'withdrawal',
+    amount: string,
+    comment: string,
+    idempotencyKey: string,
+  ): Promise<LedgerEntry> {
+    return this.auth.write<LedgerEntry>('POST', `/api/accounts/${encodeURIComponent(id)}/transactions`, {
+      source,
+      amount,
+      comment,
+      idempotencyKey,
+    });
+  }
+
+  history(id: string, cursor: string | null): Promise<LedgerHistory> {
+    const query = new URLSearchParams({ pageSize: '20' });
+
+    if (cursor) {
+      query.set('cursor', cursor);
+    }
+
+    return this.read<LedgerHistory>(`/api/accounts/${encodeURIComponent(id)}/transactions?${query}`);
+  }
+
   errorKey(failure: unknown): string {
     if (failure instanceof HttpErrorResponse && failure.status === 401) {
       this.auth.clearSession();
@@ -114,6 +141,12 @@ export class AccountsService {
         'invalid_idempotency_key',
         'already_initialized',
         'idempotency_conflict',
+        'invalid_transaction_amount',
+        'invalid_transaction_source',
+        'not_initialized',
+        'balance_overflow',
+        'invalid_page_size',
+        'invalid_history_cursor',
       ].includes(code)
       ? `accounts.errors.${code}`
       : 'accounts.errors.unavailable';

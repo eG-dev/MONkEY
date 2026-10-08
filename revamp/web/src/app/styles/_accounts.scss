@@ -156,7 +156,62 @@ textarea:focus-visible {
   color: #08745c;
 }
 
+.transaction-actions,
+.history-pagination,
+.ledger-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.transaction-actions {
+  margin-top: 1.5rem;
+}
+
+.ledger-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.ledger-list li {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--tui-border-normal);
+  overflow-wrap: anywhere;
+}
+
+.ledger-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.ledger-amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ledger-meta {
+  margin-top: 0.5rem;
+  color: var(--tui-text-secondary);
+}
+
+.ledger-comment {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+}
+
 @media (max-width: 480px) {
+  .ledger-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .ledger-amount {
+    text-align: left;
+  }
+
   .account-properties {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.5rem;

@@ -16,10 +16,10 @@ public static class OpeningBalanceEndpoints
             string id,
             OpeningBalanceRequest request,
             ClaimsPrincipal principal,
-            OpeningBalanceAdministration administration,
+            LedgerAdministration administration,
             CancellationToken cancellationToken) =>
             {
-                var result = await administration.PostAsync(
+                var result = await administration.PostOpeningAsync(
                     id, request, principal.FindFirstValue(ClaimTypes.NameIdentifier)!, cancellationToken);
 
                 return result.Error is { } error ? ToResult(error) : TypedResults.Ok(result.Entry);
@@ -27,25 +27,25 @@ public static class OpeningBalanceEndpoints
             .RequireAuthorization(UserRole.Manager.ToIdentityName())
             .WithTags("Accounts")
             .WithName("PostOpeningBalance")
-            .Produces<OpeningEntryResponse>()
+            .Produces<LedgerEntryResponse>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict);
     }
 
-    private static IResult ToResult(OpeningBalanceError error) => error switch
+    private static IResult ToResult(LedgerError error) => error switch
     {
-        OpeningBalanceError.InvalidAmount => Failure("invalid_opening_amount", StatusCodes.Status400BadRequest),
+        LedgerError.InvalidAmount => Failure("invalid_opening_amount", StatusCodes.Status400BadRequest),
 
-        OpeningBalanceError.InvalidComment => Failure("invalid_comment", StatusCodes.Status400BadRequest),
+        LedgerError.InvalidComment => Failure("invalid_comment", StatusCodes.Status400BadRequest),
 
-        OpeningBalanceError.InvalidIdempotencyKey => Failure("invalid_idempotency_key", StatusCodes.Status400BadRequest),
+        LedgerError.InvalidIdempotencyKey => Failure("invalid_idempotency_key", StatusCodes.Status400BadRequest),
 
-        OpeningBalanceError.NotFound => Failure("not_found", StatusCodes.Status404NotFound),
+        LedgerError.NotFound => Failure("not_found", StatusCodes.Status404NotFound),
 
-        OpeningBalanceError.AlreadyInitialized => Failure("already_initialized", StatusCodes.Status409Conflict),
+        LedgerError.AlreadyInitialized => Failure("already_initialized", StatusCodes.Status409Conflict),
 
-        OpeningBalanceError.IdempotencyConflict => Failure("idempotency_conflict", StatusCodes.Status409Conflict),
+        LedgerError.IdempotencyConflict => Failure("idempotency_conflict", StatusCodes.Status409Conflict),
 
         _ => throw new ArgumentOutOfRangeException(nameof(error), error, "Unsupported opening error.")
     };

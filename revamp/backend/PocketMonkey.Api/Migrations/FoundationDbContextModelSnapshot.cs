@@ -171,7 +171,7 @@ namespace PocketMonkey.Api.Migrations
 
                     b.ToTable("Accounts", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Accounts_Balance", "BalanceMinorUnits IS NULL OR (typeof(BalanceMinorUnits) = 'integer' AND BalanceMinorUnits >= 0)");
+                            t.HasCheckConstraint("CK_Accounts_Balance", "BalanceMinorUnits IS NULL OR typeof(BalanceMinorUnits) = 'integer'");
 
                             t.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40");
                         });
@@ -333,6 +333,9 @@ namespace PocketMonkey.Api.Migrations
                     b.Property<DateTimeOffset>("OccurredAtUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<long>("SequenceNumber")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -346,15 +349,23 @@ namespace PocketMonkey.Api.Migrations
                     b.HasIndex("IdempotencyKey")
                         .IsUnique();
 
+                    b.HasIndex("SequenceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("AccountId", "SequenceNumber")
+                        .IsDescending(false, true);
+
                     b.ToTable("LedgerEntries", null, t =>
                         {
-                            t.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits >= 0");
+                            t.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND (Source = 'opening' OR (Source = 'deposit' AND AmountMinorUnits > 0) OR (Source = 'withdrawal' AND AmountMinorUnits < 0))");
 
                             t.HasCheckConstraint("CK_LedgerEntries_Comment", "Comment IS NULL OR length(Comment) <= 500");
 
                             t.HasCheckConstraint("CK_LedgerEntries_Key", "length(IdempotencyKey) = 36");
 
-                            t.HasCheckConstraint("CK_LedgerEntries_Source", "Source = 'opening'");
+                            t.HasCheckConstraint("CK_LedgerEntries_Sequence", "typeof(SequenceNumber) = 'integer' AND SequenceNumber > 0");
+
+                            t.HasCheckConstraint("CK_LedgerEntries_Source", "Source IN ('opening', 'deposit', 'withdrawal')");
                         });
                 });
 

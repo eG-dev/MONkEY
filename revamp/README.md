@@ -1,8 +1,9 @@
-# POCKET MONkEY Foundation, Authentication, Accounts, and Opening Balances
+# POCKET MONkEY Foundation, Authentication, Accounts, and Ledger
 
 The build/run/storage foundation, local authentication, manager user
-administration, shared text-only accounts, and explicit opening balances are implemented. This is not a
-production-ready application. Ordinary transactions, images, allowances, and reports have
+administration, shared text-only accounts, signed opening balances, deposits/withdrawals,
+and paginated history are implemented. This is not a production-ready application.
+Dedicated reversals are deferred. Images, allowances, and reports have
 not been implemented.
 Use the independent [solution](PocketMonkey.slnx); the legacy solution is unchanged
 by this work. Follow [ADR-0007](../docs/ADR/ADR-0007-application-foundation.md).
@@ -10,6 +11,8 @@ Authentication follows [ADR-0008](../docs/ADR/ADR-0008-local-authentication.md).
 Accounts follow [ADR-0009](../docs/ADR/ADR-0009-shared-accounts.md).
 Opening balances follow [ADR-0010](../docs/ADR/ADR-0010-ledger-and-money.md),
 with the display currency policy in [ADR-0011](../docs/ADR/ADR-0011-currency-display-unit.md).
+Signed openings, overdrafts, manual transactions, and history follow
+[ADR-0012](../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md).
 
 ## Verified Stack
 
@@ -148,6 +151,10 @@ npm --prefix revamp/web ci --ignore-scripts
 npm --prefix revamp/web run dev
 ```
 
+For a fresh data directory, [create the first Manager](#first-manager-and-recovery)
+before signing in. That section also documents password recovery; there is no
+default user or public registration route.
+
 The launcher starts `dotnet watch` and Angular's SSR development server together.
 It builds automatically, enables hot reload/watch mode, uses the real Web-BFF and
 backend, and keeps state under `revamp/.local/dev/`. Docker and browser-test tooling
@@ -225,7 +232,12 @@ at the hidden terminal prompt, not as arguments or in chat.
 - Sessions expire after eight hours without sliding renewal or remember-me persistence. Valid cookies survive container restart, but password reset, role change, or disablement revokes them on the next request.
 - Unsafe requests require the backend-issued antiforgery token, including login/logout. The BFF forwards cookies/tokens and strips client identity/proxy headers; the backend decides access.
 - Five failed password attempts lock the account for fifteen minutes; login additionally permits twenty attempts per minute for the instance. Authentication failures use generic errors.
-- Members can change their own password/language and read every account. Managers create/edit accounts and post explicit opening entries; ordinary transactions remain unimplemented.
+- Members can change their own password/language and read every account and its ledger history. Managers create/edit accounts, post explicit opening entries, and make deposits/withdrawals.
+
+Application role decisions and contracts use `UserRole`; explicit Identity names
+and JSON values remain `Manager`/`Member`. Invalid textual roles retain the
+`invalid_user` error contract, numeric roles are rejected, and an omitted role
+defaults to Member.
 
 The harmless foundation diagnostics remain anonymous during development and must
 be restricted or removed before production release.
@@ -243,7 +255,8 @@ even during concurrent writes. IDs do not change on rename. There is no nine-acc
 cap and no editable balance, media, or account deletion.
 
 The Web-BFF allowlists `GET /api/accounts`, `GET /api/accounts/{id}`,
-`POST /api/accounts`, `PUT /api/accounts/{id}`, and `POST /api/accounts/{id}/opening`. Successful account responses expose
+`POST /api/accounts`, `PUT /api/accounts/{id}`, `POST /api/accounts/{id}/opening`, and
+`GET`/`POST /api/accounts/{id}/transactions`. Successful account responses expose
 IDs/names, the configured currency code, nullable exact balance, and opening provenance; errors retain stable `invalid_account_name`,
 `account_name_taken`, and `not_found` codes. Writes and their audit events commit
 atomically. Request-scoped SSR uses reviewed identity-bound hydration data, not
@@ -252,15 +265,16 @@ shared private caches or automatic HTTP transfer caching.
 ### Opening Balances and Currency
 
 Accounts start with `balance: null` and no opening entry. A Manager posts exactly
-one explicit opening amount, including zero. Members can read the resulting
+one explicit opening amount, including zero and negative amounts. Members can read the resulting
 balance and provenance but cannot post. Opening entries cannot be edited or
 deleted. Posting commits the entry, balance, and audit event atomically; retries
 with the same account, actor, amount, comment, and GUID idempotency key replay the
 original entry. Changed payloads/actors conflict.
 
 Amounts use signed 64-bit integer minor units internally and canonical
-two-decimal strings in JSON. Negative amounts, extra precision, and values above
-`92233720368547758.07` are rejected rather than rounded. Browser formatting also
+two-decimal strings in JSON. Opening amounts and balances support the full range
+`-92233720368547758.08` through `92233720368547758.07`. Extra precision and
+out-of-range values are rejected rather than rounded. Browser formatting also
 preserves every digit without binary floating-point money arithmetic.
 
 Set `MONKEY_CURRENCY=EUR` (default) or `MONKEY_CURRENCY=USD` in the backend/container
@@ -272,7 +286,8 @@ The currency-neutral helpers are `CurrencyAmount` and `CurrencyAmountPipe`.
 
 Ledger sources use `LedgerEntrySource` in entities, queries, entry creation, and
 response mapping. EF converts it to the existing lowercase text column; JSON
-uses the same `opening` value. The enum change requires no schema migration.
+uses the stable `opening`, `deposit`, and `withdrawal` values. The original enum
+change required no schema migration; manual transactions add the sequence and signed constraints described below.
 The SQLite enum query/materialization probe and all 16 focused account/ledger
 production-image cases passed on 2026-10-08.
 
@@ -288,6 +303,39 @@ The focused ledger suite passed 8/8 cases; the full production-image suite passe
 confirmed exact maximum-value layout and suffix symbols. Tests also verified
 same-volume EUR-to-USD relabeling without monetary/provenance changes.
 Hosted CI, publishing, and actual-host release gates remain open.
+
+### Manual Transactions and History
+
+An account needs one opening before a Manager can post manual transactions.
+`POST /api/accounts/{id}/transactions` accepts `source: "deposit"` or
+`"withdrawal"`, a positive decimal-string `amount`, an optional comment up to
+500 characters, and a GUID `idempotencyKey`. Deposits persist positive deltas;
+withdrawals persist negative deltas. Overdrafts are allowed. Checked balance
+overflow returns `balance_overflow` with no partial financial writes.
+Successful posts and matching replays return the original entry with HTTP 200.
+The key is shared across opening/manual postings; source is part of conflict matching.
+
+`GET /api/accounts/{id}/transactions?pageSize=20` returns `entries` and
+`nextCursor`. Pass the returned cursor unchanged, URL-encoded, to read the next
+page. Pages allow 1-100 entries and include openings. A unique increasing
+sequence gives newest-first ordering, and the first page's snapshot excludes
+new postings from later pages. The UI retains previous pages while browsing;
+refreshing the account starts a new snapshot. Ready Members can read all history
+but cannot post; the backend enforces permissions and antiforgery.
+
+The `ManualTransactions` migration backfills only the ordering sequence for
+existing openings, preserving amounts, balances, actors, timestamps, and comments.
+SQLite checks validate integer balances/deltas, source signs, positive unique
+sequences, single openings, and unique idempotency keys. Posted history has no
+edit/delete/reversal endpoint. Dedicated reversals remain deferred.
+
+On 2026-10-08, the locked .NET build, actual-SQLite migration/rollback probe,
+Angular SSR/image builds, catalog validation, E2E typecheck, and EF model check
+passed. All 15 focused ledger cases and all 56 production-image cases passed;
+the full suite used `CI=true`, one worker, zero retries, and took 10.4 minutes.
+Desktop/mobile German/English screenshots and checks cover negative extremes,
+overdrafts, escaped comments, response-loss retries, pagination during new posts,
+and unchanged persisted history on language changes. Hosted acceptance remains open.
 
 ### Manual Built Preview
 

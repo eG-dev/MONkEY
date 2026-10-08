@@ -1,8 +1,8 @@
 # E2E-first testing foundation
 
 Status: local foundation suite implemented and verified; GitHub-hosted acceptance
-remains open after a browser network-change failure. The CI worker fix passed all
-49 cases locally; the hosted rerun is pending. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
+remains open after a browser network-change failure. The latest 56-case regression
+passed locally with CI scheduling; the hosted rerun is pending. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
 and the [foundation guide](../../revamp/README.md). Extend with each feature.
 
 ## Strategy

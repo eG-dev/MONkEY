@@ -41,6 +41,9 @@
   @if (openingSaved()) {
     <p class="success" role="status">{{ t('accounts.openingSaved') }}</p>
   }
+  @if (transactionSaved()) {
+    <p class="success" role="status">{{ t('accounts.transactionSaved') }}</p>
+  }
   @if (loading()) {
     <p class="page-status" role="status">{{ t('accounts.loading') }}</p>
   } @else if (account(); as current) {
@@ -105,7 +108,7 @@
               name="openingAmount"
               inputmode="decimal"
               [(ngModel)]="amount"
-              maxlength="20"
+              maxlength="21"
               required
               autocomplete="off"
               [attr.aria-invalid]="error() ? 'true' : null"
@@ -126,6 +129,111 @@
           <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.postOpening') }}
         </button>
       }
+    }
+
+    @if (current.balance !== null) {
+      @if (auth.user()?.role === 'Manager') {
+        @if (transaction(); as source) {
+          <form class="transaction-form" (ngSubmit)="postTransaction()" [attr.aria-label]="t('accounts.' + source)">
+            <h3>{{ t('accounts.' + source) }}</h3>
+            <fieldset [disabled]="busy() || !interactive()">
+              <label for="transaction-amount">{{ t('accounts.transactionAmount', { currency: current.currency }) }}</label>
+              <input
+                id="transaction-amount"
+                name="transactionAmount"
+                inputmode="decimal"
+                [(ngModel)]="amount"
+                maxlength="20"
+                required
+                autocomplete="off"
+                [attr.aria-invalid]="error() ? 'true' : null"
+                [attr.aria-describedby]="error() ? 'account-error' : null"
+              />
+              <label for="transaction-comment">{{ t('accounts.comment') }}</label>
+              <textarea id="transaction-comment" name="transactionComment" [(ngModel)]="comment" maxlength="500" rows="3"></textarea>
+              <div class="form-actions">
+                <button tuiButton size="s" type="submit">
+                  <span class="icon icon-check" aria-hidden="true"></span>{{ t('accounts.postTransaction') }}
+                </button>
+                <button tuiButton appearance="secondary" size="s" type="button" (click)="cancel()">{{ t('accounts.cancel') }}</button>
+              </div>
+            </fieldset>
+          </form>
+        } @else {
+          <div class="transaction-actions">
+            <button tuiButton size="s" type="button" [disabled]="busy() || !interactive()" (click)="beginTransaction('deposit')">
+              <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.deposit') }}
+            </button>
+            <button
+              tuiButton
+              appearance="secondary"
+              size="s"
+              type="button"
+              [disabled]="busy() || !interactive()"
+              (click)="beginTransaction('withdrawal')"
+            >
+              <span class="icon icon-minus" aria-hidden="true"></span>{{ t('accounts.withdrawal') }}
+            </button>
+          </div>
+        }
+      }
+
+      <section class="ledger-history" [attr.aria-label]="t('accounts.history')">
+        <h3>{{ t('accounts.history') }}</h3>
+        @if (historyError()) {
+          <p class="error" role="alert">{{ t(historyError()) }}</p>
+        }
+        @if (historyLoading()) {
+          <p class="page-status" role="status">{{ t('accounts.historyLoading') }}</p>
+        } @else {
+          <ol class="ledger-list">
+            @for (entry of history(); track entry.id) {
+              <li data-testid="ledger-entry">
+                <div class="ledger-heading">
+                  <strong>{{ t('accounts.sources.' + entry.source) }}</strong>
+                  <span class="ledger-amount">{{ entry.amount | currencyAmount: language.locale() : entry.currency }}</span>
+                </div>
+                <div class="ledger-meta">
+                  <span>{{ entry.actorDisplayName }}</span>
+                  <time [attr.datetime]="entry.occurredAtUtc">{{ entry.occurredAtUtc | date: 'medium' : 'UTC' : language.locale() }}</time>
+                </div>
+                @if (entry.comment) {
+                  <p class="ledger-comment">{{ entry.comment }}</p>
+                }
+              </li>
+            } @empty {
+              <li class="page-status">{{ t('accounts.historyEmpty') }}</li>
+            }
+          </ol>
+          <nav class="history-pagination" [attr.aria-label]="t('accounts.historyPages')">
+            <button
+              tuiButton
+              appearance="secondary"
+              size="s"
+              type="button"
+              [disabled]="historyPage() === 0 || historyLoading() || busy()"
+              [attr.aria-label]="t('accounts.previousPage')"
+              [title]="t('accounts.previousPage')"
+              (click)="previousHistory()"
+            >
+              <span class="icon icon-arrow-left" aria-hidden="true"></span>
+            </button>
+            <span>{{ t('accounts.page', { page: historyPage() + 1 }) }}</span>
+            <button
+              tuiButton
+              appearance="secondary"
+              size="s"
+              type="button"
+              [disabled]="!nextCursor() || historyLoading() || busy()"
+              [attr.aria-label]="t('accounts.nextPage')"
+              [title]="t('accounts.nextPage')"
+              (click)="nextHistory()"
+            >
+              <span class="icon icon-arrow-right" aria-hidden="true"></span>
+            </button>
+          </nav>
+        }
+      </section>
     }
   }
 </section>

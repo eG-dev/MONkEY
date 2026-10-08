@@ -139,6 +139,6 @@ public sealed class AccountAdministration
         Name = account.Name,
         Currency = settings.Currency,
         Balance = account.BalanceMinorUnits is { } balance ? CurrencyAmount.Format(balance) : null,
-        OpeningEntry = account.LedgerEntries.SingleOrDefault() is { } entry ? OpeningBalanceAdministration.Describe(entry, settings.Currency) : null
+        OpeningEntry = account.LedgerEntries.SingleOrDefault() is { } entry ? LedgerAdministration.Describe(entry, settings.Currency) : null
     };
 }

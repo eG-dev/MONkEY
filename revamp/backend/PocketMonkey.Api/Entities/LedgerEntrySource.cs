@@ -2,9 +2,15 @@ using System.Text.Json.Serialization;
 
 namespace PocketMonkey.Api.Entities;
 
-[JsonConverter(typeof(JsonStringEnumConverter<LedgerEntrySource>))]
+[JsonConverter(typeof(LedgerEntrySourceConverter))]
 public enum LedgerEntrySource
 {
     [JsonStringEnumMemberName("opening")]
-    Opening
+    Opening,
+
+    [JsonStringEnumMemberName("deposit")]
+    Deposit,
+
+    [JsonStringEnumMemberName("withdrawal")]
+    Withdrawal
 }

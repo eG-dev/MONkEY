@@ -11,5 +11,5 @@ public sealed record AccountResponse
 
     public string? Balance { get; init; }
 
-    public OpeningEntryResponse? OpeningEntry { get; init; }
+    public LedgerEntryResponse? OpeningEntry { get; init; }
 }

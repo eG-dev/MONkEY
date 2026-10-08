@@ -13,7 +13,7 @@ once, before adding ordinary transactions or automated credits.
 
 - Instance-wide EUR (default) or USD display unit, configured by `MONKEY_CURRENCY`; append its symbol after localized amounts. Currency is only a unit, with no conversion or financial-history changes; see [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md).
 - Two decimal places; exact signed 64-bit integer minor units internally and decimal strings in the API. Reject extra precision rather than rounding silently.
-- No negative opening amounts/balances and no product-specific monetary cap; enforce the representation's range and checked arithmetic.
+- Signed opening amounts and balances, with no product-specific monetary cap; enforce the representation's range and checked arithmetic. [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md) supersedes the original nonnegative policy during Step 3C.
 - Accounts remain uninitialized until a Manager posts exactly one explicit opening entry, including zero. Existing accounts are not silently initialized; opening entries cannot be edited or repeated.
 - Follow [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) for atomic posting, historical provenance, and idempotent retry/conflict behavior. No Azure import or silent balance edits.
 
@@ -45,8 +45,9 @@ commands and configuration are in the [replacement guide](../../revamp/README.md
 
 ## Deferred
 
-Ordinary deposits/withdrawals, transaction-history pagination, allowances, and
-reports. Keep financial history append-only; opening-entry correction must follow
+Ordinary deposits/withdrawals and transaction-history pagination are now delivered
+in [Step 3C](03c-transactions.md). Allowances and reports remain deferred. Keep
+financial history append-only; opening-entry correction must follow
 the subsequently agreed correction policy, not silently rewrite an entry.
 
 Next: [deposits, withdrawals, and history](03c-transactions.md).

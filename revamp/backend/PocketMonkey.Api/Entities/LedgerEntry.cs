@@ -8,6 +8,8 @@ public sealed class LedgerEntry
 
     public long AmountMinorUnits { get; init; }
 
+    public long SequenceNumber { get; init; }
+
     public required string IdempotencyKey { get; init; }
 
     public required string ActorId { get; init; }

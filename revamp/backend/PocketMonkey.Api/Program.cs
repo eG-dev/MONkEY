@@ -33,7 +33,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddLocalIdentity(builder.Environment.IsDevelopment());
 builder.Services.AddScoped<AccountAdministration>();
-builder.Services.AddScoped<OpeningBalanceAdministration>();
+builder.Services.AddScoped<LedgerAdministration>();
 
 builder.Services.AddDbContext<FoundationDbContext>(options => options.UseSqlite(settings.ConnectionString));
 
@@ -108,6 +108,7 @@ app.MapAuthentication();
 app.MapUsers();
 app.MapAccounts();
 app.MapOpeningBalances();
+app.MapTransactions();
 
 if (app.Environment.IsDevelopment())
 {

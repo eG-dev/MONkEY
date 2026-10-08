@@ -2,8 +2,8 @@ using PocketMonkey.Api.Entities;
 
 namespace PocketMonkey.Api.Contracts.Accounts;
 
-/// <summary>Exact opening amount and immutable posting provenance.</summary>
-public sealed record OpeningEntryResponse
+/// <summary>Exact signed ledger delta and immutable posting provenance.</summary>
+public sealed record LedgerEntryResponse
 {
     public required string Id { get; init; }
 

@@ -60,7 +60,7 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
             accountEntity.ToTable("Accounts", table =>
             {
                 table.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40");
-                table.HasCheckConstraint("CK_Accounts_Balance", "BalanceMinorUnits IS NULL OR (typeof(BalanceMinorUnits) = 'integer' AND BalanceMinorUnits >= 0)");
+                table.HasCheckConstraint("CK_Accounts_Balance", "BalanceMinorUnits IS NULL OR typeof(BalanceMinorUnits) = 'integer'");
             });
         });
 
@@ -79,6 +79,14 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
                 .IsUnique();
 
             entryEntity
+                .HasIndex(x => x.SequenceNumber)
+                .IsUnique();
+
+            entryEntity
+                .HasIndex(entry => new { entry.AccountId, entry.SequenceNumber })
+                .IsDescending(false, true);
+
+            entryEntity
                 .HasIndex(x => x.AccountId)
                 .HasFilter("Source = 'opening'")
                 .IsUnique();
@@ -91,8 +99,9 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 
             entryEntity.ToTable("LedgerEntries", table =>
             {
-                table.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits >= 0");
-                table.HasCheckConstraint("CK_LedgerEntries_Source", "Source = 'opening'");
+                table.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND (Source = 'opening' OR (Source = 'deposit' AND AmountMinorUnits > 0) OR (Source = 'withdrawal' AND AmountMinorUnits < 0))");
+                table.HasCheckConstraint("CK_LedgerEntries_Source", "Source IN ('opening', 'deposit', 'withdrawal')");
+                table.HasCheckConstraint("CK_LedgerEntries_Sequence", "typeof(SequenceNumber) = 'integer' AND SequenceNumber > 0");
                 table.HasCheckConstraint("CK_LedgerEntries_Comment", "Comment IS NULL OR length(Comment) <= 500");
                 table.HasCheckConstraint("CK_LedgerEntries_Key", "length(IdempotencyKey) = 36");
             });

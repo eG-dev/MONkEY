@@ -1,11 +1,5 @@
-export interface OpeningEntry {
-  id: string;
-  accountId: string;
-  amount: string;
-  currency: string;
-  actorId: string;
-  actorDisplayName: string;
-  occurredAtUtc: string;
-  source: string;
-  comment: string | null;
+import { LedgerEntry } from './ledger-entry';
+
+export interface OpeningEntry extends LedgerEntry {
+  source: 'opening';
 }

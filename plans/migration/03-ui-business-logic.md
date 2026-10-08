@@ -1,7 +1,7 @@
 # Milestone 3: incremental UI and business logic
 
-Status: in progress. Steps 3A and 3B are locally implemented and verified on 2026-10-08;
-steps 3C-3H have not started. Depends on [authentication and authorization](02-authentication-authorization.md).
+Status: in progress. Steps 3A, 3B, and the approved 3C scope are locally implemented and verified on 2026-10-08;
+steps 3D-3H have not started. Dedicated correction/reversal workflows are deferred. Depends on [authentication and authorization](02-authentication-authorization.md).
 
 ## Delivery model
 
@@ -45,8 +45,8 @@ delivery rather than accumulating incomplete backend-only or UI-only work.
 ## Decision boundaries
 
 - 3A resolved: trimmed names of 1-40 characters, case-insensitive uniqueness, and no nine-account cap; see [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
-- 3B resolved: exact two-decimal integer minor units, decimal-string API, non-negative balances, explicit single opening entries, and EUR/USD display units; see [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md).
-- Before 3C: manual-posting validation and correction/reversal behavior.
+- 3B resolved: exact two-decimal integer minor units, decimal-string API, explicit single opening entries, and EUR/USD display units; see [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md). The original nonnegative rule is superseded by 3C.
+- 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
 - Before 3D: upload limits/formats and file/database failure recovery.
 - Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.
 - Before 3G: report closure, late corrections, and immutable period boundaries.
