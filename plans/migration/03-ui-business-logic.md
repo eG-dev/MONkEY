@@ -19,72 +19,48 @@ Translate application and Taiga-provided UI consistently; do not defer translati
 until feature completion. Check longer text and localized number/date entry as
 well as display, without changing the business timezone or currency.
 
-## Slice A: accounts and read-only overview
+## Delivery steps
 
-- Introduce tenant-free domain models and repositories, separate from Azure SDK entities.
-- Build account listing, detail pages, balances, and paginated transaction history.
-- Add manager account creation and editing; decide name limits and whether the old nine-account UI limit remains relevant.
-- Add authenticated image upload/read/delete with size limits, content validation, safe generated filenames, and path-traversal prevention.
-- Store files privately; serve through authorized endpoints with appropriate private caching.
-- Re-encode uploaded images and remove unnecessary metadata. Define cleanup for orphan files and failure recovery between database and file changes.
-- Provide explicit initial/opening balance behavior rather than importing Azure data or silently editing balances.
+Implement one step at a time, through the real backend and UI. Each linked plan
+has its own scope, decision prerequisites, and acceptance gate. Do not treat this
+milestone as one implementation task or build later-step infrastructure in advance.
 
-Gate: managers can create accounts; members can view all accounts but cannot
-modify them; invalid uploads and direct unauthorized writes fail.
+| Step | Plan | Usable outcome | Depends on |
+| --- | --- | --- | --- |
+| 3A | [Shared accounts](03a-accounts.md) | List, view, create, and edit text-only accounts | Milestone 2 |
+| 3B | [Ledger and opening balances](03b-ledger-opening-balances.md) | Explicit opening entries and exact displayed balances | 3A and approved money policies |
+| 3C | [Deposits, withdrawals, and history](03c-transactions.md) | Manual posting and paginated ledger history | 3B |
+| 3D | [Account images](03d-account-images.md) | Safe private upload, display, replacement, and removal | 3A |
+| 3E | [Allowance configuration](03e-allowance-configuration.md) | Persisted manager settings and member-visible configuration | 3B |
+| 3F | [Allowance execution](03f-allowance-execution.md) | Durable monthly credits and visible execution outcomes | 3C and 3E |
+| 3G | [Monthly reports](03g-monthly-reports.md) | Immutable monthly snapshots and report views, without email | 3C and 3F |
+| 3H | [Management and lifecycle completion](03h-lifecycle.md) | Remaining profile/settings/legal/lifecycle workflows | Relevant preceding steps |
 
-## Slice B: ledger and deposits/withdrawals
+Start with 3A. The table gives the default order, not a requirement to block
+independent image work on unresolved money policies: 3D can follow 3A directly.
+Complete the active step's gate before starting another. Reassess scope after each
+delivery rather than accumulating incomplete backend-only or UI-only work.
 
-- Implement transaction posting in backend application services, replacing the behavior in AccountDetails.razor.
-- Decide currency and negative-balance policy before exposing financial writes.
-- Proposed default: integer minor units, one configured currency, and explicit rounding. Never use binary floating-point for monetary calculations.
-- Define the API money representation so Angular cannot introduce precision loss; use bounded safe integers or decimal strings as appropriate.
-- Insert the ledger entry and update any stored balance in one database transaction.
-- Introduce unique idempotency keys so repeated clicks, retries, and concurrent submissions do not duplicate entries.
-- Store actor user ID, timestamp, source, and optional comment; retain an actor display snapshot where historical readability requires it.
-- Prefer append-only financial entries and explicit correction/reversal entries over silent history edits.
-- Show actionable failures; do not preserve the current swallowed exceptions.
+## Decision boundaries
 
-Gate: simultaneous manager writes produce correct balances; failed writes roll
-back completely; repeating a request does not double-post; members cannot post.
+- Before 3A: account naming/validation and whether the old nine-account UI limit remains relevant.
+- Before 3B: currency, precision, rounding, API money representation, negative balances, and opening-entry behavior.
+- Before 3C: manual-posting validation and correction/reversal behavior.
+- Before 3D: upload limits/formats and file/database failure recovery.
+- Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.
+- Before 3G: report closure, late corrections, and immutable period boundaries.
+- Before destructive work in 3H: archival, deletion/anonymization, retention, and sensitive-action confirmation/re-authentication.
 
-## Slice C: monthly allowances
+Proposed defaults in the child plans remain proposals. Resolve affected business
+policies before implementing them; record approved enduring decisions in ADRs
+during that step, not speculative records now. Follow the existing
+[application boundaries](../../docs/ADR/ADR-0002-application-boundaries.md),
+[shared access](../../docs/ADR/ADR-0003-shared-instance-access.md), and
+[language/timezone](../../docs/ADR/ADR-0004-language-and-timezone.md) decisions.
 
-- Add manager allowance configuration and member-visible allowance status.
-- Use the business timezone from Docker ENV `TZ`; define due date, effective-date behavior, missed-month catch-up rules, and handling subsequent timezone changes.
-- Replace the pocket-money Azure Function with backend scheduling plus persistent job state.
-- Use a unique account/period identity for allowance credits, enforced by the database and posted through the same atomic ledger service.
-- Do not depend on an in-memory timer firing exactly once; startup and retries must safely resume pending work.
-- Record execution outcomes and make failure status visible to managers.
-
-Gate: repeated runs and crash/restart scenarios never double-credit; tests cover
-month boundaries, daylight saving transitions, disabled allowances, and downtime.
-
-## Slice D: monthly reports without email
-
-- Replace monthly reporting with backend jobs and an Angular report list/detail view.
-- Generate immutable report snapshots from ledger boundaries with unique account/period constraints.
-- Use Docker ENV `TZ` to determine report-period boundaries; retain UTC timestamps and do not reinterpret closed periods after a timezone change.
-- Use raw timestamps and amounts in report data; apply locale formatting at presentation boundaries.
-- Define report-period closure and correction behavior so late changes do not silently alter historical reports.
-- Persist sufficient opening-balance/checkpoint information to support reliable reporting.
-- Do not port email triggers, SMTP templates, queues, delivery preferences, or resend controls.
-- Add download/export only if agreed as a requirement; it is not a substitute email feature.
-
-Gate: opening/closing balances reconcile with posted transactions; empty periods,
-late corrections, retries, and period boundaries have defined behavior.
-
-## Slice E: management and lifecycle completion
-
-- Complete manager user/role administration and member self-service profile/password screens.
-- Include a language selector usable before login and saved personal language preferences for both roles; the basic selector and identity integration are delivered in milestones 1 and 2.
-- Replace tenant settings with instance settings; remove tenant creation, selection, invitation, and tenant deletion workflows.
-- Review terms/privacy pages and acceptance requirements for the self-hosted operating model rather than copying cloud wording unchanged.
-- Define account archival and user deletion/anonymization without destroying financial audit history accidentally.
-- Proposed default: retain financial history; no automatic twelve-month deletion. Resolve retention requirements before adding a cleanup job.
-- Add explicit confirmations and re-authentication where appropriate for sensitive actions.
-
-Gate: all agreed core workflows work for both roles; destructive actions preserve
-ledger integrity and last-manager protection; no email or tenant assumptions remain.
+The locally implemented authentication foundation is the starting point, not work
+to repeat in 3H. Hosted/fork CI, publishing rehearsal, and real-host deployment
+gates remain open as recorded in the [migration overview](README.md).
 
 ## Verification across slices
 

@@ -55,8 +55,14 @@ Internet connectivity and an external identity provider must not be required at 
 | --- | --- | --- |
 | 1 | [Stack foundation](01-stack-foundation.md) | Runnable .NET + Angular SSR + storage in Docker |
 | 2 | [Authentication and authorization](02-authentication-authorization.md) | Local users, sessions, and enforced roles |
-| 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Small, tested end-to-end feature slices |
+| 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Eight separately gated backend/UI delivery steps |
 | 4 | [Operations and cutover](04-operations-cutover.md) | Restorable, upgradeable deployment and deliberate Azure retirement |
+
+Milestone 3 starts with [shared accounts](03a-accounts.md): text-only account
+listing, detail, creation, and editing. Financial posting, images, allowance
+configuration/execution, reports, and lifecycle completion have separate plans;
+do not begin them as part of the first account implementation. Follow the
+[delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
 
 Each milestone has an acceptance gate. Work may be demonstrated before feature
 parity, but the replacement is not the production system until its release gates
