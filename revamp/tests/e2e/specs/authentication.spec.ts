@@ -237,14 +237,49 @@ test('user-administration errors keep stable API codes and statuses @api', async
 
   const profile = await login(request, manager);
 
+  for (const role of ['Unknown', 'manager', 'member', '0', '1', 'Manager,Member', null]) {
+    await test.step(`unsupported role ${JSON.stringify(role)} keeps invalid_user`, async () => {
+      const created = await csrfWrite(request, 'POST', '/api/users', {
+        ...credentials('invalid-role'),
+        displayName: 'Invalid role',
+        role,
+      });
+
+      expect(created.status()).toBe(400);
+      expect(await created.json()).toEqual({ code: 'invalid_user' });
+
+      const updated = await csrfWrite(request, 'PUT', `/api/users/${profile.id}`, {
+        displayName: manager.username,
+        role,
+        isActive: true,
+      });
+
+      expect(updated.status()).toBe(400);
+      expect(await updated.json()).toEqual({ code: 'invalid_user' });
+    });
+  }
+
+  for (const role of [0, 1]) {
+    await test.step(`numeric role ${role} is rejected during JSON binding`, async () => {
+      const created = await csrfWrite(request, 'POST', '/api/users', {
+        ...credentials('numeric-role'),
+        displayName: 'Numeric role',
+        role,
+      });
+
+      expect(created.status()).toBe(400);
+
+      const updated = await csrfWrite(request, 'PUT', `/api/users/${profile.id}`, {
+        displayName: manager.username,
+        role,
+        isActive: true,
+      });
+
+      expect(updated.status()).toBe(400);
+    });
+  }
+
   const cases = [
-    {
-      method: 'POST',
-      path: '/api/users',
-      data: { ...credentials('invalid'), displayName: 'Invalid', role: 'Unknown' },
-      status: 400,
-      code: 'invalid_user',
-    },
     {
       method: 'POST',
       path: '/api/auth/password',
@@ -297,6 +332,14 @@ test('user-administration errors keep stable API codes and statuses @api', async
       expect(await response.json()).toEqual({ code: testCase.code });
     });
   }
+
+  const defaultRole = await csrfWrite(request, 'POST', '/api/users', {
+    ...credentials('default-role'),
+    displayName: 'Default role',
+  });
+
+  expect(defaultRole.status()).toBe(201);
+  expect((await defaultRole.json()).role).toBe('Member');
 });
 
 test('member permissions and concurrent SSR identity stay isolated @api', async ({ request, playwright, instance }) => {

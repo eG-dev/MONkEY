@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PocketMonkey.Api.Contracts.Users;
 using PocketMonkey.Api.Entities;
+using PocketMonkey.Api.Identity;
 using PocketMonkey.Api.Services;
 using PocketMonkey.Api.Storage;
 
@@ -13,7 +14,7 @@ public static class UserEndpoints
     public static void MapUsers(this WebApplication app)
     {
         var management = app.MapGroup("/api/users")
-            .RequireAuthorization("Manager")
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
             .WithTags("Users");
 
         management.MapGet("", async (

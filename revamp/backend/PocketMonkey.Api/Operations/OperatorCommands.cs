@@ -35,7 +35,7 @@ public static class OperatorCommands
                     Username = username,
                     DisplayName = username,
                     Password = password,
-                    Role = "Manager"
+                    Role = UserRole.Manager
                 },
                 "host-operator",
                 true,

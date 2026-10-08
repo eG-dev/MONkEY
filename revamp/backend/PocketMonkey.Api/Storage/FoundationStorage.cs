@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Entities;
+using PocketMonkey.Api.Identity;
 
 namespace PocketMonkey.Api.Storage;
 
@@ -20,9 +21,11 @@ public static class FoundationStorage
 
         var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        foreach (var role in new[] { "Manager", "Member" })
+        foreach (var role in Enum.GetValues<UserRole>())
         {
-            if (!await roles.RoleExistsAsync(role) && !(await roles.CreateAsync(new IdentityRole(role))).Succeeded)
+            var roleName = role.ToIdentityName();
+
+            if (!await roles.RoleExistsAsync(roleName) && !(await roles.CreateAsync(new IdentityRole(roleName))).Succeeded)
             {
                 throw new InvalidOperationException("Identity role initialization failed.");
             }

@@ -69,8 +69,8 @@ public static class IdentityConfiguration
                 .RequireAuthenticatedUser()
                 .RequireClaim("password_ready", "true"));
 
-            options.AddPolicy("Manager", policy => policy
-                .RequireRole("Manager")
+            options.AddPolicy(UserRole.Manager.ToIdentityName(), policy => policy
+                .RequireRole(UserRole.Manager.ToIdentityName())
                 .RequireClaim("password_ready", "true"));
         });
 

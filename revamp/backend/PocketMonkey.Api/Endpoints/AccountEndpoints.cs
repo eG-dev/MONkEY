@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using PocketMonkey.Api.Contracts.Accounts;
+using PocketMonkey.Api.Entities;
+using PocketMonkey.Api.Identity;
 using PocketMonkey.Api.Services;
 
 namespace PocketMonkey.Api.Endpoints;
@@ -50,7 +52,7 @@ public static class AccountEndpoints
                     ? ToResult(error)
                     : TypedResults.Created($"/api/accounts/{result.Account!.Id}", result.Account);
             })
-            .RequireAuthorization("Manager")
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
             .WithName("CreateAccount")
             .Produces<AccountResponse>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
@@ -73,7 +75,7 @@ public static class AccountEndpoints
                     ? ToResult(error)
                     : TypedResults.Ok(result.Account);
             })
-            .RequireAuthorization("Manager")
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
             .WithName("UpdateAccount")
             .Produces<AccountResponse>()
             .Produces(StatusCodes.Status400BadRequest)

@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using PocketMonkey.Api.Contracts.Accounts;
+using PocketMonkey.Api.Entities;
+using PocketMonkey.Api.Identity;
 using PocketMonkey.Api.Services;
 
 namespace PocketMonkey.Api.Endpoints;
@@ -22,7 +24,7 @@ public static class OpeningBalanceEndpoints
 
                 return result.Error is { } error ? ToResult(error) : TypedResults.Ok(result.Entry);
             })
-            .RequireAuthorization("Manager")
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
             .WithTags("Accounts")
             .WithName("PostOpeningBalance")
             .Produces<OpeningEntryResponse>()

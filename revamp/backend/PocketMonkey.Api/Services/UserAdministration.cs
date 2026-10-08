@@ -5,6 +5,7 @@ using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Contracts.Authentication;
 using PocketMonkey.Api.Contracts.Users;
 using PocketMonkey.Api.Entities;
+using PocketMonkey.Api.Identity;
 using PocketMonkey.Api.Storage;
 
 namespace PocketMonkey.Api.Services;
@@ -31,7 +32,7 @@ public sealed class UserAdministration
             Id = user.Id,
             Username = user.UserName!,
             DisplayName = user.DisplayName,
-            Role = await users.IsInRoleAsync(user, "Manager") ? "Manager" : "Member",
+            Role = await users.IsInRoleAsync(user, UserRole.Manager.ToIdentityName()) ? UserRole.Manager : UserRole.Member,
             Language = user.Language,
             MustChangePassword = user.MustChangePassword
         };
@@ -46,7 +47,7 @@ public sealed class UserAdministration
         ArgumentNullException.ThrowIfNull(request);
 
         if (!ValidName(request.Username) || !ValidName(request.DisplayName) || !ValidPassword(request.Password) ||
-            request.Role is not ("Manager" or "Member"))
+            request.Role is not { } role || !Enum.IsDefined(role))
         {
             return UserAdministrationError.InvalidUser;
         }
@@ -73,7 +74,7 @@ public sealed class UserAdministration
             return UserAdministrationError.InvalidUser;
         }
 
-        result = await users.AddToRoleAsync(user, request.Role);
+        result = await users.AddToRoleAsync(user, role.ToIdentityName());
 
         if (!result.Succeeded)
         {
@@ -93,7 +94,7 @@ public sealed class UserAdministration
         string actor,
         CancellationToken cancellationToken)
     {
-        if (!ValidName(request.DisplayName) || request.Role is not ("Manager" or "Member"))
+        if (!ValidName(request.DisplayName) || request.Role is not { } role || !Enum.IsDefined(role))
         {
             return UserAdministrationError.InvalidUser;
         }
@@ -106,11 +107,12 @@ public sealed class UserAdministration
             return UserAdministrationError.NotFound;
         }
 
-        var wasManager = await users.IsInRoleAsync(user, "Manager");
+        var managerRoleName = UserRole.Manager.ToIdentityName();
+        var wasManager = await users.IsInRoleAsync(user, managerRoleName);
 
-        if (user.IsActive && wasManager && (!request.IsActive || request.Role != "Manager"))
+        if (user.IsActive && wasManager && (!request.IsActive || role != UserRole.Manager))
         {
-            var managerRole = await database.Roles.SingleAsync(x => x.Name == "Manager", cancellationToken);
+            var managerRole = await database.Roles.SingleAsync(x => x.Name == managerRoleName, cancellationToken);
 
             var activeManagers = await database.UserRoles
                 .Where(membership => membership.RoleId == managerRole.Id)
@@ -128,11 +130,12 @@ public sealed class UserAdministration
         }
 
         var currentRoles = await users.GetRolesAsync(user);
+        var roleName = role.ToIdentityName();
 
-        if (!currentRoles.Contains(request.Role))
+        if (!currentRoles.Contains(roleName))
         {
             if (!(await users.RemoveFromRolesAsync(user, currentRoles)).Succeeded ||
-                !(await users.AddToRoleAsync(user, request.Role)).Succeeded)
+            !(await users.AddToRoleAsync(user, roleName)).Succeeded)
             {
                 return UserAdministrationError.InvalidUser;
             }
@@ -168,7 +171,7 @@ public sealed class UserAdministration
         await using var transaction = await database.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         var user = await users.FindByIdAsync(id);
 
-        if (user is null || (recovery && !await users.IsInRoleAsync(user, "Manager")))
+        if (user is null || (recovery && !await users.IsInRoleAsync(user, UserRole.Manager.ToIdentityName())))
         {
             return UserAdministrationError.NotFound;
         }
