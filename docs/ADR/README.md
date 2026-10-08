@@ -15,3 +15,5 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0007](ADR-0007-application-foundation.md) | Evaluated runtime, SQLite, supervised image, localization, and verification tooling |
 | [ADR-0008](ADR-0008-local-authentication.md) | Local Identity, cookie sessions, antiforgery, operator recovery, and role enforcement |
 | [ADR-0009](ADR-0009-shared-accounts.md) | Shared account identity, unique trimmed names, Manager writes, and atomic audit |
+| [ADR-0010](ADR-0010-ledger-and-money.md) | Exact two-decimal minor units, explicit opening entries, atomic posting, and idempotency |
+| [ADR-0011](ADR-0011-currency-display-unit.md) | Instance-wide EUR/USD display unit, unchanged exact arithmetic, and suffix symbols |

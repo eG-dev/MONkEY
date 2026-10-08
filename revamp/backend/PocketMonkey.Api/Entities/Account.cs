@@ -7,4 +7,8 @@ public sealed class Account
     public required string Name { get; set; }
 
     public required string NormalizedName { get; set; }
+
+    public long? BalanceMinorUnits { get; set; }
+
+    public List<LedgerEntry> LedgerEntries { get; } = [];
 }

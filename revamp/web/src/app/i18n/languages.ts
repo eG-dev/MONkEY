@@ -1,7 +1,7 @@
 import { TUI_ENGLISH_LANGUAGE, TUI_GERMAN_LANGUAGE } from '@taiga-ui/i18n';
 
-import german from '../../public/i18n/de/shell.json';
-import english from '../../public/i18n/en/shell.json';
+import german from '../../../public/i18n/de/shell.json';
+import english from '../../../public/i18n/en/shell.json';
 
 export const LANGUAGES = {
   de: { id: 'de', name: 'Deutsch', locale: 'de-DE', direction: 'ltr', catalog: german, taiga: TUI_GERMAN_LANGUAGE },

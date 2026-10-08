@@ -3,7 +3,7 @@ import { isPlatformServer } from '@angular/common';
 import { Injectable, inject, makeStateKey, PLATFORM_ID, REQUEST_CONTEXT, signal, TransferState } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
 
-import { FoundationState } from './foundation-state';
+import { FoundationState } from '../../models/foundation/foundation-state';
 
 const foundationKey = makeStateKey<FoundationState | null>('monkey-foundation');
 

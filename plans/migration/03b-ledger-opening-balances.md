@@ -1,6 +1,6 @@
 # Step 3B: ledger and opening balances
 
-Status: not started. Depends on [shared accounts](03a-accounts.md).
+Status: locally implemented and verified on 2026-10-08. Depends on [shared accounts](03a-accounts.md).
 Apply the [milestone delivery and verification rules](03-ui-business-logic.md).
 
 ## Outcome
@@ -9,13 +9,13 @@ A manager explicitly initializes an account's balance through a ledger entry.
 Both roles see the exact resulting balance. This establishes the posting contract
 once, before adding ordinary transactions or automated credits.
 
-## Decisions before implementation
+## Agreed decisions
 
-- Agree one configured currency, precision, rounding, limits, and negative-balance policy.
-- Proposed default: integer minor units with explicit rounding. Never use binary floating-point for monetary calculations.
-- Agree the API representation: bounded safe integers or decimal strings, without Angular precision loss.
-- Define initialization of empty accounts created in 3A, zero opening amounts, and whether/when an opening entry may be posted. No Azure import or silent balance edits.
-- Record the approved financial model/policies in an ADR during this step.
+- Instance-wide EUR (default) or USD display unit, configured by `MONKEY_CURRENCY`; append its symbol after localized amounts. Currency is only a unit, with no conversion or financial-history changes; see [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md).
+- Two decimal places; exact signed 64-bit integer minor units internally and decimal strings in the API. Reject extra precision rather than rounding silently.
+- No negative opening amounts/balances and no product-specific monetary cap; enforce the representation's range and checked arithmetic.
+- Accounts remain uninitialized until a Manager posts exactly one explicit opening entry, including zero. Existing accounts are not silently initialized; opening entries cannot be edited or repeated.
+- Follow [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) for atomic posting, historical provenance, and idempotent retry/conflict behavior. No Azure import or silent balance edits.
 
 ## Work
 
@@ -27,10 +27,21 @@ once, before adding ordinary transactions or automated credits.
 
 ## Acceptance gate
 
-- [ ] Opening entries and balances persist correctly; members read them but cannot post them.
-- [ ] Repeated/concurrent initialization cannot duplicate entries or bypass the agreed opening-entry rule.
-- [ ] Targeted real-SQLite checks prove exact arithmetic, constraints, and complete rollback on failure.
-- [ ] Browser tests verify localized entry/display, actionable failures, and unchanged monetary values when language changes.
+- [x] Opening entries and balances persist correctly; members read them but cannot post them.
+- [x] Repeated/concurrent initialization cannot duplicate entries or bypass the agreed opening-entry rule.
+- [x] Targeted real-SQLite checks prove exact arithmetic, constraints, and complete rollback on failure.
+- [x] Browser tests verify localized entry/display, actionable failures, and unchanged monetary values when language changes.
+
+## Local verification
+
+- Locked backend/runtime-check build and real-SQLite `ledger-persistence` check passed, including upgrade of existing accounts without implicit initialization, exact arithmetic/range enforcement, and full audit-failure rollback.
+- Angular SSR and production-image builds, German/English catalog validation, E2E typechecking, Compose USD forwarding, and editor diagnostics passed. EF reports no pending model changes.
+- `npm --prefix tests/e2e test -- ledger.spec.ts` passed all eight ledger cases. `npm --prefix tests/e2e test` passed all 49 production-image cases, including the new unsupported-currency startup check.
+- Real HTTPS/browser workflows cover both roles, CSRF, zero/maximum amounts, precision errors, idempotent retries/conflicts, concurrent openings, restart persistence, historical actor snapshots, and private SSR isolation.
+- German/English desktop/mobile entry, language switches, EUR/USD suffix display, and exact maximum-value screenshots passed. Reopening the same volume under USD preserved the original amounts and posting provenance.
+
+Hosted CI, publishing, and actual-host operational gates remain open. Reproducible
+commands and configuration are in the [replacement guide](../../revamp/README.md).
 
 ## Deferred
 

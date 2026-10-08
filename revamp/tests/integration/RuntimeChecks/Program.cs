@@ -1,5 +1,12 @@
 using RuntimeChecks.Tests;
 
+if (args is ["ledger-persistence"])
+{
+    await LedgerPersistenceCheck.RunAsync();
+
+    return;
+}
+
 if (args is ["account-persistence"])
 {
     await AccountPersistenceCheck.RunAsync();

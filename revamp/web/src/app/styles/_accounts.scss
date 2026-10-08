@@ -114,6 +114,40 @@ input:focus-visible {
   font-size: 1.125rem;
 }
 
+.account-balance {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--tui-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.opening-action,
+.opening-form,
+h3 {
+  margin-top: 1.5rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 4px;
+  color: inherit;
+  background: var(--tui-background-base);
+  font: inherit;
+}
+
+textarea:focus-visible {
+  outline: 2px solid var(--tui-text-action);
+  outline-offset: 2px;
+}
+
 .error {
   color: #a12734;
 }

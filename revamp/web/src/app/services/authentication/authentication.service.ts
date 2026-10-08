@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, makeStateKey, REQUEST_CONTEXT, signal, TransferState } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
 
-import { SessionUser } from './session-user';
+import { SessionUser } from '../../models/authentication/session-user';
 
 const sessionKey = makeStateKey<SessionUser | null>('monkey-session-profile');
 

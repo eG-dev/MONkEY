@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Contracts.Accounts;
 using PocketMonkey.Api.Entities;
 using PocketMonkey.Api.Services;
@@ -12,6 +13,7 @@ internal static class AccountPersistenceCheck
     public static async Task RunAsync()
     {
         var path = Path.Combine(Path.GetTempPath(), $"account-persistence-{Guid.NewGuid():N}.db");
+        var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "UTC", DefaultLocale = "de-DE" };
         var options = new DbContextOptionsBuilder<FoundationDbContext>()
             .UseSqlite($"Data Source={path};Foreign Keys=True")
             .Options;
@@ -24,7 +26,7 @@ internal static class AccountPersistenceCheck
             {
                 await database.Database.MigrateAsync();
 
-                var administration = new AccountAdministration(database);
+                var administration = new AccountAdministration(database, settings);
                 var first = await administration.CreateAsync(new CreateAccountRequest { Name = "First" }, "probe-manager", default);
                 var second = await administration.CreateAsync(new CreateAccountRequest { Name = "Second" }, "probe-manager", default);
 
@@ -38,7 +40,7 @@ internal static class AccountPersistenceCheck
 
             await using (var database = new FoundationDbContext(options))
             {
-                var administration = new AccountAdministration(database);
+                var administration = new AccountAdministration(database, settings);
 
                 var duplicate = await administration.CreateAsync(new CreateAccountRequest { Name = "FIRST" }, "probe-manager", default);
 
@@ -50,7 +52,7 @@ internal static class AccountPersistenceCheck
 
             await using (var database = new FoundationDbContext(options))
             {
-                var administration = new AccountAdministration(database);
+                var administration = new AccountAdministration(database, settings);
 
                 var duplicate = await administration.UpdateAsync(
                     secondId,

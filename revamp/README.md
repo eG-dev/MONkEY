@@ -1,13 +1,15 @@
-# POCKET MONkEY Foundation, Authentication, and Accounts
+# POCKET MONkEY Foundation, Authentication, Accounts, and Opening Balances
 
 The build/run/storage foundation, local authentication, manager user
-administration, and shared text-only accounts are implemented. This is not a
-production-ready application. Transactions, images, allowances, and reports have
+administration, shared text-only accounts, and explicit opening balances are implemented. This is not a
+production-ready application. Ordinary transactions, images, allowances, and reports have
 not been implemented.
 Use the independent [solution](PocketMonkey.slnx); the legacy solution is unchanged
 by this work. Follow [ADR-0007](../docs/ADR/ADR-0007-application-foundation.md).
 Authentication follows [ADR-0008](../docs/ADR/ADR-0008-local-authentication.md).
 Accounts follow [ADR-0009](../docs/ADR/ADR-0009-shared-accounts.md).
+Opening balances follow [ADR-0010](../docs/ADR/ADR-0010-ledger-and-money.md),
+with the display currency policy in [ADR-0011](../docs/ADR/ADR-0011-currency-display-unit.md).
 
 ## Verified Stack
 
@@ -28,6 +30,29 @@ No ARM, Firefox, or WebKit compatibility claim is made yet.
 
 Application styles use SCSS, while the vendor Taiga theme retains its Less import.
 The PNG favicon in `web/public/` is bundled locally.
+
+## Angular Structure
+
+Keep the root component and application configuration/routes in `web/src/app/`.
+Group other Angular artifacts by responsibility, then by their component, pipe,
+or service name. Components keep their TypeScript, HTML, and SCSS together:
+
+```text
+app/
+	components/
+		account-details/  account-details.ts, account-details.html, account-details.scss
+		accounts/         accounts.ts, accounts.html, accounts.scss
+		authentication/   authentication.ts, authentication.html, authentication.scss
+	pipes/currency-amount/
+	services/accounts/, authentication/, foundation/, language/
+	models/accounts/, authentication/, foundation/
+	i18n/               language registry and bundled-catalog loader
+	styles/             shared account Sass partial
+	app.ts, app.html, app.scss, app.config*.ts, app.routes*.ts
+```
+
+The account components import the shared Sass partial through their own local
+SCSS files; keep shared styling in one place rather than copying it.
 
 ## Backend Structure
 
@@ -189,7 +214,7 @@ at the hidden terminal prompt, not as arguments or in chat.
 - Sessions expire after eight hours without sliding renewal or remember-me persistence. Valid cookies survive container restart, but password reset, role change, or disablement revokes them on the next request.
 - Unsafe requests require the backend-issued antiforgery token, including login/logout. The BFF forwards cookies/tokens and strips client identity/proxy headers; the backend decides access.
 - Five failed password attempts lock the account for fifteen minutes; login additionally permits twenty attempts per minute for the instance. Authentication failures use generic errors.
-- Members can change their own password/language and read every account. Managers create/edit accounts; financial writes remain unimplemented.
+- Members can change their own password/language and read every account. Managers create/edit accounts and post explicit opening entries; ordinary transactions remain unimplemented.
 
 The harmless foundation diagnostics remain anonymous during development and must
 be restricted or removed before production release.
@@ -207,11 +232,51 @@ even during concurrent writes. IDs do not change on rename. There is no nine-acc
 cap and no editable balance, media, or account deletion.
 
 The Web-BFF allowlists `GET /api/accounts`, `GET /api/accounts/{id}`,
-`POST /api/accounts`, and `PUT /api/accounts/{id}`. Successful responses expose
-only account IDs/names; errors retain stable `invalid_account_name`,
+`POST /api/accounts`, `PUT /api/accounts/{id}`, and `POST /api/accounts/{id}/opening`. Successful account responses expose
+IDs/names, the configured currency code, nullable exact balance, and opening provenance; errors retain stable `invalid_account_name`,
 `account_name_taken`, and `not_found` codes. Writes and their audit events commit
 atomically. Request-scoped SSR uses reviewed identity-bound hydration data, not
 shared private caches or automatic HTTP transfer caching.
+
+### Opening Balances and Currency
+
+Accounts start with `balance: null` and no opening entry. A Manager posts exactly
+one explicit opening amount, including zero. Members can read the resulting
+balance and provenance but cannot post. Opening entries cannot be edited or
+deleted. Posting commits the entry, balance, and audit event atomically; retries
+with the same account, actor, amount, comment, and GUID idempotency key replay the
+original entry. Changed payloads/actors conflict.
+
+Amounts use signed 64-bit integer minor units internally and canonical
+two-decimal strings in JSON. Negative amounts, extra precision, and values above
+`92233720368547758.07` are rejected rather than rounded. Browser formatting also
+preserves every digit without binary floating-point money arithmetic.
+
+Set `MONKEY_CURRENCY=EUR` (default) or `MONKEY_CURRENCY=USD` in the backend/container
+environment. Unsupported values prevent startup. It is one display unit for the
+whole instance, independent of UI language and `TZ`: localized numbers always
+have the symbol after them, such as `12,34 €` or `12.34 $`. Changing the setting
+only relabels amounts; it does not convert money or alter stored ledger history.
+The currency-neutral helpers are `CurrencyAmount` and `CurrencyAmountPipe`.
+
+Ledger sources use `LedgerEntrySource` in entities, queries, entry creation, and
+response mapping. EF converts it to the existing lowercase text column; JSON
+uses the same `opening` value. The enum change requires no schema migration.
+The SQLite enum query/materialization probe and all 16 focused account/ledger
+production-image cases passed on 2026-10-08.
+
+Opening errors retain stable `invalid_opening_amount`, `invalid_comment`,
+`invalid_idempotency_key`, `not_found`, `already_initialized`, and
+`idempotency_conflict` codes.
+
+On 2026-10-08, Step 3B passed the locked backend/runtime-check build, real-SQLite
+`ledger-persistence` probe, Angular SSR/image builds, catalog checks, E2E
+typechecking, Compose USD forwarding, and EF pending-model check (none pending).
+The focused ledger suite passed 8/8 cases; the full production-image suite passed
+49/49, including invalid-currency startup rejection. Desktop/mobile screenshots
+confirmed exact maximum-value layout and suffix symbols. Tests also verified
+same-volume EUR-to-USD relabeling without monetary/provenance changes.
+Hosted CI, publishing, and actual-host release gates remain open.
 
 ### Manual Built Preview
 

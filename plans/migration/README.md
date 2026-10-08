@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented under milestone 2. Step 3A shared accounts is locally implemented and verified. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Financial functionality has not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented under milestone 2. Steps 3A shared accounts and 3B ledger/opening balances are locally implemented and verified. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Ordinary transactions, allowances, and reports have not started.
 
 ## Confirmed scope
 
@@ -58,10 +58,9 @@ Internet connectivity and an external identity provider must not be required at 
 | 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Eight separately gated backend/UI delivery steps |
 | 4 | [Operations and cutover](04-operations-cutover.md) | Restorable, upgradeable deployment and deliberate Azure retirement |
 
-Milestone 3's [shared accounts](03a-accounts.md) step is locally implemented:
-text-only account listing, detail, creation, and editing. Financial posting, images, allowance
-configuration/execution, reports, and lifecycle completion have separate plans;
-do not begin them as part of the first account implementation. Follow the
+Milestone 3's [shared accounts](03a-accounts.md) and [opening balances](03b-ledger-opening-balances.md) steps are locally implemented:
+text-only account listing, detail, creation/editing, and explicit atomic opening entries with exact balances and EUR/USD display units. Ordinary transactions, images, allowance
+configuration/execution, reports, and lifecycle completion remain separate subsequent steps. Follow the
 [delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
 
 Each milestone has an acceptance gate. Work may be demonstrated before feature
@@ -107,7 +106,7 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 
 ## Decisions to close during implementation
 
-- Currency, precision, negative balances, and opening-entry behavior. Account naming and the absence of a nine-account cap are recorded in [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
+- Currency, precision, negative balances, and opening-entry behavior are resolved in [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md). Account naming and the absence of a nine-account cap are recorded in [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md). Manual transactions/corrections remain a subsequent decision.
 - Deployment timezone value via `TZ`, monthly allowance due date, catch-up after downtime, and handling timezone changes after initial use.
 - Financial-history retention and archive versus permanent deletion semantics.
 - Manager recovery process and whether MFA is needed for the first release.

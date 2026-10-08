@@ -3,7 +3,7 @@ import { Injectable, inject, makeStateKey, REQUEST_CONTEXT, signal, TransferStat
 import { TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
-import { isLanguage, LANGUAGES, LanguageId } from './languages';
+import { isLanguage, LANGUAGES, LanguageId } from '../../i18n/languages';
 
 const languageKey = makeStateKey<LanguageId>('monkey-language');
 

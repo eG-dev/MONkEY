@@ -11,12 +11,12 @@ import { provideTransloco } from '@jsverse/transloco';
 import { provideTranslocoMessageformat } from '@jsverse/transloco-messageformat';
 
 import { routes } from './app.routes';
-import { LanguageService } from './language.service';
-import { FoundationService } from './foundation.service';
-import { BundledCatalogLoader } from './bundled-catalog.loader';
-import { LANGUAGES } from './languages';
-import { AuthenticationService } from './authentication.service';
-import { AccountsService } from './accounts.service';
+import { LanguageService } from './services/language/language.service';
+import { FoundationService } from './services/foundation/foundation.service';
+import { BundledCatalogLoader } from './i18n/bundled-catalog/bundled-catalog.loader';
+import { LANGUAGES } from './i18n/languages';
+import { AuthenticationService } from './services/authentication/authentication.service';
+import { AccountsService } from './services/accounts/accounts.service';
 
 registerLocaleData(germanLocale);
 registerLocaleData(englishLocale);

@@ -17,7 +17,7 @@ export function containerOrigin(container: string): string {
   return `http://127.0.0.1:${details.NetworkSettings.Ports['8080/tcp'][0].HostPort}`;
 }
 
-export function startContainer(container: string, volume: string): string {
+export function startContainer(container: string, volume: string, currency = 'EUR'): string {
   docker(
     'run',
     '--detach',
@@ -29,6 +29,8 @@ export function startContainer(container: string, volume: string): string {
     'MONKEY_PUBLIC_URL=https://localhost',
     '--env',
     'TZ=Europe/Berlin',
+    '--env',
+    `MONKEY_CURRENCY=${currency}`,
     '--mount',
     `type=volume,source=${volume},target=/data`,
     image,
@@ -117,18 +119,19 @@ async function secureOrigin(instance: Instance) {
   };
 }
 
-export const test = base.extend<{ instance: Instance }>({
-  instance: async ({}, use, testInfo) => {
+export const test = base.extend<{ instance: Instance; currency: 'EUR' | 'USD' }>({
+  currency: ['EUR', { option: true }],
+  instance: async ({ currency }, use, testInfo) => {
     const name = `monkey-e2e-${randomUUID()}`;
     const volume = `${name}-data`;
     docker('volume', 'create', volume);
     let closeProxy: (() => Promise<void>) | undefined;
     try {
-      const origin = startContainer(name, volume);
+      const origin = startContainer(name, volume, currency);
       await waitReady(origin);
       const instance = { origin, container: name, volume };
 
-      if (testInfo.file.endsWith('authentication.spec.ts') || testInfo.file.endsWith('accounts.spec.ts')) {
+      if (['authentication.spec.ts', 'accounts.spec.ts', 'ledger.spec.ts'].some((file) => testInfo.file.endsWith(file))) {
         const proxy = await secureOrigin(instance);
         instance.origin = proxy.origin;
         closeProxy = proxy.close;

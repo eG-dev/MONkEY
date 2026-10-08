@@ -1,7 +1,7 @@
 # Milestone 3: incremental UI and business logic
 
-Status: in progress. Step 3A is locally implemented and verified on 2026-10-08;
-steps 3B-3H have not started. Depends on [authentication and authorization](02-authentication-authorization.md).
+Status: in progress. Steps 3A and 3B are locally implemented and verified on 2026-10-08;
+steps 3C-3H have not started. Depends on [authentication and authorization](02-authentication-authorization.md).
 
 ## Delivery model
 
@@ -45,7 +45,7 @@ delivery rather than accumulating incomplete backend-only or UI-only work.
 ## Decision boundaries
 
 - 3A resolved: trimmed names of 1-40 characters, case-insensitive uniqueness, and no nine-account cap; see [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
-- Before 3B: currency, precision, rounding, API money representation, negative balances, and opening-entry behavior.
+- 3B resolved: exact two-decimal integer minor units, decimal-string API, non-negative balances, explicit single opening entries, and EUR/USD display units; see [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md).
 - Before 3C: manual-posting validation and correction/reversal behavior.
 - Before 3D: upload limits/formats and file/database failure recovery.
 - Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.

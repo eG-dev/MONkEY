@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Contracts.Accounts;
 using PocketMonkey.Api.Entities;
 using PocketMonkey.Api.Storage;
@@ -9,34 +10,36 @@ namespace PocketMonkey.Api.Services;
 public sealed class AccountAdministration
 {
     private readonly FoundationDbContext database;
+    private readonly InstanceSettings settings;
 
-    public AccountAdministration(FoundationDbContext database)
+    public AccountAdministration(FoundationDbContext database, InstanceSettings settings)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
+        this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
-    public Task<List<AccountResponse>> ListAsync(CancellationToken cancellationToken) =>
-        database.Accounts
+    public async Task<List<AccountResponse>> ListAsync(CancellationToken cancellationToken)
+    {
+        var accounts = await database.Accounts
             .AsNoTracking()
+            .Include(account => account.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Opening))
             .OrderBy(account => account.NormalizedName)
             .ThenBy(account => account.Id)
-            .Select(account => new AccountResponse
-            {
-                Id = account.Id,
-                Name = account.Name
-            })
             .ToListAsync(cancellationToken);
 
-    public Task<AccountResponse?> FindAsync(string id, CancellationToken cancellationToken) =>
-        database.Accounts
+        return accounts.Select(Describe).ToList();
+    }
+
+    public async Task<AccountResponse?> FindAsync(string id, CancellationToken cancellationToken)
+    {
+        var account = await database.Accounts
             .AsNoTracking()
+            .Include(account => account.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Opening))
             .Where(account => account.Id == id)
-            .Select(account => new AccountResponse
-            {
-                Id = account.Id,
-                Name = account.Name
-            })
             .SingleOrDefaultAsync(cancellationToken);
+
+        return account is null ? null : Describe(account);
+    }
 
     public async Task<(AccountResponse? Account, AccountError? Error)> CreateAsync(
         CreateAccountRequest request,
@@ -84,7 +87,9 @@ public sealed class AccountAdministration
             return (null, AccountError.InvalidName);
         }
 
-        var account = await database.Accounts.FindAsync([id], cancellationToken);
+        var account = await database.Accounts
+            .Include(account => account.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Opening))
+            .SingleOrDefaultAsync(account => account.Id == id, cancellationToken);
 
         if (account is null)
         {
@@ -128,9 +133,12 @@ public sealed class AccountAdministration
         }
     }
 
-    private static AccountResponse Describe(Account account) => new()
+    private AccountResponse Describe(Account account) => new()
     {
         Id = account.Id,
-        Name = account.Name
+        Name = account.Name,
+        Currency = settings.Currency,
+        Balance = account.BalanceMinorUnits is { } balance ? CurrencyAmount.Format(balance) : null,
+        OpeningEntry = account.LedgerEntries.SingleOrDefault() is { } entry ? OpeningBalanceAdministration.Describe(entry, settings.Currency) : null
     };
 }

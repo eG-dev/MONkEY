@@ -73,7 +73,7 @@ test('shared-account APIs enforce roles, CSRF, names and missing-account errors 
 
   expect(created.status()).toBe(201);
   expect(created.headers()['location']).toBe(`/api/accounts/${account.id}`);
-  expect(account).toEqual({ id: expect.any(String), name: 'Ida' });
+  expect(account).toEqual({ id: expect.any(String), name: 'Ida', currency: 'EUR', balance: null, openingEntry: null });
 
   const duplicate = await csrfWrite(request, 'POST', '/api/accounts', { name: ' iDA ' });
 
@@ -256,18 +256,18 @@ for (const language of ['de', 'en'] as const) {
     await page.getByRole('button', { name: labels.create, exact: true }).click();
 
     await expect(page).toHaveURL(/\/accounts\/[\w-]+$/);
-    await expect(page.locator('main dd')).toHaveText('Ida');
+    await expect(page.locator('main dd').first()).toHaveText('Ida');
 
     await page.getByRole('button', { name: labels.edit, exact: true }).click();
     await page.getByRole('textbox', { name: labels.name, exact: true }).fill('N'.repeat(40));
     await page.getByRole('button', { name: labels.save, exact: true }).click();
 
     await expect(page.getByRole('status').filter({ hasText: labels.saved })).toBeVisible();
-    await expect(page.locator('main dd')).toHaveText('N'.repeat(40));
+    await expect(page.locator('main dd').first()).toHaveText('N'.repeat(40));
 
     await page.reload();
 
-    await expect(page.locator('main dd')).toHaveText('N'.repeat(40));
+    await expect(page.locator('main dd').first()).toHaveText('N'.repeat(40));
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: test.info().outputPath('account-detail.png'), fullPage: true });
 
@@ -298,7 +298,7 @@ for (const language of ['de', 'en'] as const) {
       await memberPage.locator('main .account-list a').focus();
       await memberPage.locator('main .account-list a').press('Enter');
 
-      await expect(memberPage.locator('main dd')).toHaveText('N'.repeat(40));
+      await expect(memberPage.locator('main dd').first()).toHaveText('N'.repeat(40));
       await expect(memberPage.getByRole('button', { name: labels.edit, exact: true })).toHaveCount(0);
       expect(await memberPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await memberPage.screenshot({ path: test.info().outputPath('member-account.png'), fullPage: true });

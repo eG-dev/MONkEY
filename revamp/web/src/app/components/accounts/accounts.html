@@ -58,7 +58,16 @@
         <li>
           <a [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
             <span class="icon icon-wallet" aria-hidden="true"></span>
-            <span class="account-name">{{ account.name }}</span>
+            <span class="account-name">
+              {{ account.name }}
+              <span class="account-balance">
+                {{
+                  account.balance === null
+                    ? t('accounts.uninitialized')
+                    : (account.balance | currencyAmount: language.locale() : account.currency)
+                }}
+              </span>
+            </span>
             <span class="icon icon-chevron-right" aria-hidden="true"></span>
           </a>
         </li>

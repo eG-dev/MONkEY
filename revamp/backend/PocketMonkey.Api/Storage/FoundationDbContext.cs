@@ -16,6 +16,8 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Account> Accounts => Set<Account>();
 
+    public DbSet<LedgerEntry> LedgerEntries => Set<LedgerEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -56,7 +58,44 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
                 .IsUnique();
 
             accountEntity.ToTable("Accounts", table =>
-                table.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40"));
+            {
+                table.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40");
+                table.HasCheckConstraint("CK_Accounts_Balance", "BalanceMinorUnits IS NULL OR (typeof(BalanceMinorUnits) = 'integer' AND BalanceMinorUnits >= 0)");
+            });
+        });
+
+        modelBuilder.Entity<LedgerEntry>(entryEntity =>
+        {
+            entryEntity.HasKey(x => x.Id);
+
+            entryEntity
+                .Property(x => x.Source)
+                .HasConversion(
+                    source => source.ToString().ToLowerInvariant(),
+                    value => Enum.Parse<LedgerEntrySource>(value, true));
+
+            entryEntity
+                .HasIndex(x => x.IdempotencyKey)
+                .IsUnique();
+
+            entryEntity
+                .HasIndex(x => x.AccountId)
+                .HasFilter("Source = 'opening'")
+                .IsUnique();
+
+            entryEntity
+                .HasOne<Account>()
+                .WithMany(account => account.LedgerEntries)
+                .HasForeignKey(x => x.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entryEntity.ToTable("LedgerEntries", table =>
+            {
+                table.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits >= 0");
+                table.HasCheckConstraint("CK_LedgerEntries_Source", "Source = 'opening'");
+                table.HasCheckConstraint("CK_LedgerEntries_Comment", "Comment IS NULL OR length(Comment) <= 500");
+                table.HasCheckConstraint("CK_LedgerEntries_Key", "length(IdempotencyKey) = 36");
+            });
         });
     }
 }

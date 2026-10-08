@@ -48,6 +48,7 @@ for (const [variable, value] of [
   ['TZ', 'Not/A_Timezone'],
   ['MONKEY_DATA_PATH', 'relative'],
   ['MONKEY_DEFAULT_LOCALE', 'zz-ZZ'],
+  ['MONKEY_CURRENCY', 'JPY'],
   ['MONKEY_TRUSTED_PROXIES', 'not-a-proxy'],
   ['MONKEY_PUBLIC_URL', 'http://localhost'],
 ]) {
@@ -57,7 +58,19 @@ for (const [variable, value] of [
     try {
       const result = spawnSync(
         'docker',
-        ['run', '--rm', '--name', name, '--network', 'none', '--env', 'MONKEY_PUBLIC_URL=https://localhost', '--env', `${variable}=${value}`, image],
+        [
+          'run',
+          '--rm',
+          '--name',
+          name,
+          '--network',
+          'none',
+          '--env',
+          'MONKEY_PUBLIC_URL=https://localhost',
+          '--env',
+          `${variable}=${value}`,
+          image,
+        ],
         { encoding: 'utf8', timeout: 40_000 },
       );
 
@@ -214,7 +227,12 @@ standalone('Linux Node and .NET agree at DST boundaries with German/English glob
 
   expect(result.timezone).toBe('Europe/Berlin');
 
-  expect(result.samples.map((sample: { local: string }) => sample.local)).toEqual(['2026-03-29 01:59:59', '2026-03-29 03:00:00', '2026-10-25 02:59:59', '2026-10-25 02:00:00']);
+  expect(result.samples.map((sample: { local: string }) => sample.local)).toEqual([
+    '2026-03-29 01:59:59',
+    '2026-03-29 03:00:00',
+    '2026-10-25 02:59:59',
+    '2026-10-25 02:00:00',
+  ]);
   expect(result.samples.map((sample: { offsetMinutes: number }) => sample.offsetMinutes)).toEqual([60, 120, 120, 60]);
 
   expect(result.englishMonth).toBe('March');

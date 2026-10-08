@@ -5,8 +5,8 @@ import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { firstValueFrom, timeout } from 'rxjs';
 
-import { AuthenticationService } from './authentication.service';
-import { UserAccount } from './user-account';
+import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { UserAccount } from '../../models/authentication/user-account';
 
 @Component({
   selector: 'app-authentication',

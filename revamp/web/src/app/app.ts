@@ -4,17 +4,17 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { TuiButton, TuiRoot } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-import { FoundationService } from './foundation.service';
-import { LanguageService } from './language.service';
-import { LANGUAGES } from './languages';
-import { Authentication } from './authentication';
-import { AuthenticationService } from './authentication.service';
+import { FoundationService } from './services/foundation/foundation.service';
+import { LanguageService } from './services/language/language.service';
+import { LANGUAGES } from './i18n/languages';
+import { Authentication } from './components/authentication/authentication';
+import { AuthenticationService } from './services/authentication/authentication.service';
 
 @Component({
   imports: [TuiRoot, TuiButton, TranslocoDirective, DatePipe, Authentication, RouterLink, RouterOutlet],
   selector: 'app-root',
   styleUrl: './app.scss',
-  templateUrl: './foundation.html',
+  templateUrl: './app.html',
 })
 export class App {
   protected readonly foundation = inject(FoundationService);

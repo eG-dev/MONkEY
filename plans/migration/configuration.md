@@ -17,6 +17,7 @@ Read configuration at startup and validate it before readiness succeeds.
 | `MONKEY_PUBLIC_URL` | Required in production | Public origin, for example `https://monkey.home.example`; used for redirects and origin validation. |
 | `MONKEY_LOG_LEVEL` | `Information` | Shared application log level, mapped explicitly to both runtime logging systems. |
 | `MONKEY_DEFAULT_LOCALE` | `de-DE` | Instance fallback presentation locale; German and English are initially supported. Users may override it without changing timezone or currency. |
+| `MONKEY_CURRENCY` | `EUR` | Instance-wide display unit: `EUR` or `USD`. Its symbol follows localized amounts; changing it relabels values without conversion. |
 | `MONKEY_TRUSTED_PROXIES` | Empty: trust none | Explicit proxy IP addresses or CIDRs allowed to supply forwarded headers. |
 
 ## Configuration rules
@@ -32,6 +33,7 @@ Read configuration at startup and validate it before readiness succeeds.
 - Do not disable Secure cookies based on a configurable public URL; production requires HTTPS. Restrict forwarded-header trust to the configured proxies.
 - Keep passwords, bootstrap credentials, and signing keys out of ordinary ENV values; use protected secret files or an operator command for sensitive setup.
 - Document defaults and expose only safe browser configuration. Do not forward the full server environment to Angular.
+- Validate `MONKEY_CURRENCY` before readiness. Follow [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md): the setting changes only displayed units, never exact arithmetic or stored financial history.
 
 Language selection follows the [localization plan](localization.md); it does not
 change business periods or stored financial values.
@@ -41,3 +43,4 @@ change business periods or stored financial values.
 - [x] Non-default `TZ` and data-root settings work; invalid timezone/path/proxy settings fail startup clearly.
 - [x] Node and .NET agree on timezone behavior, including daylight saving boundaries.
 - [x] Non-root runtime can write mounted paths and reports actionable permission errors.
+- [x] EUR/USD display works independently of language; changing the unit preserves exact amounts/provenance, and unsupported currencies fail startup.

@@ -9,6 +9,7 @@ public sealed record InstanceSettings
     public required string DataPath { get; init; }
     public required string Timezone { get; init; }
     public required string DefaultLocale { get; init; }
+    public string Currency { get; init; } = "EUR";
     public LogLevel LogLevel { get; init; }
 
     public string ImagesPath => Path.Combine(DataPath, "images");
@@ -48,6 +49,12 @@ public sealed record InstanceSettings
         }
         _ = CultureInfo.GetCultureInfo(locale);
 
+        var currency = configuration["MONKEY_CURRENCY"] ?? "EUR";
+        if (currency is not ("EUR" or "USD"))
+        {
+            throw new InvalidOperationException("MONKEY_CURRENCY must be EUR or USD.");
+        }
+
         if (!Enum.TryParse<LogLevel>(configuration["MONKEY_LOG_LEVEL"] ?? "Information", true, out var logLevel)
             || !Enum.IsDefined(logLevel))
         {
@@ -80,6 +87,7 @@ public sealed record InstanceSettings
             DataPath = dataPath,
             Timezone = timezone,
             DefaultLocale = locale,
+            Currency = currency,
             LogLevel = logLevel
         };
     }

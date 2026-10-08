@@ -5,8 +5,8 @@ import Negotiator from 'negotiator';
 import httpProxy from 'http-proxy';
 import { join } from 'node:path';
 
-import { isLanguage, LANGUAGES } from './app/languages';
-import { isSessionUser } from './app/session-user';
+import { isLanguage, LANGUAGES } from './app/i18n/languages';
+import { isSessionUser } from './app/models/authentication/session-user';
 
 const backendUrl = process.env['MONKEY_BACKEND_URL'] ?? 'http://127.0.0.1:5080';
 const backend = new URL(backendUrl);
@@ -104,7 +104,8 @@ app.use('/api', (request, response) => {
       /^\/api\/accounts\/[\w-]+$/.test(path)
     : request.method === 'POST'
       ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users', '/api/accounts'].includes(path) ||
-        /^\/api\/users\/[\w-]+\/password$/.test(path)
+        /^\/api\/users\/[\w-]+\/password$/.test(path) ||
+        /^\/api\/accounts\/[\w-]+\/opening$/.test(path)
       : request.method === 'PUT' && (path === '/api/auth/language' || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path));
 
   if (!allowed) {

@@ -4,18 +4,21 @@ import { Router, RouterLink } from '@angular/router';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-import { AccountsService } from './accounts.service';
-import { AuthenticationService } from './authentication.service';
-import { SharedAccount } from './shared-account';
+import { AccountsService } from '../../services/accounts/accounts.service';
+import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { SharedAccount } from '../../models/accounts/shared-account';
+import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
+import { LanguageService } from '../../services/language/language.service';
 
 @Component({
   selector: 'app-accounts',
-  imports: [FormsModule, RouterLink, TuiButton, TranslocoDirective],
+  imports: [FormsModule, RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe],
   templateUrl: './accounts.html',
   styleUrl: './accounts.scss',
 })
 export class Accounts {
   protected readonly auth = inject(AuthenticationService);
+  protected readonly language = inject(LanguageService);
   private readonly service = inject(AccountsService);
   private readonly router = inject(Router);
 

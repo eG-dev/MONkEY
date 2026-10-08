@@ -2,9 +2,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, makeStateKey, REQUEST, REQUEST_CONTEXT, TransferState } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
 
-import { AccountPageState } from './account-page-state';
-import { AuthenticationService } from './authentication.service';
-import { SharedAccount } from './shared-account';
+import { AccountPageState } from '../../models/accounts/account-page-state';
+import { AuthenticationService } from '../authentication/authentication.service';
+import { SharedAccount } from '../../models/accounts/shared-account';
+import { OpeningEntry } from '../../models/accounts/opening-entry';
 
 const accountPageKey = makeStateKey<AccountPageState | null>('monkey-account-page');
 
@@ -82,6 +83,10 @@ export class AccountsService {
     return this.auth.write<SharedAccount>('PUT', `/api/accounts/${encodeURIComponent(id)}`, { name });
   }
 
+  postOpening(id: string, amount: string, comment: string, idempotencyKey: string): Promise<OpeningEntry> {
+    return this.auth.write<OpeningEntry>('POST', `/api/accounts/${encodeURIComponent(id)}/opening`, { amount, comment, idempotencyKey });
+  }
+
   errorKey(failure: unknown): string {
     if (failure instanceof HttpErrorResponse && failure.status === 401) {
       this.auth.clearSession();
@@ -99,7 +104,17 @@ export class AccountsService {
     const payload: unknown = failure instanceof HttpErrorResponse ? failure.error : null;
     const code = typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>)['code'] : null;
 
-    return typeof code === 'string' && ['invalid_account_name', 'account_name_taken', 'csrf_invalid'].includes(code)
+    return typeof code === 'string' &&
+      [
+        'invalid_account_name',
+        'account_name_taken',
+        'csrf_invalid',
+        'invalid_opening_amount',
+        'invalid_comment',
+        'invalid_idempotency_key',
+        'already_initialized',
+        'idempotency_conflict',
+      ].includes(code)
       ? `accounts.errors.${code}`
       : 'accounts.errors.unavailable';
   }
