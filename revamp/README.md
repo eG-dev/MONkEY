@@ -107,9 +107,20 @@ that trust store; never disable certificate verification to download a browser.
 The solution build includes the test-only `RuntimeChecks` probe. E2E fixtures use
 fresh named volumes/containers and dynamically published loopback ports per test;
 they rediscover ports after Docker restart. Tests clean up only their own state.
+CI uses one Playwright worker; local runs use two. Parallel Docker fixture
+creation/removal on a native Linux runner can trigger Chromium
+`ERR_NETWORK_CHANGED` during asset downloads. Serializing CI fixture lifecycles
+avoids that interference without retries; explicit concurrent-request tests still
+exercise business concurrency.
 Reports, screenshots, traces, and failure logs are beneath
 `tests/e2e/playwright-report/` and `tests/e2e/test-results/`, both ignored by Git.
 No core API/authentication/storage mocks or unit-coverage requirement are used.
+
+On 2026-10-08, the downloaded GitHub trace showed a desktop English ledger reload
+losing its stylesheet and lazy account-details bundle to `ERR_NETWORK_CHANGED`,
+then failing the balance assertion with an empty content area. The same case and
+all 49 production-image cases passed locally with `CI=true` and one worker
+(full suite: 8.5 minutes). The native Linux hosted rerun remains unverified.
 
 Browser cases live in `tests/e2e/specs/`; Playwright configuration and shared
 fixtures remain at the E2E project root. C# runtime check implementations live in
