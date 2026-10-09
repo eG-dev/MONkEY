@@ -71,7 +71,8 @@ satisfy the offline runtime requirements.
 
 - Milestone 1: independent GitHub Actions builds/E2E checks and a publishing dry run or clearly labeled foundation prerelease. Do not claim feature completeness.
 - Milestones 2 and 3: expand workflow gates alongside authentication and business features; keep tagged development releases explicitly prerelease.
-- Milestone 4: verify the production release process, downloadable assets, public image access, upgrade instructions, and release approval policy.
+- Step 2B: preserve real-stack/security regression gates while establishing the approved UX/UI design before remaining milestone 3 features resume.
+- Milestone 4: verify application-wide design acceptance, the production release process, downloadable assets, public image access, upgrade instructions, and release approval policy.
 - Keep legacy Azure workflows independent during migration; new paths must not accidentally deploy the old application. Retire them only through approved cutover.
 - Record key build/publishing/versioning decisions in `/docs/ADR` during the relevant phase, following the [ADR lifecycle](00-guardrails.md#architecture-decision-records).
 

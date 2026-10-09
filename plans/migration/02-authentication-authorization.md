@@ -1,4 +1,4 @@
-# Milestone 2: authentication and authorization
+# Step 2A: authentication and authorization
 
 Status: local authentication, operator bootstrap/recovery, cookie/CSRF transport,
 and manager user administration are implemented. Local verification is recorded in
@@ -83,4 +83,6 @@ The harmless read-only foundation diagnostics remain public during development.
 Financial routes do not exist yet; their Manager/Member access checks must be added
 with each milestone 3 feature, not inferred from frontend controls.
 
-Next: [incremental UI and business logic](03-ui-business-logic.md).
+Next: [product UX and UI design](02b-ux-ui-design.md), step 2B. Remaining
+milestone 3 feature work waits for its acceptance gate; existing local delivery
+and authentication verification records remain valid.

@@ -29,6 +29,8 @@ resources must be packaged locally and work without an external translation serv
 The anonymous shell and language selector are built in milestone 1. Preference
 persistence and translated login screens follow in milestone 2; every milestone 3
 slice delivers its German and English translations alongside its functionality.
+German/English layout and interaction review is part of
+[step 2B product UX and UI design](02b-ux-ui-design.md); it does not postpone feature translations.
 OSS contribution documentation is completed in
 [operations and cutover](04-operations-cutover.md#open-source-translation-contributions).
 

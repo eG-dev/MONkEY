@@ -5,6 +5,19 @@ administration, shared text-only accounts, signed opening balances, deposits/wit
 and paginated history are implemented. This is not a production-ready application.
 Dedicated reversals are deferred. Images, allowances, and reports have
 not been implemented.
+
+Monthly reports are deferred from the first release; no report snapshots or jobs
+are required. The current UI is functionally verified, not an approved final
+design. The next activity is
+[step 2B product UX/UI design](../plans/migration/02b-ux-ui-design.md), with draw.io
+sources and exported previews under [docs/design](../docs/design/README.md).
+Remaining milestone 3 feature work is paused until design approval and
+representative implementation pass the step 2B gate; existing delivery records
+remain intact. Subsequent slices reuse the established patterns.
+[Operations and cutover](../plans/migration/04-operations-cutover.md) is milestone 4
+and requires application-wide design acceptance as well as the existing
+security, verification, and operational gates.
+
 Use the independent [solution](PocketMonkey.slnx); the legacy solution is unchanged
 by this work. Follow [ADR-0007](../docs/ADR/ADR-0007-application-foundation.md).
 Authentication follows [ADR-0008](../docs/ADR/ADR-0008-local-authentication.md).

@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented under milestone 2. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope are locally implemented and verified. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Dedicated reversals are deferred; images, allowances, and reports have not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented as step 2A. Step 2B product UX/UI design is the next activity. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented and verified; remaining milestone 3 feature work is paused until the step 2B acceptance gate passes. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Dedicated reversals and monthly reports are deferred from the first release; images and allowances have not started.
 
 ## Confirmed scope
 
@@ -54,14 +54,26 @@ Internet connectivity and an external identity provider must not be required at 
 | Order | Plan | Outcome |
 | --- | --- | --- |
 | 1 | [Stack foundation](01-stack-foundation.md) | Runnable .NET + Angular SSR + storage in Docker |
-| 2 | [Authentication and authorization](02-authentication-authorization.md) | Local users, sessions, and enforced roles |
-| 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Eight separately gated backend/UI delivery steps |
-| 4 | [Operations and cutover](04-operations-cutover.md) | Restorable, upgradeable deployment and deliberate Azure retirement |
+| 2A | [Authentication and authorization](02-authentication-authorization.md) | Local users, sessions, and enforced roles; locally implemented |
+| 2B | [Product UX and UI design](02b-ux-ui-design.md) | Approved workflows/wireframes/visual foundations and established representative UI patterns |
+| 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Separately gated business slices with usable, tested UI; 3G deferred |
+| 4 | [Operations and cutover](04-operations-cutover.md) | Application-wide design acceptance, restorable deployment, and deliberate Azure retirement |
 
 Milestone 3's [shared accounts](03a-accounts.md), [opening balances](03b-ledger-opening-balances.md), and [manual transactions/history](03c-transactions.md) steps are locally implemented:
-text-only account listing, detail, creation/editing, explicit signed opening entries, atomic deposits/withdrawals, and snapshot-paginated history with exact balances and EUR/USD display units. Dedicated reversals, images, allowance
-configuration/execution, reports, and lifecycle completion remain separate subsequent steps. Follow the
+text-only account listing, detail, creation/editing, explicit signed opening entries, atomic deposits/withdrawals, and snapshot-paginated history with exact balances and EUR/USD display units. These are functional deliveries, not accepted final visual designs. Images, allowance
+configuration/execution, and lifecycle completion remain separate subsequent steps; monthly reports and dedicated reversals are deferred from the first release. Follow the
 [delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
+
+Complete [step 2B design foundations and representative-screen implementation](02b-ux-ui-design.md#acceptance-gate)
+before resuming remaining milestone 3 feature work, including backend-only
+additions. Store draw.io wireframes and exported previews under
+[docs/design](../../docs/design/README.md). Approved design patterns guide each
+subsequent slice; application-wide design review remains a milestone 4 release
+gate. Existing 3A-3C delivery history is preserved, not restarted or discarded.
+
+Monthly summaries may later be derived on demand from the ledger, but no summary
+feature, report snapshots, or report-generation jobs are part of the first release
+without separately approved scope. See the [deferred report plan](03g-monthly-reports.md).
 
 Each milestone has an acceptance gate. Work may be demonstrated before feature
 parity, but the replacement is not the production system until its release gates

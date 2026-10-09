@@ -31,7 +31,8 @@ and ledger credits; managers see execution outcomes and failures.
 
 ## Deferred
 
-Report generation and email. Test clocks/failure controls belong in isolated
+Monthly reports are [deferred from the first release](03g-monthly-reports.md);
+email is excluded. Test clocks/failure controls belong in isolated
 test-host composition or protected operator tooling, never public production APIs.
 
-Next: [monthly reports](03g-monthly-reports.md).
+Next: [management and lifecycle completion](03h-lifecycle.md).

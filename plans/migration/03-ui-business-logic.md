@@ -1,13 +1,25 @@
 # Milestone 3: incremental UI and business logic
 
-Status: in progress. Steps 3A, 3B, and the approved 3C scope are locally implemented and verified on 2026-10-08;
-steps 3D-3H have not started. Dedicated correction/reversal workflows are deferred. Depends on [authentication and authorization](02-authentication-authorization.md).
+Status: remaining feature work is paused until the [step 2B design acceptance gate](02b-ux-ui-design.md#acceptance-gate) passes.
+Steps 3A, 3B, and the approved 3C scope remain locally implemented and verified on 2026-10-08;
+steps 3D-3H have not started. Dedicated correction/reversal workflows are deferred.
+Depends on [step 2A authentication](02-authentication-authorization.md) and [step 2B product design](02b-ux-ui-design.md).
+
+Step 3G monthly reports are deferred from the first release. Do not implement
+remaining features, including backend-only additions, during the design pause.
 
 ## Delivery model
 
 Deliver each slice through backend rules, persistence, API contracts, and Angular
 UI together. Each slice must be usable and tested before starting the next.
 Managers can administer the instance; members can read every account.
+
+Functional slice acceptance does not approve the final visual design. Complete
+[step 2B](02b-ux-ui-design.md), including approved references and established
+representative UI patterns, before resuming. Adapt existing screens as part of
+that work; preserve their business rules and recorded delivery history. Remaining
+slices follow the approved patterns and review newly introduced ones explicitly.
+Application-wide design acceptance remains a distinct gate before release.
 
 Use Taiga UI consistently and locally packaged Lucide icon fonts/assets. Give
 icon-only controls accessible names and tooltips. Validate keyboard operation,
@@ -34,13 +46,17 @@ milestone as one implementation task or build later-step infrastructure in advan
 | 3D | [Account images](03d-account-images.md) | Safe private upload, display, replacement, and removal | 3A |
 | 3E | [Allowance configuration](03e-allowance-configuration.md) | Persisted manager settings and member-visible configuration | 3B |
 | 3F | [Allowance execution](03f-allowance-execution.md) | Durable monthly credits and visible execution outcomes | 3C and 3E |
-| 3G | [Monthly reports](03g-monthly-reports.md) | Immutable monthly snapshots and report views, without email | 3C and 3F |
+| 3G | [Monthly reports](03g-monthly-reports.md) | Deferred optional follow-up; not a first-release delivery or dependency | Separately approved scope |
 | 3H | [Management and lifecycle completion](03h-lifecycle.md) | Remaining profile/settings/legal/lifecycle workflows | Relevant preceding steps |
 
 Start with 3A. The table gives the default order, not a requirement to block
 independent image work on unresolved money policies: 3D can follow 3A directly.
 Complete the active step's gate before starting another. Reassess scope after each
 delivery rather than accumulating incomplete backend-only or UI-only work.
+
+For the remaining first-release sequence, proceed from 3F to 3H; skip deferred
+3G. Step 2B is a prerequisite for all remaining feature work, not a parallel
+activity or a late cosmetic pass.
 
 ## Decision boundaries
 
@@ -49,7 +65,7 @@ delivery rather than accumulating incomplete backend-only or UI-only work.
 - 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
 - Before 3D: upload limits/formats and file/database failure recovery.
 - Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.
-- Before 3G: report closure, late corrections, and immutable period boundaries.
+- If 3G is reopened: first establish a real user need and choose derived summaries versus persisted statements; only then agree closure, corrections, and period boundaries.
 - Before destructive work in 3H: archival, deletion/anonymization, retention, and sensitive-action confirmation/re-authentication.
 
 Proposed defaults in the child plans remain proposals. Resolve affected business
@@ -72,9 +88,12 @@ gates remain open as recorded in the [migration overview](README.md).
 - Use deterministic clocks for scheduling tests rather than waiting for wall-clock timers; exercise retries and restart behavior through the application/job host.
 - Check direct unauthorized requests against the running API in addition to browser role scenarios; do not rely on hidden buttons or route guards.
 - Check SSR HTML, hydration, desktop/mobile layouts, and local font/image loading.
+- Review each slice against approved [design references](../../docs/design/README.md); complete application-wide visual/usability acceptance before cutover. Passing functional E2E tests does not approve the design.
 - Run core browser workflows in German and English, including authentication/validation errors, accessible labels, long-text layouts, and decimal/date input.
 - Verify changing language leaves ledger amounts, report periods, actor identity, and user-entered content unchanged.
 - Keep fixtures isolated and core services unmocked; attach traces and relevant logs when a scenario fails.
 - Update schema migrations and API contracts with each slice; keep the old application independently runnable.
 
-Next: [operations and cutover](04-operations-cutover.md).
+Current next activity: [step 2B product UX and UI design](02b-ux-ui-design.md).
+After its gate passes, resume remaining slices; their completion leads to
+[operations and cutover](04-operations-cutover.md).

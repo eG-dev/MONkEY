@@ -99,7 +99,7 @@ for (const job of Object.values(foundation.jobs)) {
 assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verification must not require secrets');
 console.log('PASS: Azure trigger isolation preserves legacy/shared changes; foundation PR checks are read-only, unfiltered, secret-free, and SHA-pinned');
 
-const directories = ['.github/instructions', 'docs/ADR', 'plans/migration'];
+const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
 const markdown = ['.github/copilot-instructions.md'];
 if (fs.existsSync(path.join(root, 'revamp/README.md'))) markdown.push('revamp/README.md');
 for (const directory of directories) {

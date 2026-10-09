@@ -1,7 +1,8 @@
 # Milestone 4: operations and cutover
 
 Status: not started. Basic lifecycle checks start in [stack foundation](01-stack-foundation.md).
-Production cutover depends on the agreed slices in [UI and business logic](03-ui-business-logic.md).
+Production cutover depends on the agreed slices in [UI and business logic](03-ui-business-logic.md),
+the [step 2B design foundation](02b-ux-ui-design.md), and application-wide design acceptance.
 
 ## Goal
 
@@ -46,7 +47,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 
 - Structured logs to stdout/stderr, with rotation handled by the host.
 - Liveness/readiness cover the application processes and meaningful backend dependencies.
-- Manager-visible allowance/report job failures; no email alerts or outbox are planned.
+- Manager-visible allowance job failures; apply the same rule to report jobs only if reports are later approved. No email alerts or outbox are planned.
 - Optional vendor-neutral telemetry rather than an Azure dependency.
 - Never log passwords, session cookies, recovery credentials, or full private financial payloads.
 - Dependency and container scanning, pinned build inputs, and a documented update process.
@@ -68,6 +69,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 ## Release gate
 
 - [ ] Core workflows and role permissions pass end-to-end tests.
+- [ ] The [step 2B design acceptance gate](02b-ux-ui-design.md#acceptance-gate) passes, and application-wide review confirms the approved design across every shipped screen; functional tests alone do not approve the design.
 - [ ] The full E2E regression and container lifecycle suites pass against the release build, with reproducible fixtures and actionable failure artifacts.
 - [ ] The [GitHub publishing acceptance gates](builds-releases.md#acceptance-gates) pass; the released assets and public container digest correspond to the verified source revision.
 - [ ] Targeted integration checks cover agreed database/job risks; release does not depend on a unit-test suite or unit-coverage percentage.
@@ -79,7 +81,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - [ ] Backups restore successfully on a clean instance.
 - [ ] Upgrade failure and rollback/restore procedures have been rehearsed.
 - [ ] Operational logs and job failures are observable without cloud services.
-- [ ] Remaining feature omissions and accepted limitations are documented.
+- [ ] Remaining feature omissions and accepted limitations are documented, including deferred monthly reports and dedicated reversals.
 - [ ] Azure retirement and old-data disposal have explicit approval.
 
 Return to the [migration overview](README.md).
