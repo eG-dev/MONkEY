@@ -198,9 +198,18 @@ test('manager browser creates a user and temporary password requires change', as
 
     await expect(memberPage.getByRole('alert')).toHaveText('Benutzername oder Passwort ist falsch.');
 
-    await signIn(memberPage, temporary);
+    await memberPage.goto('/');
+    await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(temporary.username);
+    await memberPage.getByLabel('Passwort', { exact: true }).fill(temporary.password);
+
+    const temporarySignInReload = memberPage.waitForEvent('framenavigated', (frame) => frame === memberPage.mainFrame());
+
+    await memberPage.getByRole('button', { name: 'Anmelden', exact: true }).click();
+    await temporarySignInReload;
+    await memberPage.waitForLoadState('load');
 
     await expect(memberPage.getByRole('heading', { name: 'Neues Passwort wählen', exact: true })).toBeVisible();
+    await expect(memberPage.getByRole('button', { name: 'Passwort ändern', exact: true })).toBeEnabled();
 
     await memberPage.getByLabel('Aktuelles Passwort', { exact: true }).fill(temporary.password);
     await memberPage.getByLabel('Neues Passwort', { exact: true }).fill(permanent.password);

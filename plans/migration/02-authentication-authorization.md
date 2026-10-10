@@ -69,6 +69,21 @@ passed. The web dependency audit remains blocked by a critical advisory in the
 existing development-only `concurrently` / `shell-quote` chain; foundation
 hosted/fork CI, publishing, and deployment-host gates also remain open.
 
+## Browser synchronization regression
+
+On 2026-10-10, [GitHub run 38063105349](https://github.com/eG-dev/MONkEY/actions/runs/38063105349)
+passed 56 of 57 checks but the mobile temporary-password workflow missed the
+password-changed notice. This run predates account-image delivery. The supplied
+log identifies the failed assertion; the CI trace was not available locally.
+
+Successful login updates client session state before reloading the document,
+so the forced-change heading can appear on the outgoing page. The test now waits
+for that reload after submitting temporary credentials, then waits for the new
+form's enabled submit button before filling its inputs. It retains the success
+notice and subsequent permanent-password sign-in assertions. Three mobile
+repetitions and the desktop counterpart passed against the production image
+without retries; test typechecking passed. Hosted confirmation remains pending.
+
 ## Session and recovery policy
 
 - Eight-hour absolute, non-persistent cookie sessions; no sliding expiry or remember-me option.
