@@ -72,11 +72,24 @@ reversals remain deferred.
 
 ## Files and index
 
+Wireframe annotation formatting was refined on 2026-10-10: consolidate notes
+targeting the same area and use straight 3px arrows around a black 3px viewport
+border using draw.io's "Dashed (1)" preset.
+After creating or substantially updating a wireframe, ask the user to arrange
+its notes in draw.io, including above or below the viewport where this shortens
+arrows. Preserve their arrangement, then re-export and inspect the PNG after
+confirmation. The user reviewed all seven current wireframes, including their
+annotation arrangements, on 2026-10-10. All seven PNG previews were re-exported
+from those sources and visually inspected; the reviewed layouts were preserved.
+Login's note overlap and Profile's accidental color-code text were corrected;
+both affected previews were re-exported and visually checked on 2026-10-10.
+Existing view/prototype approvals below remain unchanged.
+
 Follow [ADR-0013](../ADR/ADR-0013-wireframes-and-click-prototypes.md): rough
 wireframe first, then a detailed click prototype.
 
 - Keep each `.drawio` source and its exported PNG preview together here, named `<view>-wireframe.drawio` and `<view>-wireframe.png`.
-- Draw one main desktop page per view. Show only the view inside the shell's main content container (max 1440px), not the application shell, so the shell can change independently. Describe the important behavior, states, role differences, dialogs, and phone layout in callouts on that page instead of extra pages. Create a separate `.drawio` only when a screen has its own substantial layout, such as the Profile and Users tabs.
+- Draw one main desktop viewport per view. Show only the view inside the shell's main content container (max 1440px), not the application shell, so the shell can change independently. Mark its bounds with a dashed border. Describe behavior, states, role differences, dialogs, and phone layout in yellow note shapes outside the viewport, around its edges, with arrows pointing to the relevant component. Never overlay annotations on the view. Expand the drawing/export to include the notes, not the viewport itself. Create a separate `.drawio` only when a screen has its own substantial layout, such as the Profile and Users tabs.
 - Show detailed interactions and states in the click prototype, not in additional wireframes. Keep exports synchronized with the source revision. Prefer readable, uncompressed XML when practical.
 - Commit editable sources, not only screenshots or external draw.io links. Use fictional data; never include credentials or private financial information.
 - As references arrive, add actual source/preview links below with role, viewport/state, draft/approved status, reviewed revision, approval date, and open questions. Only link files that exist.

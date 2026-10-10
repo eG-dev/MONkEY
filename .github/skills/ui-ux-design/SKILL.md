@@ -19,22 +19,26 @@ the rules; this skill describes the steps.
 | --- | --- | --- | --- |
 | New view | New source and PNG | New page | Only if new patterns are needed |
 | Layout, sections, navigation, new controls | Update | Update | — |
-| Validation, states, texts, dialog details, interaction | Callout only if important | Update | — |
+| Validation, states, texts, dialog details, interaction | Note only if important | Update | — |
 | Colors, typography, spacing, component pattern | — | Update affected pages | Update tokens and guides |
 | Shell (toolbar, navigation, user menu) | Shell wireframe | `shared/prototype.js` / `.css` | If tokens change |
 
 ## 2. Wireframe
 
-- Location: `docs/design/wireframes/<view>/<view>-wireframe.drawio`; one page, 1440px wide, showing only the main content container.
-- Style conventions: Calibri; panels and controls as plain boxes; primary actions green-filled; placeholders dashed; yellow callouts (`shape=callout`) for behavior, states, roles, dialogs, and phone layout.
+- Location: `docs/design/wireframes/<view>/<view>-wireframe.drawio`; one page with a 1440px-wide main-content viewport (or an existing agreed viewport size). Expand the drawing around it for annotations; do not enlarge the viewport merely to fit notes.
+- Style conventions: Calibri; panels and controls as plain boxes; primary actions green-filled; placeholders dashed. Enclose the viewport in a dashed border. Use yellow note shapes (`shape=note`, not callouts) for behavior, states, roles, dialogs, and phone layout, entirely outside the viewport. Arrange notes around its edges with space between them. Connect each note to the relevant existing component with an arrow pointing from note to component; route through empty space where possible.
 - Keep the XML readable. If the user edited the source, change only the affected cells.
+- Consolidate notes about the same area/component into one note with one arrow. Use straight connectors (`edgeStyle=none;curved=0`) with a 3px stroke (`strokeWidth=3`) and no intermediate waypoints.
+- Use a black 3px viewport border with draw.io's "Dashed (1)" preset (`strokeColor=#000000;strokeWidth=3;dashed=1`, no custom `dashPattern`).
+- Send the viewport rectangle to the back (first drawable cell in the XML root), keeping other elements in front. Use black (`strokeColor=#000000`) for annotation connector lines.
+- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in draw.io. Offer all four sides, including top and bottom, to shorten arrows. Pause final layout/export review until the user confirms the arrangement is ready; do not automatically optimize routes or overwrite their placement. A preliminary PNG may be exported as a draft.
 - Export the preview with the draw.io desktop app:
 
 ```powershell
 & "C:\Program Files\draw.io\draw.io.exe" -x -f png -b 10 -o <view>-wireframe.png <view>-wireframe.drawio
 ```
 
-- View the exported PNG and fix overlapping callouts before continuing.
+- Once the user confirms the arrangement, re-export and view the PNG. Check the dashed viewport, external note placement, readable text, one arrow per annotated area, and absence of annotation/control overlap before continuing.
 
 ## 3. Click prototype
 

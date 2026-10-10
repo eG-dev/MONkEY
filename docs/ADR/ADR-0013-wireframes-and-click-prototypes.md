@@ -34,10 +34,20 @@ flowchart LR
 ### Wireframes
 
 - Create one editable draw.io source per view in `docs/design/wireframes/<view>/<view>-wireframe.drawio` with a synchronized `<view>-wireframe.png` preview.
-- Draw one main desktop page per view. Describe the important behavior, states, role differences, dialogs, and phone layout roughly in callouts on that page instead of adding pages per state.
+- Draw one main desktop viewport per view, enclosed by a dashed border. Describe important behavior, states, role differences, dialogs, and phone layout in note shapes outside that border, connected by arrows to the relevant component. Keep annotations off the UI and on the same drawing rather than adding pages per state.
 - Show only the view inside the shell's main content container. The application shell has its own wireframe, so it can change without updating every view.
 - Create a separate source only when a screen has its own substantial layout, such as separate tabs of one view.
 - Keep wireframes rough: they define structure, hierarchy, and key interactions, not colors, typography, or exact spacing.
+- Consolidate annotations for the same area into one note and arrow. After the initial wireframe is created or substantially updated, ask the user to arrange the external notes in draw.io, using any side of the viewport for readable, short connectors. Preserve that arrangement, then export and review the synchronized preview after confirmation.
+
+Annotation format refined with user approval on 2026-10-10: external notes and
+component-directed arrows replace the original in-viewport callouts. The
+wireframe/prototype approval workflow is unchanged.
+
+Annotation workflow refined with user approval on 2026-10-10: the assistant
+prepares consolidated note content; the user arranges notes before final export
+and review. This replaces automatic annotation-layout optimization, not the
+wireframe/prototype approval gates.
 
 ### Click prototypes
 
