@@ -1,6 +1,5 @@
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
-import type { Page } from '@playwright/test';
 
 import {
   test,
@@ -12,6 +11,7 @@ import {
   login,
   operator,
   signIn,
+  submitLogin,
   docker,
   containerOrigin,
   waitReady,
@@ -19,14 +19,6 @@ import {
 } from '../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });
-
-// The shell closes the popover on NavigationEnd, which can land just after the click on a slow first load.
-async function openUserMenu(page: Page, button: string, item: string) {
-  await expect(async () => {
-    await page.getByRole('button', { name: button, exact: true }).click();
-    await expect(page.getByRole('menuitem', { name: item, exact: true })).toBeVisible({ timeout: 1_000 });
-  }).toPass();
-}
 
 test('existing foundation database upgrades to Identity without data loss @api', async () => {
   const probePath = resolve(__dirname, '../../integration/RuntimeChecks/bin/Release/net10.0');
@@ -103,36 +95,49 @@ test('manager browser login, language and theme preferences, and logout survive 
 
   await signIn(page, manager);
 
-  await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
+  await expect(page.locator('#overview-title')).toHaveText('Übersicht');
+  await expect(page.locator('#shell-user-toggle')).toHaveAccessibleName(`${manager.username}, Manager`);
 
-  await openUserMenu(page, `${manager.username}, Manager`, 'Profil');
-  await page.getByRole('menuitem', { name: 'Profil', exact: true }).click();
+  await page.locator('#shell-user-toggle').click();
 
-  await expect(page.getByRole('heading', { name: 'Verwaltung', exact: true })).toBeVisible();
-  await expect(page.getByRole('switch', { name: 'Dunkler Modus', exact: true })).toHaveAttribute('aria-checked', 'false');
+  await expect(page.locator('#shell-user-menu')).toHaveRole('menu');
+  await expect(page.locator('#shell-user-menu-profile')).toHaveRole('menuitem');
+  await expect(page.locator('#shell-user-menu-profile')).toHaveAccessibleName('Profil');
 
-  await page.getByRole('switch', { name: 'Dunkler Modus', exact: true }).click();
+  await page.locator('#shell-user-menu-profile').click();
+
+  await expect(page.locator('#administration-title')).toHaveText('Verwaltung');
+  await expect(page.locator('#profile-dark-mode')).toHaveRole('switch');
+  await expect(page.locator('#profile-dark-mode')).toHaveAccessibleName('Dunkler Modus');
+  await expect(page.locator('#profile-dark-mode')).toHaveAttribute('aria-checked', 'false');
+
+  await page.locator('#profile-dark-mode').click();
 
   await expect(page.locator('html')).toHaveAttribute('tuiTheme', 'dark');
+  await expect(page.locator('#profile-language')).toHaveAccessibleName('Sprache');
 
-  await page.getByRole('combobox', { name: 'Sprache', exact: true }).selectOption('en');
+  await page.locator('#profile-language').selectOption('en');
 
-  await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
+  await expect(page.locator('#administration-title')).toHaveText('Administration');
 
   await page.reload();
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('html')).toHaveAttribute('tuiTheme', 'dark');
-  await expect(page.getByRole('switch', { name: 'Dark mode', exact: true })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.locator('#profile-dark-mode')).toHaveAccessibleName('Dark mode');
+  await expect(page.locator('#profile-dark-mode')).toHaveAttribute('aria-checked', 'true');
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
   await page.screenshot({ path: test.info().outputPath('authenticated.png'), fullPage: true });
 
-  await openUserMenu(page, `${manager.username}, Manager`, 'Sign out');
-  await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click();
+  await page.locator('#shell-user-toggle').click();
 
-  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+  await expect(page.locator('#shell-user-menu-logout')).toHaveAccessibleName('Sign out');
+
+  await page.locator('#shell-user-menu-logout').click();
+
+  await expect(page.locator('#login-submit')).toHaveText('Sign in');
 
   expect(errors).toEqual([]);
 });
@@ -143,104 +148,106 @@ test('manager browser creates a user and temporary password requires change', as
 
   await signIn(page, manager);
 
-  await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
+  await expect(page.locator('#overview-title')).toHaveText('Übersicht');
 
   await page.goto('/administration/users');
 
-  await expect(page.getByRole('link', { name: 'Benutzer', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('#administration-tab-users')).toHaveText('Benutzer');
+  await expect(page.locator('#administration-tab-users')).toHaveAttribute('aria-current', 'page');
 
-  await page.getByRole('button', { name: 'Benutzer anlegen', exact: true }).click();
+  await page.locator('#users-create').click();
 
-  const createDialog = page.getByRole('dialog', { name: 'Benutzer anlegen' });
+  const createDialog = page.locator('#users-create-dialog');
 
-  await createDialog.getByRole('textbox', { name: 'Benutzername', exact: true }).fill('member');
-  await createDialog.getByRole('textbox', { name: 'Anzeigename', exact: true }).fill('Member display');
-  await createDialog.getByRole('button', { name: 'Benutzer anlegen', exact: true }).click();
+  await expect(createDialog).toHaveAccessibleName('Benutzer anlegen');
+  await expect(page.locator('#users-create-username')).toHaveAccessibleName('Benutzername');
+  await expect(page.locator('#users-create-display-name')).toHaveAccessibleName('Anzeigename');
 
-  const passwordDialog = page.getByRole('dialog', { name: 'Vorläufiges Passwort' });
+  await page.locator('#users-create-username').fill('member');
+  await page.locator('#users-create-display-name').fill('Member display');
+  await page.locator('#users-create-submit').click();
 
-  await expect(passwordDialog.getByTestId('temporary-password')).toHaveText(/^[A-Za-z2-9]{4}(-[A-Za-z2-9]{4}){3}$/);
+  const passwordDialog = page.locator('#users-password-dialog');
+  const temporaryPassword = page.locator('#users-temporary-password');
 
-  const created = (await passwordDialog.getByTestId('temporary-password').textContent())!;
+  await expect(passwordDialog).toHaveAccessibleName('Vorläufiges Passwort');
+  await expect(temporaryPassword).toHaveText(/^[A-Za-z2-9]{4}(-[A-Za-z2-9]{4}){3}$/);
 
-  await passwordDialog.getByRole('button', { name: 'Fertig', exact: true }).click();
+  const created = (await temporaryPassword.textContent())!;
 
-  await expect(passwordDialog).toHaveCount(0);
-  await expect(page.getByTestId('user-row').filter({ hasText: 'Member display' })).toContainText('Passwortänderung erforderlich');
+  await page.locator('#users-password-done').click();
 
-  await page.getByRole('button', { name: 'member bearbeiten', exact: true }).click();
+  const memberRow = page.locator('[data-testid="user-row"][data-username="member"]');
 
-  const editDialog = page.getByRole('dialog', { name: 'member bearbeiten' });
+  await expect(passwordDialog).not.toBeVisible();
+  await expect(memberRow).toContainText('Passwortänderung erforderlich');
+  await expect(memberRow.getByTestId('user-row-edit')).toHaveAccessibleName('member bearbeiten');
 
-  await editDialog.getByRole('switch', { name: 'Aktiv', exact: true }).click();
-  await editDialog.getByRole('button', { name: 'Speichern', exact: true }).click();
+  await memberRow.getByTestId('user-row-edit').click();
 
-  await expect(page.getByTestId('user-row').filter({ hasText: 'Member display' })).toContainText('Deaktiviert');
+  const editDialog = page.locator('#users-edit-dialog');
 
-  await page.getByRole('button', { name: 'member bearbeiten', exact: true }).click();
-  await editDialog.getByRole('switch', { name: 'Aktiv', exact: true }).click();
-  await editDialog.getByRole('button', { name: 'Speichern', exact: true }).click();
+  await expect(editDialog).toHaveAccessibleName('member bearbeiten');
+  await expect(page.locator('#users-edit-active')).toHaveAccessibleName('Aktiv');
 
-  await expect(page.getByTestId('user-row').filter({ hasText: 'Member display' })).not.toContainText('Deaktiviert');
+  await page.locator('#users-edit-active').click();
+  await page.locator('#users-edit-save').click();
 
-  await page.getByRole('button', { name: 'Passwort für member zurücksetzen', exact: true }).click();
+  await expect(memberRow).toContainText('Deaktiviert');
+
+  await memberRow.getByTestId('user-row-edit').click();
+  await page.locator('#users-edit-active').click();
+  await page.locator('#users-edit-save').click();
+
+  await expect(memberRow).not.toContainText('Deaktiviert');
+  await expect(memberRow.getByTestId('user-row-reset')).toHaveAccessibleName('Passwort für member zurücksetzen');
+
+  await memberRow.getByTestId('user-row-reset').click();
+
+  await expect(page.locator('#users-reset-dialog')).toHaveAccessibleName('Passwort für member zurücksetzen');
+  await expect(page.locator('#users-reset-submit')).toHaveText('Passwort zurücksetzen');
 
   const resetResponse = page.waitForResponse((response) => /\/api\/users\/[\w-]+\/password$/.test(new URL(response.url()).pathname));
-  await page
-    .getByRole('dialog', { name: 'Passwort für member zurücksetzen' })
-    .getByRole('button', { name: 'Passwort zurücksetzen', exact: true })
-    .click();
+  await page.locator('#users-reset-submit').click();
 
   expect((await resetResponse).status()).toBe(200);
-  await expect(passwordDialog.getByTestId('temporary-password')).not.toHaveText(created);
+  await expect(temporaryPassword).not.toHaveText(created);
 
-  const temporary = { username: 'member', password: (await passwordDialog.getByTestId('temporary-password').textContent())! };
+  const temporary = { username: 'member', password: (await temporaryPassword.textContent())! };
 
-  await passwordDialog.getByRole('button', { name: 'Fertig', exact: true }).click();
+  await page.locator('#users-password-done').click();
 
   const context = await browser.newContext({ ...test.info().project.use, baseURL: instance.origin, ignoreHTTPSErrors: true });
 
   try {
     const memberPage = await context.newPage();
 
-    await signIn(memberPage, { username: 'member', password: created });
+    await submitLogin(memberPage, { username: 'member', password: created });
 
-    await expect(memberPage.getByRole('alert')).toHaveText('Benutzername oder Passwort ist falsch.');
+    await expect(memberPage.locator('#login-error')).toHaveRole('alert');
+    await expect(memberPage.locator('#login-error')).toHaveText('Benutzername oder Passwort ist falsch.');
 
-    await memberPage.goto('/');
-    await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(temporary.username);
-    await memberPage.getByLabel('Passwort', { exact: true }).fill(temporary.password);
+    await signIn(memberPage, temporary);
 
-    const temporarySignInReload = memberPage.waitForEvent('framenavigated', (frame) => frame === memberPage.mainFrame());
+    await expect(memberPage.locator('#login-title')).toHaveText('Neues Passwort wählen');
+    await expect(memberPage.locator('#login-current-password')).toHaveAccessibleName('Aktuelles Passwort');
+    await expect(memberPage.locator('#login-new-password')).toHaveAccessibleName('Neues Passwort');
+    await expect(memberPage.locator('#login-change-password-submit')).toBeEnabled();
 
-    await memberPage.getByRole('button', { name: 'Anmelden', exact: true }).click();
-    await temporarySignInReload;
-    await memberPage.waitForLoadState('load');
+    await memberPage.locator('#login-current-password').fill(temporary.password);
+    await memberPage.locator('#login-new-password').fill(permanent.password);
+    await memberPage.locator('#login-change-password-submit').click();
 
-    await expect(memberPage.getByRole('heading', { name: 'Neues Passwort wählen', exact: true })).toBeVisible();
-    await expect(memberPage.getByRole('button', { name: 'Passwort ändern', exact: true })).toBeEnabled();
+    await expect(memberPage.locator('#login-notice')).toHaveText('Passwort geändert. Bitte erneut anmelden.');
 
-    await memberPage.getByLabel('Aktuelles Passwort', { exact: true }).fill(temporary.password);
-    await memberPage.getByLabel('Neues Passwort', { exact: true }).fill(permanent.password);
-    await memberPage.getByRole('button', { name: 'Passwort ändern', exact: true }).click();
+    await signIn(memberPage, { username: 'member', password: permanent.password });
 
-    await expect(memberPage.getByText('Passwort geändert. Bitte erneut anmelden.', { exact: true })).toBeVisible();
-
-    await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill('member');
-    await memberPage.getByLabel('Passwort', { exact: true }).fill(permanent.password);
-
-    const signInReload = memberPage.waitForEvent('framenavigated', (frame) => frame === memberPage.mainFrame());
-
-    await memberPage.getByRole('button', { name: 'Anmelden', exact: true }).click();
-    await signInReload;
-    await memberPage.waitForLoadState('load');
-
-    await expect(memberPage.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
+    await expect(memberPage.locator('#overview-title')).toHaveText('Übersicht');
 
     await memberPage.goto('/administration/users');
 
-    await expect(memberPage.getByText('Nur Manager können Benutzer verwalten.', { exact: true })).toBeVisible();
-    await expect(memberPage.getByRole('button', { name: 'Benutzer anlegen', exact: true })).toHaveCount(0);
+    await expect(memberPage.locator('#users-managers-only')).toHaveText('Nur Manager können Benutzer verwalten.');
+    await expect(memberPage.locator('#users-create')).toHaveCount(0);
   } finally {
     await context.close();
   }

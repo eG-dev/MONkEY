@@ -92,11 +92,26 @@ export async function createUser(request: APIRequestContext, username: string, d
   return { profile: created.user, account: { username, password: created.temporaryPassword as string } };
 }
 
-export async function signIn(page: Page, account: ReturnType<typeof credentials>) {
-  await page.goto('/');
-  await page.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(account.username);
-  await page.getByLabel('Passwort', { exact: true }).fill(account.password);
-  await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
+async function fillLogin(page: Page, account: ReturnType<typeof credentials>, path: string) {
+  await page.goto(path);
+  await expect(page.locator('#login-submit')).toBeEnabled();
+  await page.locator('#login-username').fill(account.username);
+  await page.locator('#login-password').fill(account.password);
+}
+
+export async function submitLogin(page: Page, account: ReturnType<typeof credentials>, path = '/') {
+  await fillLogin(page, account, path);
+  await page.locator('#login-submit').click();
+}
+
+// A successful login reloads the document; interacting before that reload races with the old page.
+export async function signIn(page: Page, account: ReturnType<typeof credentials>, path = '/') {
+  await fillLogin(page, account, path);
+
+  const reloaded = page.waitForEvent('load');
+
+  await page.locator('#login-submit').click();
+  await reloaded;
 }
 
 async function secureOrigin(instance: Instance) {

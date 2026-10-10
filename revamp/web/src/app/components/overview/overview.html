@@ -2,7 +2,7 @@
   <div class="page-header">
     <h1 class="page-title" id="overview-title">{{ t('shell.overview') }}</h1>
     @if (auth.user()?.role === 'Manager') {
-      <a routerLink="/accounts">{{ t('overview.manage') }}<span class="icon icon-arrow-right" aria-hidden="true"></span></a>
+      <a id="overview-manage-accounts" routerLink="/accounts">{{ t('overview.manage') }}<span class="icon icon-arrow-right" aria-hidden="true"></span></a>
     }
   </div>
 
@@ -13,20 +13,20 @@
       }
     </ul>
   } @else if (error()) {
-    <div class="message message-danger" role="alert">
+    <div class="message message-danger" id="overview-error" role="alert">
       <span class="icon icon-circle-alert" aria-hidden="true"></span>
       <div class="message-body">
         <span>{{ t(error()) }}</span>
         <div>
-          <button tuiButton appearance="secondary" size="s" type="button" [disabled]="!interactive()" (click)="load()">{{ t('tryAgain') }}</button>
+          <button tuiButton appearance="secondary" size="s" type="button" id="overview-retry" [disabled]="!interactive()" (click)="load()">{{ t('tryAgain') }}</button>
         </div>
       </div>
     </div>
   } @else if (accounts().length) {
-    <ul class="cards">
+    <ul class="cards" id="overview-accounts">
       @for (account of accounts(); track account.id) {
         <li>
-          <a class="card" [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
+          <a class="card" data-testid="account-card" [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
             <span class="card-head">
               <app-account-avatar [name]="account.name" [imageUrl]="account.imageUrl" />
               <span class="card-title">
@@ -42,10 +42,10 @@
       }
     </ul>
   } @else {
-    <div class="empty">
+    <div class="empty" id="overview-empty">
       <strong>{{ t('accounts.empty') }}</strong>
       @if (auth.user()?.role === 'Manager') {
-        <a routerLink="/accounts">{{ t('overview.createFirst') }}</a>
+        <a id="overview-create-first" routerLink="/accounts">{{ t('overview.createFirst') }}</a>
       }
     </div>
   }

@@ -10,10 +10,11 @@ import { AuthenticationService } from '../../services/authentication/authenticat
   template: `
     <ng-container *transloco="let t">
       <div class="page-header">
-        <h1 class="page-title">{{ t('shell.administration') }}</h1>
+        <h1 class="page-title" id="administration-title">{{ t('shell.administration') }}</h1>
       </div>
       <nav class="tabs" [attr.aria-label]="t('shell.administration')">
         <a
+          id="administration-tab-profile"
           routerLink="/administration"
           routerLinkActive="active"
           ariaCurrentWhenActive="page"
@@ -21,7 +22,7 @@ import { AuthenticationService } from '../../services/authentication/authenticat
           >{{ t('shell.profile') }}</a
         >
         @if (auth.user()?.role === 'Manager') {
-          <a routerLink="/administration/users" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('auth.users') }}</a>
+          <a id="administration-tab-users" routerLink="/administration/users" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('auth.users') }}</a>
         }
       </nav>
       <router-outlet />

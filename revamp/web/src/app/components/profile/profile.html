@@ -10,7 +10,7 @@
         <dt>{{ t('auth.role') }}</dt>
         <dd>{{ t('auth.' + user.role) }}</dd>
       </dl>
-      <button tuiButton appearance="secondary" size="m" type="button" [disabled]="!interactive()" (click)="openPasswordDialog()">
+      <button tuiButton appearance="secondary" size="m" type="button" id="profile-change-password" [disabled]="!interactive()" (click)="openPasswordDialog()">
         <span class="icon icon-key-round" aria-hidden="true"></span>{{ t('auth.changePassword') }}
       </button>
     </section>
@@ -19,7 +19,7 @@
       <h2 class="panel-title" id="profile-preferences-title">{{ t('profile.preferences') }}</h2>
       <div class="form">
         @if (preferenceError()) {
-          <div class="message message-danger" role="alert">
+          <div class="message message-danger" id="profile-preference-error" role="alert">
             <span class="icon icon-circle-alert" aria-hidden="true"></span>
             <div class="message-body">{{ t(preferenceError()) }}</div>
           </div>
@@ -36,6 +36,7 @@
           <span class="field-label" id="profile-dark-label">{{ t('shell.darkMode') }}</span>
           <button
             class="switch"
+            id="profile-dark-mode"
             type="button"
             role="switch"
             aria-labelledby="profile-dark-label"
@@ -48,10 +49,10 @@
     </section>
   }
 
-  <app-modal-dialog [open]="changing()" [heading]="t('auth.changePassword')" (closed)="changing.set(false)">
-    <form class="form" id="password-form" (ngSubmit)="changePassword()">
+  <app-modal-dialog dialogId="profile-password-dialog" [open]="changing()" [heading]="t('auth.changePassword')" (closed)="changing.set(false)">
+    <form class="form" id="profile-password-form" (ngSubmit)="changePassword()">
       @if (error()) {
-        <div class="message message-danger" role="alert">
+        <div class="message message-danger" id="profile-password-error" role="alert">
           <span class="icon icon-circle-alert" aria-hidden="true"></span>
           <div class="message-body">{{ t(error()) }}</div>
         </div>
@@ -91,8 +92,8 @@
       </div>
     </form>
     <ng-container dialog-actions>
-      <button tuiButton appearance="secondary" size="m" type="button" [disabled]="busy()" (click)="changing.set(false)">{{ t('accounts.cancel') }}</button>
-      <button tuiButton appearance="primary" size="m" type="submit" form="password-form" [disabled]="busy()">{{ t('auth.changePassword') }}</button>
+      <button tuiButton appearance="secondary" size="m" type="button" id="profile-password-cancel" [disabled]="busy()" (click)="changing.set(false)">{{ t('accounts.cancel') }}</button>
+      <button tuiButton appearance="primary" size="m" type="submit" id="profile-password-submit" form="profile-password-form" [disabled]="busy()">{{ t('auth.changePassword') }}</button>
     </ng-container>
   </app-modal-dialog>
 </div>

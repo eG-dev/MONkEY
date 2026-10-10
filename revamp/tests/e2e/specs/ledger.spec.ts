@@ -10,6 +10,7 @@ import {
   createUser,
   csrfWrite,
   login,
+  signIn,
   docker,
   containerOrigin,
   startContainer,
@@ -48,21 +49,25 @@ async function createReader(request: APIRequestContext, language = 'de') {
 
 async function chooseLanguage(page: Page, language: string, returnTo: string) {
   await page.goto('/administration');
-  await Promise.all([page.waitForEvent('load'), page.getByRole('combobox').selectOption(language)]);
+  await expect(page.locator('#profile-language')).toBeEnabled();
+  await Promise.all([page.waitForEvent('load'), page.locator('#profile-language').selectOption(language)]);
   await expect(page.locator('html')).toHaveAttribute('lang', language);
   await page.goto(returnTo);
 }
 
 async function openTransactionForm(page: Page, record: string) {
-  const actions = page.locator('.details-head .view-actions');
-  const trigger = actions.getByRole('button', { name: record, exact: true });
+  const trigger = page.locator('#account-details-record-transaction');
 
-  await expect(page.locator('.transaction-form')).toHaveCount(0);
-  await expect(actions.getByRole('button')).toHaveCount(2);
-  await expect(actions.getByRole('button').last()).toHaveText(record);
+  await expect(page.locator('#account-details-transaction-form')).toHaveCount(0);
+  await expect(trigger).toHaveText(record);
+  expect(
+    await trigger.evaluate(
+      (element) => !!(document.getElementById('account-details-refresh')!.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING),
+    ),
+  ).toBe(true);
   await trigger.click();
-  await expect(page.getByRole('dialog', { name: record, exact: true })).toBeVisible();
-  await expect(page.locator('.transaction-form')).toHaveCount(1);
+  await expect(page.locator('#account-details-transaction-dialog')).toHaveAccessibleName(record);
+  await expect(page.locator('#account-details-transaction-form')).toBeVisible();
 }
 
 test('real SQLite ledger migration, exact arithmetic, constraints and complete rollback hold @api', async () => {
@@ -606,38 +611,41 @@ for (const language of ['de', 'en'] as const) {
       page.on('pageerror', (error) => errors.push(error.message));
 
       await page.context().addCookies([{ name: 'monkey-language', value: language, url: instance.origin }]);
-      await page.goto(`/accounts/${account.id}`);
-      await page.getByRole('textbox', { name: labels.username, exact: true }).fill(manager.username);
-      await page.getByLabel(labels.password, { exact: true }).fill(manager.password);
-      await page.getByRole('button', { name: labels.login, exact: true }).click();
+      await signIn(page, manager, `/accounts/${account.id}`);
 
-      await expect(page.getByTestId('account-balance')).toHaveText(labels.empty);
+      const balance = page.locator('#account-details-balance');
+      const amount = page.locator('#account-details-opening-amount');
+      const submit = page.locator('#account-details-opening-submit');
 
-      await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(`${labels.input}1`);
-      await page.getByRole('button', { name: labels.post, exact: true }).click();
+      await expect(balance).toHaveText(labels.empty);
+      await expect(amount).toHaveAccessibleName(labels.amount);
+      await expect(submit).toHaveText(labels.post);
 
-      await expect(page.getByRole('alert')).toBeVisible();
-      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await amount.fill(`${labels.input}1`);
+      await submit.click();
+
+      await expect(page.locator('#account-details-opening-error')).toHaveRole('alert');
+      await expect(page.locator('#account-details-opening-confirm-dialog')).not.toBeVisible();
 
       const comment = '<script>private opening comment</script>';
-      await page.getByRole('textbox', { name: labels.comment, exact: true }).fill(comment);
-      await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(labels.input);
-      await page.getByRole('textbox', { name: labels.amount, exact: true }).press('Enter');
+      await expect(page.locator('#account-details-opening-comment')).toHaveAccessibleName(labels.comment);
+      await page.locator('#account-details-opening-comment').fill(comment);
+      await amount.fill(labels.input);
+      await amount.press('Enter');
 
-      const confirmation = page.getByRole('dialog');
+      await expect(page.locator('#account-details-opening-confirm-summary')).toContainText(labels.money);
+      await expect(page.locator('#account-details-opening-confirm-submit')).toHaveText(labels.post);
+      await page.locator('#account-details-opening-confirm-submit').click();
 
-      await expect(confirmation).toContainText(labels.money);
-      await confirmation.getByRole('button', { name: labels.post, exact: true }).click();
-
-      await expect(page.getByRole('status').filter({ hasText: labels.saved })).toBeVisible();
-      await expect(page.getByTestId('account-balance')).toHaveText(labels.money);
-      await expect(page.getByTestId('account-balance')).toHaveClass(/amount-positive/);
-      await expect(page.getByRole('button', { name: labels.post, exact: true })).toHaveCount(0);
-      await expect(page.getByText(comment, { exact: true }).first()).toBeVisible();
+      await expect(page.locator('#account-details-saved')).toContainText(labels.saved);
+      await expect(balance).toHaveText(labels.money);
+      await expect(balance).toHaveClass(/amount-positive/);
+      await expect(submit).toHaveCount(0);
+      await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
 
       await page.reload();
 
-      await expect(page.getByTestId('account-balance')).toHaveText(labels.money);
+      await expect(balance).toHaveText(labels.money);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({
         path: test.info().outputPath('opening-entry.png'),
@@ -648,8 +656,8 @@ for (const language of ['de', 'en'] as const) {
       await chooseLanguage(page, otherLanguage, `/accounts/${account.id}`);
 
       await expect(page.locator('html')).toHaveAttribute('lang', otherLanguage);
-      await expect(page.getByTestId('account-balance')).toHaveText(`+${otherLanguage === 'de' ? '12,34' : '12.34'} ${symbol}`);
-      await expect(page.getByText(comment, { exact: true }).first()).toBeVisible();
+      await expect(balance).toHaveText(`+${otherLanguage === 'de' ? '12,34' : '12.34'} ${symbol}`);
+      await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
       const persisted = await (await request.get(`/api/accounts/${account.id}`)).json();
       expect(persisted.balance).toBe('12.34');
       expect(persisted.currency).toBe(currency);
@@ -657,7 +665,7 @@ for (const language of ['de', 'en'] as const) {
 
       await chooseLanguage(page, language, `/accounts/${maximum.id}`);
 
-      await expect(page.getByTestId('account-balance')).toHaveText(labels.maximum);
+      await expect(balance).toHaveText(labels.maximum);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({
         path: test.info().outputPath('maximum-balance.png'),
@@ -674,13 +682,10 @@ for (const language of ['de', 'en'] as const) {
         const memberPage = await context.newPage();
         memberPage.on('pageerror', (error) => errors.push(error.message));
         await context.addCookies([{ name: 'monkey-language', value: language, url: instance.origin }]);
-        await memberPage.goto(`/accounts/${account.id}`);
-        await memberPage.getByRole('textbox', { name: labels.username, exact: true }).fill(reader.username);
-        await memberPage.getByLabel(labels.password, { exact: true }).fill(reader.password);
-        await memberPage.getByRole('button', { name: labels.login, exact: true }).click();
+        await signIn(memberPage, reader, `/accounts/${account.id}`);
 
-        await expect(memberPage.getByTestId('account-balance')).toHaveText(labels.money);
-        await expect(memberPage.getByRole('button', { name: labels.post, exact: true })).toHaveCount(0);
+        await expect(memberPage.locator('#account-details-balance')).toHaveText(labels.money);
+        await expect(memberPage.locator('#account-details-opening-submit')).toHaveCount(0);
       } finally {
         await context.close();
       }
@@ -759,40 +764,51 @@ for (const language of ['de', 'en'] as const) {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.context().addCookies([{ name: 'monkey-language', value: language, url: instance.origin }]);
-      await page.goto(`/accounts/${account.id}`);
-      await page.getByRole('textbox', { name: labels.username, exact: true }).fill(manager.username);
-      await page.getByLabel(labels.password, { exact: true }).fill(manager.password);
-      await page.getByRole('button', { name: labels.login, exact: true }).click();
-      await page.getByRole('textbox', { name: labels.openingAmount, exact: true }).fill(`-0${labels.decimal}01`);
-      await page.getByRole('button', { name: labels.opening, exact: true }).click();
-      await page.getByRole('dialog').getByRole('button', { name: labels.opening, exact: true }).click();
+      await signIn(page, manager, `/accounts/${account.id}`);
 
-      await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}01 ${symbol}`);
-      await expect(page.getByTestId('account-balance')).toHaveClass(/amount-negative/);
+      const balance = page.locator('#account-details-balance');
+      const amount = page.locator('#account-details-transaction-amount');
+      const submit = page.locator('#account-details-transaction-submit');
+      const deposit = page.locator('#account-details-transaction-deposit');
+      const withdrawal = page.locator('#account-details-transaction-withdrawal');
+      const error = page.locator('#account-details-transaction-error');
+      const entries = page.getByTestId('ledger-entry');
+
+      await expect(page.locator('#account-details-opening-amount')).toHaveAccessibleName(labels.openingAmount);
+      await page.locator('#account-details-opening-amount').fill(`-0${labels.decimal}01`);
+      await page.locator('#account-details-opening-submit').click();
+      await page.locator('#account-details-opening-confirm-submit').click();
+
+      await expect(balance).toHaveText(`-0${labels.decimal}01 ${symbol}`);
+      await expect(balance).toHaveClass(/amount-negative/);
       await openTransactionForm(page, labels.record);
       await page.screenshot({ path: test.info().outputPath('transaction-dialog.png'), fullPage: true });
-      await page.getByRole('radio', { name: labels.withdrawal, exact: true }).check();
+      await expect(withdrawal).toHaveAccessibleName(labels.withdrawal);
+      await withdrawal.check();
 
-      await expect(page.locator('form[data-mode="withdrawal"]')).toBeVisible();
+      await expect(page.locator('#account-details-transaction-form')).toHaveAttribute('data-mode', 'withdrawal');
+      await expect(amount).toHaveAccessibleName(labels.amount);
+      await expect(submit).toHaveText(labels.postWithdrawal);
 
-      for (const amount of ['0', '-1', `1${labels.decimal}001`]) {
-        await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(amount);
-        await page.getByRole('button', { name: labels.postWithdrawal, exact: true }).click();
-        await expect(page.getByRole('alert')).toBeVisible();
+      for (const value of ['0', '-1', `1${labels.decimal}001`]) {
+        await amount.fill(value);
+        await submit.click();
+        await expect(error).toHaveRole('alert');
       }
 
       const comment = '<img src=x onerror="window.monkeyXss=true">';
-      await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(`0${labels.decimal}02`);
-      await page.getByRole('textbox', { name: labels.comment, exact: true }).fill(comment);
-      await page.getByRole('button', { name: labels.postWithdrawal, exact: true }).click();
-      await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}03 ${symbol}`);
-      await expect(page.getByRole('dialog', { name: labels.record, exact: true })).toHaveCount(0);
-      await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
-      await expect(page.getByTestId('ledger-entry').first()).toContainText(`-0${labels.decimal}02 ${symbol}`);
+      await amount.fill(`0${labels.decimal}02`);
+      await expect(page.locator('#account-details-transaction-comment')).toHaveAccessibleName(labels.comment);
+      await page.locator('#account-details-transaction-comment').fill(comment);
+      await submit.click();
+      await expect(balance).toHaveText(`-0${labels.decimal}03 ${symbol}`);
+      await expect(page.locator('#account-details-transaction-dialog')).not.toBeVisible();
+      await expect(entries.first()).toContainText(comment);
+      await expect(entries.first()).toContainText(`-0${labels.decimal}02 ${symbol}`);
       await expect(page.getByRole('columnheader', { name: language === 'de' ? 'Erfasst von' : 'Recorded by', exact: true }))
         .toHaveCount(test.info().project.name === 'mobile' ? 0 : 1);
-      await expect(page.getByTestId('ledger-entry').first()).toContainText(recordedBy);
-      await expect(page.getByTestId('ledger-entry').first().locator('.by')).toHaveText(recordedBy);
+      await expect(entries.first()).toContainText(recordedBy);
+      await expect(entries.first().locator('.by')).toHaveText(recordedBy);
       expect(await page.evaluate(() => 'monkeyXss' in window)).toBe(false);
 
       const keys: string[] = [];
@@ -813,16 +829,18 @@ for (const language of ['de', 'en'] as const) {
       });
 
       await openTransactionForm(page, labels.record);
-      await page.getByRole('radio', { name: labels.deposit, exact: true }).check();
-      await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(`0${labels.decimal}01`);
-      await page.getByRole('button', { name: labels.postDeposit, exact: true }).click();
-      await expect(page.getByRole('alert')).toBeVisible();
-      await page.getByRole('button', { name: labels.postDeposit, exact: true }).click();
-      await expect(page.getByRole('status').filter({ hasText: labels.saved })).toBeVisible();
-      await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}02 ${symbol}`);
+      await expect(deposit).toHaveAccessibleName(labels.deposit);
+      await deposit.check();
+      await expect(submit).toHaveText(labels.postDeposit);
+      await amount.fill(`0${labels.decimal}01`);
+      await submit.click();
+      await expect(error).toHaveRole('alert');
+      await submit.click();
+      await expect(page.locator('#account-details-saved')).toContainText(labels.saved);
+      await expect(balance).toHaveText(`-0${labels.decimal}02 ${symbol}`);
       expect(keys).toHaveLength(2);
       expect(new Set(keys).size).toBe(1);
-      await expect(page.getByTestId('ledger-entry')).toHaveCount(3);
+      await expect(entries).toHaveCount(3);
       await page.unroute(`**/api/accounts/${account.id}/transactions`);
 
       for (let index = 0; index < 22; index++) {
@@ -839,11 +857,12 @@ for (const language of ['de', 'en'] as const) {
       }
 
       await page.reload();
-      await expect(page.getByTestId('ledger-entry')).toHaveCount(20);
-      await expect(page.getByTestId('ledger-entry').first()).toContainText('Page marker 21');
-      await page.getByRole('button', { name: labels.next, exact: true }).click();
-      await expect(page.getByTestId('ledger-entry')).toHaveCount(5);
-      await expect(page.getByText(comment, { exact: true })).toBeVisible();
+      await expect(entries).toHaveCount(20);
+      await expect(entries.first()).toContainText('Page marker 21');
+      await expect(page.locator('#account-details-history-next')).toHaveText(labels.next);
+      await page.locator('#account-details-history-next').click();
+      await expect(entries).toHaveCount(5);
+      await expect(entries.filter({ hasText: comment })).toHaveCount(1);
       expect(
         (
           await csrfWrite(request, 'POST', `/api/accounts/${account.id}/transactions`, {
@@ -854,9 +873,10 @@ for (const language of ['de', 'en'] as const) {
           })
         ).status(),
       ).toBe(200);
-      await page.getByRole('button', { name: labels.previous, exact: true }).click();
-      await expect(page.getByTestId('ledger-entry')).toHaveCount(20);
-      await expect(page.getByTestId('ledger-entry').first()).toContainText('Page marker 21');
+      await expect(page.locator('#account-details-history-previous')).toHaveText(labels.previous);
+      await page.locator('#account-details-history-previous').click();
+      await expect(entries).toHaveCount(20);
+      await expect(entries.first()).toContainText('Page marker 21');
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({
         path: test.info().outputPath('transaction-history.png'),
@@ -866,11 +886,11 @@ for (const language of ['de', 'en'] as const) {
       const beforeLanguage = await (await request.get(`/api/accounts/${account.id}/transactions`)).json();
       const otherLanguage = language === 'de' ? 'en' : 'de';
       await chooseLanguage(page, otherLanguage, `/accounts/${account.id}`);
-      await expect(page.getByTestId('ledger-entry')).toHaveCount(20);
+      await expect(entries).toHaveCount(20);
       expect(await (await request.get(`/api/accounts/${account.id}/transactions`)).json()).toEqual(beforeLanguage);
       await chooseLanguage(page, language, `/accounts/${minimum.id}`);
-      await expect(page.getByTestId('account-balance')).toHaveText(labels.minimum);
-      await expect(page.getByTestId('ledger-entry').first()).toContainText(labels.minimum);
+      await expect(balance).toHaveText(labels.minimum);
+      await expect(entries.first()).toContainText(labels.minimum);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({
         path: test.info().outputPath('minimum-balance.png'),
@@ -887,14 +907,11 @@ for (const language of ['de', 'en'] as const) {
         const memberPage = await context.newPage();
         memberPage.on('pageerror', (error) => errors.push(error.message));
         await context.addCookies([{ name: 'monkey-language', value: language, url: instance.origin }]);
-        await memberPage.goto(`/accounts/${account.id}`);
-        await memberPage.getByRole('textbox', { name: labels.username, exact: true }).fill(reader.username);
-        await memberPage.getByLabel(labels.password, { exact: true }).fill(reader.password);
-        await memberPage.getByRole('button', { name: labels.login, exact: true }).click();
+        await signIn(memberPage, reader, `/accounts/${account.id}`);
         await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(20);
         await expect(memberPage.getByRole('radio')).toHaveCount(0);
-        await expect(memberPage.getByRole('button', { name: labels.record, exact: true })).toHaveCount(0);
-        await memberPage.getByRole('button', { name: labels.next, exact: true }).click();
+        await expect(memberPage.locator('#account-details-record-transaction')).toHaveCount(0);
+        await memberPage.locator('#account-details-history-next').click();
         await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(6);
       } finally {
         await context.close();

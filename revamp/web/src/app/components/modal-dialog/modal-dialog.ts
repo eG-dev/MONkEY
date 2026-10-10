@@ -1,9 +1,7 @@
-import { Component, ElementRef, PLATFORM_ID, effect, inject, input, output, viewChild } from '@angular/core';
+import { Component, ElementRef, PLATFORM_ID, computed, effect, inject, input, output, viewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
-
-let dialogCount = 0;
 
 @Component({
   selector: 'app-modal-dialog',
@@ -11,12 +9,13 @@ let dialogCount = 0;
   templateUrl: './modal-dialog.html',
 })
 export class ModalDialog {
+  readonly dialogId = input.required<string>();
   readonly open = input(false);
   readonly heading = input.required<string>();
   readonly dismissible = input(true);
   readonly closed = output<void>();
 
-  protected readonly titleId = `dialog-title-${++dialogCount}`;
+  protected readonly titleId = computed(() => `${this.dialogId()}-title`);
 
   private readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('dialog');
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));

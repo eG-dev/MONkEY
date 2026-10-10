@@ -1,8 +1,8 @@
-<dialog #dialog class="dialog" [attr.aria-labelledby]="titleId" (cancel)="cancel($event)" (close)="onClose()" *transloco="let t">
+<dialog #dialog class="dialog" [id]="dialogId()" [attr.aria-labelledby]="titleId()" (cancel)="cancel($event)" (close)="onClose()" *transloco="let t">
   <div class="dialog-header">
-    <h2 class="dialog-title" [id]="titleId">{{ heading() }}</h2>
+    <h2 class="dialog-title" [id]="titleId()">{{ heading() }}</h2>
     @if (dismissible()) {
-      <button tuiButton appearance="flat" size="s" type="button" [attr.aria-label]="t('close')" [title]="t('close')" (click)="close()">
+      <button tuiButton appearance="flat" size="s" type="button" [id]="dialogId() + '-close'" [attr.aria-label]="t('close')" [title]="t('close')" (click)="close()">
         <span class="icon icon-x" aria-hidden="true"></span>
       </button>
     }

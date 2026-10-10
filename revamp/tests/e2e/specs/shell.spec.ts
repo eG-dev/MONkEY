@@ -42,15 +42,18 @@ test('hydrated shell switches language, persists state, and uses local assets', 
   await page.goto('/');
 
   await expect(page.getByRole('img', { name: 'POCKET MONkEY' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
+  await expect(page.locator('#login-title')).toHaveText('Anmelden');
+  await expect(page.locator('#login-title')).toHaveRole('heading');
   await expect(page.getByTestId('sample-id')).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'English' }).click();
+  await expect(page.locator('#login-language-en')).toBeEnabled();
+  await expect(page.locator('#login-language-en')).toHaveAccessibleName('English');
+  await page.locator('#login-language-en').click();
 
-  await expect(page.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await expect(page.locator('#login-language-en')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#login-title')).toHaveText('Sign in');
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await expect(page.locator('#login-title')).toHaveText('Sign in');
 
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('type', 'image/png');
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'favicon.png');
@@ -112,6 +115,6 @@ test('backend failure preserves sign-in rendering and fails readiness', async ({
 
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
+  await expect(page.locator('#login-title')).toHaveText('Anmelden');
   await expect(page.getByTestId('sample-id')).toHaveCount(0);
 });

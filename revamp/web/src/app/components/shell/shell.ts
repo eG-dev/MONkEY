@@ -1,4 +1,4 @@
-import { Component, ElementRef, PLATFORM_ID, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, PLATFORM_ID, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -26,16 +26,24 @@ export class Shell {
   protected readonly drawerOpen = signal(false);
   protected readonly navigationVisible = computed(() => (this.wide() ? !this.collapsed() : this.drawerOpen()));
   private readonly userMenu = viewChild<ElementRef<HTMLElement>>('userMenu');
+  private readonly router = inject(Router);
+  private readonly hydrated = signal(false);
+  private readonly navigated = signal(this.router.navigated);
+  // NavigationEnd closes the drawer and menu, so opening them earlier would be undone.
+  protected readonly interactive = computed(() => this.hydrated() && this.navigated());
 
   constructor() {
+    afterNextRender(() => this.hydrated.set(true));
+
     this.wideQuery?.addEventListener('change', (event) => {
       this.wide.set(event.matches);
       this.drawerOpen.set(false);
     });
 
-    inject(Router)
+    this.router
       .events.pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
+        this.navigated.set(true);
         this.drawerOpen.set(false);
         this.userMenu()?.nativeElement.hidePopover();
       });
@@ -52,7 +60,7 @@ export class Shell {
   protected dismissDrawer(): void {
     if (!this.wide() && this.drawerOpen() && !document.querySelector('dialog[open]')) {
       this.drawerOpen.set(false);
-      document.getElementById('navigation-toggle')?.focus();
+      document.getElementById('shell-navigation-toggle')?.focus();
     }
   }
 
