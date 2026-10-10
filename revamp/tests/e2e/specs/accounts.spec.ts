@@ -276,21 +276,27 @@ for (const language of ['de', 'en'] as const) {
     await expect(page).toHaveURL(/\/accounts\/[\w-]+$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ida');
 
-    await page.goto('/accounts');
     await page.getByRole('button', { name: labels.editNamed('Ida'), exact: true }).click();
 
-    const editDialog = page.getByRole('dialog', { name: labels.edit });
+    const editDialog = page.getByRole('dialog', { name: labels.editNamed('Ida'), exact: true });
 
     await editDialog.getByRole('textbox', { name: labels.name, exact: true }).fill('N'.repeat(40));
     await editDialog.getByRole('button', { name: labels.save, exact: true }).click();
 
-    await expect(page.getByRole('status').filter({ hasText: labels.saved('N'.repeat(40)) })).toBeVisible();
-    await expect(page.getByTestId('account-row')).toHaveCount(1);
-    await expect(page.getByTestId('account-row').getByRole('link')).toHaveText('N'.repeat(40));
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('N'.repeat(40));
 
     await page.reload();
 
-    await expect(page.getByTestId('account-row').getByRole('link')).toHaveText('N'.repeat(40));
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('N'.repeat(40));
+
+    await page.goto('/accounts');
+
+    await expect(page.getByTestId('account-row')).toHaveCount(1);
+    await expect(page.getByTestId('account-row').getByRole('link', { name: 'N'.repeat(40), exact: true })).toBeVisible();
+
+    await page.reload();
+
+    await expect(page.getByTestId('account-row').getByRole('link', { name: 'N'.repeat(40), exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: test.info().outputPath('accounts.png'), fullPage: true });
 

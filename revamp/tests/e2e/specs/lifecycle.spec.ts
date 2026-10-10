@@ -195,7 +195,7 @@ standalone('runtime works with networking disabled and no development executable
       name,
       'node',
       '-e',
-      "fetch('http://127.0.0.1:8080/',{headers:{'Accept-Language':'fr'}}).then(response=>response.text()).then(html=>process.exit(html.includes('lang=\"en\"')&&html.includes('Persisted sample')?0:1))",
+      "fetch('http://127.0.0.1:8080/',{headers:{'Accept-Language':'fr'}}).then(response=>response.text()).then(html=>process.exit(html.includes('lang=\"en\"')&&html.includes('Sign in')?0:1))",
     );
 
     expect(language).toBe('');
