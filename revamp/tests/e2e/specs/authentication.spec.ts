@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
+import type { Page } from '@playwright/test';
 
 import {
   test,
@@ -18,6 +19,14 @@ import {
 } from '../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });
+
+// The shell closes the popover on NavigationEnd, which can land just after the click on a slow first load.
+async function openUserMenu(page: Page, button: string, item: string) {
+  await expect(async () => {
+    await page.getByRole('button', { name: button, exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: item, exact: true })).toBeVisible({ timeout: 1_000 });
+  }).toPass();
+}
 
 test('existing foundation database upgrades to Identity without data loss @api', async () => {
   const probePath = resolve(__dirname, '../../integration/RuntimeChecks/bin/Release/net10.0');
@@ -96,7 +105,7 @@ test('manager browser login, language and theme preferences, and logout survive 
 
   await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: `${manager.username}, Manager`, exact: true }).click();
+  await openUserMenu(page, `${manager.username}, Manager`, 'Profil');
   await page.getByRole('menuitem', { name: 'Profil', exact: true }).click();
 
   await expect(page.getByRole('heading', { name: 'Verwaltung', exact: true })).toBeVisible();
@@ -120,7 +129,7 @@ test('manager browser login, language and theme preferences, and logout survive 
 
   await page.screenshot({ path: test.info().outputPath('authenticated.png'), fullPage: true });
 
-  await page.getByRole('button', { name: `${manager.username}, Manager`, exact: true }).click();
+  await openUserMenu(page, `${manager.username}, Manager`, 'Sign out');
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click();
 
   await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
@@ -417,6 +426,18 @@ test('theme preference persists in the session and SSR document @api', async ({ 
   expect(html).toMatch(/<html[^>]*tuiTheme="dark"/i);
 
   expect((await csrfWrite(request, 'PUT', '/api/auth/theme', { theme: null })).status()).toBe(400);
+
+  const concurrent = await Promise.all([
+    ...Array.from({ length: 5 }, () => csrfWrite(request, 'PUT', '/api/auth/theme', { theme: 'light' })),
+    ...Array.from({ length: 5 }, () => csrfWrite(request, 'PUT', '/api/auth/language', { language: 'en' })),
+  ]);
+
+  expect(concurrent.map((response) => response.status())).toEqual(Array(10).fill(204));
+
+  const profile = await (await request.get('/api/auth/me')).json();
+
+  expect(profile.theme).toBe('light');
+  expect(profile.language).toBe('en');
 });
 
 test('member permissions and concurrent SSR identity stay isolated @api', async ({ request, playwright, instance }) => {

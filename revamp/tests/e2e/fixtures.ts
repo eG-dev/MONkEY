@@ -101,19 +101,56 @@ export async function signIn(page: Page, account: ReturnType<typeof credentials>
 
 async function secureOrigin(instance: Instance) {
   const certificate = await generate([{ name: 'commonName', value: 'localhost' }], { keyType: 'ec' });
-  const server = createServer({ key: certificate.private, cert: certificate.cert }, (request, response) => {
-    const target = new URL(request.url ?? '/', containerOrigin(instance.container));
-    const upstream = httpRequest(target, { method: request.method, headers: request.headers }, (result) => {
-      response.writeHead(result.statusCode ?? 502, result.headers);
-      result.pipe(response);
-    });
-    upstream.on('error', () => {
-      if (!response.headersSent) {
-        response.writeHead(502);
+  // Resolving per request would block the worker's event loop on `docker inspect`; refresh only after a connection failure.
+  let upstreamOrigin = containerOrigin(instance.container);
+
+  const server = createServer({ key: certificate.private, cert: certificate.cert }, async (request, response) => {
+    const chunks: Buffer[] = [];
+
+    try {
+      for await (const chunk of request) {
+        chunks.push(chunk as Buffer);
       }
-      response.end();
-    });
-    request.pipe(upstream);
+    } catch {
+      response.destroy();
+      return;
+    }
+
+    const body = Buffer.concat(chunks);
+
+    const forward = (retry: boolean) => {
+      const target = new URL(request.url ?? '/', upstreamOrigin);
+      // agent: false avoids reusing pooled sockets the upstream already closed (keep-alive race -> spurious 502).
+      const upstream = httpRequest(target, { method: request.method, headers: request.headers, agent: false }, (result) => {
+        response.writeHead(result.statusCode ?? 502, result.headers);
+        result.pipe(response);
+      });
+
+      upstream.on('error', (error) => {
+        if (retry && !response.headersSent) {
+          // Docker restarts publish a new host port.
+          try {
+            upstreamOrigin = containerOrigin(instance.container);
+            forward(false);
+            return;
+          } catch {
+            // Container is stopped; report the original failure.
+          }
+        }
+
+        console.warn(`HTTPS fixture upstream ${request.method} ${request.url} failed:`, error.message);
+
+        if (!response.headersSent) {
+          response.writeHead(502);
+        }
+
+        response.end();
+      });
+
+      upstream.end(body);
+    };
+
+    forward(true);
   });
 
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));

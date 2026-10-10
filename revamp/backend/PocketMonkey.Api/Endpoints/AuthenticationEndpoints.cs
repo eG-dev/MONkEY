@@ -49,23 +49,25 @@ public static class AuthenticationEndpoints
         auth.MapPost("/password", ChangePasswordAsync)
             .RequireAuthorization();
 
+        // Preferences use single-column updates: a full UpdateAsync rejects concurrent preference writes via the concurrency stamp.
         auth.MapPut("/language", async Task<IResult> (
             LanguageRequest request,
             ClaimsPrincipal principal,
             UserManager<ApplicationUser> users,
+            FoundationDbContext database,
             CancellationToken cancellationToken) =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 if (request.Language is not ("de" or "en"))
                 {
                     return EndpointErrors.ToResult(UserAdministrationError.InvalidLanguage);
                 }
 
-                var user = (await users.GetUserAsync(principal))!;
-                user.Language = request.Language;
+                var userId = users.GetUserId(principal);
+                var updated = await database.Users
+                    .Where(x => x.Id == userId)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Language, request.Language), cancellationToken);
 
-                return (await users.UpdateAsync(user)).Succeeded
+                return updated == 1
                     ? TypedResults.NoContent()
                     : EndpointErrors.ToResult(UserAdministrationError.InvalidUser);
             })
@@ -75,19 +77,20 @@ public static class AuthenticationEndpoints
             ThemeRequest request,
             ClaimsPrincipal principal,
             UserManager<ApplicationUser> users,
+            FoundationDbContext database,
             CancellationToken cancellationToken) =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 if (request.Theme is not ("system" or "light" or "dark"))
                 {
                     return EndpointErrors.ToResult(UserAdministrationError.InvalidTheme);
                 }
 
-                var user = (await users.GetUserAsync(principal))!;
-                user.Theme = request.Theme;
+                var userId = users.GetUserId(principal);
+                var updated = await database.Users
+                    .Where(x => x.Id == userId)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Theme, request.Theme), cancellationToken);
 
-                return (await users.UpdateAsync(user)).Succeeded
+                return updated == 1
                     ? TypedResults.NoContent()
                     : EndpointErrors.ToResult(UserAdministrationError.InvalidUser);
             })

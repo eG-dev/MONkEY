@@ -150,18 +150,35 @@ npm --prefix tests/e2e exec -- playwright install chromium
 npm --prefix tests/e2e test
 ```
 
-On Linux CI, use `playwright install --with-deps chromium`. On a corporate network
+CI does not install a host browser; see the isolated browser server below. On a corporate network
 whose CA is trusted by Windows, `NODE_USE_SYSTEM_CA=1` allows Node downloads to use
 that trust store; never disable certificate verification to download a browser.
 
 The solution build includes the test-only `RuntimeChecks` probe. E2E fixtures use
 fresh named volumes/containers and dynamically published loopback ports per test;
 they rediscover ports after Docker restart. Tests clean up only their own state.
-CI uses one Playwright worker; local runs use two. Parallel Docker fixture
-creation/removal on a native Linux runner can trigger Chromium
-`ERR_NETWORK_CHANGED` during asset downloads. Serializing CI fixture lifecycles
-avoids that interference without retries; explicit concurrent-request tests still
-exercise business concurrency.
+Parallel Docker fixture creation/removal on a native Linux host creates and
+removes veth interfaces; a host-namespace Chromium reacts with
+`ERR_NETWORK_CHANGED` during asset downloads. CI therefore runs the browser in a
+pinned `mcr.microsoft.com/playwright` container (`run-server`) with its own
+network namespace and sets `PW_TEST_CONNECT_WS_ENDPOINT` plus
+`PW_TEST_CONNECT_EXPOSE_NETWORK=<loopback>`, so browser traffic to the loopback
+fixtures is tunnelled through the test runner. With a connect endpoint, CI uses
+two workers; without one, CI falls back to one worker. Local runs use two.
+Retries remain zero. To reproduce locally:
+
+```powershell
+docker run --detach --rm --init --name playwright-browser --publish 127.0.0.1:3000:3000 --workdir /home/pwuser --user pwuser mcr.microsoft.com/playwright:v1.63.0-noble /bin/sh -c "npx -y playwright@1.63.0 run-server --port 3000 --host 0.0.0.0"
+$env:PW_TEST_CONNECT_WS_ENDPOINT = 'ws://127.0.0.1:3000/'; $env:PW_TEST_CONNECT_EXPOSE_NETWORK = '<loopback>'
+npm --prefix tests/e2e test
+```
+
+Keep the image tag and the `run-server` version equal to `@playwright/test`.
+The HTTPS fixture proxy caches the container's published port, re-resolves it
+only after a connection failure (Docker restart), and opens a fresh upstream
+connection per request. Resolving the port per request blocked each worker's
+event loop on `docker inspect`, and pooled keep-alive sockets produced sporadic
+`502` responses for lazy chunks.
 Reports, screenshots, traces, and failure logs are beneath
 `tests/e2e/playwright-report/` and `tests/e2e/test-results/`, both ignored by Git.
 No core API/authentication/storage mocks or unit-coverage requirement are used.

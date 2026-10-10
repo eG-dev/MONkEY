@@ -4,7 +4,8 @@ export default defineConfig({
   testDir: './specs',
   testMatch: '*.spec.ts',
   fullyParallel: true,
-  workers: process.env['CI'] ? 1 : 2,
+  // A host-namespace browser on native Linux sees fixture veth churn (ERR_NETWORK_CHANGED); see revamp/README.md.
+  workers: process.env['CI'] && !process.env['PW_TEST_CONNECT_WS_ENDPOINT'] ? 1 : 2,
   forbidOnly: Boolean(process.env['CI']),
   retries: 0,
   timeout: 60_000,
