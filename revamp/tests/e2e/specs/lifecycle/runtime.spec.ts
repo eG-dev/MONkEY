@@ -1,0 +1,122 @@
+import { spawnSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
+import { resolve } from 'node:path';
+import { test as standalone } from '@playwright/test';
+import { test, expect, docker, image } from '../../fixtures';
+
+test.use({ ignoreHTTPSErrors: true });
+
+standalone('runtime works with networking disabled and no development executables', async () => {
+  const name = `monkey-offline-${randomUUID()}`;
+
+  try {
+    docker(
+      'run',
+      '--detach',
+      '--name',
+      name,
+      '--network',
+      'none',
+      '--env',
+      'MONKEY_PUBLIC_URL=https://localhost',
+      '--env',
+      'MONKEY_DATA_PATH=/data/offline',
+      '--env',
+      'MONKEY_DEFAULT_LOCALE=en-GB',
+      '--env',
+      'MONKEY_LOG_LEVEL=Warning',
+      image,
+    );
+
+    await expect
+      .poll(
+        () => {
+          const check = spawnSync(
+            'docker',
+            [
+              'exec',
+              name,
+              'node',
+              '-e',
+              "Promise.all(['/health/ready','/favicon.png','/assets/lucide/lucide.woff2','/assets/lucide/LICENSE','/'].map(path=>fetch('http://127.0.0.1:8080'+path))).then(responses=>process.exit(responses.every(response=>response.ok)?0:1)).catch(()=>process.exit(1))",
+            ],
+            { encoding: 'utf8', timeout: 10_000 },
+          );
+          return check.status;
+        },
+        { timeout: 30_000, intervals: [100, 250, 500] },
+      )
+      .toBe(0);
+
+    const language = docker(
+      'exec',
+      name,
+      'node',
+      '-e',
+      "fetch('http://127.0.0.1:8080/',{headers:{'Accept-Language':'en-GB'}}).then(response=>response.text()).then(html=>process.exit(html.includes('lang=\"en\"')&&html.includes('Sign in')?0:1))",
+    );
+
+    expect(language).toBe('');
+
+    expect(docker('logs', name)).not.toContain('"event":"listening"');
+
+    expect(docker('exec', name, 'dotnet', '--list-sdks')).toBe('');
+    docker('exec', name, '/bin/sh', '-c', '! command -v npm && ! command -v ng && ! command -v playwright');
+  } finally {
+    docker('rm', '--force', '--volumes', name);
+  }
+});
+
+standalone('Linux Node and .NET agree at DST boundaries with German/English globalization', async () => {
+  const probe = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0');
+
+  const result = JSON.parse(
+    docker(
+      'run',
+      '--rm',
+      '--network',
+      'none',
+      '--env',
+      'TZ=Europe/Berlin',
+      '--entrypoint',
+      '/usr/bin/dotnet',
+      '--mount',
+      `type=bind,source=${probe},target=/probe,readonly`,
+      image,
+      '/probe/RuntimeChecks.dll',
+    ),
+  );
+
+  expect(result.timezone).toBe('Europe/Berlin');
+
+  expect(result.samples.map((sample: { local: string }) => sample.local)).toEqual([
+    '2026-03-29 01:59:59',
+    '2026-03-29 03:00:00',
+    '2026-10-25 02:59:59',
+    '2026-10-25 02:00:00',
+  ]);
+  expect(result.samples.map((sample: { offsetMinutes: number }) => sample.offsetMinutes)).toEqual([60, 120, 120, 60]);
+
+  expect(result.englishMonth).toBe('March');
+  expect(result.germanMonth).toBe('M\u00e4rz');
+
+  const nodeSamples = JSON.parse(
+    docker(
+      'run',
+      '--rm',
+      '--network',
+      'none',
+      '--env',
+      'TZ=Europe/Berlin',
+      '--entrypoint',
+      '/usr/local/bin/node',
+      image,
+      '-e',
+      `const instants = ${JSON.stringify(result.samples.map((sample: { instant: string }) => sample.instant))};
+     const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+     console.log(JSON.stringify(instants.map(instant => { const parts = Object.fromEntries(format.formatToParts(new Date(instant)).map(part => [part.type, part.value])); return parts.year+'-'+parts.month+'-'+parts.day+' '+parts.hour+':'+parts.minute+':'+parts.second; })));`,
+    ),
+  );
+
+  expect(nodeSamples).toEqual(result.samples.map((sample: { local: string }) => sample.local));
+});

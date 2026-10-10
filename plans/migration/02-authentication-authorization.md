@@ -82,7 +82,8 @@ for that reload after submitting temporary credentials, then waits for the new
 form's enabled submit button before filling its inputs. It retains the success
 notice and subsequent permanent-password sign-in assertions. Three mobile
 repetitions and the desktop counterpart passed against the production image
-without retries; test typechecking passed. Hosted confirmation remains pending.
+without retries; test typechecking passed. On 2026-10-10, the user subsequently
+confirmed that all tests pass in GitHub Actions; see the [testing record](testing.md).
 
 ## Session and recovery policy
 

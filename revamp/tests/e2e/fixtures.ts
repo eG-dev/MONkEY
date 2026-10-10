@@ -30,6 +30,8 @@ export function startContainer(container: string, volume: string, currency = 'EU
     '--env',
     'TZ=Europe/Berlin',
     '--env',
+    'MONKEY_DEFAULT_LOCALE=en-GB',
+    '--env',
     `MONKEY_CURRENCY=${currency}`,
     '--mount',
     `type=volume,source=${volume},target=/data`,
@@ -82,7 +84,17 @@ export async function csrfWrite(request: APIRequestContext, method: 'POST' | 'PU
 export async function login(request: APIRequestContext, account: ReturnType<typeof credentials>) {
   const response = await csrfWrite(request, 'POST', '/api/auth/login', account);
   expect(response.status()).toBe(200);
-  return response.json();
+  const profile = await response.json();
+
+  if (!profile.mustChangePassword && profile.language !== 'en') {
+    const preference = await csrfWrite(request, 'PUT', '/api/auth/language', { language: 'en' });
+    expect(preference.status()).toBe(204);
+    const updated = await request.get('/api/auth/me');
+    expect(updated.status()).toBe(200);
+    return updated.json();
+  }
+
+  return profile;
 }
 
 export async function createUser(request: APIRequestContext, username: string, displayName: string, role: 'Manager' | 'Member') {
@@ -112,6 +124,15 @@ export async function signIn(page: Page, account: ReturnType<typeof credentials>
 
   await page.locator('#login-submit').click();
   await reloaded;
+
+  const profile = await page.request.get('/api/auth/me');
+  const user = await profile.json();
+
+  if (!user.mustChangePassword && user.language !== 'en') {
+    const preference = await csrfWrite(page.request, 'PUT', '/api/auth/language', { language: 'en' });
+    expect(preference.status()).toBe(204);
+    await page.reload();
+  }
 }
 
 async function secureOrigin(instance: Instance) {
@@ -197,7 +218,9 @@ export const test = base.extend<{ instance: Instance; currency: 'EUR' | 'USD' }>
       await waitReady(origin);
       const instance = { origin, container: name, volume };
 
-      if (['authentication.spec.ts', 'accounts.spec.ts', 'ledger.spec.ts', 'lifecycle.spec.ts', 'images.spec.ts'].some((file) => testInfo.file.endsWith(file))) {
+      const category = testInfo.file.replaceAll('\\', '/').split('/specs/')[1]?.split('/')[0];
+
+      if (['authentication', 'accounts', 'ledger', 'lifecycle'].includes(category ?? '')) {
         const proxy = await secureOrigin(instance);
         instance.origin = proxy.origin;
         closeProxy = proxy.close;

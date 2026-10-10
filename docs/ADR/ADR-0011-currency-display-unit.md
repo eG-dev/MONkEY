@@ -1,6 +1,7 @@
 # ADR-0011 Currency Display Unit
 
 _Creation date_: 2026-10-08
+_Updated_: 2026-10-10
 
 ## Context
 
@@ -15,6 +16,7 @@ rewrite ledger history, and changing presentation language must not select it.
 - Keep the two-decimal signed 64-bit minor-unit representation, canonical decimal-string API, validation, and atomic/idempotent posting rules from [ADR-0010](ADR-0010-ledger-and-money.md).
 - Return the configured currency code with account and opening-entry responses. Format the number using the selected UI locale, preserving exact precision, and append the symbol (`€` or `$`) after the amount in every language.
 - Use currency-neutral names for money parsing and formatting components.
+- Run core E2E workflows with EUR, not a duplicated EUR/USD matrix. Verify USD through one focused desktop configuration/rendering check and targeted persistence checks that changing the display unit preserves exact amounts and posting history. Retain unsupported-currency startup validation.
 
 This supersedes only the EUR-only and currency-immutability policy in
 [ADR-0010](ADR-0010-ledger-and-money.md); its other decisions remain unchanged.

@@ -1,33 +1,6 @@
-import { test, expect, docker } from '../fixtures';
+import { test, expect } from '../../fixtures';
 
-test('SSR languages stay isolated and explicit preference wins', async ({ request }) => {
-  const [german, english] = await Promise.all([
-    request.get('/', { headers: { 'Accept-Language': 'de-DE' } }),
-    request.get('/', { headers: { 'Accept-Language': 'en-GB' } }),
-  ]);
-
-  expect(german.status()).toBe(200);
-  expect(english.status()).toBe(200);
-
-  expect(await german.text()).toContain('lang="de"');
-  expect(await german.text()).toContain('Anmelden');
-
-  expect(await english.text()).toContain('lang="en"');
-  expect(await english.text()).toContain('Sign in');
-
-  expect(german.headers()['cache-control']).toBe('no-store');
-  expect(await german.text()).not.toContain('http://127.0.0.1:5080');
-
-  const preference = await request.get('/', { headers: { 'Accept-Language': 'en', Cookie: 'monkey-language=de' } });
-
-  expect(await preference.text()).toContain('lang="de"');
-
-  const unsupported = await request.get('/', { headers: { 'Accept-Language': 'fr', Cookie: 'monkey-language=../../private' } });
-
-  expect(await unsupported.text()).toContain('lang="de"');
-});
-
-test('hydrated shell switches language, persists state, and uses local assets', async ({ page, instance }) => {
+test('hydrated English shell survives reload and uses local assets', async ({ page, instance }) => {
   const errors: string[] = [];
   const external: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -42,16 +15,13 @@ test('hydrated shell switches language, persists state, and uses local assets', 
   await page.goto('/');
 
   await expect(page.getByRole('img', { name: 'POCKET MONkEY' })).toBeVisible();
-  await expect(page.locator('#login-title')).toHaveText('Anmelden');
+  await expect(page.locator('#login-title')).toHaveText('Sign in');
   await expect(page.locator('#login-title')).toHaveRole('heading');
   await expect(page.getByTestId('sample-id')).toHaveCount(0);
 
   await expect(page.locator('#login-language-en')).toBeEnabled();
   await expect(page.locator('#login-language-en')).toHaveAccessibleName('English');
-  await page.locator('#login-language-en').click();
-
   await expect(page.locator('#login-language-en')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#login-title')).toHaveText('Sign in');
   await page.reload();
   await expect(page.locator('#login-title')).toHaveText('Sign in');
 
@@ -100,21 +70,4 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
   expect(favicon.status()).toBe(200);
   expect(favicon.headers()['content-type']).toContain('image/png');
   expect((await favicon.body()).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
-});
-
-test('backend failure preserves sign-in rendering and fails readiness', async ({ page, request, instance }) => {
-  docker('exec', instance.container, 'supervisorctl', '-c', '/app/supervisord.conf', 'stop', 'backend');
-
-  const readiness = await request.get('/health/ready');
-  const failure = await request.get('/api/auth/me');
-
-  expect(readiness.status()).toBe(503);
-
-  expect(failure.status()).toBe(502);
-  expect((await failure.json()).code).toBe('backend_unavailable');
-
-  await page.goto('/');
-
-  await expect(page.locator('#login-title')).toHaveText('Anmelden');
-  await expect(page.getByTestId('sample-id')).toHaveCount(0);
 });

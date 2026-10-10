@@ -47,7 +47,7 @@ image directory together. Financial history is unchanged.
 The six focused image checks passed against the production Linux image on
 2026-10-10, covering API limits/security/restart, real file/database recovery,
 and German/English desktop/mobile workflows. Run from `revamp/` after the solution
-and container builds: `npm --prefix tests/e2e test -- images.spec.ts --workers 1`.
+and container builds: `npm --prefix tests/e2e test -- accounts/images --workers 1`.
 
 ## Verified Stack
 
@@ -156,6 +156,26 @@ whose CA is trusted by Windows, `NODE_USE_SYSTEM_CA=1` allows Node downloads to 
 that trust store; never disable certificate verification to download a browser.
 
 The solution build includes the test-only `RuntimeChecks` probe. E2E fixtures use
+English browser/request defaults and English preferences for ready users. Core
+workflows use EUR without a duplicated USD matrix; one desktop check verifies
+USD configuration in API responses and SSR/hydrated rendering, while a targeted
+persistence check verifies relabeling without financial-history changes.
+Workflows are not duplicated by language; one desktop check verifies an explicit
+German preference on the first SSR render and hydration. German/other-language
+catalog checks and focused localization review remain separate.
+
+Specs live in category folders beneath `tests/e2e/specs/`: `accounts`,
+`authentication`, `ledger`, `shell`, and `lifecycle`. Each category has smaller
+workflow, API, persistence, or recovery specs; shared helpers live in
+`tests/e2e/helpers/`. Run a category or focused file from `revamp/`:
+
+```powershell
+npm --prefix tests/e2e test -- accounts/
+npm --prefix tests/e2e test -- ledger/opening-workflows.spec.ts
+npm --prefix tests/e2e run test:shell
+```
+
+E2E fixtures use
 fresh named volumes/containers and dynamically published loopback ports per test;
 they rediscover ports after Docker restart. Tests clean up only their own state.
 Parallel Docker fixture creation/removal on a native Linux host creates and
@@ -188,7 +208,10 @@ On 2026-10-08, the downloaded GitHub trace showed a desktop English ledger reloa
 losing its stylesheet and lazy account-details bundle to `ERR_NETWORK_CHANGED`,
 then failing the balance assertion with an empty content area. The same case and
 all 49 production-image cases passed locally with `CI=true` and one worker
-(full suite: 8.5 minutes). The native Linux hosted rerun remains unverified.
+(full suite: 8.5 minutes). On 2026-10-10, the user subsequently confirmed that
+all tests pass in GitHub Actions; see the [testing record](../plans/migration/testing.md).
+This confirms hosted test execution, not fork-specific verification, publishing,
+or real-host deployment acceptance.
 
 Browser cases live in `tests/e2e/specs/`; Playwright configuration and shared
 fixtures remain at the E2E project root. C# runtime check implementations live in

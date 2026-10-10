@@ -1,11 +1,25 @@
 # E2E-first testing foundation
 
-Status: local foundation suite implemented and verified; GitHub-hosted acceptance
-remains open after a browser network-change failure. The latest 56-case regression
-passed locally with CI scheduling; the hosted rerun is pending. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
+Status: local foundation suite implemented and verified. On 2026-10-10, the user
+confirmed that all tests pass in GitHub Actions; hosted test execution is no
+longer pending. No run URL or exact hosted case count was supplied. Fork-specific
+verification, publishing rehearsal, and real-host deployment remain separate
+gates. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
 and the [foundation guide](../../revamp/README.md). Extend with each feature.
 
 ## Strategy
+
+On 2026-10-10, the categorized suite passed all 60 production-image cases locally
+with two workers and zero retries (`npm --prefix revamp/tests/e2e test` from the
+repository root). Specs are split across 22 files in five category folders.
+Workflows run in English, retaining EUR/USD and desktop/mobile coverage plus
+one German first-render/hydration check. This local result does not close hosted
+CI or release gates.
+
+Currency coverage was narrowed on 2026-10-10: core workflows use EUR, with one
+desktop USD setting/rendering check and the existing display-unit-change
+persistence check. All 11 other ledger checks passed in the category run; the
+focused USD check passed after correcting its SSR whitespace assertion.
 
 Browser end-to-end tests are the primary application verification, not a small
 smoke suite on top of a unit-test pyramid. Use Playwright as the proposed runner
@@ -19,11 +33,13 @@ percentage or tests that merely duplicate E2E coverage.
 - Isolate data and authentication state per test/worker. Parallel workers need separate application instances/data roots or equivalent proven isolation; do not share a mutable SQLite fixture database accidentally.
 - Run the CI browser in an isolated Playwright `run-server` container with loopback exposed through the test runner, so parallel Docker fixture network-interface churn cannot interrupt native Linux Chromium requests (`ERR_NETWORK_CHANGED`). CI then uses two workers like local runs (one worker only without a connect endpoint); explicit concurrent-request cases remain enabled, and retries remain zero.
 - Select elements as decided in [ADR-0005](../../docs/ADR/ADR-0005-e2e-first-verification.md#browser-selectors): document-unique `<scope>-<purpose>` IDs, row-scoped `data-testid` values, and role/label locators as fallback, with explicit accessible-name and localized-text assertions. Avoid selectors coupled to Taiga internals, arbitrary sleeps, and order-dependent scenarios.
-- Test meaningful user outcomes and persisted results, including reloads, validation/error states, manager/member behavior, and German/English workflows.
+- Test meaningful user outcomes and persisted results in English, including reloads, validation/error states, and manager/member behavior. Keep only the focused desktop German first-render/hydration exception defined in [ADR-0005](../../docs/ADR/ADR-0005-e2e-first-verification.md); verify other localization behavior separately through Transloco/catalog checks and focused localization review, not duplicated E2E workflows.
+- Use EUR for core workflows rather than duplicating them for USD. Verify the USD setting in one desktop API/SSR/browser check, retain targeted display-unit-change persistence coverage and unsupported-currency startup validation, following [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md).
+- Organize specs under category folders with focused workflow, API, persistence, or recovery files and shared helpers outside `specs/`. Discover and typecheck nested specs; category filters must retain the intended HTTPS fixtures and desktop/mobile coverage.
 - Use Playwright's HTTP client against the running system for direct authorization/CSRF denial checks where the UI cannot express an attack. UI hiding alone is not proof of security.
 - Add targeted integration tests only where they provide stronger, more deterministic evidence: actual SQLite rollback/concurrency/constraints, migration behavior, job idempotency, and controlled clock/failure scenarios. Avoid mocked repository tests as substitutes for real behavior.
 - Introduce clock control and failure injection only through isolated test-host composition or protected host tooling; production must not expose arbitrary time-changing or failure-injection endpoints.
-- Begin with Chromium desktop/mobile viewport coverage and both supported languages. Validate a broader Firefox/WebKit matrix on scheduled/release runs where supported; do not claim untested browser compatibility.
+- Begin with Chromium desktop/mobile viewport coverage in English. Validate a broader Firefox/WebKit matrix on scheduled/release runs where supported; do not claim untested browser compatibility.
 - Run the growing core E2E suite on pull requests and the full regression/container lifecycle suite before release. Keep fixtures and runtime efficient rather than disabling important tests to shorten CI.
 - Preserve Playwright traces/screenshots and application logs on failure, with private data/credentials handled safely. Do not hide flakes with unconditional retries; investigate and repair nondeterminism.
 - Document one reproducible local E2E command and the CI commands once scaffolding exists. Test dependencies belong in the development/test runner, not the production image.
@@ -38,7 +54,7 @@ are automated as the corresponding operational features become available.
 
 ## Foundation acceptance gate
 
-- [ ] A reproducible Playwright suite runs against the real stack locally and in CI without requiring unit tests.
+- [x] A reproducible Playwright suite runs against the real stack locally and in CI without requiring unit tests; GitHub Actions success confirmed by the user on 2026-10-10.
 - [x] E2E fixtures are isolated, reproducible, and unavailable as production backdoors; failed runs produce useful diagnostics.
 - [x] SSR HTML is checked independently of browser JavaScript execution.
 - [x] Smoke checks pass on desktop and mobile-sized viewports.

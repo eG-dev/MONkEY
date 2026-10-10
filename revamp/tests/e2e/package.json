@@ -7,7 +7,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "test": "playwright test",
-    "test:shell": "playwright test shell.spec.ts"
+    "test:shell": "playwright test specs/shell"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
