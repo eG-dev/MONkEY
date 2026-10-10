@@ -24,8 +24,8 @@ Read configuration at startup and validate it before readiness succeeds.
 
 - The backend reads `TZ` explicitly for business rules; setting the OS timezone alone is not the scheduling implementation.
 - Include timezone data and required globalization support in the image. Verify the configured IANA ID in both runtimes and fail startup on invalid values.
-- Persist timestamps in UTC; derive allowance months and report boundaries in the configured business timezone, not the browser timezone.
-- Timezone changes require a restart and a deliberate policy for existing schedules/periods. Never silently reinterpret closed reports or duplicate credits.
+- Persist timestamps in UTC; derive allowance months in the configured business timezone, not the browser timezone.
+- Timezone changes require a restart and a deliberate policy for existing schedules/periods. Never silently reinterpret recorded allowance periods or duplicate credits.
 - Derive `monkey.db`, `images/`, and `keys/` beneath `MONKEY_DATA_PATH`; do not expose independent path variables until a real need exists.
 - The host bind-mount path is a Docker/Compose setting, not an application variable. For example, mount `/srv/monkey` on the host to `/data` in the container; no `MONKEY_DATA_PATH` override is needed.
 - Validate that the data path is absolute, private, and writable by the non-root backend. Do not fall back silently to ephemeral container storage if the configured path is invalid.

@@ -29,10 +29,9 @@ and ledger credits; managers see execution outcomes and failures.
 - [ ] Deterministic real-SQLite/job-host tests cover month/DST boundaries, effective dates, disabled allowances, downtime/catch-up, and timezone policy.
 - [ ] Browser tests verify member-visible status and actionable manager failure/recovery states in German and English.
 
-## Deferred
+## Constraints
 
-Monthly reports are [deferred from the first release](03g-monthly-reports.md);
-email is excluded. Test clocks/failure controls belong in isolated
+Email is excluded. Test clocks/failure controls belong in isolated
 test-host composition or protected operator tooling, never public production APIs.
 
 Next: [management and lifecycle completion](03h-lifecycle.md).

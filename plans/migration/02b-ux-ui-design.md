@@ -49,7 +49,7 @@ No framework replacement or business-policy change is implied by a wireframe.
 - Define Taiga/Lucide patterns for account items, exact balances, ledger rows, forms, pagination, notifications, and confirmations. Keep identity recognizable without a decorative dashboard.
 - Cover German/English, mobile/desktop, signed-out/forced-password states, both roles, empty/loading/submitting/success/error/retry states, long text, uninitialized accounts, overdrafts, and signed monetary limits.
 - Wireframes establish structure and interaction intent, not automatically visual styling, accessibility compliance, or business rules. Record visual foundations and interaction notes alongside them.
-- Use fictional data. Monthly reports and dedicated reversals remain deferred; future allowance/image/legal details require their separately agreed business policies.
+- Use fictional data. Monthly reports are excluded from the product scope. Dedicated reversals remain deferred; future allowance/image/legal details require their separately agreed business policies.
 
 ## Approval and implementation sequence
 

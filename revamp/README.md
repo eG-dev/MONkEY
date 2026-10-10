@@ -3,11 +3,12 @@
 The build/run/storage foundation, local authentication, manager user
 administration, shared accounts and private account images, signed opening balances, deposits/withdrawals,
 and paginated history are implemented. This is not a production-ready application.
-Dedicated reversals are deferred. Allowances and reports have
+Dedicated reversals are deferred. Allowances have
 not been implemented.
 
-Monthly reports are deferred from the first release; no report snapshots or jobs
-are required. The approved [step 2B](../plans/migration/02b-ux-ui-design.md)
+Monthly reports are excluded from the product scope; no monthly-summary views,
+report snapshots, or report-generation jobs are planned.
+The approved [step 2B](../plans/migration/02b-ux-ui-design.md)
 shell, design tokens, and view designs from [docs/design](../docs/design/README.md)
 are implemented on the existing screens: sign-in, overview, account management,
 account details, profile, and user administration. The representative design was

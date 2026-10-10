@@ -2,10 +2,10 @@
 
 Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is locally implemented and verified on 2026-10-10. Step 3E allowance configuration is next, subject to its decision prerequisites.
 Steps 3A, 3B, and the approved 3C scope remain locally implemented and verified on 2026-10-08;
-steps 3E-3H have not started. Dedicated correction/reversal workflows are deferred.
+steps 3E, 3F, and 3H have not started. Dedicated correction/reversal workflows are deferred.
 Depends on [step 2A authentication](02-authentication-authorization.md) and [step 2B product design](02b-ux-ui-design.md).
 
-Step 3G monthly reports are deferred from the first release.
+Monthly reports are excluded from the product scope.
 
 ## Delivery model
 
@@ -45,7 +45,6 @@ milestone as one implementation task or build later-step infrastructure in advan
 | 3D | [Account images](03d-account-images.md) | Safe private upload, display, replacement, and removal | 3A |
 | 3E | [Allowance configuration](03e-allowance-configuration.md) | Persisted manager settings and member-visible configuration | 3B |
 | 3F | [Allowance execution](03f-allowance-execution.md) | Durable monthly credits and visible execution outcomes | 3C and 3E |
-| 3G | [Monthly reports](03g-monthly-reports.md) | Deferred optional follow-up; not a first-release delivery or dependency | Separately approved scope |
 | 3H | [Management and lifecycle completion](03h-lifecycle.md) | Remaining profile/settings/legal/lifecycle workflows | Relevant preceding steps |
 
 Start with 3A. The table gives the default order, not a requirement to block
@@ -53,8 +52,8 @@ independent image work on unresolved money policies: 3D can follow 3A directly.
 Complete the active step's gate before starting another. Reassess scope after each
 delivery rather than accumulating incomplete backend-only or UI-only work.
 
-For the remaining first-release sequence, proceed from 3F to 3H; skip deferred
-3G. Step 2B is a prerequisite for all remaining feature work, not a parallel
+For the remaining delivery sequence, proceed from 3F to 3H.
+Step 2B is a prerequisite for all remaining feature work, not a parallel
 activity or a late cosmetic pass.
 
 ## Decision boundaries
@@ -64,7 +63,6 @@ activity or a late cosmetic pass.
 - 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
 - 3D resolved: PNG/JPEG/WebP, 512 pixels per axis, 2 MiB, metadata-free re-encoding, and immutable-file/reference recovery; see [ADR-0014](../../docs/ADR/ADR-0014-private-account-images.md).
 - Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.
-- If 3G is reopened: first establish a real user need and choose derived summaries versus persisted statements; only then agree closure, corrections, and period boundaries.
 - Before destructive work in 3H: archival, deletion/anonymization, retention, and sensitive-action confirmation/re-authentication.
 
 Proposed defaults in the child plans remain proposals. Resolve affected business
@@ -83,13 +81,13 @@ gates remain open as recorded in the [migration overview](README.md).
 - Follow the [E2E-first testing foundation](testing.md): browser E2E tests are the primary feature acceptance and regression suite.
 - Add end-to-end scenarios with every slice, covering user-visible rules, persisted outcomes, manager/member permissions, invalid inputs, failures, and recovery through the real application.
 - No routine unit tests are required; do not create backend rule/mock test suites or coverage quotas by default. Add an exceptional unit test only when its specific benefit is justified.
-- Use targeted real-SQLite integration tests for transaction rollback/concurrency, database constraints, schema changes, and deterministic job/report boundary behavior that is difficult to verify reliably through the browser.
+- Use targeted real-SQLite integration tests for transaction rollback/concurrency, database constraints, schema changes, and deterministic job boundary behavior that is difficult to verify reliably through the browser.
 - Use deterministic clocks for scheduling tests rather than waiting for wall-clock timers; exercise retries and restart behavior through the application/job host.
 - Check direct unauthorized requests against the running API in addition to browser role scenarios; do not rely on hidden buttons or route guards.
 - Check SSR HTML, hydration, desktop/mobile layouts, and local font/image loading.
 - Review each slice against approved [design references](../../docs/design/README.md); complete application-wide visual/usability acceptance before cutover. Passing functional E2E tests does not approve the design.
 - Run core browser workflows in German and English, including authentication/validation errors, accessible labels, long-text layouts, and decimal/date input.
-- Verify changing language leaves ledger amounts, report periods, actor identity, and user-entered content unchanged.
+- Verify changing language leaves ledger amounts, allowance periods, actor identity, and user-entered content unchanged.
 - Keep fixtures isolated and core services unmocked; attach traces and relevant logs when a scenario fails.
 - Update schema migrations and API contracts with each slice; keep the old application independently runnable.
 

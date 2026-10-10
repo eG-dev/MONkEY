@@ -86,8 +86,8 @@ Use desktop/mobile and Manager/Member variants where relevant. Forms, dialogs,
 image upload, confirmations, and validation/retry states can be named pages in
 the owning view's source, not additional top-level views. The overview links to
 the dedicated Accounts view for management instead of embedding Manager controls.
-Legal views depend on the lifecycle scope review; monthly reports and dedicated
-reversals remain deferred.
+Legal views depend on the lifecycle scope review; dedicated reversals remain
+deferred. Monthly reports are excluded from the product scope.
 
 ## Files and index
 

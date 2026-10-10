@@ -22,7 +22,6 @@ once, before adding ordinary transactions or automated credits.
 - Add ledger schema and backend application-service posting, with a ledger entry and any stored balance changed in one database transaction.
 - Enforce unique idempotency keys and define repeated-key/conflicting-payload behavior under retries and concurrent requests.
 - Store immutable actor user ID, UTC timestamp, source, and optional comment; retain an actor display snapshot where historical readability requires it.
-- Supply opening-balance/checkpoint information needed for later reporting, without building report jobs now.
 - Add an explicit manager opening-entry workflow and localized balance display to account pages; never use a generic editable balance property.
 
 ## Acceptance gate
@@ -46,7 +45,7 @@ commands and configuration are in the [replacement guide](../../revamp/README.md
 ## Deferred
 
 Ordinary deposits/withdrawals and transaction-history pagination are now delivered
-in [Step 3C](03c-transactions.md). Allowances and reports remain deferred. Keep
+in [Step 3C](03c-transactions.md). Allowances remain deferred. Keep
 financial history append-only; opening-entry correction must follow
 the subsequently agreed correction policy, not silently rewrite an entry.
 

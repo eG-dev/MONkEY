@@ -2,7 +2,6 @@
 
 Status: not started. Depends on the preceding features affected by each lifecycle
 operation. Apply the [milestone delivery and verification rules](03-ui-business-logic.md).
-Deferred [monthly reports](03g-monthly-reports.md) are not a prerequisite.
 
 ## Outcome
 
@@ -28,7 +27,7 @@ deliver each remaining workflow separately rather than treating it as one large 
 ## Acceptance gate
 
 - [ ] Each newly delivered lifecycle workflow has real-stack browser coverage for both roles/languages and direct API denials.
-- [ ] Archival/anonymization preserves required financial history and historical attribution; preserve report integrity only if reports are later approved and implemented.
+- [ ] Archival/anonymization preserves required financial history and historical attribution.
 - [ ] Last-manager protection remains valid, including concurrency; retention behavior follows the approved policy.
 - [ ] No tenant or email assumptions remain in the agreed replacement workflows.
 

@@ -47,7 +47,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 
 - Structured logs to stdout/stderr, with rotation handled by the host.
 - Liveness/readiness cover the application processes and meaningful backend dependencies.
-- Manager-visible allowance job failures; apply the same rule to report jobs only if reports are later approved. No email alerts or outbox are planned.
+- Manager-visible allowance job failures. No email alerts or outbox are planned.
 - Optional vendor-neutral telemetry rather than an Azure dependency.
 - Never log passwords, session cookies, recovery credentials, or full private financial payloads.
 - Dependency and container scanning, pinned build inputs, and a documented update process.
@@ -81,7 +81,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - [ ] Backups restore successfully on a clean instance.
 - [ ] Upgrade failure and rollback/restore procedures have been rehearsed.
 - [ ] Operational logs and job failures are observable without cloud services.
-- [ ] Remaining feature omissions and accepted limitations are documented, including deferred monthly reports and dedicated reversals.
+- [ ] Remaining feature omissions and accepted limitations are documented, including deferred dedicated reversals.
 - [ ] Azure retirement and old-data disposal have explicit approval.
 
 Return to the [migration overview](README.md).
