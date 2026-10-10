@@ -690,6 +690,18 @@ for (const language of ['de', 'en'] as const) {
 
     test(`localized signed transactions, retry and history pagination in ${language}`, async ({ page, request, browser, instance }) => {
       const manager = bootstrapManager(instance);
+      const managerProfile = await login(request, manager);
+      const recordedBy = 'Ledger Manager Display';
+
+      expect(
+        (
+          await csrfWrite(request, 'PUT', `/api/users/${managerProfile.id}`, {
+            displayName: recordedBy,
+            role: 'Manager',
+            isActive: true,
+          })
+        ).status(),
+      ).toBe(204);
       await login(request, manager);
       expect((await csrfWrite(request, 'PUT', '/api/auth/language', { language })).status()).toBe(204);
       const account = await createAccount(request, 'Manual ledger');
@@ -777,6 +789,10 @@ for (const language of ['de', 'en'] as const) {
       await expect(page.getByRole('dialog', { name: labels.record, exact: true })).toHaveCount(0);
       await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
       await expect(page.getByTestId('ledger-entry').first()).toContainText(`-0${labels.decimal}02 ${symbol}`);
+      await expect(page.getByRole('columnheader', { name: language === 'de' ? 'Erfasst von' : 'Recorded by', exact: true }))
+        .toHaveCount(test.info().project.name === 'mobile' ? 0 : 1);
+      await expect(page.getByTestId('ledger-entry').first()).toContainText(recordedBy);
+      await expect(page.getByTestId('ledger-entry').first().locator('.by')).toHaveText(recordedBy);
       expect(await page.evaluate(() => 'monkeyXss' in window)).toBe(false);
 
       const keys: string[] = [];

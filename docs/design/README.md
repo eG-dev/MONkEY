@@ -45,6 +45,16 @@ light/dark, 320px/360px/1440px, action order, dialog opening and role/opening ga
 
 ## Reference inventory
 
+The account-details history column now reads "Recorded by" / "Erfasst von"
+(2026-10-10). It displays the user's display name captured when the entry was
+recorded, not their username or the financial account name; later user edits do
+not rewrite historical attribution. The label-only prototype refinement is a
+draft pending review; the reviewed wireframe layout remains unchanged.
+Verification: catalog/type checks and the production-image build passed; four
+localized desktop/mobile transaction workflows verified a distinct display name,
+and the historical-name/restart API check passed. Both prototype labels were
+checked in the browser. Existing ledger snapshots were not modified.
+
 Login and app-shell footer updates are approved: show the build version and a
 GitHub icon/label. The repository link is an unavailable placeholder pending the
 future repository URL; it must not point to the current repository. The login
