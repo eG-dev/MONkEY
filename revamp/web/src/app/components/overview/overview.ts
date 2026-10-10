@@ -9,10 +9,11 @@ import { LanguageService } from '../../services/language/language.service';
 import { SharedAccount } from '../../models/accounts/shared-account';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
+import { AccountAvatar } from '../account-avatar/account-avatar';
 
 @Component({
   selector: 'app-overview',
-  imports: [RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe, AmountTonePipe],
+  imports: [RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe, AmountTonePipe, AccountAvatar],
   templateUrl: './overview.html',
   styleUrl: './overview.scss',
 })

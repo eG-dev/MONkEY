@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented as step 2A. The user accepted step 2B design references, foundations, and implemented representative screens on 2026-10-10; the design pause is lifted. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented with their existing verification records. Step 3D account images is next, beginning with its image-policy and recovery decisions. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Dedicated reversals and monthly reports are deferred from the first release; images and allowances have not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented as step 2A. The user accepted step 2B design references, foundations, and implemented representative screens on 2026-10-10; the design pause is lifted. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented with their existing verification records. Step 3D account images is locally implemented and verified on 2026-10-10. Step 3E allowance configuration is next, beginning with its policy decisions. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Dedicated reversals and monthly reports are deferred from the first release; allowances have not started.
 
 ## Confirmed scope
 
@@ -60,7 +60,7 @@ Internet connectivity and an external identity provider must not be required at 
 | 4 | [Operations and cutover](04-operations-cutover.md) | Application-wide design acceptance, restorable deployment, and deliberate Azure retirement |
 
 Milestone 3's [shared accounts](03a-accounts.md), [opening balances](03b-ledger-opening-balances.md), and [manual transactions/history](03c-transactions.md) steps are locally implemented:
-text-only account listing, detail, creation/editing, explicit signed opening entries, atomic deposits/withdrawals, and snapshot-paginated history with exact balances and EUR/USD display units. These are functional deliveries, not accepted final visual designs. Images, allowance
+account listing, detail, creation/editing, explicit signed opening entries, atomic deposits/withdrawals, and snapshot-paginated history with exact balances and EUR/USD display units. [Account images](03d-account-images.md) now adds private upload, display, replacement, and removal. These are functional deliveries, not application-wide design acceptance. Allowance
 configuration/execution, and lifecycle completion remain separate subsequent steps; monthly reports and dedicated reversals are deferred from the first release. Follow the
 [delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
 

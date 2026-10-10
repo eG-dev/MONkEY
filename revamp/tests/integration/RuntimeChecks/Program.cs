@@ -1,5 +1,12 @@
 using RuntimeChecks.Tests;
 
+if (args is ["image-persistence"])
+{
+    await ImagePersistenceCheck.RunAsync();
+
+    return;
+}
+
 if (args is ["ledger-persistence"])
 {
     await LedgerPersistenceCheck.RunAsync();

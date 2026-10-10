@@ -50,6 +50,8 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
                 .HasMaxLength(40)
                 .IsRequired();
 
+            accountEntity.Property(x => x.ImageKey).HasMaxLength(36);
+
             accountEntity
                 .HasIndex(x => x.NormalizedName)
                 .IsUnique();

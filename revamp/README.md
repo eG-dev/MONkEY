@@ -1,18 +1,18 @@
-# POCKET MONkEY Foundation, Authentication, Accounts, and Ledger
+# POCKET MONkEY Foundation, Authentication, Accounts, Images, and Ledger
 
 The build/run/storage foundation, local authentication, manager user
-administration, shared text-only accounts, signed opening balances, deposits/withdrawals,
+administration, shared accounts and private account images, signed opening balances, deposits/withdrawals,
 and paginated history are implemented. This is not a production-ready application.
-Dedicated reversals are deferred. Images, allowances, and reports have
+Dedicated reversals are deferred. Allowances and reports have
 not been implemented.
 
 Monthly reports are deferred from the first release; no report snapshots or jobs
 are required. The approved [step 2B](../plans/migration/02b-ux-ui-design.md)
 shell, design tokens, and view designs from [docs/design](../docs/design/README.md)
 are implemented on the existing screens: sign-in, overview, account management,
-account details, profile, and user administration. The implemented design awaits
-acceptance before remaining milestone 3 feature work resumes; existing delivery
-records remain intact. Subsequent slices reuse the established patterns.
+account details, profile, and user administration. The representative design was
+accepted on 2026-10-10; existing delivery records remain intact. Subsequent slices
+reuse the established patterns and resolve their own policy prerequisites.
 [Operations and cutover](../plans/migration/04-operations-cutover.md) is milestone 4
 and requires application-wide design acceptance as well as the existing
 security, verification, and operational gates.
@@ -25,6 +25,28 @@ Opening balances follow [ADR-0010](../docs/ADR/ADR-0010-ledger-and-money.md),
 with the display currency policy in [ADR-0011](../docs/ADR/ADR-0011-currency-display-unit.md).
 Signed openings, overdrafts, manual transactions, and history follow
 [ADR-0012](../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md).
+Private images follow [ADR-0014](../docs/ADR/ADR-0014-private-account-images.md).
+
+## Private Account Images
+
+Managers upload, replace, and remove PNG/JPEG/WebP images from account details.
+Both dimensions must be at most 512 pixels; uploads must not exceed 2,097,152
+bytes (2 MiB). Oversized images are rejected, not cropped or resized. The backend
+decodes actual content and writes a fresh metadata-free PNG using SkiaSharp
+4.153.1 and its Linux native assets. Members have read-only access; missing or
+unavailable images fall back to the account name's first letter.
+
+Generated files live under `MONKEY_DATA_PATH/images`, never public static storage.
+Authenticated image routes use `Cache-Control: no-store`. Files are finished
+before the account reference and audit event commit atomically; failed replacements
+retain the old image. Startup/hourly collection removes only generated,
+unreferenced PNG files older than 24 hours. Back up and restore the database and
+image directory together. Financial history is unchanged.
+
+The six focused image checks passed against the production Linux image on
+2026-10-10, covering API limits/security/restart, real file/database recovery,
+and German/English desktop/mobile workflows. Run from `revamp/` after the solution
+and container builds: `npm --prefix tests/e2e test -- images.spec.ts --workers 1`.
 
 ## Verified Stack
 

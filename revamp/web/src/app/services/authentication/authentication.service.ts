@@ -71,7 +71,7 @@ export class AuthenticationService {
     return `auth.errors.${key}`;
   }
 
-  async write<T = void>(method: 'POST' | 'PUT', url: string, body: object): Promise<T> {
+  async write<T = void>(method: 'POST' | 'PUT' | 'DELETE', url: string, body: object): Promise<T> {
     const csrf = await firstValueFrom(this.http.get<{ token: string }>('/api/auth/csrf').pipe(timeout(5000)));
 
     return firstValueFrom(

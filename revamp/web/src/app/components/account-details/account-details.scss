@@ -44,6 +44,47 @@
   margin-bottom: var(--space-5);
 }
 
+.avatar-button {
+  position: relative;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.avatar-badge {
+  position: absolute;
+  inset-inline-end: 0;
+  bottom: 0;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  padding: var(--space-1);
+  font-size: 1rem;
+}
+
+.image-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+
+  > app-account-avatar {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  > .field {
+    min-width: 0;
+    flex: 1 1 12rem;
+  }
+
+  input {
+    max-width: 100%;
+  }
+}
+
 .layout {
   display: grid;
   grid-template-columns: minmax(18rem, 27.5rem) minmax(0, 1fr);

@@ -34,6 +34,11 @@ builder.Services.AddOpenApi();
 builder.Services.AddLocalIdentity(builder.Environment.IsDevelopment());
 builder.Services.AddScoped<AccountAdministration>();
 builder.Services.AddScoped<LedgerAdministration>();
+builder.Services.AddScoped<AccountImages>();
+if (!isOperatorCommand)
+{
+	builder.Services.AddHostedService<ImageCleanup>();
+}
 
 builder.Services.AddDbContext<FoundationDbContext>(options => options.UseSqlite(settings.ConnectionString));
 
@@ -106,6 +111,7 @@ app.MapHealthChecks("/health/ready");
 app.MapAuthentication();
 app.MapUsers();
 app.MapAccounts();
+app.MapAccountImages();
 app.MapOpeningBalances();
 app.MapTransactions();
 

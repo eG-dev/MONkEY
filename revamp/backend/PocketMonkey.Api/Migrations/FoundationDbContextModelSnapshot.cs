@@ -154,6 +154,10 @@ namespace PocketMonkey.Api.Migrations
                     b.Property<long?>("BalanceMinorUnits")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ImageKey")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)

@@ -5,5 +5,6 @@ export interface SharedAccount {
   name: string;
   currency: string;
   balance: string | null;
+  imageUrl: string | null;
   openingEntry: OpeningEntry | null;
 }

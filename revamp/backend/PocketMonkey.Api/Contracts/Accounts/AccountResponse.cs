@@ -11,5 +11,7 @@ public sealed record AccountResponse
 
     public string? Balance { get; init; }
 
+    public string? ImageUrl { get; init; }
+
     public LedgerEntryResponse? OpeningEntry { get; init; }
 }

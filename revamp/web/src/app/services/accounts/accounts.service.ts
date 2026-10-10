@@ -85,6 +85,14 @@ export class AccountsService {
     return this.auth.write<SharedAccount>('PUT', `/api/accounts/${encodeURIComponent(id)}`, { name });
   }
 
+  replaceImage(id: string, file: File): Promise<void> {
+    return this.auth.write('PUT', `/api/accounts/${encodeURIComponent(id)}/image`, file);
+  }
+
+  removeImage(id: string): Promise<void> {
+    return this.auth.write('DELETE', `/api/accounts/${encodeURIComponent(id)}/image`, {});
+  }
+
   postOpening(id: string, amount: string, comment: string, idempotencyKey: string): Promise<OpeningEntry> {
     return this.auth.write<OpeningEntry>('POST', `/api/accounts/${encodeURIComponent(id)}/opening`, { amount, comment, idempotencyKey });
   }
@@ -134,6 +142,10 @@ export class AccountsService {
     return typeof code === 'string' &&
       [
         'invalid_account_name',
+        'invalid_image',
+        'image_too_large',
+        'image_dimensions',
+        'image_unavailable',
         'account_name_taken',
         'csrf_invalid',
         'invalid_opening_amount',

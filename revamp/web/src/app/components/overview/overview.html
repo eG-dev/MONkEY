@@ -28,7 +28,7 @@
         <li>
           <a class="card" [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
             <span class="card-head">
-              <span class="avatar" aria-hidden="true">{{ account.name.charAt(0) }}</span>
+              <app-account-avatar [name]="account.name" [imageUrl]="account.imageUrl" />
               <span class="card-title">
                 <span class="card-name">{{ account.name }}</span>
                 <span class="label">{{ t('accounts.balance') }}</span>

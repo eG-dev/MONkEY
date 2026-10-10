@@ -1,4 +1,4 @@
-import { afterNextRender, Component, effect, inject, signal } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { LedgerHistory } from '../../models/accounts/ledger-history';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
+import { AccountAvatar } from '../account-avatar/account-avatar';
 
 @Component({
   selector: 'app-account-details',
@@ -28,6 +29,7 @@ import { ModalDialog } from '../modal-dialog/modal-dialog';
     DatePipe,
     NgTemplateOutlet,
     ModalDialog,
+    AccountAvatar,
   ],
   templateUrl: './account-details.html',
   styleUrl: './account-details.scss',
@@ -48,6 +50,13 @@ export class AccountDetails {
   protected readonly saved = signal('');
   protected readonly renaming = signal(false);
   protected readonly renameError = signal('');
+  protected readonly imageDialog = signal(false);
+  protected readonly imageError = signal('');
+  protected readonly imagePreview = signal<string | null>(null);
+  protected readonly imageDirty = signal(false);
+  private imageFile: File | null = null;
+  private imageObjectUrl = '';
+  private imageSelection = 0;
   protected name = '';
   protected readonly source = signal<'deposit' | 'withdrawal'>('deposit');
   protected readonly confirmingOpening = signal(false);
@@ -68,6 +77,7 @@ export class AccountDetails {
   private loadedId: string | null = null;
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.releaseImagePreview());
     const id = this.route.snapshot.paramMap.get('id') ?? '';
     const initial = this.service.consume(`/accounts/${id}`);
 
@@ -105,6 +115,120 @@ export class AccountDetails {
     this.name = account.name;
     this.renameError.set('');
     this.renaming.set(true);
+  }
+
+  protected openImage(): void {
+    const account = this.account();
+
+    if (!account || this.auth.user()?.role !== 'Manager' || this.busy() || !this.interactive()) {
+      return;
+    }
+
+    this.releaseImagePreview();
+    this.imageFile = null;
+    this.imagePreview.set(account.imageUrl);
+    this.imageDirty.set(false);
+    this.imageError.set('');
+    this.imageDialog.set(true);
+  }
+
+  protected closeImage(): void {
+    this.imageSelection++;
+    this.imageDialog.set(false);
+    this.releaseImagePreview();
+  }
+
+  protected async chooseImage(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    const selection = ++this.imageSelection;
+
+    if (!file) {
+      return;
+    }
+
+    this.imageError.set('');
+
+    if (file.size > 2 * 1024 * 1024) {
+      this.imageError.set('accounts.errors.image_too_large');
+      return;
+    }
+
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      this.imageError.set('accounts.errors.invalid_image');
+      return;
+    }
+
+    try {
+      const bitmap = await createImageBitmap(file);
+      const valid = bitmap.width <= 512 && bitmap.height <= 512;
+      bitmap.close();
+
+      if (selection !== this.imageSelection || !this.imageDialog()) {
+        return;
+      }
+
+      if (!valid) {
+        this.imageError.set('accounts.errors.image_dimensions');
+        return;
+      }
+
+      this.releaseImagePreview();
+      this.imageObjectUrl = URL.createObjectURL(file);
+      this.imageFile = file;
+      this.imagePreview.set(this.imageObjectUrl);
+      this.imageDirty.set(true);
+    } catch {
+      this.imageError.set('accounts.errors.invalid_image');
+    }
+  }
+
+  protected removeImageDraft(): void {
+    this.imageSelection++;
+    this.releaseImagePreview();
+    this.imageFile = null;
+    this.imagePreview.set(null);
+    this.imageDirty.set(true);
+    this.imageError.set('');
+  }
+
+  protected async saveImage(): Promise<void> {
+    const account = this.account();
+
+    if (!account || !this.imageDirty() || this.busy() || !this.interactive() || this.auth.user()?.role !== 'Manager') {
+      return;
+    }
+
+    this.busy.set(true);
+    this.imageError.set('');
+
+    try {
+      if (this.imageFile) {
+        await this.service.replaceImage(account.id, this.imageFile);
+      } else {
+        await this.service.removeImage(account.id);
+      }
+
+      const updated = await this.service.find(account.id);
+
+      if (this.account()?.id === account.id) {
+        this.account.set(updated);
+        this.saved.set('accounts.imageSaved');
+        this.closeImage();
+      }
+    } catch (failure: unknown) {
+      this.imageError.set(this.service.errorKey(failure));
+    } finally {
+      this.busy.set(false);
+    }
+  }
+
+  private releaseImagePreview(): void {
+    if (this.imageObjectUrl) {
+      URL.revokeObjectURL(this.imageObjectUrl);
+      this.imageObjectUrl = '';
+    }
   }
 
   protected async saveName(): Promise<void> {

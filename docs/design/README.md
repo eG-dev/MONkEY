@@ -45,6 +45,15 @@ light/dark, 320px/360px/1440px, action order, dialog opening and role/opening ga
 
 ## Reference inventory
 
+Account-image controls are implemented and locally verified on 2026-10-10:
+six real-stack image checks passed, including both languages on desktop/mobile,
+private access, reload/restart, upload limits, and file/database recovery.
+The prototype hint now states the approved 512 x 512 pixel and 2 MiB limits;
+this text-only refinement is draft pending review. The reviewed layout is unchanged.
+Production desktop/mobile dialog screenshots were reviewed without overlap.
+The prototype hint passed English/German, light/dark, and 360px/1440px checks
+without horizontal overflow.
+
 The account-details history column now reads "Recorded by" / "Erfasst von"
 (2026-10-10). It displays the user's display name captured when the entry was
 recorded, not their username or the financial account name; later user edits do
@@ -131,5 +140,6 @@ security, exact money rules, or real-stack verification. Resolve policy conflict
 before implementation rather than inferring decisions from diagrams.
 
 The user accepted the representative design on 2026-10-10; the phase 2B design
-pause is lifted. Next is [account images](../../plans/migration/03d-account-images.md),
+pause is lifted. [Account images](../../plans/migration/03d-account-images.md) is
+locally implemented and verified. Next is [allowance configuration](../../plans/migration/03e-allowance-configuration.md),
 subject to its separate policy and verification prerequisites.

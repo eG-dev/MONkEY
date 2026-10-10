@@ -20,7 +20,15 @@
     </div>
   } @else if (account(); as current) {
     <div class="details-head">
-      <span class="avatar" aria-hidden="true">{{ current.name.charAt(0) }}</span>
+      @if (auth.user()?.role === 'Manager') {
+        <button class="avatar-button" type="button" [disabled]="busy() || !interactive()" (click)="openImage()"
+          [attr.aria-label]="t('accounts.changeImage', { name: current.name })" [title]="t('accounts.changeImage', { name: current.name })">
+          <app-account-avatar [name]="current.name" [imageUrl]="current.imageUrl" />
+          <span class="avatar-badge icon icon-pencil" aria-hidden="true"></span>
+        </button>
+      } @else {
+        <app-account-avatar [name]="current.name" [imageUrl]="current.imageUrl" />
+      }
       <h1 class="page-title" id="account-title">{{ current.name }}</h1>
       @if (auth.user()?.role === 'Manager') {
         <button tuiButton appearance="flat" size="s" type="button" [disabled]="busy() || !interactive()"
@@ -49,6 +57,32 @@
         }
       </div>
     </div>
+
+    <app-modal-dialog [open]="imageDialog()" [heading]="t('accounts.accountImage')" (closed)="closeImage()">
+      <div class="form">
+        @if (imageError()) {
+          <div class="message message-danger" role="alert"><div class="message-body">{{ t(imageError()) }}</div></div>
+        }
+        <div class="image-field">
+          <app-account-avatar [name]="current.name" [imageUrl]="imagePreview()" />
+          <div class="field">
+            <label for="account-image">{{ t('accounts.uploadImage') }}</label>
+            <input id="account-image" type="file" accept="image/png,image/jpeg,image/webp" [disabled]="busy()"
+              aria-describedby="account-image-hint" (change)="chooseImage($event)" />
+          </div>
+        </div>
+        <span class="hint" id="account-image-hint">{{ t('accounts.imageHint') }}</span>
+        @if (imagePreview()) {
+          <button tuiButton appearance="flat" size="m" type="button" [disabled]="busy()" (click)="removeImageDraft()">
+            <span class="icon icon-trash-2" aria-hidden="true"></span>{{ t('accounts.removeImage') }}
+          </button>
+        }
+      </div>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" [disabled]="busy()" (click)="closeImage()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="button" [disabled]="busy() || !imageDirty()" (click)="saveImage()">{{ t('accounts.save') }}</button>
+      </ng-container>
+    </app-modal-dialog>
 
     <app-modal-dialog [open]="renaming()" [heading]="t('accounts.editNamed', { name: current.name })" (closed)="renaming.set(false)">
       <form class="form" id="rename-account-form" (ngSubmit)="saveName()">

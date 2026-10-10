@@ -137,6 +137,7 @@ public sealed class AccountAdministration
     {
         Id = account.Id,
         Name = account.Name,
+        ImageUrl = account.ImageKey is { } key ? $"/api/accounts/{account.Id}/image?v={key}" : null,
         Currency = settings.Currency,
         Balance = account.BalanceMinorUnits is { } balance ? CurrencyAmount.Format(balance) : null,
         OpeningEntry = account.LedgerEntries.SingleOrDefault() is { } entry ? LedgerAdministration.Describe(entry, settings.Currency) : null

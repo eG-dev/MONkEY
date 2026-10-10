@@ -1,8 +1,8 @@
 # Milestone 3: incremental UI and business logic
 
-Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is next, subject to its separate decision prerequisites.
+Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is locally implemented and verified on 2026-10-10. Step 3E allowance configuration is next, subject to its decision prerequisites.
 Steps 3A, 3B, and the approved 3C scope remain locally implemented and verified on 2026-10-08;
-steps 3D-3H have not started. Dedicated correction/reversal workflows are deferred.
+steps 3E-3H have not started. Dedicated correction/reversal workflows are deferred.
 Depends on [step 2A authentication](02-authentication-authorization.md) and [step 2B product design](02b-ux-ui-design.md).
 
 Step 3G monthly reports are deferred from the first release.
@@ -62,7 +62,7 @@ activity or a late cosmetic pass.
 - 3A resolved: trimmed names of 1-40 characters, case-insensitive uniqueness, and no nine-account cap; see [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
 - 3B resolved: exact two-decimal integer minor units, decimal-string API, explicit single opening entries, and EUR/USD display units; see [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md). The original nonnegative rule is superseded by 3C.
 - 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
-- Before 3D: upload limits/formats and file/database failure recovery.
+- 3D resolved: PNG/JPEG/WebP, 512 pixels per axis, 2 MiB, metadata-free re-encoding, and immutable-file/reference recovery; see [ADR-0014](../../docs/ADR/ADR-0014-private-account-images.md).
 - Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.
 - If 3G is reopened: first establish a real user need and choose derived summaries versus persisted statements; only then agree closure, corrections, and period boundaries.
 - Before destructive work in 3H: archival, deletion/anonymization, retention, and sensitive-action confirmation/re-authentication.
@@ -94,6 +94,6 @@ gates remain open as recorded in the [migration overview](README.md).
 - Update schema migrations and API contracts with each slice; keep the old application independently runnable.
 
 Current next activity: resolve the decision prerequisites for
-[step 3D account images](03d-account-images.md), then implement that slice.
+[step 3E allowance configuration](03e-allowance-configuration.md), then implement that slice.
 Remaining slice completion leads to
 [operations and cutover](04-operations-cutover.md).

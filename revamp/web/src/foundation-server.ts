@@ -101,13 +101,15 @@ app.use('/api', (request, response) => {
   const path = request.originalUrl.split('?')[0];
   const allowed = ['GET', 'HEAD'].includes(request.method)
     ? ['/api/auth/csrf', '/api/auth/me', '/api/users', '/api/accounts'].includes(path) ||
-      /^\/api\/accounts\/[\w-]+(?:\/transactions)?$/.test(path)
+      /^\/api\/accounts\/[\w-]+(?:\/(?:transactions|image))?$/.test(path)
     : request.method === 'POST'
       ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users', '/api/accounts'].includes(path) ||
         /^\/api\/users\/[\w-]+\/password$/.test(path) ||
         /^\/api\/accounts\/[\w-]+\/(?:opening|transactions)$/.test(path)
-      : request.method === 'PUT' &&
-        (['/api/auth/language', '/api/auth/theme'].includes(path) || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path));
+      : request.method === 'PUT'
+        ? (['/api/auth/language', '/api/auth/theme'].includes(path) || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path) ||
+          /^\/api\/accounts\/[\w-]+\/image$/.test(path))
+        : request.method === 'DELETE' && /^\/api\/accounts\/[\w-]+\/image$/.test(path);
 
   if (!allowed) {
     response.status(404).json({ status: 404, code: 'not_found' });

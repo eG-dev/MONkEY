@@ -10,5 +10,7 @@ public sealed class Account
 
     public long? BalanceMinorUnits { get; set; }
 
+    public string? ImageKey { get; set; }
+
     public List<LedgerEntry> LedgerEntries { get; } = [];
 }

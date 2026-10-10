@@ -53,7 +53,7 @@
                 <td class="name">
                   <span class="name-cell">
                     <a [routerLink]="['/accounts', account.id]" [attr.aria-label]="account.name">
-                      <span class="avatar small" aria-hidden="true">{{ account.name.charAt(0) }}</span>
+                      <app-account-avatar [name]="account.name" [imageUrl]="account.imageUrl" [small]="true" />
                       <span class="account-identity">
                         <span class="account-name">{{ account.name }}</span>
                         <span class="mobile-status">{{ t(account.balance === null ? 'accounts.uninitialized' : 'accounts.active') }}</span>

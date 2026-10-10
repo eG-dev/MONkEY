@@ -82,7 +82,7 @@ test('shared-account APIs enforce roles, CSRF, names and missing-account errors 
 
   expect(created.status()).toBe(201);
   expect(created.headers()['location']).toBe(`/api/accounts/${account.id}`);
-  expect(account).toEqual({ id: expect.any(String), name: 'Ida', currency: 'EUR', balance: null, openingEntry: null });
+  expect(account).toEqual({ id: expect.any(String), name: 'Ida', currency: 'EUR', balance: null, openingEntry: null, imageUrl: null });
 
   const duplicate = await csrfWrite(request, 'POST', '/api/accounts', { name: ' iDA ' });
 

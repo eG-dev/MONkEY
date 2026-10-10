@@ -11,10 +11,11 @@ import { SharedAccount } from '../../models/accounts/shared-account';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
+import { AccountAvatar } from '../account-avatar/account-avatar';
 
 @Component({
   selector: 'app-accounts',
-  imports: [FormsModule, RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe, AmountTonePipe, ModalDialog],
+  imports: [FormsModule, RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe, AmountTonePipe, ModalDialog, AccountAvatar],
   templateUrl: './accounts.html',
   styleUrl: './accounts.scss',
 })

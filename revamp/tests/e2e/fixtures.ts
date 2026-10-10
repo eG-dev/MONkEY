@@ -145,7 +145,7 @@ export const test = base.extend<{ instance: Instance; currency: 'EUR' | 'USD' }>
       await waitReady(origin);
       const instance = { origin, container: name, volume };
 
-      if (['authentication.spec.ts', 'accounts.spec.ts', 'ledger.spec.ts', 'lifecycle.spec.ts'].some((file) => testInfo.file.endsWith(file))) {
+      if (['authentication.spec.ts', 'accounts.spec.ts', 'ledger.spec.ts', 'lifecycle.spec.ts', 'images.spec.ts'].some((file) => testInfo.file.endsWith(file))) {
         const proxy = await secureOrigin(instance);
         instance.origin = proxy.origin;
         closeProxy = proxy.close;

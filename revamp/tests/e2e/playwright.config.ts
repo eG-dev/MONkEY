@@ -15,7 +15,7 @@ export default defineConfig({
     { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
     {
       name: 'mobile',
-      testMatch: ['shell.spec.ts', 'authentication.spec.ts', 'accounts.spec.ts', 'ledger.spec.ts'],
+      testMatch: ['shell.spec.ts', 'authentication.spec.ts', 'accounts.spec.ts', 'ledger.spec.ts', 'images.spec.ts'],
       grepInvert: /@api/,
       use: { ...devices['Pixel 8'], defaultBrowserType: 'chromium' },
     },
