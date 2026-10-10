@@ -61,6 +61,22 @@ No framework replacement or business-policy change is implied by a wireframe.
 
 ## Verification
 
+Post-approval cleanup on 2026-10-10 removes the temporary foundation/system login
+panel, demo API contracts, sample-state entity and startup sample creation. A
+forward migration drops only the demo table; operational health endpoints and
+private storage checks remain. Historical migration files are preserved. Existing
+`images/foundation.txt` files are inert and are not automatically deleted from
+operator storage. Smoke checks now use real accounts and readiness, not public
+demo data. This cleanup does not reopen the approved visual foundations.
+
+Cleanup verification on 2026-10-10: frontend/backend builds and the production
+Docker image build passed. The focused Playwright run passed all nine selected
+desktop/mobile shell and account/key restart-and-replacement checks with retries
+disabled. The Release `identity-upgrade` integration probe passed, including
+preservation of an existing account and removal of the old sample table.
+Catalog validation, E2E TypeScript checking and repository guardrails also passed.
+This is focused cleanup verification, not a new full-suite acceptance run.
+
 - Preserve authorization, CSRF, session isolation, exact arithmetic, persistence, and idempotent retries through [real-stack verification](testing.md) under [ADR-0005](../../docs/ADR/ADR-0005-e2e-first-verification.md).
 - Review screenshots and actual interactions at agreed phone/tablet/desktop widths, including 320px, long German labels, and the full signed monetary range without truncation, scientific notation, overlap, or horizontal page overflow.
 - Verify keyboard navigation, visible focus, accessible names/headings, contrast, touch targets, responsive navigation, both roles/languages, SSR/hydration, and local asset loading.

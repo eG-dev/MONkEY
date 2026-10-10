@@ -20,11 +20,13 @@ public sealed class StorageReadinessCheck : IHealthCheck
             using var scope = scopeFactory.CreateScope();
             var database = scope.ServiceProvider.GetRequiredService<FoundationDbContext>();
             var settings = scope.ServiceProvider.GetRequiredService<InstanceSettings>();
-            _ = await database.FoundationStates
+            _ = await database.Accounts
                 .AsNoTracking()
-                .SingleAsync(cancellationToken);
+                .AnyAsync(cancellationToken);
+            _ = await database.Users
+                .AsNoTracking()
+                .AnyAsync(cancellationToken);
             settings.PrepareStorage();
-            _ = await File.ReadAllTextAsync(settings.SampleFilePath, cancellationToken);
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception) when (exception is not OperationCanceledException)

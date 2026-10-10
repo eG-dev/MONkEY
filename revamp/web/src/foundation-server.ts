@@ -100,7 +100,7 @@ proxy.on('error', (_error, _request, response) => {
 app.use('/api', (request, response) => {
   const path = request.originalUrl.split('?')[0];
   const allowed = ['GET', 'HEAD'].includes(request.method)
-    ? ['/api/foundation', '/api/foundation/file', '/api/auth/csrf', '/api/auth/me', '/api/users', '/api/accounts'].includes(path) ||
+    ? ['/api/auth/csrf', '/api/auth/me', '/api/users', '/api/accounts'].includes(path) ||
       /^\/api\/accounts\/[\w-]+(?:\/transactions)?$/.test(path)
     : request.method === 'POST'
       ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users', '/api/accounts'].includes(path) ||

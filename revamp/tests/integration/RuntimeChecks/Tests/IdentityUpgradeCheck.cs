@@ -25,27 +25,26 @@ internal static class IdentityUpgradeCheck
                     .GetMigrations()
                     .First());
 
-            var sampleId = Guid.NewGuid().ToString();
-            database.FoundationStates.Add(new FoundationState
-            {
-                Id = 1,
-                SampleId = sampleId,
-                InitializedAtUtc = DateTimeOffset.UtcNow
-            });
+            await database.Database.ExecuteSqlRawAsync(
+                "INSERT INTO FoundationState (Id, SampleId, InitializedAtUtc) VALUES (1, 'upgrade-sample', '2026-10-10T00:00:00Z')");
+            await migrator.MigrateAsync("20261010085457_UserTheme");
 
+            var account = new Account { Name = "Upgrade account", NormalizedName = "UPGRADE ACCOUNT", BalanceMinorUnits = 1234 };
+            database.Accounts.Add(account);
             await database.SaveChangesAsync();
 
             await migrator.MigrateAsync();
 
-            var preserved = await database.FoundationStates
-                .AsNoTracking()
+            var preserved = await database.Accounts.AsNoTracking().SingleAsync();
+            var demoTables = await database.Database
+                .SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM sqlite_master WHERE type = 'table' AND name = 'FoundationState'")
                 .SingleAsync();
 
-            if (preserved.SampleId != sampleId ||
+            if (demoTables != 0 || preserved.Id != account.Id || preserved.BalanceMinorUnits != 1234 ||
                 await database.Users.AnyAsync() ||
                 await database.AuditEvents.AnyAsync())
             {
-                throw new InvalidOperationException("Identity upgrade did not preserve the foundation state.");
+                throw new InvalidOperationException("Demo removal did not preserve the application schema and account data.");
             }
 
             Console.WriteLine("identity_upgrade_passed");

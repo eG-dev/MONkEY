@@ -10,10 +10,10 @@ test('SSR languages stay isolated and explicit preference wins', async ({ reques
   expect(english.status()).toBe(200);
 
   expect(await german.text()).toContain('lang="de"');
-  expect(await german.text()).toContain('Gespeicherter Testwert');
+  expect(await german.text()).toContain('Anmelden');
 
   expect(await english.text()).toContain('lang="en"');
-  expect(await english.text()).toContain('Persisted sample');
+  expect(await english.text()).toContain('Sign in');
 
   expect(german.headers()['cache-control']).toBe('no-store');
   expect(await german.text()).not.toContain('http://127.0.0.1:5080');
@@ -43,21 +43,14 @@ test('hydrated shell switches language, persists state, and uses local assets', 
 
   await expect(page.getByRole('img', { name: 'POCKET MONkEY' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
-  await expect(page.getByRole('status')).toHaveText('Bereit');
-
-  const sample = await page.getByTestId('sample-id').textContent();
+  await expect(page.getByTestId('sample-id')).toHaveCount(0);
 
   await page.getByRole('button', { name: 'English' }).click();
 
   await expect(page.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
-  await expect(page.getByRole('status')).toHaveText('Ready');
-
-  await expect(page.getByTestId('sample-id')).toHaveText(sample!);
-
-  await page.getByRole('button', { name: 'Reload', exact: true }).click();
-
-  await expect(page.getByRole('status')).toHaveText('Ready');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
 
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('type', 'image/png');
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'favicon.png');
@@ -66,7 +59,7 @@ test('hydrated shell switches language, persists state, and uses local assets', 
     await page.evaluate(async () => {
       await document.fonts.ready;
       const families = [...document.fonts].filter((font) => font.status === 'loaded').map((font) => font.family.replaceAll('"', ''));
-      return ['lucide', 'Roboto'].every((family) => families.includes(family));
+      return families.includes('Roboto');
     }),
   ).toBe(true);
 
@@ -90,7 +83,8 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
   expect(missing.status()).toBe(404);
   expect(write.status()).toBe(404);
 
-  expect(await file.text()).toBe('POCKET MONkEY foundation file\n');
+  expect(file.status()).toBe(404);
+  expect((await request.get('/api/foundation')).status()).toBe(404);
 
   expect(font.status()).toBe(200);
 
@@ -105,11 +99,11 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
   expect((await favicon.body()).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
 });
 
-test('backend failure produces actionable UI and failed readiness', async ({ page, request, instance }) => {
+test('backend failure preserves sign-in rendering and fails readiness', async ({ page, request, instance }) => {
   docker('exec', instance.container, 'supervisorctl', '-c', '/app/supervisord.conf', 'stop', 'backend');
 
   const readiness = await request.get('/health/ready');
-  const failure = await request.get('/api/foundation');
+  const failure = await request.get('/api/auth/me');
 
   expect(readiness.status()).toBe(503);
 
@@ -118,6 +112,6 @@ test('backend failure produces actionable UI and failed readiness', async ({ pag
 
   await page.goto('/');
 
-  await expect(page.getByRole('alert')).toHaveText('Verbindung fehlgeschlagen');
-  await expect(page.getByRole('button', { name: 'Neu laden' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
+  await expect(page.getByTestId('sample-id')).toHaveCount(0);
 });

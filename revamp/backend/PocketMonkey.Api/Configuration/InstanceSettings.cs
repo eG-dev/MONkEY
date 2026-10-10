@@ -14,7 +14,6 @@ public sealed record InstanceSettings
 
     public string ImagesPath => Path.Combine(DataPath, "images");
     public string KeysPath => Path.Combine(DataPath, "keys");
-    public string SampleFilePath => Path.Combine(ImagesPath, "foundation.txt");
     public string ConnectionString => new SqliteConnectionStringBuilder
     {
         DataSource = Path.Combine(DataPath, "monkey.db"),

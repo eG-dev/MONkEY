@@ -2,10 +2,15 @@ import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { test as standalone } from '@playwright/test';
-import { test, expect, containerOrigin, docker, image, startContainer, waitReady } from '../fixtures';
+import { test, expect, bootstrapManager, csrfWrite, login, containerOrigin, docker, image, startContainer, waitReady } from '../fixtures';
 
-test('restart and container replacement preserve database, sample file, and private keys', async ({ instance }) => {
-  const before = await (await fetch(`${instance.origin}/api/foundation`)).json();
+test.use({ ignoreHTTPSErrors: true });
+
+test('restart and container replacement preserve accounts and private keys', async ({ instance, request }) => {
+  await login(request, bootstrapManager(instance));
+  const created = await csrfWrite(request, 'POST', '/api/accounts', { name: 'Persistent account' });
+  expect(created.status()).toBe(201);
+  const before = await created.json();
   const keys = docker('exec', instance.container, 'find', '/data/keys', '-type', 'f', '-printf', '%f\n');
 
   expect(keys).toMatch(/key-.*\.xml/);
@@ -15,7 +20,7 @@ test('restart and container replacement preserve database, sample file, and priv
   instance.origin = containerOrigin(instance.container);
   await waitReady(instance.origin);
 
-  expect(await (await fetch(`${instance.origin}/api/foundation`)).json()).toEqual(before);
+  expect(await (await request.get(`/api/accounts/${before.id}`)).json()).toEqual(before);
 
   const started = Date.now();
 
@@ -28,8 +33,7 @@ test('restart and container replacement preserve database, sample file, and priv
   instance.origin = startContainer(instance.container, instance.volume);
   await waitReady(instance.origin);
 
-  expect(await (await fetch(`${instance.origin}/api/foundation`)).json()).toEqual(before);
-  expect(await (await fetch(`${instance.origin}/api/foundation/file`)).text()).toBe('POCKET MONkEY foundation file\n');
+  expect(await (await request.get(`/api/accounts/${before.id}`)).json()).toEqual(before);
 
   expect(docker('exec', instance.container, 'find', '/data/keys', '-type', 'f', '-printf', '%f\n')).toBe(keys);
 });
@@ -176,7 +180,7 @@ standalone('runtime works with networking disabled and no development executable
               name,
               'node',
               '-e',
-              "Promise.all(['/health/ready','/favicon.png','/assets/lucide/lucide.woff2','/assets/lucide/LICENSE','/api/foundation/file','/'].map(path=>fetch('http://127.0.0.1:8080'+path))).then(responses=>process.exit(responses.every(response=>response.ok)?0:1)).catch(()=>process.exit(1))",
+              "Promise.all(['/health/ready','/favicon.png','/assets/lucide/lucide.woff2','/assets/lucide/LICENSE','/'].map(path=>fetch('http://127.0.0.1:8080'+path))).then(responses=>process.exit(responses.every(response=>response.ok)?0:1)).catch(()=>process.exit(1))",
             ],
             { encoding: 'utf8', timeout: 10_000 },
           );

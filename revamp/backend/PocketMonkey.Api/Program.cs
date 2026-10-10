@@ -103,7 +103,6 @@ app.Use(async (context, next) =>
 app.MapGet("/health/live", () => Results.Ok(new { status = "healthy" }));
 app.MapHealthChecks("/health/ready");
 
-app.MapFoundation();
 app.MapAuthentication();
 app.MapUsers();
 app.MapAccounts();

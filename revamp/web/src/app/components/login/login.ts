@@ -1,24 +1,21 @@
 import { afterNextRender, Component, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { AuthenticationService } from '../../services/authentication/authentication.service';
-import { FoundationService } from '../../services/foundation/foundation.service';
 import { LanguageService } from '../../services/language/language.service';
 import { LANGUAGES, LanguageId } from '../../i18n/languages';
 import packageJson from '../../../../package.json';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, TuiButton, TranslocoDirective, DatePipe],
+  imports: [FormsModule, TuiButton, TranslocoDirective],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
   protected readonly auth = inject(AuthenticationService);
-  protected readonly foundation = inject(FoundationService);
   protected readonly language = inject(LanguageService);
   protected readonly languages = Object.values(LANGUAGES);
   protected readonly version = packageJson.version;
@@ -70,10 +67,6 @@ export class Login {
       await this.auth.logout();
       location.reload();
     });
-  }
-
-  protected reload(): void {
-    location.reload();
   }
 
   private async run(action: () => Promise<void>, unauthorized = 'auth.errors.unauthorized'): Promise<void> {

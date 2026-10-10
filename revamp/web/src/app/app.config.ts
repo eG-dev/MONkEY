@@ -12,7 +12,6 @@ import { provideTranslocoMessageformat } from '@jsverse/transloco-messageformat'
 
 import { routes } from './app.routes';
 import { LanguageService } from './services/language/language.service';
-import { FoundationService } from './services/foundation/foundation.service';
 import { BundledCatalogLoader } from './i18n/bundled-catalog/bundled-catalog.loader';
 import { LANGUAGES } from './i18n/languages';
 import { AuthenticationService } from './services/authentication/authentication.service';
@@ -54,12 +53,11 @@ export const appConfig: ApplicationConfig = {
 
     provideAppInitializer(() => {
       const language = inject(LanguageService);
-      const foundation = inject(FoundationService);
       const accounts = inject(AccountsService);
       inject(AuthenticationService).initialize();
       inject(ThemeService).initialize();
 
-      return Promise.all([language.initialize(), foundation.initialize(), accounts.initialize()]);
+      return Promise.all([language.initialize(), accounts.initialize()]);
     }),
   ],
 };

@@ -26,6 +26,9 @@ Login and app-shell footer updates are approved: show the build version and a
 GitHub icon/label. The repository link is an unavailable placeholder pending the
 future repository URL; it must not point to the current repository. The login
 footer sits at the bottom and flows below tall content on small screens.
+The temporary foundation/system smoke-check panel has been removed from the
+login implementation to match the approved references. Operational health checks
+remain separate from the public sign-in screen.
 
 | Reference | Scope |
 | --- | --- |

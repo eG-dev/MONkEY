@@ -10,8 +10,6 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    public DbSet<FoundationState> FoundationStates => Set<FoundationState>();
-
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<Account> Accounts => Set<Account>();
@@ -32,19 +30,6 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 
             userEntity.ToTable(table =>
                 table.HasCheckConstraint("CK_AspNetUsers_Theme", "Theme IN ('system', 'light', 'dark')"));
-        });
-
-        modelBuilder.Entity<FoundationState>(stateEntity =>
-        {
-            stateEntity.HasKey(x => x.Id);
-
-            stateEntity
-                .Property(x => x.SampleId)
-                .HasMaxLength(36)
-                .IsRequired();
-
-            stateEntity.ToTable("FoundationState", table =>
-                table.HasCheckConstraint("CK_FoundationState_Singleton", "Id = 1"));
         });
 
         modelBuilder.Entity<Account>(accountEntity =>

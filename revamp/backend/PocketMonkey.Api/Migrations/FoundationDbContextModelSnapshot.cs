@@ -291,28 +291,6 @@ namespace PocketMonkey.Api.Migrations
                     b.ToTable("AuditEvents");
                 });
 
-            modelBuilder.Entity("PocketMonkey.Api.Entities.FoundationState", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("InitializedAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SampleId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FoundationState", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_FoundationState_Singleton", "Id = 1");
-                        });
-                });
-
             modelBuilder.Entity("PocketMonkey.Api.Entities.LedgerEntry", b =>
                 {
                     b.Property<string>("Id")

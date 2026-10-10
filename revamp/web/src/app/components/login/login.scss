@@ -90,56 +90,6 @@
   cursor: pointer;
 }
 
-.system {
-  display: grid;
-  gap: var(--space-3);
-  padding: var(--space-5);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--surface-raised);
-  font: var(--type-caption);
-
-  h2 {
-    font: var(--type-label);
-  }
-
-  dl {
-    display: grid;
-    gap: var(--space-2);
-    margin: 0;
-
-    div {
-      display: grid;
-      grid-template-columns: 9rem minmax(0, 1fr);
-      gap: var(--space-3);
-    }
-  }
-
-  dt {
-    color: var(--text-secondary);
-  }
-
-  dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .actions {
-    justify-content: flex-start;
-  }
-}
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--status-success-fg);
-}
-
-.unavailable {
-  color: var(--status-danger-fg);
-}
-
 @media (max-width: 599px) {
   :host {
     background: var(--surface-raised);

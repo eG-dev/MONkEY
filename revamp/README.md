@@ -90,7 +90,7 @@ and behavior by responsibility. Namespaces follow the folders:
 | Folder | Responsibility |
 | --- | --- |
 | Entities | Persisted domain and Identity entities, not API payloads |
-| Contracts/Authentication, Contracts/Users, Contracts/Accounts, Contracts/Foundation | Request/response models grouped by API feature |
+| Contracts/Authentication, Contracts/Users, Contracts/Accounts | Request/response models grouped by API feature |
 | Endpoints | Feature-specific HTTP routing, policies, and response mapping |
 | Services | Application behavior, transactional user/account administration, and typed error outcomes |
 | Identity | Identity registration, cookie validation, policies, and claims |
