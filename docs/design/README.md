@@ -15,7 +15,17 @@ with the same larger type.
 
 The Accounts and account-details layouts are approved: account
 renaming is available only through the Manager pencil beside the account-details
-heading. Lists have no rename control; their trailing chevron opens details.
+heading. Lists have no rename control; their desktop trailing chevron opens details.
+The mobile Accounts refinement was approved by the user on 2026-10-10: avatar
+and name share a minimum 44px-high link, muted status sits below the name, and
+balance remains right-aligned. Phones omit the duplicate chevron; long names and
+amounts wrap without overlap. The wireframe, prototype and implementation reflect
+this refinement. See [mobile account rows](design-system/components.md#mobile-account-rows).
+Verification: Angular and production-image builds passed; all four selected
+German/English desktop/mobile account workflows passed without retries, including
+320px and 360px tap-target, status-alignment and overflow assertions. Mobile
+screenshots were reviewed. Prototype checks covered both languages/themes at
+320px, 360px and 1440px, long names/amounts, Member guidance and keyboard navigation.
 View-level actions such as refresh align at the right edge of the view header;
 contextual actions stay beside their target. See the shared
 [view-header guidance](design-system/components.md#view-headers).
@@ -63,7 +73,7 @@ wireframe first, then a detailed click prototype.
 | --- | --- | --- | --- |
 | App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Approved 2026-10-10, including footer refinements | [Shell](prototypes/application-shell/index.html) |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
-| Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10 | [Accounts](prototypes/accounts/index.html) |
+| Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
 | Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Approved 2026-10-10, including rename, refresh, spacing and navigation refinements | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |

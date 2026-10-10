@@ -298,6 +298,45 @@ for (const language of ['de', 'en'] as const) {
 
     await expect(page.getByTestId('account-row').getByRole('link', { name: 'N'.repeat(40), exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
+    if (test.info().project.name === 'mobile') {
+      const originalViewport = page.viewportSize();
+
+      for (const width of [320, 360]) {
+        await page.setViewportSize({ width, height: 800 });
+
+        const row = page.getByTestId('account-row');
+        const accountLink = row.getByRole('link', { name: 'N'.repeat(40), exact: true });
+
+        await expect(row.getByRole('link', { name: labels.open('N'.repeat(40)), exact: true })).toHaveCount(0);
+        await expect(accountLink.locator('.avatar')).toBeVisible();
+
+        const layout = await row.evaluate((element) => {
+          const link = element.querySelector('.name-cell > a')!.getBoundingClientRect();
+          const name = element.querySelector('.account-name')!.getBoundingClientRect();
+          const status = element.querySelector('.mobile-status')!.getBoundingClientRect();
+          const balance = element.querySelector('.numeric')!.getBoundingClientRect();
+
+          return {
+            targetHeight: link.height,
+            statusBelowName: status.top >= name.bottom,
+            statusAlignedWithName: Math.abs(status.left - name.left) < 1,
+            noOverlap: link.right <= balance.left,
+            noOverflow: document.documentElement.scrollWidth <= innerWidth,
+          };
+        });
+
+        expect(layout.targetHeight).toBeGreaterThanOrEqual(44);
+        expect(layout.statusBelowName).toBe(true);
+        expect(layout.statusAlignedWithName).toBe(true);
+        expect(layout.noOverlap).toBe(true);
+        expect(layout.noOverflow).toBe(true);
+        await page.screenshot({ path: test.info().outputPath(`accounts-${width}.png`), fullPage: true });
+      }
+
+      await page.setViewportSize(originalViewport!);
+    }
+
     await page.screenshot({ path: test.info().outputPath('accounts.png'), fullPage: true });
 
     await page.getByRole('button', { name: labels.create, exact: true }).click();

@@ -1,16 +1,18 @@
-.name-cell {
+.name-cell > a {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  font-weight: var(--weight-medium);
+  min-width: 0;
+  text-decoration: none;
+}
 
-  > a {
-    overflow-wrap: anywhere;
-  }
+.account-name {
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+}
 
-  > button {
-    flex-shrink: 0;
-  }
+.mobile-status {
+  display: none;
 }
 
 .row-actions {
@@ -19,8 +21,26 @@
 }
 
 @media (max-width: 599px) {
-  .status {
-    grid-column: 1;
+  .stack-table tr {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 40%);
+  }
+
+  .stack-table td {
+    min-width: 0;
+  }
+
+  .name-cell > a {
+    min-height: 44px;
+    align-items: start;
+  }
+
+  .account-identity {
+    min-width: 0;
+  }
+
+  .mobile-status {
+    display: block;
+    margin-top: var(--space-1);
     font: var(--type-caption);
     color: var(--text-secondary);
   }
@@ -28,10 +48,12 @@
   .numeric {
     grid-column: 2;
     grid-row: 1;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
+  .status,
   .row-actions {
-    grid-column: 2;
-    grid-row: 2;
+    display: none;
   }
 }

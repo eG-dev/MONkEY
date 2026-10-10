@@ -54,6 +54,17 @@ interaction requirements.
 - Confirm consequential departures, such as leaving an unsaved transaction form;
   cancelling preserves the entered data.
 
+## Mobile Account Rows
+
+- Below 600px, use two columns: identity on the left and balance on the right.
+- Avatar and underlined name share one link with a minimum 44px tap height.
+- Place muted caption-sized status beneath the name, aligned with the name rather
+  than the avatar. Long names wrap within the identity column.
+- Hide the duplicate chevron and separate status cells on phones. Desktop keeps
+  the status column and chevron action.
+- Bound the balance column so long amounts can wrap without overlapping names
+  or creating horizontal page overflow; never truncate a monetary value.
+
 ## Reference Lifecycle
 
 The [click prototypes](../prototypes/README.md) show these patterns per view;

@@ -52,8 +52,13 @@
               <tr data-testid="account-row">
                 <td class="name">
                   <span class="name-cell">
-                    <span class="avatar small" aria-hidden="true">{{ account.name.charAt(0) }}</span>
-                    <a [routerLink]="['/accounts', account.id]">{{ account.name }}</a>
+                    <a [routerLink]="['/accounts', account.id]" [attr.aria-label]="account.name">
+                      <span class="avatar small" aria-hidden="true">{{ account.name.charAt(0) }}</span>
+                      <span class="account-identity">
+                        <span class="account-name">{{ account.name }}</span>
+                        <span class="mobile-status">{{ t(account.balance === null ? 'accounts.uninitialized' : 'accounts.active') }}</span>
+                      </span>
+                    </a>
                   </span>
                 </td>
                 <td class="numeric" [class]="account.balance | amountTone">

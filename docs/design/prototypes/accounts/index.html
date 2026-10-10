@@ -7,15 +7,19 @@
   <link rel="stylesheet" href="../../design-system/styles.css">
   <link rel="stylesheet" href="../shared/prototype.css">
   <style>
-    .name-cell { display: flex; align-items: center; gap: var(--space-4); font-weight: var(--weight-medium); }
+    .name-cell > a { display: flex; align-items: center; gap: var(--space-4); text-decoration: none; min-width: 0; }
+    .account-name { overflow-wrap: anywhere; text-decoration: underline; }
+    .mobile-status { display: none; }
     @media (max-width: 599px) {
       .table thead { display: none; }
-      .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
-      .table td { border: 0; padding: 4px 8px; }
-      .table td.status { grid-column: 1; color: var(--text-secondary); font: var(--type-caption); }
-      .table td.numeric { grid-column: 2; grid-row: 1; }
-      .table td.actions-cell { grid-column: 2; grid-row: 2; text-align: end; }
-      .actions-cell .button-link span { display: none; }
+      .table tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40%); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-subtle); }
+      .table td { border: 0; padding: var(--space-1) var(--space-2); min-width: 0; }
+      .name-cell > a { min-height: 44px; align-items: start; }
+      .name-cell .avatar { flex-shrink: 0; }
+      .account-identity { min-width: 0; }
+      .mobile-status { display: block; margin-top: var(--space-1); color: var(--text-secondary); font: var(--type-caption); }
+      .table td.numeric { grid-column: 2; grid-row: 1; overflow-wrap: anywhere; white-space: normal; }
+      .table td.status, .table td.actions-cell { display: none; }
     }
   </style>
 </head>
@@ -35,7 +39,7 @@
       const rows = PM.accountsByName().map(account => {
         const balance = PM.balance(account);
         return `<tr class="clickable" data-account="${account.id}">
-          <td><span class="name-cell">${PM.avatar(account, true)}<a href="../account-details/index.html?account=${account.id}">${PM.esc(account.name)}</a></span></td>
+          <td><span class="name-cell"><a href="../account-details/index.html?account=${account.id}" aria-label="${PM.esc(account.name)}">${PM.avatar(account, true)}<span class="account-identity"><span class="account-name">${PM.esc(account.name)}</span><span class="mobile-status">${PM.esc(balance === null ? PM.t('notInitialized') : PM.t('active'))}</span></span></a></span></td>
           <td class="numeric">${balance === null ? '–' : PM.amountHtml(balance)}</td>
           <td class="status">${PM.esc(balance === null ? PM.t('notInitialized') : PM.t('active'))}</td>
           <td class="actions-cell"><a class="icon-button" href="../account-details/index.html?account=${account.id}" aria-label="${PM.esc(PM.t('openNamed', { name: account.name }))}" title="${PM.esc(PM.t('openNamed', { name: account.name }))}">${PM.icon('right')}</a></td>
