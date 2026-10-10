@@ -43,38 +43,8 @@
         <mxCell id="undefined-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;fontSize=14;" value="Set allowance" vertex="1">
           <mxGeometry x="320" y="312" width="128" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=16;spacingTop=10;fontStyle=1;fontSize=20;" value="Record transaction" vertex="1">
-          <mxGeometry x="24" y="378" width="440" height="420" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="+ Deposit" vertex="1">
-          <mxGeometry x="40" y="424" width="204" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fillColor=#C62828;fontColor=#FFFFFF;strokeColor=#C62828;" value="− Withdrawal" vertex="1">
-          <mxGeometry x="244" y="424" width="204" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Amount" vertex="1">
-          <mxGeometry x="40" y="480" width="408" height="24" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#999999;align=left;spacingLeft=10;fontColor=#666666;" value="&lt;font color=&quot;#C62828&quot;&gt;−&lt;/font&gt; 12.99" vertex="1">
-          <mxGeometry x="40" y="506" width="408" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=16;align=right;verticalAlign=middle;fontColor=#666666;" value="EUR" vertex="1">
-          <mxGeometry x="388" y="506" width="50" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=13;align=left;verticalAlign=middle;fontColor=#666666;" value="Positive, at most two decimal places" vertex="1">
-          <mxGeometry x="40" y="548" width="408" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-22" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Comment (optional)" vertex="1">
-          <mxGeometry x="40" y="580" width="408" height="24" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#999999;align=left;spacingLeft=10;fontColor=#666666;" value="Book" vertex="1">
-          <mxGeometry x="40" y="606" width="408" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-24" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=13;align=left;verticalAlign=middle;fontColor=#666666;" value="Up to 500 characters" vertex="1">
-          <mxGeometry x="40" y="648" width="408" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="undefined-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fillColor=#C62828;fontColor=#FFFFFF;strokeColor=#C62828;" value="− Record withdrawal" vertex="1">
-          <mxGeometry x="40" y="730" width="408" height="44" as="geometry" />
+        <mxCell id="transaction-dialog-note" parent="1" style="shape=callout;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;" value="Record transaction opens a dialog at every width: Deposit/Withdrawal selector, positive amount (up to two decimals), optional comment (up to 500 characters), mode-coloured submit. Errors retain input; success closes and refreshes balance/history. No inline transaction form." vertex="1">
+          <mxGeometry x="24" y="400" width="440" height="180" as="geometry" />
         </mxCell>
         <mxCell id="undefined-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=16;spacingTop=10;fontStyle=1;fontSize=20;" value="Transactions" vertex="1">
           <mxGeometry x="492" y="136" width="924" height="420" as="geometry" />
@@ -181,8 +151,8 @@
         <mxCell id="undefined-60" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="Managers: avatar edits the image (PNG/JPEG/WebP); pencil beside the heading renames (1-40 characters, unique). Errors keep input; Cancel keeps the name. Members see no edit controls. Rename is available only on this page." vertex="1">
           <mxGeometry x="300" y="8" width="560" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-61" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="View-level actions align right in the header: refresh sits at the right edge. Contextual rename stays beside the name. Keep this distinction on phones. Shell navigation keeps Accounts selected on account details." vertex="1">
-          <mxGeometry x="900" y="20" width="380" height="90" as="geometry" />
+        <mxCell id="undefined-61" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="Right-aligned actions: icon-only refresh, then labelled Record transaction for Managers with an opening balance. On phones the action group wraps together onto a right-aligned line. Rename stays beside the name." vertex="1">
+          <mxGeometry x="24" y="610" width="440" height="140" as="geometry" />
         </mxCell>
         <mxCell id="undefined-62" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Managers only. The mode is shown by color plus sign: deposit green (+), withdrawal red (−) on the selected toggle, the amount sign, and the button. Submitting disables the button until the backend confirms; retries reuse the same request so nothing is booked twice. Withdrawals may make the balance negative." vertex="1">
           <mxGeometry x="24" y="806" width="440" height="186" as="geometry" />
@@ -196,11 +166,12 @@
         <mxCell id="undefined-65" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Monthly allowance&lt;/b&gt;&lt;br&gt;Amount per month or &quot;No monthly allowance&quot;; status &quot;Credited this month on …&quot; or &quot;Next credit on …&quot;; Managers also see failed credits with the reason. Managers: &quot;Set allowance&quot; opens a dialog (amount ≥ 0, on/off). Credits appear in the history as &quot;Allowance&quot; by &quot;Automatic&quot;. Saving never books money itself." vertex="1">
           <mxGeometry x="492" y="780" width="450" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-66" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Member&lt;/b&gt;: balance, allowance, and history only; no forms and no &quot;Set allowance&quot;. The backend enforces this regardless of the UI.&lt;br&gt;&lt;b&gt;Phone&lt;/b&gt;: stacked balance, allowance, &quot;Record transaction&quot; button (full-screen dialog), then history as two-line items (comment or type, date and author; amount right-aligned, never truncated)." vertex="1">
+        <mxCell id="undefined-66" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Member: balance, allowance and history only; no business-write controls. Phone: labelled Record transaction stays after refresh in the header and opens a full-screen dialog. Balance, allowance and history remain stacked; amounts are never truncated." vertex="1">
           <mxGeometry x="966" y="780" width="450" height="190" as="geometry" />
         </mxCell>
         <mxCell id="rename-account" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=18;" value="[pencil]" vertex="1"><mxGeometry x="190" y="68" width="80" height="28" as="geometry" /></mxCell>
-        <mxCell id="refresh-view" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=14;fillColor=#FFFFFF;strokeColor=#666666;" value="[refresh]" vertex="1"><mxGeometry x="1320" y="56" width="96" height="48" as="geometry" /></mxCell>
+        <mxCell id="refresh-view" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=14;fillColor=#FFFFFF;strokeColor=#666666;" value="[refresh]" vertex="1"><mxGeometry x="1070" y="56" width="96" height="48" as="geometry" /></mxCell>
+        <mxCell id="record-transaction" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" value="+ Record transaction" vertex="1"><mxGeometry x="1180" y="56" width="236" height="48" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

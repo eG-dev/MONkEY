@@ -8,10 +8,13 @@
   <link rel="stylesheet" href="../shared/prototype.css">
   <style>
     .back-link { margin-bottom: var(--space-7); }
-    .details-head { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-7); }
+    .details-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); margin-bottom: var(--space-7); }
     .details-head > .page-title { min-width: 0; overflow-wrap: anywhere; }
     .details-head > .avatar, .details-head > button { flex-shrink: 0; }
     .details-head > .view-actions { margin-inline-start: auto; }
+    .view-actions { display: flex; align-items: center; justify-content: end; gap: var(--space-3); max-width: 100%; }
+    .view-actions > .icon-button { flex-shrink: 0; }
+    .view-actions > .button { white-space: normal; }
     .avatar-button { position: relative; padding: 0; border: 0; border-radius: 50%; background: none; }
     .avatar-button:hover .avatar { outline: 2px solid var(--border-strong); }
     .avatar-badge { position: absolute; inset-inline-end: -2px; inset-block-end: -2px; display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid var(--border-default); border-radius: 50%; background: var(--surface-raised); color: var(--icon-default); }
@@ -25,7 +28,6 @@
     .balance { font: var(--type-display); font-weight: var(--weight-medium); text-align: end; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
     .allowance { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); }
     .allowance-amount { font: var(--type-h3); }
-    .phone-record { display: none; }
     .pager { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin-top: var(--space-5); }
     .type-label { white-space: nowrap; }
     .transaction-form .segments span { gap: 6px; }
@@ -43,8 +45,6 @@
     .transaction-form .input-wrap .input { padding-inline-start: 28px; }
     @media (max-width: 899px) { .layout { grid-template-columns: 1fr; } }
     @media (max-width: 599px) {
-      .record-panel { display: none; }
-      .phone-record { display: flex; }
       .table thead { display: none; }
       .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
       .table td { border: 0; padding: 2px 4px; }
@@ -90,7 +90,7 @@
       const balance = PM.balance(account);
       const money = PM.money(balance);
       view.innerHTML = `${back()}
-        <div class="details-head">${PM.isManager() ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1>${PM.isManager() ? `<button class="icon-button" type="button" id="edit-name" aria-label="${PM.esc(PM.t('editNamed', { name: account.name }))}" title="${PM.esc(PM.t('editNamed', { name: account.name }))}">${PM.icon('pencil')}</button>` : ''}<button class="icon-button view-actions" type="button" id="refresh-view" aria-label="${PM.esc(PM.t('refresh'))}" title="${PM.esc(PM.t('refresh'))}">${PM.icon('refresh')}</button></div>
+        <div class="details-head">${PM.isManager() ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1>${PM.isManager() ? `<button class="icon-button" type="button" id="edit-name" aria-label="${PM.esc(PM.t('editNamed', { name: account.name }))}" title="${PM.esc(PM.t('editNamed', { name: account.name }))}">${PM.icon('pencil')}</button>` : ''}<div class="view-actions"><button class="icon-button" type="button" id="refresh-view" aria-label="${PM.esc(PM.t('refresh'))}" title="${PM.esc(PM.t('refresh'))}">${PM.icon('refresh')}</button>${PM.isManager() && balance !== null ? `<button class="button button-primary" type="button" id="record-transaction">${PM.icon('plus')}${PM.esc(PM.t('recordTransaction'))}</button>` : ''}</div></div>
         <div class="layout">
           <div class="side">
             <section class="panel" aria-labelledby="balance-label"><div class="label" id="balance-label">${PM.esc(PM.t('balance'))}</div><div class="balance ${money.cls}">${PM.esc(money.text)}</div></section>
@@ -171,8 +171,7 @@
           </form></section>`;
       }
 
-      return `<button class="button button-primary button-block phone-record" type="button" id="phone-record">${PM.icon('plus')}${PM.esc(PM.t('recordTransaction'))}</button>
-        <section class="panel record-panel" aria-labelledby="record-title"><h2 class="panel-title" id="record-title">${PM.esc(PM.t('recordTransaction'))}</h2>${transactionForm('record')}</section>`;
+      return '';
     }
 
     function transactionForm(prefix) {
@@ -213,15 +212,10 @@
       document.getElementById('set-allowance')?.addEventListener('click', () => openAllowance(account));
       document.getElementById('edit-image')?.addEventListener('click', () => openImage(account));
       document.getElementById('opening-form')?.addEventListener('submit', event => submitOpening(event, account));
-      document.getElementById('phone-record')?.addEventListener('click', () => {
+      document.getElementById('record-transaction')?.addEventListener('click', () => {
         const recordDialog = PM.dialog({ title: PM.t('recordTransaction'), body: transactionForm('dialog') });
         bindTransaction(recordDialog.querySelector('form'), account, recordDialog);
       });
-      const form = view.querySelector('.transaction-form');
-
-      if (form) {
-        bindTransaction(form, account);
-      }
     }
 
     function bindTransaction(form, account, container) {

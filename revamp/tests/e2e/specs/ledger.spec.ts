@@ -54,9 +54,15 @@ async function chooseLanguage(page: Page, language: string, returnTo: string) {
 }
 
 async function openTransactionForm(page: Page, record: string) {
-  if (page.viewportSize()!.width < 600) {
-    await page.getByRole('button', { name: record, exact: true }).click();
-  }
+  const actions = page.locator('.details-head .view-actions');
+  const trigger = actions.getByRole('button', { name: record, exact: true });
+
+  await expect(page.locator('.transaction-form')).toHaveCount(0);
+  await expect(actions.getByRole('button')).toHaveCount(2);
+  await expect(actions.getByRole('button').last()).toHaveText(record);
+  await trigger.click();
+  await expect(page.getByRole('dialog', { name: record, exact: true })).toBeVisible();
+  await expect(page.locator('.transaction-form')).toHaveCount(1);
 }
 
 test('real SQLite ledger migration, exact arithmetic, constraints and complete rollback hold @api', async () => {
@@ -752,6 +758,7 @@ for (const language of ['de', 'en'] as const) {
       await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}01 ${symbol}`);
       await expect(page.getByTestId('account-balance')).toHaveClass(/amount-negative/);
       await openTransactionForm(page, labels.record);
+      await page.screenshot({ path: test.info().outputPath('transaction-dialog.png'), fullPage: true });
       await page.getByRole('radio', { name: labels.withdrawal, exact: true }).check();
 
       await expect(page.locator('form[data-mode="withdrawal"]')).toBeVisible();
@@ -767,6 +774,7 @@ for (const language of ['de', 'en'] as const) {
       await page.getByRole('textbox', { name: labels.comment, exact: true }).fill(comment);
       await page.getByRole('button', { name: labels.postWithdrawal, exact: true }).click();
       await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}03 ${symbol}`);
+      await expect(page.getByRole('dialog', { name: labels.record, exact: true })).toHaveCount(0);
       await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
       await expect(page.getByTestId('ledger-entry').first()).toContainText(`-0${labels.decimal}02 ${symbol}`);
       expect(await page.evaluate(() => 'monkeyXss' in window)).toBe(false);

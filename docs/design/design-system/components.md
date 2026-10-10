@@ -28,6 +28,12 @@ interaction requirements.
 - On narrow screens, allow long titles to wrap without shrinking icon controls
   or overlapping content. Keep view actions aligned right; if the header needs
   another line, the action group remains right-aligned on that line.
+- Account details groups icon-only refresh followed by a labelled, plus-icon
+  "Record transaction" button. Managers see that action only after an opening
+  balance exists. At every width it opens the same deposit/withdrawal dialog;
+  no transaction form is embedded in the regular view. Phones use the existing
+  full-screen dialog. Errors preserve input; success closes the dialog and
+  refreshes balance/history. Closing without posting preserves the draft.
 
 ## Amounts
 

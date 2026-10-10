@@ -1,5 +1,5 @@
-import { afterNextRender, Component, effect, inject, PLATFORM_ID, signal } from '@angular/core';
-import { DatePipe, isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
+import { afterNextRender, Component, effect, inject, signal } from '@angular/core';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -38,7 +38,6 @@ export class AccountDetails {
   private readonly service = inject(AccountsService);
   private readonly route = inject(ActivatedRoute);
   private readonly parameters = toSignal(this.route.paramMap);
-  private readonly phoneQuery = isPlatformBrowser(inject(PLATFORM_ID)) ? matchMedia('(max-width: 599px)') : null;
 
   protected readonly account = signal<SharedAccount | null>(null);
   protected readonly loading = signal(false);
@@ -52,8 +51,7 @@ export class AccountDetails {
   protected name = '';
   protected readonly source = signal<'deposit' | 'withdrawal'>('deposit');
   protected readonly confirmingOpening = signal(false);
-  protected readonly phone = signal(false);
-  protected readonly phoneForm = signal(false);
+  protected readonly transactionDialog = signal(false);
   protected readonly history = signal<LedgerEntry[]>([]);
   protected readonly historyLoading = signal(true);
   protected readonly historyError = signal('');
@@ -88,10 +86,7 @@ export class AccountDetails {
       }
     });
 
-    this.phoneQuery?.addEventListener('change', (event) => this.phone.set(event.matches));
-
     afterNextRender(() => {
-      this.phone.set(this.phoneQuery?.matches ?? false);
       this.interactive.set(true);
 
       if (this.account()?.balance !== null) {
@@ -181,7 +176,7 @@ export class AccountDetails {
         this.transactionPayload = '';
         this.amount = '';
         this.comment = '';
-        this.phoneForm.set(false);
+        this.transactionDialog.set(false);
         this.saved.set(source === 'deposit' ? 'accounts.depositSaved' : 'accounts.withdrawalSaved');
         const refreshed = await this.service.find(account.id);
 

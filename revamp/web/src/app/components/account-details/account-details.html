@@ -29,19 +29,25 @@
           <span class="icon icon-pencil" aria-hidden="true"></span>
         </button>
       }
-      <button
-        class="view-actions"
-        tuiButton
-        appearance="flat"
-        size="s"
-        type="button"
-        [disabled]="busy() || !interactive()"
-        [attr.aria-label]="t('accounts.refresh')"
-        [title]="t('accounts.refresh')"
-        (click)="reload()"
-      >
-        <span class="icon icon-refresh-cw" aria-hidden="true"></span>
-      </button>
+      <div class="view-actions">
+        <button
+          tuiButton
+          appearance="flat"
+          size="s"
+          type="button"
+          [disabled]="busy() || !interactive()"
+          [attr.aria-label]="t('accounts.refresh')"
+          [title]="t('accounts.refresh')"
+          (click)="reload()"
+        >
+          <span class="icon icon-refresh-cw" aria-hidden="true"></span>
+        </button>
+        @if (auth.user()?.role === 'Manager' && current.balance !== null) {
+          <button tuiButton appearance="primary" size="m" type="button" [disabled]="busy() || !interactive()" (click)="transactionDialog.set(true)">
+            <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.recordTransaction') }}
+          </button>
+        }
+      </div>
     </div>
 
     <app-modal-dialog [open]="renaming()" [heading]="t('accounts.editNamed', { name: current.name })" (closed)="renaming.set(false)">
@@ -124,15 +130,6 @@
                 </button>
               </form>
             </section>
-          } @else if (phone()) {
-            <button tuiButton appearance="primary" size="m" type="button" class="phone-record" (click)="phoneForm.set(true)">
-              <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.recordTransaction') }}
-            </button>
-          } @else {
-            <section class="panel" aria-labelledby="record-title">
-              <h2 class="panel-title" id="record-title">{{ t('accounts.recordTransaction') }}</h2>
-              <ng-container [ngTemplateOutlet]="transactionForm" [ngTemplateOutletContext]="{ $implicit: current }" />
-            </section>
           }
         } @else if (current.balance === null) {
           <div class="message message-info">
@@ -205,8 +202,8 @@
       }
     </div>
 
-    <app-modal-dialog [open]="phoneForm()" [heading]="t('accounts.recordTransaction')" (closed)="phoneForm.set(false)">
-      @if (phoneForm()) {
+    <app-modal-dialog [open]="transactionDialog()" [heading]="t('accounts.recordTransaction')" (closed)="transactionDialog.set(false)">
+      @if (transactionDialog()) {
         <ng-container [ngTemplateOutlet]="transactionForm" [ngTemplateOutletContext]="{ $implicit: current }" />
       }
     </app-modal-dialog>

@@ -30,6 +30,19 @@ View-level actions such as refresh align at the right edge of the view header;
 contextual actions stay beside their target. See the shared
 [view-header guidance](design-system/components.md#view-headers).
 
+The user approved the unified transaction-dialog refinement on 2026-10-10:
+desktop and mobile account details show a labelled "Record transaction" action
+immediately after icon-only refresh in the right-aligned header group. Managers
+with an opening balance use the same dialog for deposits and withdrawals at
+every width; the regular view no longer embeds the form. Phone dialogs remain
+full-screen. Opening-balance entry and backend financial rules are unchanged.
+Verification: Angular/production-image builds, catalog validation and test
+typechecking passed. All four selected desktop/mobile localized transaction
+workflows passed without retries, covering deposits, withdrawals, validation,
+retry idempotency, dialog closure, history and Member access. Desktop/mobile
+dialog screenshots were reviewed. Prototype checks covered English/German,
+light/dark, 320px/360px/1440px, action order, dialog opening and role/opening gates.
+
 ## Reference inventory
 
 Login and app-shell footer updates are approved: show the build version and a
@@ -74,7 +87,7 @@ wireframe first, then a detailed click prototype.
 | App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Approved 2026-10-10, including footer refinements | [Shell](prototypes/application-shell/index.html) |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
-| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Approved 2026-10-10, including rename, refresh, spacing and navigation refinements | [Account details](prototypes/account-details/index.html) |
+| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Approved 2026-10-10, including unified transaction dialog and labelled header action after refresh | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved 2026-10-10, including version/GitHub footer | [Login](prototypes/login/index.html) |
