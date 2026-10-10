@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Elevation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .stage {
+            display: flex;
+            gap: 24px;
+            margin: -20px;
+            padding: 20px;
+            background: var(--surface-panel);
+        }
+
+        .stage > div {
+            display: flex;
+            flex: 1;
+            align-items: end;
+            height: 80px;
+            padding: 8px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stage">
+        <div class="v">border only</div>
+        <div class="v" style="box-shadow:var(--shadow-1)">shadow-1</div>
+        <div class="v" style="box-shadow:var(--shadow-2)">shadow-2 · menus</div>
+        <div class="v" style="box-shadow:var(--shadow-3)">shadow-3 · dialogs, drawer</div>
+    </div>
+</body>
+
+</html>

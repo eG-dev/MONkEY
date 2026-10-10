@@ -1,0 +1,133 @@
+<mxfile host="Electron">
+  <diagram id="administration-users" name="Administration - Users">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1000" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="undefined-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#9673a6;dashed=1;" value="" vertex="1">
+          <mxGeometry x="0" y="0" width="1440" height="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=28;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Administration" vertex="1">
+          <mxGeometry x="24" y="16" width="800" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Profile" vertex="1">
+          <mxGeometry x="24" y="76" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#7EA6E0;strokeColor=#6c8ebf;fontStyle=1;" value="Users" vertex="1">
+          <mxGeometry x="184" y="76" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
+          <mxGeometry x="24" y="120" width="1392" height="2" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" value="+ Create user" vertex="1">
+          <mxGeometry x="1216" y="150" width="200" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Display name" vertex="1">
+          <mxGeometry x="24" y="214" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Username" vertex="1">
+          <mxGeometry x="324" y="214" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Role" vertex="1">
+          <mxGeometry x="524" y="214" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Status" vertex="1">
+          <mxGeometry x="684" y="214" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Actions" vertex="1">
+          <mxGeometry x="944" y="214" width="472" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Mara Example" vertex="1">
+          <mxGeometry x="24" y="254" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="mara" vertex="1">
+          <mxGeometry x="324" y="254" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Manager" vertex="1">
+          <mxGeometry x="524" y="254" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
+          <mxGeometry x="684" y="254" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt; · &lt;u&gt;Reset password&lt;/u&gt;" vertex="1">
+          <mxGeometry x="944" y="254" width="472" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Tom Example" vertex="1">
+          <mxGeometry x="24" y="302" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="tom" vertex="1">
+          <mxGeometry x="324" y="302" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Manager" vertex="1">
+          <mxGeometry x="524" y="302" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
+          <mxGeometry x="684" y="302" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt; · &lt;u&gt;Reset password&lt;/u&gt;" vertex="1">
+          <mxGeometry x="944" y="302" width="472" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Emma" vertex="1">
+          <mxGeometry x="24" y="350" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="emma" vertex="1">
+          <mxGeometry x="324" y="350" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Member" vertex="1">
+          <mxGeometry x="524" y="350" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
+          <mxGeometry x="684" y="350" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt; · &lt;u&gt;Reset password&lt;/u&gt;" vertex="1">
+          <mxGeometry x="944" y="350" width="472" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Noah" vertex="1">
+          <mxGeometry x="24" y="398" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="noah" vertex="1">
+          <mxGeometry x="324" y="398" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-30" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Member" vertex="1">
+          <mxGeometry x="524" y="398" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-31" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#666666;" value="Disabled" vertex="1">
+          <mxGeometry x="684" y="398" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt; · &lt;u&gt;Reset password&lt;/u&gt;" vertex="1">
+          <mxGeometry x="944" y="398" width="472" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Lena" vertex="1">
+          <mxGeometry x="24" y="446" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="lena" vertex="1">
+          <mxGeometry x="324" y="446" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-35" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Member" vertex="1">
+          <mxGeometry x="524" y="446" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#666666;" value="Must change password" vertex="1">
+          <mxGeometry x="684" y="446" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt; · &lt;u&gt;Reset password&lt;/u&gt;" vertex="1">
+          <mxGeometry x="944" y="446" width="472" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-38" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Managers only. The last active Manager cannot be disabled or demoted; the related controls are disabled with an explanation." vertex="1">
+          <mxGeometry x="24" y="520" width="420" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-39" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="No delete. Phone: list with an actions menu per user." vertex="1">
+          <mxGeometry x="470" y="520" width="420" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-40" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Create user dialog&lt;/b&gt;&lt;br&gt;Username (sign-in name, not changeable later), display name (up to 100 characters), role (Member / Manager). Then a second step shows the &lt;b&gt;temporary password&lt;/b&gt; once with Copy and Done: never shown again, the user must change it at the first sign-in." vertex="1">
+          <mxGeometry x="24" y="670" width="440" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-41" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Edit user dialog&lt;/b&gt;&lt;br&gt;Display name, role, Active switch, and &quot;Reset password&quot;. Role change or disabling ends the user's sessions. For the last active Manager, &quot;Member&quot; and &quot;Active&quot; are disabled with the reason shown." vertex="1">
+          <mxGeometry x="490" y="670" width="440" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-42" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Reset password&lt;/b&gt;&lt;br&gt;Asks for confirmation, then shows the new temporary password once (same step as when creating). Existing sessions of that user end." vertex="1">
+          <mxGeometry x="956" y="670" width="440" height="220" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

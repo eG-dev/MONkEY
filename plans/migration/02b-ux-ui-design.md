@@ -32,6 +32,7 @@ No framework replacement or business-policy change is implied by a wireframe.
 ## References and foundations
 
 - Store editable draw.io sources and synchronized PNG previews under [docs/design](../../docs/design/README.md), with roles, viewports, states, revision-specific approval, and open questions indexed there.
+- Follow [ADR-0013](../../docs/ADR/ADR-0013-wireframes-and-click-prototypes.md): rough view-only wireframes first, then detailed offline click prototypes on a shared shell.
 - Start with the app shell without specific view content, then separate references for accounts overview, account management, account details including transactions, settings, user administration, and login.
 - Treat the accounts overview as the application home/landing view, not a separate marketing page. Forms, dialogs, and error states can be named pages in the owning view's source.
 - Agree the household/group audience, Manager/Member workflows, navigation, page hierarchy, back behavior, primary actions, and recovery paths. Separate everyday account use from administration.

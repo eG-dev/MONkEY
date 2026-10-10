@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Logo</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .stage {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) 120px;
+            margin: -20px;
+            height: 180px;
+        }
+
+        .stage > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .stage img {
+            width: 100%;
+            max-width: 240px;
+        }
+
+        .stage .face {
+            width: 64px;
+        }
+
+        .on-toolbar .v {
+            color: var(--grey-200);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stage">
+        <div style="background:var(--pm-color-background)"><img src="../../assets/images/monkey.png" alt="POCKET MONkEY"><span class="v">white</span></div>
+        <div style="background:var(--pm-color-surface)"><img src="../../assets/images/monkey.png" alt="POCKET MONkEY"><span class="v">surface</span></div>
+        <div class="on-toolbar" style="background:var(--pm-color-toolbar)"><img src="../../assets/images/monkey.png" alt="POCKET MONkEY"><span class="v">toolbar: maroon parts have almost no contrast</span></div>
+        <div style="background:var(--pm-color-background)"><img class="face" src="../../assets/images/monkey_face.png" alt="POCKET MONkEY"><span class="v">face mark</span></div>
+    </div>
+</body>
+
+</html>

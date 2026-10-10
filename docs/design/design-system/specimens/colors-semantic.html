@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Semantic tokens</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .grid .chip {
+            height: 36px;
+        }
+
+        .nav {
+            width: 220px;
+            margin-top: 14px;
+            padding: 8px;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+        }
+
+        .nav div {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 12px;
+            border-inline-start: 4px solid transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-nav);
+        }
+
+        .nav .selected {
+            border-inline-start-color: var(--indicator-selected);
+            background: var(--surface-selected);
+            color: var(--text-selected);
+            font-weight: var(--weight-medium);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        <div><div class="chip" style="background:var(--surface-app)"></div><div class="v">surface-app</div></div>
+        <div><div class="chip" style="background:var(--surface-panel)"></div><div class="v">surface-panel</div></div>
+        <div><div class="chip" style="background:var(--surface-header)"></div><div class="v">surface-header</div></div>
+        <div><div class="chip" style="background:var(--surface-selected)"></div><div class="v">surface-selected</div></div>
+        <div><div class="chip" style="background:var(--indicator-selected)"></div><div class="v">indicator-selected</div></div>
+        <div><div class="chip" style="background:var(--border-default)"></div><div class="v">border-default</div></div>
+        <div><div class="chip" style="background:var(--action-primary)"></div><div class="v">action-primary</div></div>
+        <div><div class="chip" style="background:var(--action-danger)"></div><div class="v">action-danger</div></div>
+    </div>
+    <div style="display:flex;gap:24px;align-items:flex-start">
+        <div class="nav">
+            <div class="selected">Overview (selected)</div>
+            <div>Administration</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;font:var(--type-body)">
+            <span style="color:var(--text-primary)">text-primary</span>
+            <span style="color:var(--text-secondary)">text-secondary</span>
+            <span style="color:var(--text-muted)">text-muted</span>
+            <span style="color:var(--text-disabled)">text-disabled</span>
+            <a href="#">text-link</a>
+        </div>
+    </div>
+</body>
+
+</html>

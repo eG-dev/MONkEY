@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Control sizes</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .controls {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+        }
+
+        .controls > div {
+            text-align: center;
+        }
+
+        .controls span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            font: var(--type-label);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <div><span style="height:var(--control-sm)">32px</span><div class="v">control-sm</div></div>
+        <div><span style="height:var(--control-md)">36px</span><div class="v">control-md</div></div>
+        <div><span style="height:var(--control-lg)">44px</span><div class="v">control-lg · touch</div></div>
+    </div>
+</body>
+
+</html>

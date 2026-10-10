@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POCKET MONkEY</title>
+  <link rel="stylesheet" href="../../design-system/styles.css">
+  <link rel="stylesheet" href="../shared/prototype.css">
+  <style>
+    .details-head { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-7); }
+    .avatar-button { position: relative; padding: 0; border: 0; border-radius: 50%; background: none; }
+    .avatar-button:hover .avatar { outline: 2px solid var(--border-strong); }
+    .avatar-badge { position: absolute; inset-inline-end: -2px; inset-block-end: -2px; display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid var(--border-default); border-radius: 50%; background: var(--surface-raised); color: var(--icon-default); }
+    .avatar-badge .icon { width: 14px; height: 14px; }
+    .image-field { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); }
+    .image-field .avatar { width: 96px; height: 96px; font-size: var(--fs-32); }
+    .layout { display: grid; grid-template-columns: minmax(300px, 440px) minmax(0, 1fr); gap: var(--space-7); align-items: start; }
+    .layout > * { min-width: 0; }
+    .side > * + * { margin-top: var(--space-5); }
+    .label { font: var(--type-caption); color: var(--text-secondary); }
+    .balance { font: var(--type-display); font-weight: var(--weight-medium); text-align: end; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .allowance { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); }
+    .allowance-amount { font: var(--type-h3); }
+    .phone-record { display: none; }
+    .pager { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin-top: var(--space-5); }
+    .type-label { white-space: nowrap; }
+    .transaction-form .segments span { gap: 6px; }
+    .transaction-form .segments .icon { width: 16px; height: 16px; }
+    .transaction-form[data-mode="deposit"] .segments input:checked + span { background: var(--action-deposit); color: var(--action-deposit-text); }
+    .transaction-form[data-mode="withdrawal"] .segments input:checked + span { background: var(--action-withdrawal); color: var(--action-withdrawal-text); }
+    .transaction-form[data-mode="deposit"] .mode-submit { background: var(--action-deposit); color: var(--action-deposit-text); }
+    .transaction-form[data-mode="deposit"] .mode-submit:hover:not(:disabled) { background: var(--action-deposit-hover); color: var(--action-deposit-text); }
+    .transaction-form[data-mode="withdrawal"] .mode-submit { background: var(--action-withdrawal); color: var(--action-withdrawal-text); }
+    .transaction-form[data-mode="withdrawal"] .mode-submit:hover:not(:disabled) { background: var(--action-withdrawal-hover); color: var(--action-withdrawal-text); }
+    .mode-submit:disabled { background: var(--action-disabled) !important; color: var(--text-disabled) !important; }
+    .input-prefix { position: absolute; inset-inline-start: 10px; font-weight: var(--weight-bold); pointer-events: none; }
+    .transaction-form[data-mode="deposit"] .input-prefix { color: var(--amount-positive); }
+    .transaction-form[data-mode="withdrawal"] .input-prefix { color: var(--amount-negative); }
+    .transaction-form .input-wrap .input { padding-inline-start: 28px; }
+    @media (max-width: 899px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 599px) {
+      .record-panel { display: none; }
+      .phone-record { display: flex; }
+      .table thead { display: none; }
+      .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
+      .table td { border: 0; padding: 2px 4px; }
+      .table td.comment { grid-column: 1; grid-row: 1; font-weight: var(--weight-medium); }
+      .table td.meta { grid-column: 1; grid-row: 2; font: var(--type-caption); color: var(--text-secondary); }
+      .table td.numeric { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+      .table td.date, .table td.type, .table td.by { display: none; }
+    }
+    @media (min-width: 600px) { .table td.meta, .phone-only { display: none; } }
+    @media (max-width: 599px) { .wide-only { display: none; } }
+  </style>
+</head>
+<body>
+  <div id="view"></div>
+  <script src="../shared/data.js"></script>
+  <script src="../shared/prototype.js"></script>
+  <script>
+    const view = document.getElementById('view');
+    const id = new URLSearchParams(location.search).get('account') ?? 'noah';
+    const PAGE_SIZE = 20;
+    let page = 0;
+    let draft = { type: 'deposit', amount: '', comment: '' };
+
+    function back() {
+      return `<a class="back-link" href="../accounts-overview/index.html">${PM.icon('back')}${PM.esc(PM.t('overview'))}</a>`;
+    }
+
+    function render() {
+      const account = PM.account(id);
+      const state = PM.prefs.viewState;
+
+      if (state === 'loading') {
+        view.innerHTML = `${back()}<div class="layout" aria-busy="true"><div class="skeleton" style="height:320px"></div><div class="skeleton" style="height:480px"></div></div>`;
+        return;
+      }
+
+      if (state === 'error' || !account) {
+        view.innerHTML = `${back()}<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body"><span>${PM.esc(PM.t(account ? 'loadFailed' : 'notFound'))}</span>${account ? `<div><button class="button button-secondary" type="button" id="retry">${PM.esc(PM.t('tryAgain'))}</button></div>` : ''}</div></div>`;
+        document.getElementById('retry')?.addEventListener('click', () => PM.savePrefs({ viewState: 'normal' }));
+        return;
+      }
+
+      const balance = PM.balance(account);
+      const money = PM.money(balance);
+      view.innerHTML = `${back()}
+        <div class="details-head">${PM.isManager() ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1></div>
+        <div class="layout">
+          <div class="side">
+            <section class="panel" aria-labelledby="balance-label"><div class="label" id="balance-label">${PM.esc(PM.t('balance'))}</div><div class="balance ${money.cls}">${PM.esc(money.text)}</div></section>
+            <section class="panel" aria-labelledby="allowance-label">${allowancePanel(account)}</section>
+            ${formSection(account, balance)}
+          </div>
+          <section class="panel" aria-labelledby="history-title"><h2 class="panel-title" id="history-title">${PM.esc(PM.t('transactions'))}</h2>${history(account)}</section>
+        </div>`;
+      bind(account, balance);
+    }
+
+    function allowancePanel(account) {
+      const status = PM.allowanceStatus(account);
+      let text = `<div class="allowance-amount">${PM.esc(PM.t('noAllowance'))}</div>`;
+
+      if (status.configured) {
+        const line = status.credited ? PM.t('creditedOn', { date: PM.date(status.credited, false) }) : PM.t('nextOn', { date: PM.date(status.next, false) });
+        text = `<div class="allowance-amount">${PM.t('perMonth', { amount: PM.amountHtml(status.amount) })}</div><div class="label">${PM.esc(line)}</div>`;
+
+        if (status.failed && PM.isManager()) {
+          text += `<div class="message message-warning" style="margin-top:8px">${PM.icon('warning')}<div class="message-body">${PM.esc(PM.t('creditFailed'))}</div></div>`;
+        }
+      }
+
+      return `<div class="label" id="allowance-label">${PM.esc(PM.t('monthlyAllowance'))}</div><div class="allowance"><div>${text}</div>${PM.isManager() ? `<button class="button button-secondary" type="button" id="set-allowance">${PM.icon('calendar')}${PM.esc(PM.t('setAllowance'))}</button>` : ''}</div>`;
+    }
+
+    function formSection(account, balance) {
+      if (!PM.isManager()) {
+        return balance === null ? `<div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('noOpeningMember'))}</div></div>` : '';
+      }
+
+      if (balance === null) {
+        return `<section class="panel" aria-labelledby="opening-title"><h2 class="panel-title" id="opening-title">${PM.esc(PM.t('openingAmount'))}</h2>
+          <form class="form" id="opening-form" novalidate>
+            <p class="muted">${PM.esc(PM.t('openingIntro'))}</p>
+            <div class="field"><label for="opening-amount">${PM.esc(PM.t('openingAmount'))}</label><div class="input-wrap"><input class="input" id="opening-amount" inputmode="decimal" autocomplete="off"><span class="input-suffix">EUR</span></div><span class="hint">${PM.esc(PM.t('openingHint'))}</span></div>
+            <div class="field"><label for="opening-comment">${PM.esc(PM.t('comment'))}</label><input class="input" id="opening-comment" maxlength="500"></div>
+            <button class="button button-primary button-block" type="submit">${PM.esc(PM.t('postOpening'))}</button>
+          </form></section>`;
+      }
+
+      return `<button class="button button-primary button-block phone-record" type="button" id="phone-record">${PM.icon('plus')}${PM.esc(PM.t('recordTransaction'))}</button>
+        <section class="panel record-panel" aria-labelledby="record-title"><h2 class="panel-title" id="record-title">${PM.esc(PM.t('recordTransaction'))}</h2>${transactionForm('record')}</section>`;
+    }
+
+    function transactionForm(prefix) {
+      const typeOption = type => `<label><input type="radio" name="${prefix}-type" value="${type}" ${draft.type === type ? 'checked' : ''}><span>${PM.icon(type === 'deposit' ? 'plus' : 'minus')}${PM.esc(PM.t(type))}</span></label>`;
+      return `<form class="form transaction-form" data-prefix="${prefix}" data-mode="${draft.type}" novalidate>
+        <fieldset class="field"><legend class="visually-hidden">${PM.esc(PM.t('type'))}</legend><div class="segments segments-block">${typeOption('deposit')}${typeOption('withdrawal')}</div></fieldset>
+        <div class="field"><label for="${prefix}-amount">${PM.esc(PM.t('amount'))}</label><div class="input-wrap"><span class="input-prefix" aria-hidden="true">${draft.type === 'deposit' ? '+' : '−'}</span><input class="input" id="${prefix}-amount" inputmode="decimal" autocomplete="off" value="${PM.esc(draft.amount)}"><span class="input-suffix">EUR</span></div><span class="hint">${PM.esc(PM.t('amountHint'))}</span></div>
+        <div class="field"><label for="${prefix}-comment">${PM.esc(PM.t('comment'))}</label><textarea class="input" id="${prefix}-comment" maxlength="500">${PM.esc(draft.comment)}</textarea><span class="hint">${PM.esc(PM.t('commentHint'))}</span></div>
+        <button class="button button-block mode-submit" type="submit">${submitLabel()}</button>
+      </form>`;
+    }
+
+    function submitLabel() {
+      return `${PM.icon(draft.type === 'deposit' ? 'plus' : 'minus')}${PM.esc(PM.t(draft.type === 'deposit' ? 'recordDeposit' : 'recordWithdrawal'))}`;
+    }
+
+    function history(account) {
+      const entries = [...account.history].sort((a, b) => new Date(b.at) - new Date(a.at));
+
+      if (!entries.length) {
+        return `<div class="empty">${PM.esc(PM.t('noTransactions'))}</div>`;
+      }
+
+      const pages = Math.ceil(entries.length / PAGE_SIZE);
+      page = Math.min(page, pages - 1);
+      const rows = entries.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(entry => {
+        const by = entry.by === 'automatic' ? PM.t('automatic') : entry.by;
+        const comment = entry.comment ? PM.esc(entry.comment) : entry.type === 'allowance' ? PM.esc(PM.t('allowanceComment')) : `<span class="wide-only muted">—</span><span class="phone-only">${PM.esc(PM.t(entry.type))}</span>`;
+        return `<tr><td class="numeric">${PM.amountHtml(entry.amount)}</td><td class="type"><span class="type-label">${PM.esc(PM.t(entry.type))}</span></td><td class="comment">${comment}</td><td class="by">${PM.esc(by)}</td><td class="meta">${PM.esc(PM.date(entry.at, false))} · ${PM.esc(by)}</td><td class="date">${PM.esc(PM.date(entry.at))}</td></tr>`;
+      }).join('');
+      return `<div class="table-wrap"><table class="table"><thead><tr><th class="numeric">${PM.esc(PM.t('amount'))}</th><th>${PM.esc(PM.t('type'))}</th><th>${PM.esc(PM.t('commentHeader'))}</th><th>${PM.esc(PM.t('postedBy'))}</th><th>${PM.esc(PM.t('date'))}</th></tr></thead><tbody>${rows}</tbody></table></div>
+        <nav class="pager" aria-label="${PM.esc(PM.t('pages'))}"><button class="button button-secondary" type="button" id="previous" ${page === 0 ? 'disabled' : ''}>${PM.icon('left')}${PM.esc(PM.t('previous'))}</button><span>${PM.esc(PM.t('pageOf', { page: page + 1, pages }))}</span><button class="button button-secondary" type="button" id="next" ${page >= pages - 1 ? 'disabled' : ''}>${PM.esc(PM.t('next'))}${PM.icon('right')}</button></nav>`;
+    }
+
+    function bind(account, balance) {
+      document.getElementById('previous')?.addEventListener('click', () => { page--; render(); document.getElementById('history-title').scrollIntoView(); });
+      document.getElementById('next')?.addEventListener('click', () => { page++; render(); document.getElementById('history-title').scrollIntoView(); });
+      document.getElementById('set-allowance')?.addEventListener('click', () => openAllowance(account));
+      document.getElementById('edit-image')?.addEventListener('click', () => openImage(account));
+      document.getElementById('opening-form')?.addEventListener('submit', event => submitOpening(event, account));
+      document.getElementById('phone-record')?.addEventListener('click', () => {
+        const recordDialog = PM.dialog({ title: PM.t('recordTransaction'), body: transactionForm('dialog') });
+        bindTransaction(recordDialog.querySelector('form'), account, recordDialog);
+      });
+      const form = view.querySelector('.transaction-form');
+
+      if (form) {
+        bindTransaction(form, account);
+      }
+    }
+
+    function bindTransaction(form, account, container) {
+      const prefix = form.dataset.prefix;
+      const amount = form.querySelector(`#${prefix}-amount`);
+      const comment = form.querySelector(`#${prefix}-comment`);
+      const submit = form.querySelector('[type="submit"]');
+      form.addEventListener('input', () => {
+        draft = { type: form.querySelector(`[name="${prefix}-type"]:checked`).value, amount: amount.value, comment: comment.value };
+        form.dataset.mode = draft.type;
+        form.querySelector('.input-prefix').textContent = draft.type === 'deposit' ? '+' : '\u2212';
+        submit.innerHTML = submitLabel();
+      });
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const minor = PM.parseAmount(amount.value);
+
+        if (!PM.fieldError(amount, minor === null || minor === 0 ? PM.t('amountInvalid') : '')) {
+          amount.focus();
+          return;
+        }
+
+        submit.disabled = true;
+        submit.textContent = PM.t('saving');
+        form.querySelector('.message')?.remove();
+
+        try {
+          await PM.request();
+          const signed = draft.type === 'withdrawal' ? -minor : minor;
+          account.history.push({ at: new Date().toISOString(), type: draft.type, amount: signed, comment: comment.value.trim(), by: PM.currentUser().displayName });
+          PM.saveData();
+          const type = draft.type;
+          draft = { type, amount: '', comment: '' };
+          container?.close();
+          page = 0;
+          render();
+          PM.toast(PM.t(type === 'deposit' ? 'deposited' : 'withdrawn', { amount: PM.money(minor, { signed: false }).text, name: account.name }));
+        } catch {
+          form.insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+          submit.disabled = false;
+          submit.innerHTML = submitLabel();
+        }
+      });
+    }
+
+    function submitOpening(event, account) {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const amount = form.querySelector('#opening-amount');
+      const comment = form.querySelector('#opening-comment');
+      const minor = PM.parseAmount(amount.value, { signed: true });
+
+      if (!PM.fieldError(amount, minor === null ? PM.t('openingInvalid') : '')) {
+        amount.focus();
+        return;
+      }
+
+      const confirm = PM.dialog({
+        title: PM.t('confirmOpeningTitle'),
+        body: `<p>${PM.t('confirmOpening', { amount: PM.amountHtml(minor), name: PM.esc(account.name) })}</p>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="button" id="confirm-opening">${PM.esc(PM.t('postOpening'))}</button>`
+      });
+      const button = confirm.querySelector('#confirm-opening');
+      button.focus();
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        button.textContent = PM.t('saving');
+
+        try {
+          await PM.request();
+          account.history.push({ at: new Date().toISOString(), type: 'opening', amount: minor, comment: comment.value.trim(), by: PM.currentUser().displayName });
+          PM.saveData();
+          confirm.close();
+          render();
+          PM.toast(PM.t('openingPosted'));
+        } catch {
+          confirm.close();
+          form.insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+        }
+      });
+    }
+
+    function openImage(account) {
+      let image = account.image ?? null;
+      const editor = PM.dialog({
+        title: PM.t('accountImage'),
+        body: `<div class="image-field"><span id="image-preview"></span><div class="actions"><label class="button button-secondary">${PM.icon('plus')}${PM.esc(PM.t('upload'))}<input class="visually-hidden" type="file" accept="image/png, image/jpeg, image/webp" id="image-input"></label><button class="button button-link" type="button" id="image-remove">${PM.esc(PM.t('removeImage'))}</button></div></div><span class="hint">${PM.esc(PM.t('imageHint'))}</span>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="button" id="image-save">${PM.esc(PM.t('save'))}</button>`
+      });
+      const save = editor.querySelector('#image-save');
+      const show = () => {
+        editor.querySelector('#image-preview').innerHTML = PM.avatar({ name: account.name, image });
+        editor.querySelector('#image-remove').hidden = !image;
+      };
+      show();
+      editor.querySelector('#image-input').focus();
+      editor.querySelector('#image-input').addEventListener('change', event => {
+        const file = event.target.files[0];
+
+        if (file) {
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            image = reader.result;
+            show();
+          });
+          reader.readAsDataURL(file);
+        }
+      });
+      editor.querySelector('#image-remove').addEventListener('click', () => {
+        image = null;
+        show();
+      });
+      save.addEventListener('click', async () => {
+        save.disabled = true;
+        save.textContent = PM.t('saving');
+        editor.querySelector('.message-error')?.remove();
+
+        try {
+          await PM.request();
+          account.image = image;
+          PM.saveData();
+          editor.close();
+          render();
+          PM.toast(PM.t('imageSaved', { name: account.name }));
+        } catch {
+          editor.querySelector('.dialog-body').insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+          save.disabled = false;
+          save.textContent = PM.t('save');
+        }
+      });
+    }
+
+    function openAllowance(account) {
+      let enabled = account.allowance.enabled;
+      const editor = PM.dialog({
+        title: PM.t('setAllowance'),
+        body: `<form class="form" id="allowance-form" novalidate>
+          <div class="switch-row"><span class="field-label" id="allowance-enabled-label">${PM.esc(PM.t('allowanceEnabled'))}</span><button class="switch" type="button" role="switch" id="allowance-enabled" aria-labelledby="allowance-enabled-label" aria-checked="${enabled}"></button></div>
+          <div class="field"><label for="allowance-amount">${PM.esc(PM.t('amountPerMonth'))}</label><div class="input-wrap"><input class="input" id="allowance-amount" inputmode="decimal" autocomplete="off" value="${account.allowance.amount ? (account.allowance.amount / 100).toFixed(2) : ''}"><span class="input-suffix">EUR</span></div><span class="hint">${PM.esc(PM.t('allowanceHint'))}</span></div>
+          <div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('allowanceInfo'))}</div></div>
+        </form>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="allowance-form" id="allowance-save">${PM.esc(PM.t('save'))}</button>`
+      });
+      const toggle = editor.querySelector('#allowance-enabled');
+      const amount = editor.querySelector('#allowance-amount');
+      const save = editor.querySelector('#allowance-save');
+      const sync = () => {
+        toggle.setAttribute('aria-checked', String(enabled));
+        amount.disabled = !enabled;
+      };
+      sync();
+      toggle.focus();
+      toggle.addEventListener('click', () => {
+        enabled = !enabled;
+        sync();
+      });
+      editor.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const minor = enabled ? PM.parseAmount(amount.value) : 0;
+
+        if (enabled && !PM.fieldError(amount, minor === null || minor === 0 ? PM.t('allowanceInvalid') : '')) {
+          amount.focus();
+          return;
+        }
+
+        save.disabled = true;
+        save.textContent = PM.t('saving');
+        editor.querySelector('.message-error')?.remove();
+
+        try {
+          await PM.request();
+          account.allowance = { enabled, amount: minor };
+          PM.saveData();
+          editor.close();
+          render();
+          PM.toast(PM.t(enabled ? 'allowanceSaved' : 'allowanceOff', { name: account.name }));
+        } catch {
+          editor.querySelector('.dialog-body').insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+          save.disabled = false;
+          save.textContent = PM.t('save');
+        }
+      });
+    }
+
+    PM.init({
+      active: 'overview',
+      title: 'accountDetails',
+      states: ['normal', 'loading', 'error'],
+      render,
+      strings: {
+        en: {
+          accountDetails: 'Account details', changeImage: 'Change image of {name}', accountImage: 'Account image', upload: 'Upload image', removeImage: 'Remove image', imageHint: 'PNG, JPEG, or WebP. Without an image, the first letter of the name is shown.', imageSaved: 'Image of {name} saved.', balance: 'Balance', loadFailed: 'The account could not be loaded.', notFound: 'This account does not exist.',
+          monthlyAllowance: 'Monthly allowance', noAllowance: 'No monthly allowance', perMonth: '{amount} per month', creditedOn: 'Credited this month on {date}', nextOn: 'Next credit on {date}',
+          creditFailed: 'This month\'s credit failed. It is retried automatically; no money was booked twice.', setAllowance: 'Set allowance', allowanceEnabled: 'Monthly allowance', amountPerMonth: 'Amount per month',
+          allowanceHint: 'Positive, at most two decimal places', allowanceInfo: 'The allowance is credited automatically each month. Saving does not book any money.', allowanceInvalid: 'Enter a positive amount with at most two decimal places.',
+          allowanceSaved: 'Monthly allowance for {name} saved.', allowanceOff: '{name} no longer receives a monthly allowance.',
+          recordTransaction: 'Record transaction', deposit: 'Deposit', withdrawal: 'Withdrawal', opening: 'Opening', allowance: 'Allowance', type: 'Type', amount: 'Amount', comment: 'Comment (optional)',
+          amountHint: 'Positive, at most two decimal places', commentHint: 'Up to 500 characters', recordDeposit: 'Record deposit', recordWithdrawal: 'Record withdrawal',
+          amountInvalid: 'Enter a positive amount with at most two decimal places.', deposited: '{amount} deposited to {name}.', withdrawn: '{amount} withdrawn from {name}.',
+          openingAmount: 'Opening amount', openingIntro: 'Post the opening amount before recording transactions. It cannot be changed later.', openingHint: 'May be negative or zero',
+          openingInvalid: 'Enter an amount with at most two decimal places.', postOpening: 'Post opening amount', confirmOpeningTitle: 'Post opening amount?',
+          confirmOpening: 'Post {amount} as the opening amount for {name}? It cannot be changed later.', openingPosted: 'Opening amount posted.', noOpeningMember: 'This account has no opening amount yet.',
+          transactions: 'Transactions', commentHeader: 'Comment', allowanceComment: 'Monthly allowance', noTransactions: 'No transactions yet', date: 'Date', postedBy: 'Posted by', pages: 'Transaction pages', previous: 'Previous', next: 'Next', pageOf: 'Page {page} of {pages}'
+        },
+        de: {
+          accountDetails: 'Kontodetails', changeImage: 'Bild von {name} ändern', accountImage: 'Kontobild', upload: 'Bild hochladen', removeImage: 'Bild entfernen', imageHint: 'PNG, JPEG oder WebP. Ohne Bild wird der erste Buchstabe des Namens angezeigt.', imageSaved: 'Bild von {name} gespeichert.', balance: 'Kontostand', loadFailed: 'Das Konto konnte nicht geladen werden.', notFound: 'Dieses Konto existiert nicht.',
+          monthlyAllowance: 'Monatliches Taschengeld', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} pro Monat', creditedOn: 'Diesen Monat gutgeschrieben am {date}', nextOn: 'Nächste Gutschrift am {date}',
+          creditFailed: 'Die Gutschrift für diesen Monat ist fehlgeschlagen. Sie wird automatisch wiederholt; es wurde nichts doppelt gebucht.', setAllowance: 'Taschengeld festlegen', allowanceEnabled: 'Monatliches Taschengeld', amountPerMonth: 'Betrag pro Monat',
+          allowanceHint: 'Positiv, höchstens zwei Nachkommastellen', allowanceInfo: 'Das Taschengeld wird jeden Monat automatisch gutgeschrieben. Das Speichern bucht kein Geld.', allowanceInvalid: 'Einen positiven Betrag mit höchstens zwei Nachkommastellen eingeben.',
+          allowanceSaved: 'Monatliches Taschengeld für {name} gespeichert.', allowanceOff: '{name} bekommt kein monatliches Taschengeld mehr.',
+          recordTransaction: 'Buchung erfassen', deposit: 'Einzahlung', withdrawal: 'Abhebung', opening: 'Eröffnung', allowance: 'Taschengeld', type: 'Art', amount: 'Betrag', comment: 'Kommentar (optional)',
+          amountHint: 'Positiv, höchstens zwei Nachkommastellen', commentHint: 'Bis zu 500 Zeichen', recordDeposit: 'Einzahlung buchen', recordWithdrawal: 'Abhebung buchen',
+          amountInvalid: 'Einen positiven Betrag mit höchstens zwei Nachkommastellen eingeben.', deposited: '{amount} auf das Konto von {name} eingezahlt.', withdrawn: '{amount} vom Konto von {name} abgehoben.',
+          openingAmount: 'Eröffnungsbetrag', openingIntro: 'Vor weiteren Buchungen den Eröffnungsbetrag buchen. Er kann später nicht geändert werden.', openingHint: 'Darf negativ oder null sein',
+          openingInvalid: 'Einen Betrag mit höchstens zwei Nachkommastellen eingeben.', postOpening: 'Eröffnungsbetrag buchen', confirmOpeningTitle: 'Eröffnungsbetrag buchen?',
+          confirmOpening: '{amount} als Eröffnungsbetrag für {name} buchen? Er kann später nicht geändert werden.', openingPosted: 'Eröffnungsbetrag gebucht.', noOpeningMember: 'Für dieses Konto gibt es noch keinen Eröffnungsbetrag.',
+          transactions: 'Buchungen', commentHeader: 'Kommentar', allowanceComment: 'Monatliches Taschengeld', noTransactions: 'Noch keine Buchungen', date: 'Datum', postedBy: 'Gebucht von', pages: 'Buchungsseiten', previous: 'Zurück', next: 'Weiter', pageOf: 'Seite {page} von {pages}'
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Actions</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .states {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .states > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="states">
+        <div><span class="button button-primary">Save</span><span class="v">default</span></div>
+        <div><span class="button button-primary" style="background:var(--action-primary-hover)">Save</span><span class="v">hover</span></div>
+        <div><span class="button button-primary" style="background:var(--action-primary-active)">Save</span><span class="v">active</span></div>
+        <div><span class="button button-primary" style="box-shadow:var(--focus-ring)">Save</span><span class="v">focus</span></div>
+        <div><span class="button" style="background:var(--action-disabled);color:var(--text-disabled)">Save</span><span class="v">disabled</span></div>
+    </div>
+    <div class="states" style="margin-top:20px">
+        <div><span class="button button-secondary">Cancel</span><span class="v">secondary</span></div>
+        <div><span class="button button-danger">Delete account</span><span class="v">danger</span></div>
+        <div><span class="button button-danger" style="background:var(--action-danger-hover)">Delete account</span><span class="v">danger hover</span></div>
+    </div>
+</body>
+
+</html>

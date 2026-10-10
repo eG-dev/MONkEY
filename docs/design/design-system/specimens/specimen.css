@@ -1,0 +1,59 @@
+body {
+  background: var(--surface-app);
+  padding: 20px;
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.sw {
+  flex: 1;
+  min-width: 0;
+}
+
+.chip {
+  height: 56px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.n {
+  font: var(--type-label);
+  margin-top: 6px;
+}
+
+.v {
+  font: var(--type-caption);
+  color: var(--text-muted);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--control-md);
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: var(--type-label);
+}
+
+.button-primary {
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+}
+
+.button-secondary {
+  background: var(--action-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.button-danger {
+  background: var(--action-danger);
+  color: var(--action-danger-text);
+}

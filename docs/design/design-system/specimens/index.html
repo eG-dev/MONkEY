@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>POCKET MONkEY | Foundation specimens</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            margin: 0;
+            background: var(--surface-app);
+            color: var(--text-primary);
+            font: var(--type-body);
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -80px;
+            left: 16px;
+            padding: 12px;
+            background: var(--surface-raised);
+            z-index: 2;
+        }
+
+        .skip-link:focus {
+            top: 12px;
+        }
+
+        header {
+            --border-focus: var(--focus-on-header);
+            background: var(--surface-header);
+            color: var(--text-on-header);
+        }
+
+        .header-inner,
+        main,
+        .nav-inner {
+            max-width: 1280px;
+            margin-inline: auto;
+            padding-inline: 24px;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding-block: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font: var(--type-h1);
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+            flex-shrink: 0;
+        }
+
+        nav {
+            border-bottom: 1px solid var(--border-default);
+            background: var(--surface-panel);
+        }
+
+        .nav-inner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            padding-block: 14px;
+        }
+
+        main {
+            padding-block: 24px 48px;
+        }
+
+        section {
+            margin-bottom: 36px;
+            scroll-margin-top: 16px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px 24px;
+            border-bottom: 1px solid var(--border-default);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            margin: 0;
+            font: var(--type-h2);
+        }
+
+        h3 {
+            margin: 0;
+            font: var(--type-label);
+        }
+
+        .specimens {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        article {
+            min-width: 0;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-sm);
+            overflow: auto;
+        }
+
+        .specimen-heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            padding: 12px 16px;
+            background: var(--surface-panel);
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .specimen-heading a {
+            font: var(--type-caption);
+        }
+
+        iframe {
+            display: block;
+            width: 100%;
+            min-width: 600px;
+            height: 220px;
+            border: 0;
+            background: var(--surface-app);
+        }
+
+        .wide {
+            grid-column: 1 / -1;
+        }
+
+        .short iframe {
+            height: 160px;
+        }
+
+        .tall iframe {
+            height: 300px;
+        }
+
+        @media (max-width: 760px) {
+            .specimens {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .header-inner,
+            main,
+            .nav-inner {
+                padding-inline: 16px;
+            }
+
+            .header-inner {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to specimens</a>
+    <header>
+        <div class="header-inner">
+            <div>
+                <h1>POCKET MONkEY</h1>
+                <p class="subtitle">Foundation specimens</p>
+            </div>
+            <img class="logo" src="../../assets/images/monkey.png" alt="">
+        </div>
+    </header>
+    <nav aria-label="Specimen sections">
+        <div class="nav-inner">
+            <a href="#brand">Brand</a><a href="#colors">Colors</a><a href="#typography">Typography</a><a href="#spacing">Spacing and layout</a><a href="../README.md">Design system guidance</a>
+        </div>
+    </nav>
+    <main id="main">
+        <section id="brand" aria-labelledby="brand-heading">
+            <div class="section-heading">
+                <h2 id="brand-heading">Brand</h2><a href="../logo.md">Logo guidance</a>
+            </div>
+            <div class="specimens">
+                <article class="wide">
+                    <div class="specimen-heading">
+                        <h3>Logo</h3><a href="brand-logo.html">Open specimen</a>
+                    </div><iframe src="brand-logo.html" title="Logo specimen"></iframe>
+                </article>
+                <article class="wide">
+                    <div class="specimen-heading">
+                        <h3>Focus indicators</h3><a href="brand-focus.html">Open specimen</a>
+                    </div><iframe src="brand-focus.html" title="Focus indicator specimen"></iframe>
+                </article>
+            </div>
+        </section>
+        <section id="colors" aria-labelledby="colors-heading">
+            <div class="section-heading">
+                <h2 id="colors-heading">Colors</h2><a href="../color-scheme.md">Color guidance</a>
+            </div>
+            <div class="specimens">
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Brand palette</h3><a href="colors-brand.html">Open specimen</a>
+                    </div><iframe src="colors-brand.html" title="Brand palette specimen"></iframe>
+                </article>
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Actions</h3><a href="colors-primary.html">Open specimen</a>
+                    </div><iframe src="colors-primary.html" title="Action colors specimen"></iframe>
+                </article>
+                <article class="tall">
+                    <div class="specimen-heading">
+                        <h3>Neutral palette</h3><a href="colors-neutral.html">Open specimen</a>
+                    </div><iframe src="colors-neutral.html" title="Neutral palette specimen"></iframe>
+                </article>
+                <article class="tall">
+                    <div class="specimen-heading">
+                        <h3>Semantic tokens and selection</h3><a href="colors-semantic.html">Open specimen</a>
+                    </div><iframe src="colors-semantic.html" title="Semantic color tokens specimen"></iframe>
+                </article>
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Status colors</h3><a href="colors-status.html">Open specimen</a>
+                    </div><iframe src="colors-status.html" title="Status colors specimen"></iframe>
+                </article>
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Surfaces</h3><a href="colors-surfaces.html">Open specimen</a>
+                    </div><iframe src="colors-surfaces.html" title="Surface colors specimen"></iframe>
+                </article>
+                <article class="wide tall">
+                    <div class="specimen-heading">
+                        <h3>Dark palette</h3><a href="colors-dark.html">Open specimen</a>
+                    </div><iframe src="colors-dark.html" title="Dark palette specimen"></iframe>
+                </article>
+            </div>
+        </section>
+        <section id="typography" aria-labelledby="typography-heading">
+            <div class="section-heading">
+                <h2 id="typography-heading">Typography</h2><a href="../typography.md">Typography guidance</a>
+            </div>
+            <div class="specimens">
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Display and headings</h3><a href="type-display.html">Open specimen</a>
+                    </div><iframe src="type-display.html" title="Display typography specimen"></iframe>
+                </article>
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Body and labels</h3><a href="type-body.html">Open specimen</a>
+                    </div><iframe src="type-body.html" title="Body and label typography specimen"></iframe>
+                </article>
+                <article class="wide tall">
+                    <div class="specimen-heading">
+                        <h3>Amounts</h3><a href="type-amounts.html">Open specimen</a>
+                    </div><iframe src="type-amounts.html" title="Amounts specimen"></iframe>
+                </article>
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Font weights</h3><a href="type-weights.html">Open specimen</a>
+                    </div><iframe src="type-weights.html" title="Font weight specimen"></iframe>
+                </article>
+            </div>
+        </section>
+        <section id="spacing" aria-labelledby="spacing-heading">
+            <div class="section-heading">
+                <h2 id="spacing-heading">Spacing and layout</h2><a href="../README.md#visual-foundations">Foundation guidance</a>
+            </div>
+            <div class="specimens">
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Spacing scale</h3><a href="spacing-scale.html">Open specimen</a>
+                    </div><iframe src="spacing-scale.html" title="Spacing scale specimen"></iframe>
+                </article>
+                <article>
+                    <div class="specimen-heading">
+                        <h3>Control sizes</h3><a href="spacing-controls.html">Open specimen</a>
+                    </div><iframe src="spacing-controls.html" title="Control size specimen"></iframe>
+                </article>
+                <article class="short">
+                    <div class="specimen-heading">
+                        <h3>Corner radii</h3><a href="spacing-radii.html">Open specimen</a>
+                    </div><iframe src="spacing-radii.html" title="Corner radius specimen"></iframe>
+                </article>
+                <article class="short">
+                    <div class="specimen-heading">
+                        <h3>Elevation</h3><a href="spacing-shadows.html">Open specimen</a>
+                    </div><iframe src="spacing-shadows.html" title="Elevation specimen"></iframe>
+                </article>
+                <article class="wide tall">
+                    <div class="specimen-heading">
+                        <h3>Application shell</h3><a href="spacing-shell.html">Open specimen</a>
+                    </div><iframe src="spacing-shell.html" title="Application shell specimen"></iframe>
+                </article>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

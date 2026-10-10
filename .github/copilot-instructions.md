@@ -11,7 +11,7 @@
 - Write ADRs from a greenfield product perspective. Document enduring architecture and rationale, not revamping history, legacy comparisons for their own sake, or migration sequencing; those details belong in the plans.
 - If a request or existing implementation conflicts with an ADR, identify the conflict and obtain agreement on the decision change before implementing it. Record the approved change and preserve history as specified in ADR-0001.
 - Add decision records during the relevant migration phase, not speculative ADRs for unresolved proposals. Link affected plans and instructions to the applicable records.
-- Use the [ADR index](../docs/ADR/README.md) to identify applicable records: application boundaries, shared access, language/timezone, E2E-first verification, and GitHub delivery are already documented.
+- Use the [ADR index](../docs/ADR/README.md) to identify applicable records: application boundaries, shared access, language/timezone, E2E-first verification, GitHub delivery, and the wireframe/click-prototype design process are already documented.
 
 ## Incremental Migration
 

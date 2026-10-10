@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Corner radii</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .radii {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radii > div {
+            text-align: center;
+        }
+
+        .radii span {
+            display: block;
+            width: 90px;
+            height: 56px;
+            border: 2px solid var(--grey-400);
+            background: var(--grey-25);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="radii">
+        <div><span style="border-radius:var(--radius-xs)"></span><div class="v">radius-xs · 2px</div></div>
+        <div><span style="border-radius:var(--radius-sm)"></span><div class="v">radius-sm · 4px</div></div>
+        <div><span style="border-radius:var(--radius-md)"></span><div class="v">radius-md · 6px</div></div>
+        <div><span style="border-radius:var(--radius-lg)"></span><div class="v">radius-lg · 8px</div></div>
+        <div><span style="border-radius:var(--radius-pill)"></span><div class="v">radius-pill</div></div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,205 @@
+<mxfile host="Electron">
+  <diagram id="account-details" name="Account details">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1000" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="undefined-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#9673a6;dashed=1;" value="" vertex="1">
+          <mxGeometry x="0" y="0" width="1440" height="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#1F4E9E;" value="← &lt;u&gt;Overview&lt;/u&gt;" vertex="1">
+          <mxGeometry x="24" y="12" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;rounded=1;arcSize=50;fontSize=26;fontStyle=1;" value="N" vertex="1">
+          <mxGeometry x="24" y="48" width="64" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;rounded=1;arcSize=50;fontSize=12;" value="✎" vertex="1">
+          <mxGeometry x="68" y="92" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=28;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Noah" vertex="1">
+          <mxGeometry x="104" y="56" width="600" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;strokeColor=#666666;" value="" vertex="1">
+          <mxGeometry x="24" y="136" width="440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#666666;" value="Balance" vertex="1">
+          <mxGeometry x="44" y="146" width="200" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=40;align=right;verticalAlign=middle;fontColor=#C62828;" value="−7.99 EUR" vertex="1">
+          <mxGeometry x="44" y="176" width="400" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;strokeColor=#666666;" value="" vertex="1">
+          <mxGeometry x="24" y="268" width="440" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#666666;" value="Monthly allowance" vertex="1">
+          <mxGeometry x="44" y="274" width="260" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=18;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="&lt;font color=&quot;#00732F&quot;&gt;+5.00 EUR&lt;/font&gt; per month" vertex="1">
+          <mxGeometry x="44" y="302" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=13;align=left;verticalAlign=middle;fontColor=#666666;" value="Credited this month on 1 Oct 2026" vertex="1">
+          <mxGeometry x="44" y="332" width="280" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;fontSize=14;" value="Set allowance" vertex="1">
+          <mxGeometry x="320" y="312" width="128" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=16;spacingTop=10;fontStyle=1;fontSize=20;" value="Record transaction" vertex="1">
+          <mxGeometry x="24" y="378" width="440" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="+ Deposit" vertex="1">
+          <mxGeometry x="40" y="424" width="204" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fillColor=#C62828;fontColor=#FFFFFF;strokeColor=#C62828;" value="− Withdrawal" vertex="1">
+          <mxGeometry x="244" y="424" width="204" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Amount" vertex="1">
+          <mxGeometry x="40" y="480" width="408" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#999999;align=left;spacingLeft=10;fontColor=#666666;" value="&lt;font color=&quot;#C62828&quot;&gt;−&lt;/font&gt; 12.99" vertex="1">
+          <mxGeometry x="40" y="506" width="408" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=16;align=right;verticalAlign=middle;fontColor=#666666;" value="EUR" vertex="1">
+          <mxGeometry x="388" y="506" width="50" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=13;align=left;verticalAlign=middle;fontColor=#666666;" value="Positive, at most two decimal places" vertex="1">
+          <mxGeometry x="40" y="548" width="408" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-22" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Comment (optional)" vertex="1">
+          <mxGeometry x="40" y="580" width="408" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#999999;align=left;spacingLeft=10;fontColor=#666666;" value="Book" vertex="1">
+          <mxGeometry x="40" y="606" width="408" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-24" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=13;align=left;verticalAlign=middle;fontColor=#666666;" value="Up to 500 characters" vertex="1">
+          <mxGeometry x="40" y="648" width="408" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fillColor=#C62828;fontColor=#FFFFFF;strokeColor=#C62828;" value="− Record withdrawal" vertex="1">
+          <mxGeometry x="40" y="730" width="408" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=16;spacingTop=10;fontStyle=1;fontSize=20;" value="Transactions" vertex="1">
+          <mxGeometry x="492" y="136" width="924" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=right;spacingLeft=12;spacingRight=12;" value="Amount" vertex="1">
+          <mxGeometry x="508" y="186" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Type" vertex="1">
+          <mxGeometry x="658" y="186" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Comment" vertex="1">
+          <mxGeometry x="778" y="186" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-30" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Posted by" vertex="1">
+          <mxGeometry x="1038" y="186" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-31" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Date" vertex="1">
+          <mxGeometry x="1198" y="186" width="202" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#C62828;" value="−12.99 EUR" vertex="1">
+          <mxGeometry x="508" y="226" width="150" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Withdrawal" vertex="1">
+          <mxGeometry x="658" y="226" width="120" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Book" vertex="1">
+          <mxGeometry x="778" y="226" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-35" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Mara Example" vertex="1">
+          <mxGeometry x="1038" y="226" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="10 Oct 2026, 14:32" vertex="1">
+          <mxGeometry x="1198" y="226" width="202" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#00732F;" value="+5.00 EUR" vertex="1">
+          <mxGeometry x="508" y="274" width="150" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-38" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Allowance" vertex="1">
+          <mxGeometry x="658" y="274" width="120" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Monthly allowance" vertex="1">
+          <mxGeometry x="778" y="274" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-40" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Automatic" vertex="1">
+          <mxGeometry x="1038" y="274" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-41" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="01 Oct 2026, 00:00" vertex="1">
+          <mxGeometry x="1198" y="274" width="202" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-42" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#00732F;" value="+50.00 EUR" vertex="1">
+          <mxGeometry x="508" y="322" width="150" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-43" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Deposit" vertex="1">
+          <mxGeometry x="658" y="322" width="120" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-44" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Birthday gift from grandma" vertex="1">
+          <mxGeometry x="778" y="322" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-45" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Tom Example" vertex="1">
+          <mxGeometry x="1038" y="322" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-46" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="24 Sep 2026, 17:05" vertex="1">
+          <mxGeometry x="1198" y="322" width="202" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#00732F;" value="+5.00 EUR" vertex="1">
+          <mxGeometry x="508" y="370" width="150" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-48" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Allowance" vertex="1">
+          <mxGeometry x="658" y="370" width="120" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-49" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Monthly allowance" vertex="1">
+          <mxGeometry x="778" y="370" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-50" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Automatic" vertex="1">
+          <mxGeometry x="1038" y="370" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-51" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="01 Sep 2026, 00:00" vertex="1">
+          <mxGeometry x="1198" y="370" width="202" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-52" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#C62828;" value="−55.00 EUR" vertex="1">
+          <mxGeometry x="508" y="418" width="150" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-53" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Opening" vertex="1">
+          <mxGeometry x="658" y="418" width="120" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-54" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="" vertex="1">
+          <mxGeometry x="778" y="418" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-55" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Mara Example" vertex="1">
+          <mxGeometry x="1038" y="418" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-56" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="15 Aug 2026, 09:12" vertex="1">
+          <mxGeometry x="1198" y="418" width="202" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-57" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;fontColor=#999999;" value="‹ Previous" vertex="1">
+          <mxGeometry x="508" y="496" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-58" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=16;align=center;verticalAlign=middle;fontColor=#000000;" value="Page 1" vertex="1">
+          <mxGeometry x="640" y="496" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-59" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Next ›" vertex="1">
+          <mxGeometry x="772" y="496" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-60" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="&lt;b&gt;Account image&lt;/b&gt;: shows the image, or the first letter of the name if none is set. Managers click it to upload, replace, or remove the image (PNG, JPEG, WebP); a pencil badge marks it as editable. Members only see it." vertex="1">
+          <mxGeometry x="300" y="8" width="560" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-61" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="The shell navigation keeps &quot;Overview&quot; selected; details are reached from an account card or the Accounts list." vertex="1">
+          <mxGeometry x="900" y="20" width="380" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-62" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Managers only. The mode is shown by color plus sign: deposit green (+), withdrawal red (−) on the selected toggle, the amount sign, and the button. Submitting disables the button until the backend confirms; retries reuse the same request so nothing is booked twice. Withdrawals may make the balance negative." vertex="1">
+          <mxGeometry x="24" y="806" width="440" height="186" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-63" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Newest first, 20 per page. Dates in the business timezone, formatted for the language. Amounts signed and colored. Without transactions: &quot;No transactions yet&quot;." vertex="1">
+          <mxGeometry x="492" y="580" width="450" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-64" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Not initialized&lt;/b&gt;&lt;br&gt;The balance shows &quot;Not initialized&quot;. Managers get an &quot;Opening amount&quot; form instead of &quot;Record transaction&quot;: signed amount (may be zero or negative), optional comment, &quot;Post opening amount&quot;. Final once posted, so a confirmation dialog asks before posting. Members see a note instead." vertex="1">
+          <mxGeometry x="966" y="580" width="450" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-65" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Monthly allowance&lt;/b&gt;&lt;br&gt;Amount per month or &quot;No monthly allowance&quot;; status &quot;Credited this month on …&quot; or &quot;Next credit on …&quot;; Managers also see failed credits with the reason. Managers: &quot;Set allowance&quot; opens a dialog (amount ≥ 0, on/off). Credits appear in the history as &quot;Allowance&quot; by &quot;Automatic&quot;. Saving never books money itself." vertex="1">
+          <mxGeometry x="492" y="780" width="450" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-66" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Member&lt;/b&gt;: balance, allowance, and history only; no forms and no &quot;Set allowance&quot;. The backend enforces this regardless of the UI.&lt;br&gt;&lt;b&gt;Phone&lt;/b&gt;: stacked balance, allowance, &quot;Record transaction&quot; button (full-screen dialog), then history as two-line items (comment or type, date and author; amount right-aligned, never truncated)." vertex="1">
+          <mxGeometry x="966" y="780" width="450" height="190" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

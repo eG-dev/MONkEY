@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POCKET MONkEY</title>
+  <link rel="stylesheet" href="../../design-system/styles.css">
+  <link rel="stylesheet" href="../shared/prototype.css">
+  <style>
+    .profile { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 560px)); gap: var(--space-7); align-items: start; }
+    .profile .panel + .panel { margin-top: 0; }
+    .facts { display: grid; grid-template-columns: max-content 1fr; gap: 12px 24px; margin: 0 0 var(--space-5); }
+    .facts dt { color: var(--text-secondary); }
+    .facts dd { margin: 0; }
+    .temporary { display: flex; gap: var(--space-3); align-items: center; }
+    .temporary code { flex: 1; padding: 8px 12px; border: 1px solid var(--control-border); border-radius: var(--radius-sm); background: var(--surface-input); font: var(--type-h3); font-family: var(--font-mono); letter-spacing: .04em; }
+    .status-disabled, .status-mustChange { color: var(--text-secondary); }
+    @media (max-width: 599px) {
+      .table thead { display: none; }
+      .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
+      .table td { border: 0; padding: 2px 4px; }
+      .table td.user-name { font-weight: var(--weight-medium); }
+      .table td.username, .table td.role, .table td.status-cell { grid-column: 1; font: var(--type-caption); color: var(--text-secondary); }
+      .table td.actions-cell { grid-column: 2; grid-row: 1 / 5; align-self: center; }
+      .table .row-actions { flex-direction: column; align-items: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div id="view"></div>
+  <script src="../shared/data.js"></script>
+  <script src="../shared/prototype.js"></script>
+  <script>
+    const view = document.getElementById('view');
+    const statusLabel = user => PM.t(`status_${user.status}`);
+    const activeManagers = () => PM.data.users.filter(user => user.role === 'Manager' && user.status !== 'disabled');
+    const isLastManager = user => user.role === 'Manager' && user.status !== 'disabled' && activeManagers().length === 1;
+
+    function tab() {
+      return location.hash === '#users' && PM.isManager() ? 'users' : 'profile';
+    }
+
+    function render() {
+      const current = tab();
+      const tabs = `<nav class="tabs" aria-label="${PM.esc(PM.t('administration'))}"><a href="#profile" ${current === 'profile' ? 'aria-current="page"' : ''}>${PM.esc(PM.t('profile'))}</a>${PM.isManager() ? `<a href="#users" ${current === 'users' ? 'aria-current="page"' : ''}>${PM.esc(PM.t('users'))}</a>` : ''}</nav>`;
+      view.innerHTML = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('administration'))}</h1></div>${tabs}${current === 'users' ? users() : profile()}`;
+      current === 'users' ? bindUsers() : bindProfile();
+    }
+
+    // ---------- Profile ----------
+    function profile() {
+      const user = PM.currentUser();
+      return `<div class="profile">
+        <section class="panel" aria-labelledby="account-title"><h2 class="panel-title" id="account-title">${PM.esc(PM.t('account'))}</h2>
+          <dl class="facts"><dt>${PM.esc(PM.t('displayName'))}</dt><dd>${PM.esc(user.displayName)}</dd><dt>${PM.esc(PM.t('username'))}</dt><dd>${PM.esc(user.username)}</dd><dt>${PM.esc(PM.t('role'))}</dt><dd>${PM.esc(PM.t(user.role))}</dd></dl>
+          <button class="button button-secondary" type="button" id="change-password">${PM.icon('key')}${PM.esc(PM.t('changePassword'))}</button>
+        </section>
+        <section class="panel" aria-labelledby="preferences-title"><h2 class="panel-title" id="preferences-title">${PM.esc(PM.t('preferences'))}</h2>
+          <div class="form">
+            <div class="field"><label for="language">${PM.esc(PM.t('language'))}</label><select class="select" id="language"><option value="de" ${PM.prefs.language === 'de' ? 'selected' : ''}>Deutsch</option><option value="en" ${PM.prefs.language === 'en' ? 'selected' : ''}>English</option></select></div>
+            <div class="switch-row"><span class="field-label" id="dark-label">${PM.esc(PM.t('darkMode'))}</span><button class="switch" type="button" role="switch" id="dark-switch" aria-labelledby="dark-label" aria-checked="${PM.prefs.dark}"></button></div>
+          </div>
+        </section>
+      </div>`;
+    }
+
+    function bindProfile() {
+      document.getElementById('language').addEventListener('change', event => {
+        PM.savePrefs({ language: event.target.value });
+        document.getElementById('language').focus();
+        PM.toast(PM.t('preferencesSaved'));
+      });
+      document.getElementById('dark-switch').addEventListener('click', () => {
+        PM.savePrefs({ dark: !PM.prefs.dark });
+        document.getElementById('dark-switch').focus();
+      });
+      document.getElementById('change-password').addEventListener('click', openChangePassword);
+    }
+
+    function openChangePassword() {
+      const editor = PM.dialog({
+        title: PM.t('changePassword'),
+        body: `<form class="form" id="password-form" novalidate>
+          <div class="field"><label for="current-password">${PM.esc(PM.t('currentPassword'))}</label><input class="input" type="password" id="current-password" autocomplete="current-password"></div>
+          <div class="field"><label for="new-password">${PM.esc(PM.t('newPassword'))}</label><input class="input" type="password" id="new-password" autocomplete="new-password"><span class="hint">${PM.esc(PM.t('passwordHint'))}</span></div>
+          <div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('sessionsEnd'))}</div></div>
+        </form>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="password-form" id="password-save">${PM.esc(PM.t('changePassword'))}</button>`
+      });
+      const current = editor.querySelector('#current-password');
+      const next = editor.querySelector('#new-password');
+      const save = editor.querySelector('#password-save');
+      current.focus();
+      editor.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const currentOk = PM.fieldError(current, !current.value ? PM.t('required') : current.value === 'wrong' ? PM.t('currentWrong') : '');
+        const nextOk = PM.fieldError(next, next.value.length < 12 ? PM.t('passwordShort') : '');
+
+        if (!currentOk || !nextOk) {
+          (currentOk ? next : current).focus();
+          return;
+        }
+
+        save.disabled = true;
+        save.textContent = PM.t('saving');
+
+        try {
+          await PM.request();
+          location.href = '../login/index.html?signedout=password';
+        } catch {
+          editor.querySelector('.dialog-body').insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+          save.disabled = false;
+          save.textContent = PM.t('changePassword');
+        }
+      });
+    }
+
+    // ---------- Users ----------
+    function users() {
+      const rows = [...PM.data.users].sort((a, b) => a.displayName.localeCompare(b.displayName)).map(user => `<tr>
+        <td class="user-name">${PM.esc(user.displayName)}</td><td class="username">${PM.esc(user.username)}</td><td class="role">${PM.esc(PM.t(user.role))}</td>
+        <td class="status-cell status-${user.status}">${PM.esc(statusLabel(user))}</td>
+        <td class="actions-cell"><span class="row-actions"><button class="button button-link" type="button" data-edit="${user.id}" aria-label="${PM.esc(PM.t('editNamed', { name: user.displayName }))}">${PM.esc(PM.t('edit'))}</button><button class="button button-link" type="button" data-reset="${user.id}" aria-label="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}">${PM.esc(PM.t('resetPassword'))}</button></span></td>
+      </tr>`).join('');
+      return `<div class="page-header"><span></span><button class="button button-primary" type="button" id="create-user">${PM.icon('plus')}${PM.esc(PM.t('createUser'))}</button></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('username'))}</th><th>${PM.esc(PM.t('role'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function bindUsers() {
+      document.getElementById('create-user').addEventListener('click', openCreateUser);
+      view.querySelectorAll('[data-edit]').forEach(button => button.addEventListener('click', () => openEditUser(PM.data.users.find(user => user.id === button.dataset.edit))));
+      view.querySelectorAll('[data-reset]').forEach(button => button.addEventListener('click', () => confirmReset(PM.data.users.find(user => user.id === button.dataset.reset))));
+    }
+
+    const roleSegments = (selected, disableMember = false) => `<fieldset class="field"><legend class="field-label">${PM.esc(PM.t('role'))}</legend><div class="segments">
+      <label><input type="radio" name="role" value="Member" ${selected === 'Member' ? 'checked' : ''} ${disableMember ? 'disabled' : ''}><span>${PM.esc(PM.t('Member'))}</span></label>
+      <label><input type="radio" name="role" value="Manager" ${selected === 'Manager' ? 'checked' : ''}><span>${PM.esc(PM.t('Manager'))}</span></label></div></fieldset>`;
+
+    function failure(editor, button, label) {
+      editor.querySelector('.dialog-body').insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+      button.disabled = false;
+      button.textContent = label;
+    }
+
+    function openCreateUser() {
+      const editor = PM.dialog({
+        title: PM.t('createUser'),
+        body: `<form class="form" id="user-form" novalidate>
+          <div class="field"><label for="new-username">${PM.esc(PM.t('username'))}</label><input class="input" id="new-username" autocomplete="off" autocapitalize="none"><span class="hint">${PM.esc(PM.t('usernameHint'))}</span></div>
+          <div class="field"><label for="new-display">${PM.esc(PM.t('displayName'))}</label><input class="input" id="new-display" maxlength="120"><span class="hint">${PM.esc(PM.t('displayHint'))}</span></div>
+          ${roleSegments('Member')}
+        </form>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="user-form" id="user-save">${PM.esc(PM.t('createUser'))}</button>`
+      });
+      const username = editor.querySelector('#new-username');
+      const display = editor.querySelector('#new-display');
+      const save = editor.querySelector('#user-save');
+      username.focus();
+      editor.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const name = username.value.trim().toLowerCase();
+        const usernameOk = PM.fieldError(username, !/^[a-z0-9._-]{3,32}$/.test(name) ? PM.t('usernameInvalid') : PM.data.users.some(user => user.username === name) ? PM.t('usernameTaken') : '');
+        const displayOk = PM.fieldError(display, !display.value.trim() || display.value.trim().length > 100 ? PM.t('displayInvalid') : '');
+
+        if (!usernameOk || !displayOk) {
+          (usernameOk ? display : username).focus();
+          return;
+        }
+
+        save.disabled = true;
+        save.textContent = PM.t('saving');
+
+        try {
+          await PM.request();
+          const user = { id: `user-${Date.now()}`, username: name, displayName: display.value.trim(), role: editor.querySelector('[name="role"]:checked').value, status: 'mustChange' };
+          PM.data.users.push(user);
+          PM.saveData();
+          editor.close();
+          render();
+          showTemporaryPassword(user);
+        } catch {
+          failure(editor, save, PM.t('createUser'));
+        }
+      });
+    }
+
+    function openEditUser(user) {
+      const last = isLastManager(user);
+      let active = user.status !== 'disabled';
+      const editor = PM.dialog({
+        title: PM.t('editNamed', { name: user.displayName }),
+        body: `<form class="form" id="user-form" novalidate>
+          ${last ? `<div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('lastManager', { name: user.displayName }))}</div></div>` : ''}
+          <div class="field"><label for="edit-display">${PM.esc(PM.t('displayName'))}</label><input class="input" id="edit-display" maxlength="120" value="${PM.esc(user.displayName)}"><span class="hint">${PM.esc(PM.t('displayHint'))}</span></div>
+          ${roleSegments(user.role, last)}
+          <div class="switch-row"><span class="field-label" id="active-label">${PM.esc(PM.t('active'))}</span><button class="switch" type="button" role="switch" id="active-switch" aria-labelledby="active-label" aria-checked="${active}" ${last ? 'disabled' : ''}></button></div>
+          <div class="message message-warning">${PM.icon('warning')}<div class="message-body">${PM.esc(PM.t('sessionsRevoked'))}</div></div>
+        </form>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="user-form" id="user-save">${PM.esc(PM.t('save'))}</button>`
+      });
+      const display = editor.querySelector('#edit-display');
+      const toggle = editor.querySelector('#active-switch');
+      const save = editor.querySelector('#user-save');
+      display.focus();
+      toggle.addEventListener('click', () => {
+        active = !active;
+        toggle.setAttribute('aria-checked', String(active));
+      });
+      editor.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+
+        if (!PM.fieldError(display, !display.value.trim() || display.value.trim().length > 100 ? PM.t('displayInvalid') : '')) {
+          display.focus();
+          return;
+        }
+
+        save.disabled = true;
+        save.textContent = PM.t('saving');
+
+        try {
+          await PM.request();
+          user.displayName = display.value.trim();
+          user.role = editor.querySelector('[name="role"]:checked').value;
+          user.status = active ? (user.status === 'disabled' ? 'active' : user.status) : 'disabled';
+          PM.saveData();
+          editor.close();
+          render();
+          PM.toast(PM.t('userSaved', { name: user.displayName }));
+        } catch {
+          failure(editor, save, PM.t('save'));
+        }
+      });
+    }
+
+    function confirmReset(user) {
+      const confirm = PM.dialog({
+        title: PM.t('resetNamed', { name: user.displayName }),
+        body: `<p>${PM.esc(PM.t('resetConfirm', { name: user.displayName }))}</p>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="button" id="reset-confirm">${PM.esc(PM.t('resetPassword'))}</button>`
+      });
+      const button = confirm.querySelector('#reset-confirm');
+      button.focus();
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        button.textContent = PM.t('saving');
+
+        try {
+          await PM.request();
+
+          if (user.status !== 'disabled') {
+            user.status = 'mustChange';
+          }
+
+          PM.saveData();
+          confirm.close();
+          render();
+          showTemporaryPassword(user);
+        } catch {
+          failure(confirm, button, PM.t('resetPassword'));
+        }
+      });
+    }
+
+    function showTemporaryPassword(user) {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+      const values = crypto.getRandomValues(new Uint32Array(12));
+      const password = [...values].map(value => alphabet[value % alphabet.length]).join('').replace(/(.{4})(?=.)/g, '$1-');
+      const result = PM.dialog({
+        title: PM.t('temporaryPassword'),
+        dismissible: false,
+        body: `<p>${PM.esc(PM.t('temporaryFor', { name: user.displayName }))}</p>
+          <div class="temporary"><code id="temporary-value">${password}</code><button class="button button-secondary" type="button" id="copy">${PM.icon('copy')}${PM.esc(PM.t('copy'))}</button></div>
+          <div class="message message-warning">${PM.icon('warning')}<div class="message-body">${PM.esc(PM.t('temporaryOnce', { name: user.displayName }))}</div></div>`,
+        footer: `<button class="button button-primary" type="button" data-close>${PM.esc(PM.t('done'))}</button>`
+      });
+      const copy = result.querySelector('#copy');
+      copy.focus();
+      copy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(password);
+          PM.toast(PM.t('copied'), 'info');
+        } catch {
+          getSelection().selectAllChildren(result.querySelector('#temporary-value'));
+        }
+      });
+    }
+
+    addEventListener('hashchange', render);
+    PM.init({
+      active: 'administration',
+      title: 'administration',
+      render,
+      strings: {
+        en: {
+          users: 'Users', account: 'Account', displayName: 'Display name', username: 'Username', role: 'Role', status: 'Status', actions: 'Actions', changePassword: 'Change password', preferences: 'Preferences',
+          language: 'Language', preferencesSaved: 'Preferences saved.', currentPassword: 'Current password', newPassword: 'New password', passwordHint: 'At least 12 characters',
+          sessionsEnd: 'After the change, all your sessions end and you sign in again with the new password.', currentWrong: 'The current password is incorrect.', passwordShort: 'Use at least 12 characters.',
+          status_active: 'Active', status_disabled: 'Disabled', status_mustChange: 'Must change password', edit: 'Edit', editNamed: 'Edit {name}', resetPassword: 'Reset password', resetNamed: 'Reset password for {name}',
+          createUser: 'Create user', usernameHint: 'Used to sign in; cannot be changed later', displayHint: 'Up to 100 characters', usernameInvalid: 'Use 3–32 lowercase letters, digits, dots, hyphens, or underscores.',
+          usernameTaken: 'This username is already taken.', displayInvalid: 'Enter a display name with 1–100 characters.', active: 'Active',
+          lastManager: '{name} is the last active Manager, so the role cannot be changed to Member and the user cannot be disabled.', sessionsRevoked: 'Changing the role or disabling the user ends their sessions.',
+          userSaved: '{name} saved.', resetConfirm: 'Reset the password for {name}? Their sessions end, and they must choose a new password at the next sign-in.',
+          temporaryPassword: 'Temporary password', temporaryFor: 'Temporary password for {name}:', temporaryOnce: 'This password is shown only once. {name} must change it at the first sign-in.', copy: 'Copy', copied: 'Copied to the clipboard.', done: 'Done'
+        },
+        de: {
+          users: 'Benutzer', account: 'Konto', displayName: 'Anzeigename', username: 'Benutzername', role: 'Rolle', status: 'Status', actions: 'Aktionen', changePassword: 'Passwort ändern', preferences: 'Einstellungen',
+          language: 'Sprache', preferencesSaved: 'Einstellungen gespeichert.', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', passwordHint: 'Mindestens 12 Zeichen',
+          sessionsEnd: 'Nach der Änderung enden alle deine Sitzungen und du meldest dich mit dem neuen Passwort erneut an.', currentWrong: 'Das aktuelle Passwort ist falsch.', passwordShort: 'Mindestens 12 Zeichen verwenden.',
+          status_active: 'Aktiv', status_disabled: 'Deaktiviert', status_mustChange: 'Muss Passwort ändern', edit: 'Bearbeiten', editNamed: '{name} bearbeiten', resetPassword: 'Passwort zurücksetzen', resetNamed: 'Passwort für {name} zurücksetzen',
+          createUser: 'Benutzer anlegen', usernameHint: 'Zum Anmelden; kann später nicht geändert werden', displayHint: 'Bis zu 100 Zeichen', usernameInvalid: '3–32 Kleinbuchstaben, Ziffern, Punkte, Binde- oder Unterstriche verwenden.',
+          usernameTaken: 'Dieser Benutzername ist bereits vergeben.', displayInvalid: 'Einen Anzeigenamen mit 1–100 Zeichen eingeben.', active: 'Aktiv',
+          lastManager: '{name} ist der letzte aktive Manager. Die Rolle kann daher nicht auf Mitglied geändert und der Benutzer nicht deaktiviert werden.', sessionsRevoked: 'Eine Rollenänderung oder Deaktivierung beendet die Sitzungen des Benutzers.',
+          userSaved: '{name} gespeichert.', resetConfirm: 'Passwort für {name} zurücksetzen? Die Sitzungen enden, und bei der nächsten Anmeldung muss ein neues Passwort gewählt werden.',
+          temporaryPassword: 'Vorläufiges Passwort', temporaryFor: 'Vorläufiges Passwort für {name}:', temporaryOnce: 'Dieses Passwort wird nur einmal angezeigt. {name} muss es bei der ersten Anmeldung ändern.', copy: 'Kopieren', copied: 'In die Zwischenablage kopiert.', done: 'Fertig'
+        }
+      }
+    });
+  </script>
+</body>
+</html>

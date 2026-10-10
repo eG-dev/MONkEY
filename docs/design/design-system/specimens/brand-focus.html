@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Focus indicators</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <style>
+        .stage {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            margin: -20px;
+            height: 180px;
+        }
+
+        .stage > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: var(--surface-app);
+            color: var(--text-primary);
+        }
+
+        .focused {
+            outline: 2px solid var(--border-focus);
+            outline-offset: 2px;
+        }
+
+        .toolbar {
+            --border-focus: var(--focus-on-header);
+            background: var(--surface-header) !important;
+            color: var(--text-on-header) !important;
+        }
+
+        .toolbar .icon-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 40px;
+            color: inherit;
+        }
+
+        .toolbar .v {
+            color: var(--grey-200);
+        }
+
+        svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.75;
+            stroke-linecap: round;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stage">
+        <div><span class="button button-primary focused">Record deposit</span><span class="v">light: maroon outline</span></div>
+        <div class="toolbar"><span class="icon-button focused"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16" /></svg></span><span class="v">toolbar: peach outline</span></div>
+        <div data-theme="dark"><span class="button button-primary focused">Record deposit</span><span class="v">dark: peach outline</span></div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<mxfile host="Electron">
+  <diagram id="administration-profile" name="Administration - Profile">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1000" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="undefined-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#9673a6;dashed=1;" value="" vertex="1">
+          <mxGeometry x="0" y="0" width="1440" height="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=28;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Administration" vertex="1">
+          <mxGeometry x="24" y="16" width="800" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#7EA6E0;strokeColor=#6c8ebf;fontStyle=1;" value="Profile" vertex="1">
+          <mxGeometry x="24" y="76" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Users" vertex="1">
+          <mxGeometry x="184" y="76" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
+          <mxGeometry x="24" y="120" width="1392" height="2" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=16;spacingTop=10;fontStyle=1;fontSize=20;" value="Account" vertex="1">
+          <mxGeometry x="24" y="150" width="560" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#666666;" value="Display name" vertex="1">
+          <mxGeometry x="44" y="200" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=middle;fontColor=#000000;" value="Mara Example" vertex="1">
+          <mxGeometry x="250" y="200" width="310" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#666666;" value="Username" vertex="1">
+          <mxGeometry x="44" y="252" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=middle;fontColor=#000000;" value="mara" vertex="1">
+          <mxGeometry x="250" y="252" width="310" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#666666;" value="Role" vertex="1">
+          <mxGeometry x="44" y="304" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=middle;fontColor=#000000;" value="Manager" vertex="1">
+          <mxGeometry x="250" y="304" width="310" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Change password" vertex="1">
+          <mxGeometry x="44" y="370" width="220" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=16;spacingTop=10;fontStyle=1;fontSize=20;" value="Preferences" vertex="1">
+          <mxGeometry x="24" y="460" width="560" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Language" vertex="1">
+          <mxGeometry x="44" y="500" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#999999;align=left;spacingLeft=10;fontColor=#666666;" value="Deutsch ▾" vertex="1">
+          <mxGeometry x="44" y="526" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Dark mode" vertex="1">
+          <mxGeometry x="44" y="590" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;rounded=1;arcSize=50;" value="" vertex="1">
+          <mxGeometry x="250" y="598" width="48" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-20" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="Members see only the Profile tab." vertex="1">
+          <mxGeometry x="360" y="62" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-21" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Visible to everyone. The user menu &quot;Profile&quot; link opens this tab. Display name, username, and role are changed by Managers in Users." vertex="1">
+          <mxGeometry x="620" y="150" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-22" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;&quot;Change password&quot; opens a dialog&lt;/b&gt;&lt;br&gt;Current password and new password (at least 12 characters), Cancel and Change password. Errors appear at the field (e.g. wrong current password). The dialog states that all sessions end; after a successful change the user signs in again. Full-screen on phones." vertex="1">
+          <mxGeometry x="620" y="300" width="470" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-23" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Language and dark mode apply immediately and are saved per user." vertex="1">
+          <mxGeometry x="620" y="640" width="400" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="undefined-24" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Phone: the panels stack in the order Account, Preferences." vertex="1">
+          <mxGeometry x="24" y="690" width="400" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

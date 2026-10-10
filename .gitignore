@@ -21,6 +21,9 @@ local.settings.json
 __pycache__/
 *.pyc
 
+# Draw.io diagram backup files
+*.drawio.bkp
+
 # Local editor state; keep shared VS Code configuration
 .vs/
 *.suo

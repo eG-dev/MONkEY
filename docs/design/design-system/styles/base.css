@@ -1,0 +1,42 @@
+html {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface-app);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  font: var(--type-body);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--text-link-hover);
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.pm-num {
+  font-variant-numeric: tabular-nums;
+}
+
+::placeholder {
+  color: var(--text-placeholder);
+  opacity: 1;
+}
