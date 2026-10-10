@@ -1,4 +1,4 @@
-import { APIRequestContext, request as apiRequest } from '@playwright/test';
+import { APIRequestContext, Page, request as apiRequest } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 
@@ -7,6 +7,7 @@ import {
   expect,
   bootstrapManager,
   credentials,
+  createUser,
   csrfWrite,
   login,
   docker,
@@ -27,15 +28,8 @@ async function createAccount(request: APIRequestContext, name: string) {
 }
 
 async function createReader(request: APIRequestContext, language = 'de') {
-  const temporary = credentials('reader');
+  const { account: temporary } = await createUser(request, 'reader', 'Reader', 'Member');
   const permanent = credentials('reader');
-  const response = await csrfWrite(request, 'POST', '/api/users', {
-    ...temporary,
-    displayName: 'Reader',
-    role: 'Member',
-  });
-
-  expect(response.status()).toBe(201);
 
   await csrfWrite(request, 'POST', '/api/auth/logout', {});
   await login(request, temporary);
@@ -50,6 +44,19 @@ async function createReader(request: APIRequestContext, language = 'de') {
   expect((await csrfWrite(request, 'PUT', '/api/auth/language', { language })).status()).toBe(204);
 
   return permanent;
+}
+
+async function chooseLanguage(page: Page, language: string, returnTo: string) {
+  await page.goto('/administration');
+  await Promise.all([page.waitForEvent('load'), page.getByRole('combobox').selectOption(language)]);
+  await expect(page.locator('html')).toHaveAttribute('lang', language);
+  await page.goto(returnTo);
+}
+
+async function openTransactionForm(page: Page, record: string) {
+  if (page.viewportSize()!.width < 600) {
+    await page.getByRole('button', { name: record, exact: true }).click();
+  }
 }
 
 test('real SQLite ledger migration, exact arithmetic, constraints and complete rollback hold @api', async () => {
@@ -242,16 +249,7 @@ test('maximum exact balances, historical actor names and private SSR survive res
 
   expect(await replay.json()).toEqual(entry);
 
-  const secondManager = credentials('othermanager');
-  expect(
-    (
-      await csrfWrite(request, 'POST', '/api/users', {
-        ...secondManager,
-        displayName: 'Other Manager',
-        role: 'Manager',
-      })
-    ).status(),
-  ).toBe(201);
+  const { account: secondManager } = await createUser(request, 'othermanager', 'Other Manager', 'Manager');
   await login(request, secondManager);
   const permanent = credentials(secondManager.username);
   expect(
@@ -581,9 +579,9 @@ for (const language of ['de', 'en'] as const) {
               comment: 'Kommentar (optional)',
               empty: 'Nicht initialisiert',
               saved: 'Eröffnungsbetrag gebucht',
-              money: `12,34 ${symbol}`,
+              money: `+12,34 ${symbol}`,
               input: '12,34',
-              maximum: `92.233.720.368.547.758,07 ${symbol}`,
+              maximum: `+92.233.720.368.547.758,07 ${symbol}`,
             }
           : {
               username: 'Username',
@@ -594,9 +592,9 @@ for (const language of ['de', 'en'] as const) {
               comment: 'Comment (optional)',
               empty: 'Not initialized',
               saved: 'Opening balance posted',
-              money: `12.34 ${symbol}`,
+              money: `+12.34 ${symbol}`,
               input: '12.34',
-              maximum: `92,233,720,368,547,758.07 ${symbol}`,
+              maximum: `+92,233,720,368,547,758.07 ${symbol}`,
             };
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
@@ -609,19 +607,25 @@ for (const language of ['de', 'en'] as const) {
 
       await expect(page.getByTestId('account-balance')).toHaveText(labels.empty);
 
-      await page.getByRole('button', { name: labels.post, exact: true }).click();
       await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(`${labels.input}1`);
       await page.getByRole('button', { name: labels.post, exact: true }).click();
 
       await expect(page.getByRole('alert')).toBeVisible();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
 
       const comment = '<script>private opening comment</script>';
       await page.getByRole('textbox', { name: labels.comment, exact: true }).fill(comment);
       await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(labels.input);
       await page.getByRole('textbox', { name: labels.amount, exact: true }).press('Enter');
 
+      const confirmation = page.getByRole('dialog');
+
+      await expect(confirmation).toContainText(labels.money);
+      await confirmation.getByRole('button', { name: labels.post, exact: true }).click();
+
       await expect(page.getByRole('status').filter({ hasText: labels.saved })).toBeVisible();
       await expect(page.getByTestId('account-balance')).toHaveText(labels.money);
+      await expect(page.getByTestId('account-balance')).toHaveClass(/amount-positive/);
       await expect(page.getByRole('button', { name: labels.post, exact: true })).toHaveCount(0);
       await expect(page.getByText(comment, { exact: true }).first()).toBeVisible();
 
@@ -635,18 +639,17 @@ for (const language of ['de', 'en'] as const) {
       });
 
       const otherLanguage = language === 'de' ? 'en' : 'de';
-      await Promise.all([page.waitForEvent('load'), page.getByRole('combobox').selectOption(otherLanguage)]);
+      await chooseLanguage(page, otherLanguage, `/accounts/${account.id}`);
 
       await expect(page.locator('html')).toHaveAttribute('lang', otherLanguage);
-      await expect(page.getByTestId('account-balance')).toHaveText(`${otherLanguage === 'de' ? '12,34' : '12.34'} ${symbol}`);
+      await expect(page.getByTestId('account-balance')).toHaveText(`+${otherLanguage === 'de' ? '12,34' : '12.34'} ${symbol}`);
       await expect(page.getByText(comment, { exact: true }).first()).toBeVisible();
       const persisted = await (await request.get(`/api/accounts/${account.id}`)).json();
       expect(persisted.balance).toBe('12.34');
       expect(persisted.currency).toBe(currency);
       expect(persisted.openingEntry.currency).toBe(currency);
 
-      await Promise.all([page.waitForEvent('load'), page.getByRole('combobox').selectOption(language)]);
-      await page.goto(`/accounts/${maximum.id}`);
+      await chooseLanguage(page, language, `/accounts/${maximum.id}`);
 
       await expect(page.getByTestId('account-balance')).toHaveText(labels.maximum);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -703,14 +706,16 @@ for (const language of ['de', 'en'] as const) {
               login: 'Anmelden',
               opening: 'Eröffnungsbetrag buchen',
               openingAmount: `Eröffnungsbetrag (${currency})`,
-              deposit: 'Einzahlen',
-              withdrawal: 'Abheben',
+              record: 'Buchung erfassen',
+              deposit: 'Einzahlung',
+              withdrawal: 'Abhebung',
               amount: `Betrag (${currency})`,
-              post: 'Buchung speichern',
+              postDeposit: 'Einzahlung buchen',
+              postWithdrawal: 'Abhebung buchen',
               comment: 'Kommentar (optional)',
               next: 'Nächste Seite',
               previous: 'Vorherige Seite',
-              saved: 'Buchung gespeichert',
+              saved: 'Einzahlung gebucht',
               decimal: ',',
               minimum: `-92.233.720.368.547.758,08 ${symbol}`,
             }
@@ -720,14 +725,16 @@ for (const language of ['de', 'en'] as const) {
               login: 'Sign in',
               opening: 'Post opening balance',
               openingAmount: `Opening amount (${currency})`,
+              record: 'Record transaction',
               deposit: 'Deposit',
-              withdrawal: 'Withdraw',
+              withdrawal: 'Withdrawal',
               amount: `Amount (${currency})`,
-              post: 'Post transaction',
+              postDeposit: 'Record deposit',
+              postWithdrawal: 'Record withdrawal',
               comment: 'Comment (optional)',
               next: 'Next page',
               previous: 'Previous page',
-              saved: 'Transaction posted',
+              saved: 'Deposit recorded',
               decimal: '.',
               minimum: `-92,233,720,368,547,758.08 ${symbol}`,
             };
@@ -738,25 +745,30 @@ for (const language of ['de', 'en'] as const) {
       await page.getByRole('textbox', { name: labels.username, exact: true }).fill(manager.username);
       await page.getByLabel(labels.password, { exact: true }).fill(manager.password);
       await page.getByRole('button', { name: labels.login, exact: true }).click();
-      await page.getByRole('button', { name: labels.opening, exact: true }).click();
       await page.getByRole('textbox', { name: labels.openingAmount, exact: true }).fill(`-0${labels.decimal}01`);
       await page.getByRole('button', { name: labels.opening, exact: true }).click();
+      await page.getByRole('dialog').getByRole('button', { name: labels.opening, exact: true }).click();
 
       await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}01 ${symbol}`);
-      await page.getByRole('button', { name: labels.withdrawal, exact: true }).click();
+      await expect(page.getByTestId('account-balance')).toHaveClass(/amount-negative/);
+      await openTransactionForm(page, labels.record);
+      await page.getByRole('radio', { name: labels.withdrawal, exact: true }).check();
+
+      await expect(page.locator('form[data-mode="withdrawal"]')).toBeVisible();
 
       for (const amount of ['0', '-1', `1${labels.decimal}001`]) {
         await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(amount);
-        await page.getByRole('button', { name: labels.post, exact: true }).click();
+        await page.getByRole('button', { name: labels.postWithdrawal, exact: true }).click();
         await expect(page.getByRole('alert')).toBeVisible();
       }
 
       const comment = '<img src=x onerror="window.monkeyXss=true">';
       await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(`0${labels.decimal}02`);
       await page.getByRole('textbox', { name: labels.comment, exact: true }).fill(comment);
-      await page.getByRole('button', { name: labels.post, exact: true }).click();
+      await page.getByRole('button', { name: labels.postWithdrawal, exact: true }).click();
       await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}03 ${symbol}`);
       await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
+      await expect(page.getByTestId('ledger-entry').first()).toContainText(`-0${labels.decimal}02 ${symbol}`);
       expect(await page.evaluate(() => 'monkeyXss' in window)).toBe(false);
 
       const keys: string[] = [];
@@ -776,11 +788,12 @@ for (const language of ['de', 'en'] as const) {
         }
       });
 
-      await page.getByRole('button', { name: labels.deposit, exact: true }).click();
+      await openTransactionForm(page, labels.record);
+      await page.getByRole('radio', { name: labels.deposit, exact: true }).check();
       await page.getByRole('textbox', { name: labels.amount, exact: true }).fill(`0${labels.decimal}01`);
-      await page.getByRole('button', { name: labels.post, exact: true }).click();
+      await page.getByRole('button', { name: labels.postDeposit, exact: true }).click();
       await expect(page.getByRole('alert')).toBeVisible();
-      await page.getByRole('button', { name: labels.post, exact: true }).click();
+      await page.getByRole('button', { name: labels.postDeposit, exact: true }).click();
       await expect(page.getByRole('status').filter({ hasText: labels.saved })).toBeVisible();
       await expect(page.getByTestId('account-balance')).toHaveText(`-0${labels.decimal}02 ${symbol}`);
       expect(keys).toHaveLength(2);
@@ -828,11 +841,10 @@ for (const language of ['de', 'en'] as const) {
 
       const beforeLanguage = await (await request.get(`/api/accounts/${account.id}/transactions`)).json();
       const otherLanguage = language === 'de' ? 'en' : 'de';
-      await Promise.all([page.waitForEvent('load'), page.getByRole('combobox').selectOption(otherLanguage)]);
+      await chooseLanguage(page, otherLanguage, `/accounts/${account.id}`);
       await expect(page.getByTestId('ledger-entry')).toHaveCount(20);
       expect(await (await request.get(`/api/accounts/${account.id}/transactions`)).json()).toEqual(beforeLanguage);
-      await Promise.all([page.waitForEvent('load'), page.getByRole('combobox').selectOption(language)]);
-      await page.goto(`/accounts/${minimum.id}`);
+      await chooseLanguage(page, language, `/accounts/${minimum.id}`);
       await expect(page.getByTestId('account-balance')).toHaveText(labels.minimum);
       await expect(page.getByTestId('ledger-entry').first()).toContainText(labels.minimum);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -856,13 +868,8 @@ for (const language of ['de', 'en'] as const) {
         await memberPage.getByLabel(labels.password, { exact: true }).fill(reader.password);
         await memberPage.getByRole('button', { name: labels.login, exact: true }).click();
         await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(20);
-        await expect(memberPage.getByRole('button', { name: labels.deposit, exact: true })).toHaveCount(0);
-        await expect(
-          memberPage.getByRole('button', {
-            name: labels.withdrawal,
-            exact: true,
-          }),
-        ).toHaveCount(0);
+        await expect(memberPage.getByRole('radio')).toHaveCount(0);
+        await expect(memberPage.getByRole('button', { name: labels.record, exact: true })).toHaveCount(0);
         await memberPage.getByRole('button', { name: labels.next, exact: true }).click();
         await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(6);
       } finally {

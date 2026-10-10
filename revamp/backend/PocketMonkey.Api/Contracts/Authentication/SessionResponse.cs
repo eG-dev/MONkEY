@@ -15,5 +15,7 @@ public sealed record SessionResponse
 
     public required string Language { get; init; }
 
+    public required string Theme { get; init; }
+
     public bool MustChangePassword { get; init; }
 }

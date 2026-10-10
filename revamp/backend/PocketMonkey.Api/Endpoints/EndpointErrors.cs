@@ -16,7 +16,8 @@ internal static class EndpointErrors
 
                 UserAdministrationError.InvalidUser or
                 UserAdministrationError.InvalidPassword or
-                UserAdministrationError.InvalidLanguage => StatusCodes.Status400BadRequest,
+                UserAdministrationError.InvalidLanguage or
+                UserAdministrationError.InvalidTheme => StatusCodes.Status400BadRequest,
 
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, "Unsupported user administration error.")
             });

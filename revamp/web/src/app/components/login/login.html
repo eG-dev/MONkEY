@@ -1,0 +1,126 @@
+<div class="page" *transloco="let t">
+  <div class="languages" role="group" [attr.aria-label]="t('language')">
+    @for (entry of languages; track entry.id) {
+      <button type="button" [attr.lang]="entry.id" [attr.aria-pressed]="language.current() === entry.id" [disabled]="!interactive()" (click)="chooseLanguage(entry.id)">
+        {{ entry.name }}
+      </button>
+    }
+  </div>
+
+  <div class="column">
+    <main class="card" [attr.aria-busy]="busy()">
+      <img class="card-logo" src="/images/monkey.png" alt="POCKET MONkEY" width="260" height="47" />
+      @if (auth.user()?.mustChangePassword) {
+        <h1>{{ t('auth.changeTitle') }}</h1>
+        <div class="message message-info" role="status">
+          <span class="icon icon-info" aria-hidden="true"></span>
+          <div class="message-body">{{ t('auth.mustChange') }}</div>
+        </div>
+        @if (error()) {
+          <div class="message message-danger" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(error()) }}</div>
+          </div>
+        }
+        <form class="form" (ngSubmit)="changePassword()">
+          <div class="field">
+            <label for="current-password">{{ t('auth.currentPassword') }}</label>
+            <input
+              class="input"
+              id="current-password"
+              name="currentPassword"
+              type="password"
+              autocomplete="current-password"
+              required
+              maxlength="256"
+              [(ngModel)]="currentPassword"
+            />
+          </div>
+          <div class="field">
+            <label for="new-password">{{ t('auth.newPassword') }}</label>
+            <input
+              class="input"
+              id="new-password"
+              name="newPassword"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="12"
+              maxlength="256"
+              aria-describedby="new-password-hint"
+              [(ngModel)]="newPassword"
+            />
+            <span class="hint" id="new-password-hint">{{ t('auth.passwordHint') }}</span>
+          </div>
+          <button tuiButton appearance="primary" size="m" type="submit" [disabled]="busy() || !interactive()">
+            {{ t('auth.changePassword') }}
+          </button>
+        </form>
+        <button class="sign-out" type="button" [disabled]="busy() || !interactive()" (click)="logout()">{{ t('auth.logout') }}</button>
+      } @else {
+        <h1>{{ t('auth.login') }}</h1>
+        @if (notice()) {
+          <div class="message message-info" role="status">
+            <span class="icon icon-info" aria-hidden="true"></span>
+            <div class="message-body">{{ t(notice()) }}</div>
+          </div>
+        }
+        @if (error()) {
+          <div class="message message-danger" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(error()) }}</div>
+          </div>
+        }
+        <form class="form" (ngSubmit)="login()">
+          <div class="field">
+            <label for="username">{{ t('auth.username') }}</label>
+            <input class="input" id="username" name="username" autocomplete="username" autocapitalize="none" required maxlength="100" [(ngModel)]="username" />
+          </div>
+          <div class="field">
+            <label for="password">{{ t('auth.password') }}</label>
+            <input class="input" id="password" name="password" type="password" autocomplete="current-password" required maxlength="256" [(ngModel)]="password" />
+          </div>
+          <button tuiButton appearance="primary" size="m" type="submit" [disabled]="busy() || !interactive()">{{ t('auth.login') }}</button>
+        </form>
+        <p class="hint forgot">{{ t('auth.forgot') }}</p>
+      }
+    </main>
+
+    <section class="system" [attr.aria-label]="t('system')">
+      <h2>{{ t('system') }}</h2>
+      @if (foundation.state(); as state) {
+        <p class="status" role="status"><span class="icon icon-circle-check" aria-hidden="true"></span>{{ t('ready') }}</p>
+        <dl>
+          <div>
+            <dt>{{ t('sample', { count: 1 }) }}</dt>
+            <dd data-testid="sample-id">{{ state.sampleId }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('initialized') }}</dt>
+            <dd>{{ state.initializedAtUtc | date: 'medium' : 'UTC' : language.locale() }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('timezone') }}</dt>
+            <dd>{{ state.timezone }}</dd>
+          </div>
+        </dl>
+      } @else {
+        <p class="unavailable" role="alert">{{ t('unavailable') }}</p>
+      }
+      <div class="actions">
+        <button tuiButton appearance="secondary" size="s" type="button" [attr.aria-label]="t('reload')" [title]="t('reload')" (click)="reload()">
+          <span class="icon icon-refresh-cw" aria-hidden="true"></span>
+        </button>
+        @if (foundation.state()) {
+          <a tuiButton appearance="secondary" size="s" href="/api/foundation/file" download [attr.aria-label]="t('download')" [title]="t('download')"
+            ><span class="icon icon-download" aria-hidden="true"></span
+          ></a>
+        }
+      </div>
+    </section>
+  </div>
+  <footer class="login-footer">
+    <span>{{ t('shell.version', { version }) }}</span>
+    <span class="repository-link" role="link" aria-disabled="true"><span class="icon icon-github" aria-hidden="true"></span>GitHub</span>
+  </footer>
+</div>

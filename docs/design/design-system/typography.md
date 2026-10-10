@@ -1,6 +1,6 @@
 # Typography
 
-Status: Draft. Role sizes and weights are defined in
+Status: Approved by the user on 2026-10-10. Role sizes and weights are defined in
 [typography.css](styles/typography.css); fonts are declared in
 [fonts.css](styles/fonts.css).
 
@@ -55,6 +55,10 @@ Angular application. The fonts must not be sold on their own.
 
 ## Readability and Localization
 
+- Match these pixel-based role sizes in the Angular application. Do not convert
+  them to `rem` assuming a 16px root: Taiga uses a 14px root, which would shrink
+  body text and headings. Keep Taiga button text sizing independent of these
+  content roles; changing content typography must not resize buttons or spacing.
 - Prefer Regular for text and Medium or Bold for emphasis. Do not use Light for
   small or essential text.
 - Do not shrink text to fit a German translation into a fixed-width control;

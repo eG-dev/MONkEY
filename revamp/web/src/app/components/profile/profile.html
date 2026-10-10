@@ -1,0 +1,98 @@
+<div class="profile" *transloco="let t">
+  @if (auth.user(); as user) {
+    <section class="panel" aria-labelledby="profile-account-title">
+      <h2 class="panel-title" id="profile-account-title">{{ t('profile.account') }}</h2>
+      <dl class="facts">
+        <dt>{{ t('auth.displayName') }}</dt>
+        <dd>{{ user.displayName }}</dd>
+        <dt>{{ t('auth.username') }}</dt>
+        <dd>{{ user.username }}</dd>
+        <dt>{{ t('auth.role') }}</dt>
+        <dd>{{ t('auth.' + user.role) }}</dd>
+      </dl>
+      <button tuiButton appearance="secondary" size="m" type="button" [disabled]="!interactive()" (click)="openPasswordDialog()">
+        <span class="icon icon-key-round" aria-hidden="true"></span>{{ t('auth.changePassword') }}
+      </button>
+    </section>
+
+    <section class="panel" aria-labelledby="profile-preferences-title">
+      <h2 class="panel-title" id="profile-preferences-title">{{ t('profile.preferences') }}</h2>
+      <div class="form">
+        @if (preferenceError()) {
+          <div class="message message-danger" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(preferenceError()) }}</div>
+          </div>
+        }
+        <div class="field">
+          <label for="profile-language">{{ t('language') }}</label>
+          <select class="input" id="profile-language" [value]="language.current()" [disabled]="!interactive()" (change)="chooseLanguage($event)">
+            @for (entry of languages; track entry.id) {
+              <option [value]="entry.id">{{ entry.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="switch-row">
+          <span class="field-label" id="profile-dark-label">{{ t('shell.darkMode') }}</span>
+          <button
+            class="switch"
+            type="button"
+            role="switch"
+            aria-labelledby="profile-dark-label"
+            [attr.aria-checked]="theme.dark()"
+            [disabled]="!interactive()"
+            (click)="toggleDark()"
+          ></button>
+        </div>
+      </div>
+    </section>
+  }
+
+  <app-modal-dialog [open]="changing()" [heading]="t('auth.changePassword')" (closed)="changing.set(false)">
+    <form class="form" id="password-form" (ngSubmit)="changePassword()">
+      @if (error()) {
+        <div class="message message-danger" role="alert">
+          <span class="icon icon-circle-alert" aria-hidden="true"></span>
+          <div class="message-body">{{ t(error()) }}</div>
+        </div>
+      }
+      <div class="field">
+        <label for="profile-current-password">{{ t('auth.currentPassword') }}</label>
+        <input
+          class="input"
+          id="profile-current-password"
+          name="currentPassword"
+          type="password"
+          autocomplete="current-password"
+          required
+          maxlength="256"
+          [(ngModel)]="currentPassword"
+        />
+      </div>
+      <div class="field">
+        <label for="profile-new-password">{{ t('auth.newPassword') }}</label>
+        <input
+          class="input"
+          id="profile-new-password"
+          name="newPassword"
+          type="password"
+          autocomplete="new-password"
+          required
+          minlength="12"
+          maxlength="256"
+          aria-describedby="profile-password-hint"
+          [(ngModel)]="newPassword"
+        />
+        <span class="hint" id="profile-password-hint">{{ t('auth.passwordHint') }}</span>
+      </div>
+      <div class="message message-info">
+        <span class="icon icon-info" aria-hidden="true"></span>
+        <div class="message-body">{{ t('profile.sessionsEnd') }}</div>
+      </div>
+    </form>
+    <ng-container dialog-actions>
+      <button tuiButton appearance="secondary" size="m" type="button" [disabled]="busy()" (click)="changing.set(false)">{{ t('accounts.cancel') }}</button>
+      <button tuiButton appearance="primary" size="m" type="submit" form="password-form" [disabled]="busy()">{{ t('auth.changePassword') }}</button>
+    </ng-container>
+  </app-modal-dialog>
+</div>

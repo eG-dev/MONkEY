@@ -9,6 +9,8 @@
   <style>
     body { overflow: auto; background: var(--surface-panel); }
     .page { display: grid; place-items: center; min-height: 100dvh; padding: 72px 16px 32px; }
+    .page { grid-template-rows: 1fr auto; gap: var(--space-7); }
+    .login-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-5); font: var(--type-caption); color: var(--text-muted); }
     .languages { position: fixed; top: 16px; inset-inline-end: 16px; display: flex; border: 1px solid var(--border-default); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-raised); }
     .languages button { min-height: var(--control-md); padding: 0 14px; border: 0; background: transparent; color: var(--text-primary); }
     .languages button[aria-pressed="true"] { background: var(--action-primary); color: var(--action-primary-text); }
@@ -65,7 +67,7 @@
           </form>
           <button class="button button-link hint-center" type="button" id="cancel-change">${PM.esc(PM.t('signOut'))}</button>`;
       view.innerHTML = `${languages}<div class="page"><div><main class="card"><img class="card-logo" src="../../assets/images/monkey.png" alt="POCKET MONkEY">${form}</main>
-        <p class="prototype-note">Prototype: password for every user is <code>${PASSWORD}</code>. Try <code>emma</code> (Member), <code>mara</code> (Manager), <code>lena</code> (must change password), or wrong passwords five times. Add <code>?expired=1</code> to the URL for an expired session.</p></div></div>`;
+        <p class="prototype-note">Prototype: password for every user is <code>${PASSWORD}</code>. Try <code>emma</code> (Member), <code>mara</code> (Manager), <code>lena</code> (must change password), or wrong passwords five times. Add <code>?expired=1</code> to the URL for an expired session.</p></div><footer class="login-footer"><span>${PM.esc(PM.t('version'))}</span><span class="repository-link" role="link" aria-disabled="true">${PM.icon('github')}GitHub</span></footer></div>`;
       document.title = `${PM.t(mode === 'signin' ? 'signIn' : 'changeTitle')} – POCKET MONkEY`;
       view.querySelectorAll('[data-language]').forEach(button => button.addEventListener('click', () => PM.savePrefs({ language: button.dataset.language })));
       document.getElementById('signin-form')?.addEventListener('submit', signIn);

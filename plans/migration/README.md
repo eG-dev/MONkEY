@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented as step 2A. Step 2B product UX/UI design is the next activity. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented and verified; remaining milestone 3 feature work is paused until the step 2B acceptance gate passes. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Dedicated reversals and monthly reports are deferred from the first release; images and allowances have not started.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented as step 2A. The user accepted step 2B design references, foundations, and implemented representative screens on 2026-10-10; the design pause is lifted. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented with their existing verification records. Step 3D account images is next, beginning with its image-policy and recovery decisions. Hosted/fork CI, publishing rehearsal, and the real deployment host remain open; local implementation does not close those gates. Dedicated reversals and monthly reports are deferred from the first release; images and allowances have not started.
 
 ## Confirmed scope
 
@@ -64,9 +64,9 @@ text-only account listing, detail, creation/editing, explicit signed opening ent
 configuration/execution, and lifecycle completion remain separate subsequent steps; monthly reports and dedicated reversals are deferred from the first release. Follow the
 [delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
 
-Complete [step 2B design foundations and representative-screen implementation](02b-ux-ui-design.md#acceptance-gate)
-before resuming remaining milestone 3 feature work, including backend-only
-additions. Store draw.io wireframes and exported previews under
+[Step 2B design foundations and representative screens](02b-ux-ui-design.md#acceptance-gate)
+were accepted by the user on 2026-10-10; remaining milestone 3 work may resume
+subject to each slice's policy and verification prerequisites. Store references under
 [docs/design](../../docs/design/README.md). Approved design patterns guide each
 subsequent slice; application-wide design review remains a milestone 4 release
 gate. Existing 3A-3C delivery history is preserved, not restarted or discarded.

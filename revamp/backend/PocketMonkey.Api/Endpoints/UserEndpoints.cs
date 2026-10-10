@@ -46,8 +46,9 @@ public static class UserEndpoints
             UserManager<ApplicationUser> users,
             CancellationToken cancellationToken) =>
             {
+                var temporaryPassword = TemporaryPassword.Generate();
                 var error = await administration.CreateAsync(
-                    request,
+                    request with { Password = temporaryPassword },
                     principal.FindFirstValue(ClaimTypes.NameIdentifier)!,
                     false,
                     cancellationToken);
@@ -59,7 +60,11 @@ public static class UserEndpoints
 
                 var user = (await users.FindByNameAsync(request.Username.Trim()))!;
 
-                return TypedResults.Created($"/api/users/{user.Id}", await administration.DescribeAsync(user));
+                return TypedResults.Created($"/api/users/{user.Id}", new CreatedUserResponse
+                {
+                    User = await administration.DescribeAsync(user),
+                    TemporaryPassword = temporaryPassword
+                });
             });
 
         management.MapPut("/{id}", async Task<IResult> (
@@ -82,20 +87,20 @@ public static class UserEndpoints
 
         management.MapPost("/{id}/password", async Task<IResult> (
             string id,
-            ResetPasswordRequest request,
             ClaimsPrincipal principal,
             UserAdministration administration,
             CancellationToken cancellationToken) =>
             {
+                var temporaryPassword = TemporaryPassword.Generate();
                 var error = await administration.ResetAsync(
                     id,
-                    request.Password,
+                    temporaryPassword,
                     principal.FindFirstValue(ClaimTypes.NameIdentifier)!,
                     false,
                     cancellationToken);
 
                 return error is null
-                    ? TypedResults.NoContent()
+                    ? TypedResults.Ok(new TemporaryPasswordResponse { TemporaryPassword = temporaryPassword })
                     : EndpointErrors.ToResult(error.Value);
             });
     }

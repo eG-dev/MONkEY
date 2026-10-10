@@ -7,13 +7,12 @@ Dedicated reversals are deferred. Images, allowances, and reports have
 not been implemented.
 
 Monthly reports are deferred from the first release; no report snapshots or jobs
-are required. The current UI is functionally verified, not an approved final
-design. The next activity is
-[step 2B product UX/UI design](../plans/migration/02b-ux-ui-design.md), with draw.io
-sources and exported previews under [docs/design](../docs/design/README.md).
-Remaining milestone 3 feature work is paused until design approval and
-representative implementation pass the step 2B gate; existing delivery records
-remain intact. Subsequent slices reuse the established patterns.
+are required. The approved [step 2B](../plans/migration/02b-ux-ui-design.md)
+shell, design tokens, and view designs from [docs/design](../docs/design/README.md)
+are implemented on the existing screens: sign-in, overview, account management,
+account details, profile, and user administration. The implemented design awaits
+acceptance before remaining milestone 3 feature work resumes; existing delivery
+records remain intact. Subsequent slices reuse the established patterns.
 [Operations and cutover](../plans/migration/04-operations-cutover.md) is milestone 4
 and requires application-wide design acceptance as well as the existing
 security, verification, and operational gates.
@@ -45,7 +44,17 @@ initial budget is 650 KB warning / 800 KB error. No runtime CDN is used.
 No ARM, Firefox, or WebKit compatibility claim is made yet.
 
 Application styles use SCSS, while the vendor Taiga theme retains its Less import.
-The PNG favicon in `web/public/` is bundled locally.
+Global partials in `web/src/styles/` hold the design tokens (light/dark), local
+Roboto WOFF2 faces, Taiga variable mapping, base utilities, and shared component
+classes; component SCSS holds only view-specific layout. Roboto (SIL OFL 1.1, see
+`web/public/fonts/roboto/OFL.txt`), the logo, and the PNG favicon in `web/public/`
+are bundled locally.
+
+The theme preference (`system`, `light`, `dark`) is stored per user by the
+backend (`PUT /api/auth/theme`) and applied during SSR as `data-theme-preference`
+and `tuiTheme` on the root element; `system` follows the device setting.
+Manager-created users and password resets receive a backend-generated temporary
+password that the API returns once.
 
 ## Angular Structure
 
@@ -56,19 +65,22 @@ or service name. Components keep their TypeScript, HTML, and SCSS together:
 ```text
 app/
 	components/
-		account-details/  account-details.ts, account-details.html, account-details.scss
-		accounts/         accounts.ts, accounts.html, accounts.scss
-		authentication/   authentication.ts, authentication.html, authentication.scss
-	pipes/currency-amount/
-	services/accounts/, authentication/, foundation/, language/
+		shell/            app shell: header, user menu, navigation drawer
+		login/            sign-in, forced password change, system status
+		overview/         account cards (home view)
+		accounts/         Manager account table with create/edit dialog
+		account-details/  balance, opening entry, transactions, history
+		administration/   profile/users tabs
+		profile/          account facts, password dialog, preferences
+		users/            Manager user administration and temporary passwords
+		modal-dialog/     shared native dialog
+	pipes/amount-tone/, currency-amount/
+	services/accounts/, authentication/, foundation/, language/, theme/, users/
 	models/accounts/, authentication/, foundation/
 	i18n/               language registry and bundled-catalog loader
-	styles/             shared account Sass partial
-	app.ts, app.html, app.scss, app.config*.ts, app.routes*.ts
+	app.ts, app.html, app.config*.ts, app.routes*.ts
+styles/             global tokens, fonts, Taiga mapping, base and component classes
 ```
-
-The account components import the shared Sass partial through their own local
-SCSS files; keep shared styling in one place rather than copying it.
 
 ## Backend Structure
 

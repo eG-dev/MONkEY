@@ -1,7 +1,19 @@
 import { APIRequestContext, request as apiRequest } from '@playwright/test';
 import { resolve } from 'node:path';
 
-import { test, expect, bootstrapManager, credentials, csrfWrite, login, docker, containerOrigin, waitReady, image } from '../fixtures';
+import {
+  test,
+  expect,
+  bootstrapManager,
+  credentials,
+  createUser,
+  csrfWrite,
+  login,
+  docker,
+  containerOrigin,
+  waitReady,
+  image,
+} from '../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });
 
@@ -28,11 +40,8 @@ test('real SQLite account constraints and audit rollback hold @api', async () =>
 });
 
 async function createMember(request: APIRequestContext) {
-  const temporary = credentials('reader');
+  const { account: temporary } = await createUser(request, 'reader', 'Reader', 'Member');
   const permanent = credentials('reader');
-  const created = await csrfWrite(request, 'POST', '/api/users', { ...temporary, displayName: 'Reader', role: 'Member' });
-
-  expect(created.status()).toBe(201);
 
   await csrfWrite(request, 'POST', '/api/auth/logout', {});
   await login(request, temporary);
@@ -208,13 +217,16 @@ for (const language of ['de', 'en'] as const) {
             title: 'Konten',
             empty: 'Noch keine Konten',
             missing: 'Dieses Konto existiert nicht.',
-            refresh: 'Konten neu laden',
+            refresh: 'Erneut versuchen',
             create: 'Konto anlegen',
             name: 'Kontoname',
             edit: 'Konto bearbeiten',
+            editNamed: (name: string) => `${name} bearbeiten`,
+            open: (name: string) => `${name} öffnen`,
             save: 'Speichern',
-            saved: 'Konto gespeichert',
-            back: 'Zurück zu den Konten',
+            saved: (name: string) => `${name} gespeichert`,
+            managersOnly: 'Nur Manager können Konten verwalten.',
+            noOpening: 'Dieses Konto hat noch keinen Eröffnungsbetrag. Ein Manager muss ihn zuerst buchen.',
             duplicate: 'Ein Konto mit diesem Namen existiert bereits.',
           }
         : {
@@ -224,13 +236,16 @@ for (const language of ['de', 'en'] as const) {
             title: 'Accounts',
             empty: 'No accounts yet',
             missing: 'This account does not exist.',
-            refresh: 'Refresh accounts',
+            refresh: 'Try again',
             create: 'Create account',
             name: 'Account name',
             edit: 'Edit account',
+            editNamed: (name: string) => `Edit ${name}`,
+            open: (name: string) => `Open ${name}`,
             save: 'Save',
-            saved: 'Account saved',
-            back: 'Back to accounts',
+            saved: (name: string) => `${name} saved`,
+            managersOnly: 'Only managers can manage accounts.',
+            noOpening: 'This account has no opening balance yet. A manager must post it first.',
             duplicate: 'An account with this name already exists.',
           };
     const errors: string[] = [];
@@ -251,35 +266,39 @@ for (const language of ['de', 'en'] as const) {
     await expect(page.getByText(labels.empty, { exact: true })).toBeVisible();
 
     await page.getByRole('button', { name: labels.create, exact: true }).click();
-    await expect(page.getByRole('textbox', { name: labels.name, exact: true })).toHaveAttribute('maxlength', '40');
-    await page.getByRole('textbox', { name: labels.name, exact: true }).fill('  Ida  ');
-    await page.getByRole('button', { name: labels.create, exact: true }).click();
+
+    const createDialog = page.getByRole('dialog', { name: labels.create });
+
+    await expect(createDialog.getByRole('textbox', { name: labels.name, exact: true })).toHaveAttribute('maxlength', '40');
+    await createDialog.getByRole('textbox', { name: labels.name, exact: true }).fill('  Ida  ');
+    await createDialog.getByRole('button', { name: labels.create, exact: true }).click();
 
     await expect(page).toHaveURL(/\/accounts\/[\w-]+$/);
-    await expect(page.locator('main dd').first()).toHaveText('Ida');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ida');
 
-    await page.getByRole('button', { name: labels.edit, exact: true }).click();
-    await page.getByRole('textbox', { name: labels.name, exact: true }).fill('N'.repeat(40));
-    await page.getByRole('button', { name: labels.save, exact: true }).click();
+    await page.goto('/accounts');
+    await page.getByRole('button', { name: labels.editNamed('Ida'), exact: true }).click();
 
-    await expect(page.getByRole('status').filter({ hasText: labels.saved })).toBeVisible();
-    await expect(page.locator('main dd').first()).toHaveText('N'.repeat(40));
+    const editDialog = page.getByRole('dialog', { name: labels.edit });
+
+    await editDialog.getByRole('textbox', { name: labels.name, exact: true }).fill('N'.repeat(40));
+    await editDialog.getByRole('button', { name: labels.save, exact: true }).click();
+
+    await expect(page.getByRole('status').filter({ hasText: labels.saved('N'.repeat(40)) })).toBeVisible();
+    await expect(page.getByTestId('account-row')).toHaveCount(1);
+    await expect(page.getByTestId('account-row').getByRole('link')).toHaveText('N'.repeat(40));
 
     await page.reload();
 
-    await expect(page.locator('main dd').first()).toHaveText('N'.repeat(40));
+    await expect(page.getByTestId('account-row').getByRole('link')).toHaveText('N'.repeat(40));
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({ path: test.info().outputPath('account-detail.png'), fullPage: true });
-
-    await page.getByRole('link', { name: labels.back, exact: true }).click();
-
-    await expect(page.locator('main .account-list a')).toHaveCount(1);
+    await page.screenshot({ path: test.info().outputPath('accounts.png'), fullPage: true });
 
     await page.getByRole('button', { name: labels.create, exact: true }).click();
-    await page.getByRole('textbox', { name: labels.name, exact: true }).fill('n'.repeat(40));
-    await page.getByRole('button', { name: labels.create, exact: true }).click();
+    await createDialog.getByRole('textbox', { name: labels.name, exact: true }).fill('n'.repeat(40));
+    await createDialog.getByRole('button', { name: labels.create, exact: true }).click();
 
-    await expect(page.getByRole('alert')).toHaveText(labels.duplicate);
+    await expect(createDialog.getByRole('alert')).toHaveText(labels.duplicate);
 
     const context = await browser.newContext({ ...test.info().project.use, baseURL: instance.origin, ignoreHTTPSErrors: true });
 
@@ -292,20 +311,27 @@ for (const language of ['de', 'en'] as const) {
       await memberPage.getByLabel(labels.password, { exact: true }).fill(member.password);
       await memberPage.getByRole('button', { name: labels.login, exact: true }).click();
 
-      await expect(memberPage.locator('main .account-list a')).toHaveCount(1);
+      await expect(memberPage.getByText(labels.managersOnly, { exact: true })).toBeVisible();
       await expect(memberPage.getByRole('button', { name: labels.create, exact: true })).toHaveCount(0);
 
-      await memberPage.locator('main .account-list a').focus();
-      await memberPage.locator('main .account-list a').press('Enter');
+      await memberPage.goto('/');
 
-      await expect(memberPage.locator('main dd').first()).toHaveText('N'.repeat(40));
-      await expect(memberPage.getByRole('button', { name: labels.edit, exact: true })).toHaveCount(0);
+      const card = memberPage.getByRole('link', { name: labels.open('N'.repeat(40)), exact: true });
+
+      await expect(card).toHaveCount(1);
+
+      await card.focus();
+      await card.press('Enter');
+
+      await expect(memberPage.getByRole('heading', { level: 1 })).toHaveText('N'.repeat(40));
+      await expect(memberPage.getByText(labels.noOpening, { exact: true })).toBeVisible();
+      await expect(memberPage.getByRole('textbox')).toHaveCount(0);
       expect(await memberPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await memberPage.screenshot({ path: test.info().outputPath('member-account.png'), fullPage: true });
 
       await memberPage.goto('/accounts/missing');
 
-      await expect(memberPage.getByRole('alert')).toHaveText(labels.missing);
+      await expect(memberPage.getByRole('alert')).toContainText(labels.missing);
 
       await login(request, manager);
       const users = await (await request.get('/api/users')).json();

@@ -10,6 +10,8 @@ public static class UserAdministrationErrorExtensions
 
         UserAdministrationError.InvalidLanguage => "invalid_language",
 
+        UserAdministrationError.InvalidTheme => "invalid_theme",
+
         UserAdministrationError.NotFound => "not_found",
 
         UserAdministrationError.LastManager => "last_manager",

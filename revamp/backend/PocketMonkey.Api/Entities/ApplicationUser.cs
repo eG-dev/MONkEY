@@ -11,4 +11,6 @@ public sealed class ApplicationUser : IdentityUser
     public bool MustChangePassword { get; set; }
 
     public string Language { get; set; } = "de";
+
+    public string Theme { get; set; } = "system";
 }

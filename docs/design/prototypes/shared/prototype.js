@@ -17,9 +17,12 @@
     close: '<path d="M18 6 6 18m0-12 12 12"/>',
     signout: '<path d="m16 17 5-5-5-5M21 12H9M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>',
     plus: '<path d="M5 12h14M12 5v14"/>',
+    github: '<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 19 4.77 5.07 5.07 0 0 0 18.91 1S17.73.65 15 2.48a13.38 13.38 0 0 0-7 0C5.27.65 4.09 1 4.09 1A5.07 5.07 0 0 0 4 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 8 18.13V22"/>',
     minus: '<path d="M5 12h14"/>',
     pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
     back: '<path d="m12 19-7-7 7-7M19 12H5"/>',
+    forward: '<path d="M5 12h14m-7-7 7 7-7 7"/>',
+    refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/>',
     right: '<path d="m9 18 6-6-6-6"/>',
     left: '<path d="m15 18-6-6 6-6"/>',
     info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
@@ -241,7 +244,7 @@
           <a href="../accounts/index.html" data-nav="accounts" data-manager>${icon('wallet')}<span data-t="accounts"></span></a>
           <a class="administration" href="../administration/index.html" data-nav="administration">${icon('administration')}<span data-t="administration"></span></a>
         </nav>
-        <div class="application-info"><span class="application-name">POCKET MONkEY</span><span class="application-version" data-t="version"></span></div>
+        <div class="application-info"><span class="application-name">POCKET MONkEY</span><span class="application-version" data-t="version"></span><span class="repository-link" role="link" aria-disabled="true">${icon('github')}GitHub</span></div>
       </aside>
       <main class="workspace" id="workspace"><div class="content"></div></main>`;
     shell.querySelector('.content').append(content);

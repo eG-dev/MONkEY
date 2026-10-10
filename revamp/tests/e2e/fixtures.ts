@@ -1,4 +1,4 @@
-import { test as base, expect, APIRequestContext } from '@playwright/test';
+import { test as base, expect, APIRequestContext, Page } from '@playwright/test';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:https';
@@ -83,6 +83,20 @@ export async function login(request: APIRequestContext, account: ReturnType<type
   const response = await csrfWrite(request, 'POST', '/api/auth/login', account);
   expect(response.status()).toBe(200);
   return response.json();
+}
+
+export async function createUser(request: APIRequestContext, username: string, displayName: string, role: 'Manager' | 'Member') {
+  const response = await csrfWrite(request, 'POST', '/api/users', { username, displayName, role });
+  expect(response.status()).toBe(201);
+  const created = await response.json();
+  return { profile: created.user, account: { username, password: created.temporaryPassword as string } };
+}
+
+export async function signIn(page: Page, account: ReturnType<typeof credentials>) {
+  await page.goto('/');
+  await page.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(account.username);
+  await page.getByLabel('Passwort', { exact: true }).fill(account.password);
+  await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
 }
 
 async function secureOrigin(instance: Instance) {

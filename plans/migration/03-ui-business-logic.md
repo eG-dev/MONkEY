@@ -1,12 +1,11 @@
 # Milestone 3: incremental UI and business logic
 
-Status: remaining feature work is paused until the [step 2B design acceptance gate](02b-ux-ui-design.md#acceptance-gate) passes.
+Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is next, subject to its separate decision prerequisites.
 Steps 3A, 3B, and the approved 3C scope remain locally implemented and verified on 2026-10-08;
 steps 3D-3H have not started. Dedicated correction/reversal workflows are deferred.
 Depends on [step 2A authentication](02-authentication-authorization.md) and [step 2B product design](02b-ux-ui-design.md).
 
-Step 3G monthly reports are deferred from the first release. Do not implement
-remaining features, including backend-only additions, during the design pause.
+Step 3G monthly reports are deferred from the first release.
 
 ## Delivery model
 
@@ -94,6 +93,7 @@ gates remain open as recorded in the [migration overview](README.md).
 - Keep fixtures isolated and core services unmocked; attach traces and relevant logs when a scenario fails.
 - Update schema migrations and API contracts with each slice; keep the old application independently runnable.
 
-Current next activity: [step 2B product UX and UI design](02b-ux-ui-design.md).
-After its gate passes, resume remaining slices; their completion leads to
+Current next activity: resolve the decision prerequisites for
+[step 3D account images](03d-account-images.md), then implement that slice.
+Remaining slice completion leads to
 [operations and cutover](04-operations-cutover.md).

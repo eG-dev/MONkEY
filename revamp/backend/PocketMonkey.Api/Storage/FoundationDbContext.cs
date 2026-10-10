@@ -22,6 +22,18 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<ApplicationUser>(userEntity =>
+        {
+            userEntity
+                .Property(x => x.Theme)
+                .HasMaxLength(6)
+                .HasDefaultValue("system")
+                .IsRequired();
+
+            userEntity.ToTable(table =>
+                table.HasCheckConstraint("CK_AspNetUsers_Theme", "Theme IN ('system', 'light', 'dark')"));
+        });
+
         modelBuilder.Entity<FoundationState>(stateEntity =>
         {
             stateEntity.HasKey(x => x.Id);

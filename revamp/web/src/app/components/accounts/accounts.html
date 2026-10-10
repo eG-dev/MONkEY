@@ -1,79 +1,118 @@
-<section *transloco="let t" [attr.aria-label]="t('accounts.title')">
-  <div class="page-heading">
-    <h2>{{ t('accounts.title') }}</h2>
-    <div class="page-actions">
-      <button
-        tuiButton
-        appearance="secondary"
-        size="s"
-        type="button"
-        [disabled]="loading() || busy() || !interactive()"
-        [attr.aria-label]="t('accounts.refresh')"
-        [title]="t('accounts.refresh')"
-        (click)="load()"
-      >
-        <span class="icon icon-refresh-cw" aria-hidden="true"></span>
-      </button>
-      @if (auth.user()?.role === 'Manager' && !creating()) {
-        <button tuiButton size="s" type="button" [disabled]="busy() || !interactive()" (click)="creating.set(true)">
-          <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.create') }}
-        </button>
-      }
+<section *transloco="let t" aria-labelledby="accounts-title" [attr.aria-busy]="loading()">
+  @if (auth.user()?.role !== 'Manager') {
+    <div class="message message-info">
+      <span class="icon icon-info" aria-hidden="true"></span>
+      <div class="message-body">
+        <span>{{ t('accounts.managersOnly') }}</span>
+        <a routerLink="/">{{ t('accounts.toOverview') }}</a>
+      </div>
     </div>
-  </div>
+  } @else {
+    <div class="page-header">
+      <h1 class="page-title" id="accounts-title">{{ t('accounts.title') }}</h1>
+      <button tuiButton appearance="primary" size="m" type="button" [disabled]="busy() || !interactive()" (click)="open('new')">
+        <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.create') }}
+      </button>
+    </div>
 
-  @if (creating()) {
-    <form (ngSubmit)="create()" [attr.aria-label]="t('accounts.create')">
-      <fieldset [disabled]="busy() || !interactive()">
-        <label for="new-account-name">{{ t('accounts.name') }}</label>
-        <input
-          id="new-account-name"
-          name="accountName"
-          [(ngModel)]="name"
-          maxlength="40"
-          required
-          autocomplete="off"
-          [attr.aria-invalid]="error() ? 'true' : null"
-          [attr.aria-describedby]="error() ? 'account-error' : null"
-        />
-        <div class="form-actions">
-          <button tuiButton size="s" type="submit">
-            <span class="icon icon-check" aria-hidden="true"></span>{{ t('accounts.create') }}
-          </button>
-          <button tuiButton appearance="secondary" size="s" type="button" (click)="cancel()">{{ t('accounts.cancel') }}</button>
+    @if (saved()) {
+      <div class="message message-success" role="status">
+        <span class="icon icon-circle-check" aria-hidden="true"></span>
+        <div class="message-body">{{ t('accounts.savedNamed', { name: saved() }) }}</div>
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="muted" role="status">{{ t('accounts.loading') }}</p>
+    } @else if (error()) {
+      <div class="message message-danger" role="alert">
+        <span class="icon icon-circle-alert" aria-hidden="true"></span>
+        <div class="message-body">
+          <span>{{ t(error()) }}</span>
+          <div>
+            <button tuiButton appearance="secondary" size="s" type="button" (click)="load()">{{ t('tryAgain') }}</button>
+          </div>
         </div>
-      </fieldset>
-    </form>
-  }
+      </div>
+    } @else if (accounts().length) {
+      <div class="table-wrap">
+        <table class="table stack-table">
+          <thead>
+            <tr>
+              <th>{{ t('accounts.name') }}</th>
+              <th class="numeric">{{ t('accounts.balance') }}</th>
+              <th>{{ t('accounts.status') }}</th>
+              <th>
+                <span class="visually-hidden">{{ t('accounts.actions') }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (account of accounts(); track account.id) {
+              <tr data-testid="account-row">
+                <td class="name">
+                  <span class="name-cell">
+                    <span class="avatar small" aria-hidden="true">{{ account.name.charAt(0) }}</span>
+                    <a [routerLink]="['/accounts', account.id]">{{ account.name }}</a>
+                  </span>
+                </td>
+                <td class="numeric" [class]="account.balance | amountTone">
+                  {{ account.balance === null ? '–' : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
+                </td>
+                <td class="status">{{ t(account.balance === null ? 'accounts.uninitialized' : 'accounts.active') }}</td>
+                <td class="row-actions">
+                  <a
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    [routerLink]="['/accounts', account.id]"
+                    [attr.aria-label]="t('accounts.open', { name: account.name })"
+                    [title]="t('accounts.open', { name: account.name })"
+                  >
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty">
+        <strong>{{ t('accounts.empty') }}</strong>
+      </div>
+    }
 
-  @if (error()) {
-    <p id="account-error" class="error" role="alert">{{ t(error()) }}</p>
-  }
-
-  @if (loading()) {
-    <p class="page-status" role="status">{{ t('accounts.loading') }}</p>
-  } @else if (accounts().length) {
-    <ul class="account-list">
-      @for (account of accounts(); track account.id) {
-        <li>
-          <a [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
-            <span class="icon icon-wallet" aria-hidden="true"></span>
-            <span class="account-name">
-              {{ account.name }}
-              <span class="account-balance">
-                {{
-                  account.balance === null
-                    ? t('accounts.uninitialized')
-                    : (account.balance | currencyAmount: language.locale() : account.currency)
-                }}
-              </span>
-            </span>
-            <span class="icon icon-chevron-right" aria-hidden="true"></span>
-          </a>
-        </li>
-      }
-    </ul>
-  } @else if (!error()) {
-    <p class="page-status">{{ t('accounts.empty') }}</p>
+    <app-modal-dialog [open]="editing() !== null" [heading]="t('accounts.create')" (closed)="close()">
+      <form class="form" id="account-form" (ngSubmit)="save()">
+        @if (dialogError()) {
+          <div class="message message-danger" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(dialogError()) }}</div>
+          </div>
+        }
+        <div class="field">
+          <label for="account-name">{{ t('accounts.name') }}</label>
+          <input
+            class="input"
+            id="account-name"
+            name="accountName"
+            maxlength="40"
+            required
+            autocomplete="off"
+            aria-describedby="account-name-hint"
+            [attr.aria-invalid]="dialogError() ? 'true' : null"
+            [(ngModel)]="name"
+          />
+          <span class="hint" id="account-name-hint">{{ t('accounts.nameHint') }}</span>
+        </div>
+      </form>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="submit" form="account-form" [disabled]="busy()">
+          {{ t('accounts.create') }}
+        </button>
+      </ng-container>
+    </app-modal-dialog>
   }
 </section>

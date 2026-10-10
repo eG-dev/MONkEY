@@ -3,6 +3,10 @@
 Status: not started. Depends only on [shared accounts](03a-accounts.md);
 this step may be delivered before financial steps if money decisions remain open.
 Apply the [milestone delivery and verification rules](03-ui-business-logic.md).
+The user approved the design references and implemented representative design on
+2026-10-10; the [step 2B design pause](02b-ux-ui-design.md) is lifted. This is the
+next slice. The image policy and recovery decisions below remain unresolved;
+prototype image controls do not settle them.
 
 ## Outcome
 

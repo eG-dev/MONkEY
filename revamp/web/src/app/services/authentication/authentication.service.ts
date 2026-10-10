@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, makeStateKey, REQUEST_CONTEXT, signal, TransferState } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
 
@@ -13,6 +13,8 @@ export class AuthenticationService {
   private readonly context = inject(REQUEST_CONTEXT, { optional: true }) as { session?: SessionUser | null } | null;
 
   readonly user = signal<SessionUser | null>(null);
+  readonly expired = signal(false);
+  readonly notice = signal('');
 
   initialize(): void {
     if (this.transfer.hasKey(sessionKey)) {
@@ -31,6 +33,10 @@ export class AuthenticationService {
   }
 
   clearSession(): void {
+    if (this.user()) {
+      this.expired.set(true);
+    }
+
     this.user.set(null);
 
     if (this.context) {
@@ -41,6 +47,28 @@ export class AuthenticationService {
   async logout(): Promise<void> {
     await this.write('POST', '/api/auth/logout', {});
     this.user.set(null);
+  }
+
+  errorKey(failure: unknown): string {
+    if (failure instanceof HttpErrorResponse && failure.status === 401) {
+      this.clearSession();
+    }
+
+    const codes = ['invalid_user', 'invalid_password', 'last_manager', 'csrf_invalid', 'invalid_language', 'invalid_theme', 'not_found'];
+    const payload: unknown = failure instanceof HttpErrorResponse ? failure.error : null;
+    const code = typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>)['code'] : null;
+    const key =
+      typeof code === 'string' && codes.includes(code)
+        ? code
+        : failure instanceof HttpErrorResponse && failure.status === 401
+          ? 'unauthorized'
+          : failure instanceof HttpErrorResponse && failure.status === 403
+            ? 'forbidden'
+            : failure instanceof HttpErrorResponse && failure.status === 429
+              ? 'throttled'
+              : 'unavailable';
+
+    return `auth.errors.${key}`;
   }
 
   async write<T = void>(method: 'POST' | 'PUT', url: string, body: object): Promise<T> {

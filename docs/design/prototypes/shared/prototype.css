@@ -27,8 +27,10 @@ h1, h2, h3, p { margin: 0; }
 .navigation a[aria-current="page"] { color: var(--text-selected); background: var(--surface-selected); border-inline-start-color: var(--indicator-selected); font-weight: var(--weight-medium); }
 .navigation .administration { margin-top: auto; }
 .application-info { display: flex; flex-direction: column; flex-shrink: 0; padding: 12px 24px; border-top: 1px solid var(--border-default); background: var(--surface-sunken); }
+.application-info .repository-link { margin-top: var(--space-3); }
 .application-name { font-weight: var(--weight-medium); }
 .application-version { font: var(--type-caption); color: var(--text-muted); }
+.repository-link { display: inline-flex; align-items: center; gap: var(--space-2); font: var(--type-caption); color: var(--text-muted); }
 .workspace { grid-column: 2; grid-row: 2; min-height: 0; min-width: 0; overflow: auto; padding: var(--space-7); }
 .content { max-width: var(--content-max-width); margin-inline: auto; }
 .backdrop { position: fixed; inset: var(--header-height) 0 0; background: var(--surface-overlay); z-index: calc(var(--z-nav) - 1); }
@@ -47,7 +49,10 @@ h1, h2, h3, p { margin: 0; }
 /* ---------- Common components ---------- */
 .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-bottom: var(--space-7); }
 .page-title { font: var(--type-h1); }
-.back-link { display: inline-flex; align-items: center; gap: 4px; margin-bottom: var(--space-3); font: var(--type-label); }
+.back-link { display: inline-flex; align-items: center; gap: 4px; margin-bottom: var(--space-3); }
+.back-link, .page-header > a, .empty > a, .message-body > a { font: var(--type-body-lg); text-decoration: none; }
+.name-cell > a { font: var(--type-body-lg); text-decoration: underline; }
+.page-header > a { display: inline-flex; align-items: center; gap: var(--space-2); }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--control-md); padding: 0 16px; border: 1px solid transparent; border-radius: var(--radius-sm); font: var(--type-label); font-size: var(--fs-14); text-decoration: none; white-space: nowrap; }
 .button .icon { width: 18px; height: 18px; }
 .button-primary { background: var(--action-primary); color: var(--action-primary-text); }

@@ -70,6 +70,28 @@ public static class AuthenticationEndpoints
                     : EndpointErrors.ToResult(UserAdministrationError.InvalidUser);
             })
             .RequireAuthorization("ReadyUser");
+
+        auth.MapPut("/theme", async Task<IResult> (
+            ThemeRequest request,
+            ClaimsPrincipal principal,
+            UserManager<ApplicationUser> users,
+            CancellationToken cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (request.Theme is not ("system" or "light" or "dark"))
+                {
+                    return EndpointErrors.ToResult(UserAdministrationError.InvalidTheme);
+                }
+
+                var user = (await users.GetUserAsync(principal))!;
+                user.Theme = request.Theme;
+
+                return (await users.UpdateAsync(user)).Succeeded
+                    ? TypedResults.NoContent()
+                    : EndpointErrors.ToResult(UserAdministrationError.InvalidUser);
+            })
+            .RequireAuthorization("ReadyUser");
     }
 
     private static async Task<IResult> LoginAsync(

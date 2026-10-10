@@ -1,7 +1,10 @@
 import { test, expect, docker } from '../fixtures';
 
 test('SSR languages stay isolated and explicit preference wins', async ({ request }) => {
-  const [german, english] = await Promise.all([request.get('/', { headers: { 'Accept-Language': 'de-DE' } }), request.get('/', { headers: { 'Accept-Language': 'en-GB' } })]);
+  const [german, english] = await Promise.all([
+    request.get('/', { headers: { 'Accept-Language': 'de-DE' } }),
+    request.get('/', { headers: { 'Accept-Language': 'en-GB' } }),
+  ]);
 
   expect(german.status()).toBe(200);
   expect(english.status()).toBe(200);
@@ -38,14 +41,16 @@ test('hydrated shell switches language, persists state, and uses local assets', 
 
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: 'POCKET MONkEY' })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'POCKET MONkEY' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('Bereit');
 
   const sample = await page.getByTestId('sample-id').textContent();
 
-  await page.getByRole('combobox', { name: 'Sprache' }).selectOption('en');
+  await page.getByRole('button', { name: 'English' }).click();
 
-  await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('Ready');
 
   await expect(page.getByTestId('sample-id')).toHaveText(sample!);
@@ -60,7 +65,8 @@ test('hydrated shell switches language, persists state, and uses local assets', 
   expect(
     await page.evaluate(async () => {
       await document.fonts.ready;
-      return [...document.fonts].some((font) => font.family === 'lucide' && font.status === 'loaded');
+      const families = [...document.fonts].filter((font) => font.status === 'loaded').map((font) => font.family.replaceAll('"', ''));
+      return ['lucide', 'Roboto'].every((family) => families.includes(family));
     }),
   ).toBe(true);
 
@@ -78,6 +84,8 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
   const file = await request.get('/api/foundation/file');
   const font = await request.get('/assets/lucide/lucide.woff2');
   const favicon = await request.get('/favicon.png');
+  const roboto = await request.get('/fonts/roboto/Roboto-Regular.woff2');
+  const logo = await request.get('/images/monkey.png');
 
   expect(missing.status()).toBe(404);
   expect(write.status()).toBe(404);
@@ -85,6 +93,12 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
   expect(await file.text()).toBe('POCKET MONkEY foundation file\n');
 
   expect(font.status()).toBe(200);
+
+  expect(roboto.status()).toBe(200);
+  expect((await roboto.body()).subarray(0, 4).toString('latin1')).toBe('wOF2');
+
+  expect(logo.status()).toBe(200);
+  expect(logo.headers()['content-type']).toContain('image/png');
 
   expect(favicon.status()).toBe(200);
   expect(favicon.headers()['content-type']).toContain('image/png');

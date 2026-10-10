@@ -6,13 +6,15 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import { AccountsService } from '../../services/accounts/accounts.service';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { LanguageService } from '../../services/language/language.service';
 import { SharedAccount } from '../../models/accounts/shared-account';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
-import { LanguageService } from '../../services/language/language.service';
+import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
+import { ModalDialog } from '../modal-dialog/modal-dialog';
 
 @Component({
   selector: 'app-accounts',
-  imports: [FormsModule, RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe],
+  imports: [FormsModule, RouterLink, TuiButton, TranslocoDirective, CurrencyAmountPipe, AmountTonePipe, ModalDialog],
   templateUrl: './accounts.html',
   styleUrl: './accounts.scss',
 })
@@ -26,8 +28,10 @@ export class Accounts {
   protected readonly loading = signal(false);
   protected readonly busy = signal(false);
   protected readonly interactive = signal(false);
-  protected readonly creating = signal(false);
   protected readonly error = signal('');
+  protected readonly dialogError = signal('');
+  protected readonly editing = signal<'new' | null>(null);
+  protected readonly saved = signal('');
 
   protected name = '';
 
@@ -35,9 +39,9 @@ export class Accounts {
     const initial = this.service.consume('/accounts');
 
     if (initial) {
-      this.accounts.set(initial.accounts);
+      this.accounts.set(this.sorted(initial.accounts));
       this.error.set(initial.error);
-    } else if (this.auth.user() && !this.auth.user()?.mustChangePassword) {
+    } else if (this.auth.user()?.role === 'Manager') {
       void this.load();
     }
 
@@ -49,7 +53,7 @@ export class Accounts {
     this.error.set('');
 
     try {
-      this.accounts.set(await this.service.list());
+      this.accounts.set(this.sorted(await this.service.list()));
     } catch (failure: unknown) {
       this.accounts.set([]);
       this.error.set(this.service.errorKey(failure));
@@ -58,35 +62,46 @@ export class Accounts {
     }
   }
 
-  protected cancel(): void {
-    this.creating.set(false);
+  protected open(account: 'new'): void {
     this.name = '';
-    this.error.set('');
+    this.dialogError.set('');
+    this.saved.set('');
+    this.editing.set(account);
   }
 
-  protected async create(): Promise<void> {
-    if (this.busy() || !this.interactive()) {
+  protected close(): void {
+    this.editing.set(null);
+  }
+
+  protected async save(): Promise<void> {
+    const target = this.editing();
+    const name = this.name.trim();
+
+    if (!target || this.busy() || !this.interactive()) {
       return;
     }
 
-    const name = this.name.trim();
-
     if (!name || name.length > 40) {
-      this.error.set('accounts.errors.invalid_account_name');
+      this.dialogError.set('accounts.errors.invalid_account_name');
       return;
     }
 
     this.busy.set(true);
-    this.error.set('');
+    this.dialogError.set('');
 
     try {
       const account = await this.service.create(name);
 
+      this.editing.set(null);
       await this.router.navigate(['/accounts', account.id]);
     } catch (failure: unknown) {
-      this.error.set(this.service.errorKey(failure));
+      this.dialogError.set(this.service.errorKey(failure));
     } finally {
       this.busy.set(false);
     }
+  }
+
+  private sorted(accounts: SharedAccount[]): SharedAccount[] {
+    return [...accounts].sort((first, second) => first.name.localeCompare(second.name, this.language.locale()));
   }
 }

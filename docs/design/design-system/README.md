@@ -1,9 +1,10 @@
 # POCKET MONkEY Design System
 
-Status: Draft for the [phase 2B design review](../../../plans/migration/02b-ux-ui-design.md).
+Status: Approved by the user on 2026-10-10 in the [phase 2B design review](../../../plans/migration/02b-ux-ui-design.md).
 The structure was adapted from an earlier product's design system; colors,
-typography, and the application shell are specific to POCKET MONkEY. Nothing here
-is approved or implemented in the [Angular application](../../../revamp/web/) yet.
+typography, and the application shell are specific to POCKET MONkEY. The current
+foundations and representative [Angular screens](../../../revamp/web/) are accepted.
+Design approval does not certify outstanding accessibility or technical checks.
 
 POCKET MONkEY manages household pocket-money accounts on a shared instance.
 Managers maintain accounts and record transactions; Members view all accounts.

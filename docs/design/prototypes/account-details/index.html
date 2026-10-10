@@ -7,7 +7,11 @@
   <link rel="stylesheet" href="../../design-system/styles.css">
   <link rel="stylesheet" href="../shared/prototype.css">
   <style>
+    .back-link { margin-bottom: var(--space-7); }
     .details-head { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-7); }
+    .details-head > .page-title { min-width: 0; overflow-wrap: anywhere; }
+    .details-head > .avatar, .details-head > button { flex-shrink: 0; }
+    .details-head > .view-actions { margin-inline-start: auto; }
     .avatar-button { position: relative; padding: 0; border: 0; border-radius: 50%; background: none; }
     .avatar-button:hover .avatar { outline: 2px solid var(--border-strong); }
     .avatar-badge { position: absolute; inset-inline-end: -2px; inset-block-end: -2px; display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid var(--border-default); border-radius: 50%; background: var(--surface-raised); color: var(--icon-default); }
@@ -86,7 +90,7 @@
       const balance = PM.balance(account);
       const money = PM.money(balance);
       view.innerHTML = `${back()}
-        <div class="details-head">${PM.isManager() ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1></div>
+        <div class="details-head">${PM.isManager() ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1>${PM.isManager() ? `<button class="icon-button" type="button" id="edit-name" aria-label="${PM.esc(PM.t('editNamed', { name: account.name }))}" title="${PM.esc(PM.t('editNamed', { name: account.name }))}">${PM.icon('pencil')}</button>` : ''}<button class="icon-button view-actions" type="button" id="refresh-view" aria-label="${PM.esc(PM.t('refresh'))}" title="${PM.esc(PM.t('refresh'))}">${PM.icon('refresh')}</button></div>
         <div class="layout">
           <div class="side">
             <section class="panel" aria-labelledby="balance-label"><div class="label" id="balance-label">${PM.esc(PM.t('balance'))}</div><div class="balance ${money.cls}">${PM.esc(money.text)}</div></section>
@@ -96,6 +100,44 @@
           <section class="panel" aria-labelledby="history-title"><h2 class="panel-title" id="history-title">${PM.esc(PM.t('transactions'))}</h2>${history(account)}</section>
         </div>`;
       bind(account, balance);
+      document.getElementById('edit-name')?.addEventListener('click', () => renameAccount(account));
+      document.getElementById('refresh-view').addEventListener('click', render);
+    }
+
+    function renameAccount(account) {
+      const editor = PM.dialog({
+        title: PM.t('editNamed', { name: account.name }),
+        body: `<form class="form" id="rename-form"><div class="field"><label for="account-name">${PM.esc(PM.t('name'))}</label><input class="input" id="account-name" maxlength="40" value="${PM.esc(account.name)}"><span class="hint">${PM.esc(PM.t('nameHint'))}</span></div></form>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="rename-form">${PM.esc(PM.t('save'))}</button>`
+      });
+      const input = editor.querySelector('#account-name');
+      const save = editor.querySelector('[type="submit"]');
+      editor.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const name = input.value.trim();
+        const taken = PM.data.accounts.some(item => item.id !== account.id && item.name.toLowerCase() === name.toLowerCase());
+
+        if (!PM.fieldError(input, !name || name.length > 40 ? PM.t('nameInvalid') : taken ? PM.t('nameTaken') : '')) {
+          return;
+        }
+
+        save.disabled = true;
+        input.disabled = true;
+        editor.querySelector('.message')?.remove();
+
+        try {
+          await PM.request();
+          account.name = name;
+          PM.saveData();
+          editor.close();
+          render();
+          PM.toast(PM.t('nameSaved', { name }));
+        } catch {
+          editor.querySelector('.dialog-body').insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.esc(PM.t('saveFailed'))}</div>`);
+          save.disabled = false;
+          input.disabled = false;
+        }
+      });
     }
 
     function allowancePanel(account) {
@@ -365,12 +407,14 @@
     }
 
     PM.init({
-      active: 'overview',
+      active: 'accounts',
       title: 'accountDetails',
       states: ['normal', 'loading', 'error'],
       render,
       strings: {
         en: {
+          refresh: 'Refresh',
+          name: 'Name', editNamed: 'Edit {name}', nameHint: '1–40 characters, unique', nameInvalid: 'Enter a name with 1–40 characters.', nameTaken: 'An account with this name already exists.', nameSaved: 'Account {name} saved.',
           accountDetails: 'Account details', changeImage: 'Change image of {name}', accountImage: 'Account image', upload: 'Upload image', removeImage: 'Remove image', imageHint: 'PNG, JPEG, or WebP. Without an image, the first letter of the name is shown.', imageSaved: 'Image of {name} saved.', balance: 'Balance', loadFailed: 'The account could not be loaded.', notFound: 'This account does not exist.',
           monthlyAllowance: 'Monthly allowance', noAllowance: 'No monthly allowance', perMonth: '{amount} per month', creditedOn: 'Credited this month on {date}', nextOn: 'Next credit on {date}',
           creditFailed: 'This month\'s credit failed. It is retried automatically; no money was booked twice.', setAllowance: 'Set allowance', allowanceEnabled: 'Monthly allowance', amountPerMonth: 'Amount per month',
@@ -385,6 +429,8 @@
           transactions: 'Transactions', commentHeader: 'Comment', allowanceComment: 'Monthly allowance', noTransactions: 'No transactions yet', date: 'Date', postedBy: 'Posted by', pages: 'Transaction pages', previous: 'Previous', next: 'Next', pageOf: 'Page {page} of {pages}'
         },
         de: {
+          refresh: 'Aktualisieren',
+          name: 'Name', editNamed: '{name} bearbeiten', nameHint: '1–40 Zeichen, eindeutig', nameInvalid: 'Einen Namen mit 1–40 Zeichen eingeben.', nameTaken: 'Ein Konto mit diesem Namen existiert bereits.', nameSaved: 'Konto {name} gespeichert.',
           accountDetails: 'Kontodetails', changeImage: 'Bild von {name} ändern', accountImage: 'Kontobild', upload: 'Bild hochladen', removeImage: 'Bild entfernen', imageHint: 'PNG, JPEG oder WebP. Ohne Bild wird der erste Buchstabe des Namens angezeigt.', imageSaved: 'Bild von {name} gespeichert.', balance: 'Kontostand', loadFailed: 'Das Konto konnte nicht geladen werden.', notFound: 'Dieses Konto existiert nicht.',
           monthlyAllowance: 'Monatliches Taschengeld', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} pro Monat', creditedOn: 'Diesen Monat gutgeschrieben am {date}', nextOn: 'Nächste Gutschrift am {date}',
           creditFailed: 'Die Gutschrift für diesen Monat ist fehlgeschlagen. Sie wird automatisch wiederholt; es wurde nichts doppelt gebucht.', setAllowance: 'Taschengeld festlegen', allowanceEnabled: 'Monatliches Taschengeld', amountPerMonth: 'Betrag pro Monat',

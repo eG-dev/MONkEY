@@ -1,0 +1,18 @@
+<dialog #dialog class="dialog" [attr.aria-labelledby]="titleId" (cancel)="cancel($event)" (close)="onClose()" *transloco="let t">
+  <div class="dialog-header">
+    <h2 class="dialog-title" [id]="titleId">{{ heading() }}</h2>
+    @if (dismissible()) {
+      <button tuiButton appearance="flat" size="s" type="button" [attr.aria-label]="t('close')" [title]="t('close')" (click)="close()">
+        <span class="icon icon-x" aria-hidden="true"></span>
+      </button>
+    }
+  </div>
+  @if (open()) {
+    <div class="dialog-body">
+      <ng-content />
+    </div>
+    <div class="dialog-footer actions">
+      <ng-content select="[dialog-actions]" />
+    </div>
+  }
+</dialog>

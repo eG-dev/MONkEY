@@ -44,7 +44,7 @@
 
     function render() {
       const manager = PM.isManager();
-      const header = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('overview'))}</h1>${manager ? `<a href="../accounts/index.html"><span class="manage-long">${PM.esc(PM.t('manageAccounts'))}</span><span class="manage-short">${PM.esc(PM.t('manage'))}</span> →</a>` : ''}</div>`;
+      const header = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('overview'))}</h1>${manager ? `<a href="../accounts/index.html"><span class="manage-long">${PM.esc(PM.t('manageAccounts'))}</span><span class="manage-short">${PM.esc(PM.t('manage'))}</span>${PM.icon('forward')}</a>` : ''}</div>`;
       const state = PM.prefs.viewState;
 
       if (state === 'loading') {

@@ -2,17 +2,37 @@
 
 Store editable draw.io sources and synchronized PNG previews here for
 [step 2B: product UX and UI design](../../plans/migration/02b-ux-ui-design.md).
-The wireframes below were approved on 2026-10-10; the visual foundations in the
-design system are still a draft.
+The user approved the current wireframes, click prototypes, visual foundations,
+and implemented representative design on 2026-10-10, including all subsequent
+refinements recorded below. Approval applies to the current working-tree revision;
+later design changes require renewed review. It does not settle future business
+policies or certify unperformed technical checks.
+
+The navigation/account-name link styling in the click prototypes was updated on
+2026-10-10 and is approved. Navigation
+text links are larger and not underlined; account-name links remain underlined
+with the same larger type.
+
+The Accounts and account-details layouts are approved: account
+renaming is available only through the Manager pencil beside the account-details
+heading. Lists have no rename control; their trailing chevron opens details.
+View-level actions such as refresh align at the right edge of the view header;
+contextual actions stay beside their target. See the shared
+[view-header guidance](design-system/components.md#view-headers).
 
 ## Reference inventory
+
+Login and app-shell footer updates are approved: show the build version and a
+GitHub icon/label. The repository link is an unavailable placeholder pending the
+future repository URL; it must not point to the current repository. The login
+footer sits at the bottom and flows below tall content on small screens.
 
 | Reference | Scope |
 | --- | --- |
 | App shell | Shared navigation, identity/role controls, content boundaries, and responsive structure, without specific view content |
 | Accounts overview | Application home/landing view with accounts and balances; no separate marketing page |
-| Account management | Dedicated **Accounts** navigation entry: Manager account creation/editing and image controls |
-| Account details | Balance, opening state, transactions/history, deposit/withdrawal forms, and monthly allowance configuration/status |
+| Account management | Dedicated **Accounts** navigation entry: Manager account creation and navigation; no existing-account name editing |
+| Account details | Manager rename beside the heading, image controls, balance, opening state, transactions/history, deposit/withdrawal forms, and monthly allowance configuration/status |
 | Settings | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration |
 | User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection |
 | Login | Sign-in, forced-password change, and session-expiry states |
@@ -38,13 +58,13 @@ wireframe first, then a detailed click prototype.
 
 | Reference | Files | Status | Click prototype |
 | --- | --- | --- | --- |
-| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Approved 2026-10-10 | [Shell](prototypes/application-shell/index.html) |
+| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Approved 2026-10-10, including footer refinements | [Shell](prototypes/application-shell/index.html) |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10 | [Accounts](prototypes/accounts/index.html) |
-| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Approved 2026-10-10 | [Account details](prototypes/account-details/index.html) |
+| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Approved 2026-10-10, including rename, refresh, spacing and navigation refinements | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
-| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved 2026-10-10 | [Login](prototypes/login/index.html) |
+| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved 2026-10-10, including version/GitHub footer | [Login](prototypes/login/index.html) |
 
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).
@@ -61,5 +81,6 @@ Approved references guide implementation but do not override ADRs, backend
 security, exact money rules, or real-stack verification. Resolve policy conflicts
 before implementation rather than inferring decisions from diagrams.
 
-Remaining phase 3 feature work waits for the
-[phase 2B acceptance gate](../../plans/migration/02b-ux-ui-design.md#acceptance-gate).
+The user accepted the representative design on 2026-10-10; the phase 2B design
+pause is lifted. Next is [account images](../../plans/migration/03d-account-images.md),
+subject to its separate policy and verification prerequisites.

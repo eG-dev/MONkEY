@@ -6,9 +6,11 @@ import {
   expect,
   bootstrapManager,
   credentials,
+  createUser,
   csrfWrite,
   login,
   operator,
+  signIn,
   docker,
   containerOrigin,
   waitReady,
@@ -85,32 +87,41 @@ test('sessions have eight-hour absolute expiry and expired tickets are rejected 
   expect(expired.status()).toBe(401);
 });
 
-test('manager browser login, language preference and logout survive SSR', async ({ page, instance }) => {
+test('manager browser login, language and theme preferences, and logout survive SSR', async ({ page, instance }) => {
   const manager = bootstrapManager(instance);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
-  await page.goto('/');
-  await page.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(manager.username);
-  await page.getByLabel('Passwort', { exact: true }).fill(manager.password);
-  await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
+  await signIn(page, manager);
 
-  await expect(page.getByRole('heading', { name: manager.username, exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Benutzer', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: `${manager.username}, Manager`, exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Profil', exact: true }).click();
+
+  await expect(page.getByRole('heading', { name: 'Verwaltung', exact: true })).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Dunkler Modus', exact: true })).toHaveAttribute('aria-checked', 'false');
+
+  await page.getByRole('switch', { name: 'Dunkler Modus', exact: true }).click();
+
+  await expect(page.locator('html')).toHaveAttribute('tuiTheme', 'dark');
 
   await page.getByRole('combobox', { name: 'Sprache', exact: true }).selectOption('en');
 
-  await expect(page.getByRole('heading', { name: 'Users', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
 
   await page.reload();
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('html')).toHaveAttribute('tuiTheme', 'dark');
+  await expect(page.getByRole('switch', { name: 'Dark mode', exact: true })).toHaveAttribute('aria-checked', 'true');
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
   await page.screenshot({ path: test.info().outputPath('authenticated.png'), fullPage: true });
 
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await page.getByRole('button', { name: `${manager.username}, Manager`, exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click();
 
   await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
 
@@ -119,69 +130,94 @@ test('manager browser login, language preference and logout survive SSR', async 
 
 test('manager browser creates a user and temporary password requires change', async ({ page, browser, instance }) => {
   const manager = bootstrapManager(instance);
-  const member = credentials('member');
   const permanent = credentials('member');
 
-  await page.goto('/');
-  await page.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(manager.username);
-  await page.getByLabel('Passwort', { exact: true }).fill(manager.password);
-  await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
+  await signIn(page, manager);
 
-  await expect(page.getByRole('heading', { name: 'Benutzer', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
 
-  await page.locator('summary').filter({ hasText: 'Benutzer anlegen' }).click();
-  await page.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(member.username);
-  await page.getByRole('textbox', { name: 'Anzeigename', exact: true }).fill('Member display');
-  await page.getByLabel('Vorläufiges Passwort', { exact: true }).fill(member.password);
+  await page.goto('/administration/users');
+
+  await expect(page.getByRole('link', { name: 'Benutzer', exact: true })).toHaveAttribute('aria-current', 'page');
+
   await page.getByRole('button', { name: 'Benutzer anlegen', exact: true }).click();
 
-  await expect(page.getByText('Member display', { exact: true })).toBeVisible();
+  const createDialog = page.getByRole('dialog', { name: 'Benutzer anlegen' });
+
+  await createDialog.getByRole('textbox', { name: 'Benutzername', exact: true }).fill('member');
+  await createDialog.getByRole('textbox', { name: 'Anzeigename', exact: true }).fill('Member display');
+  await createDialog.getByRole('button', { name: 'Benutzer anlegen', exact: true }).click();
+
+  const passwordDialog = page.getByRole('dialog', { name: 'Vorläufiges Passwort' });
+
+  await expect(passwordDialog.getByTestId('temporary-password')).toHaveText(/^[A-Za-z2-9]{4}(-[A-Za-z2-9]{4}){3}$/);
+
+  const created = (await passwordDialog.getByTestId('temporary-password').textContent())!;
+
+  await passwordDialog.getByRole('button', { name: 'Fertig', exact: true }).click();
+
+  await expect(passwordDialog).toHaveCount(0);
+  await expect(page.getByTestId('user-row').filter({ hasText: 'Member display' })).toContainText('Passwortänderung erforderlich');
 
   await page.getByRole('button', { name: 'member bearbeiten', exact: true }).click();
-  await page.getByRole('checkbox', { name: 'Aktiv', exact: true }).uncheck();
-  await page.getByRole('button', { name: 'Speichern', exact: true }).click();
 
-  await expect(page.getByText('Deaktiviert', { exact: true })).toBeVisible();
+  const editDialog = page.getByRole('dialog', { name: 'member bearbeiten' });
 
-  await page.getByRole('checkbox', { name: 'Aktiv', exact: true }).check();
-  await page.getByRole('button', { name: 'Speichern', exact: true }).click();
+  await editDialog.getByRole('switch', { name: 'Aktiv', exact: true }).click();
+  await editDialog.getByRole('button', { name: 'Speichern', exact: true }).click();
 
-  await expect(page.getByText('Deaktiviert', { exact: true })).toHaveCount(0);
+  await expect(page.getByTestId('user-row').filter({ hasText: 'Member display' })).toContainText('Deaktiviert');
 
-  const resetForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Passwort zurücksetzen', exact: true }) });
+  await page.getByRole('button', { name: 'member bearbeiten', exact: true }).click();
+  await editDialog.getByRole('switch', { name: 'Aktiv', exact: true }).click();
+  await editDialog.getByRole('button', { name: 'Speichern', exact: true }).click();
 
-  await resetForm.getByLabel('Vorläufiges Passwort', { exact: true }).fill(member.password);
+  await expect(page.getByTestId('user-row').filter({ hasText: 'Member display' })).not.toContainText('Deaktiviert');
+
+  await page.getByRole('button', { name: 'Passwort für member zurücksetzen', exact: true }).click();
+
   const resetResponse = page.waitForResponse((response) => /\/api\/users\/[\w-]+\/password$/.test(new URL(response.url()).pathname));
-  await page.getByRole('button', { name: 'Passwort zurücksetzen', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'Passwort für member zurücksetzen' })
+    .getByRole('button', { name: 'Passwort zurücksetzen', exact: true })
+    .click();
 
-  expect((await resetResponse).status()).toBe(204);
-  await expect(page.getByText('Gespeichert', { exact: true })).toBeVisible();
+  expect((await resetResponse).status()).toBe(200);
+  await expect(passwordDialog.getByTestId('temporary-password')).not.toHaveText(created);
+
+  const temporary = { username: 'member', password: (await passwordDialog.getByTestId('temporary-password').textContent())! };
+
+  await passwordDialog.getByRole('button', { name: 'Fertig', exact: true }).click();
 
   const context = await browser.newContext({ ...test.info().project.use, baseURL: instance.origin, ignoreHTTPSErrors: true });
 
   try {
     const memberPage = await context.newPage();
 
-    await memberPage.goto('/');
-    await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(member.username);
-    await memberPage.getByLabel('Passwort', { exact: true }).fill(member.password);
-    await memberPage.getByRole('button', { name: 'Anmelden', exact: true }).click();
+    await signIn(memberPage, { username: 'member', password: created });
 
-    await expect(memberPage.getByRole('heading', { name: 'Member display', exact: true })).toBeVisible();
+    await expect(memberPage.getByRole('alert')).toHaveText('Benutzername oder Passwort ist falsch.');
 
-    await memberPage.getByLabel('Aktuelles Passwort', { exact: true }).fill(member.password);
+    await signIn(memberPage, temporary);
+
+    await expect(memberPage.getByRole('heading', { name: 'Neues Passwort wählen', exact: true })).toBeVisible();
+
+    await memberPage.getByLabel('Aktuelles Passwort', { exact: true }).fill(temporary.password);
     await memberPage.getByLabel('Neues Passwort', { exact: true }).fill(permanent.password);
     await memberPage.getByRole('button', { name: 'Passwort ändern', exact: true }).click();
 
     await expect(memberPage.getByText('Passwort geändert. Bitte erneut anmelden.', { exact: true })).toBeVisible();
 
-    await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill(member.username);
+    await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill('member');
     await memberPage.getByLabel('Passwort', { exact: true }).fill(permanent.password);
     await memberPage.getByRole('button', { name: 'Anmelden', exact: true }).click();
 
-    await expect(memberPage.getByRole('heading', { name: 'Member display', exact: true })).toBeVisible();
+    await expect(memberPage.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
 
-    await expect(memberPage.getByRole('heading', { name: 'Benutzer', exact: true })).toHaveCount(0);
+    await memberPage.goto('/administration/users');
+
+    await expect(memberPage.getByText('Nur Manager können Benutzer verwalten.', { exact: true })).toBeVisible();
+    await expect(memberPage.getByRole('button', { name: 'Benutzer anlegen', exact: true })).toHaveCount(0);
   } finally {
     await context.close();
   }
@@ -288,18 +324,18 @@ test('user-administration errors keep stable API codes and statuses @api', async
       code: 'invalid_password',
     },
     {
-      method: 'POST',
-      path: `/api/users/${profile.id}/password`,
-      data: { password: 'short' },
-      status: 400,
-      code: 'invalid_password',
-    },
-    {
       method: 'PUT',
       path: '/api/auth/language',
       data: { language: 'fr' },
       status: 400,
       code: 'invalid_language',
+    },
+    {
+      method: 'PUT',
+      path: '/api/auth/theme',
+      data: { theme: 'blue' },
+      status: 400,
+      code: 'invalid_theme',
     },
     {
       method: 'PUT',
@@ -311,7 +347,7 @@ test('user-administration errors keep stable API codes and statuses @api', async
     {
       method: 'POST',
       path: '/api/users/missing/password',
-      data: { password: credentials('missing').password },
+      data: {},
       status: 404,
       code: 'not_found',
     },
@@ -334,12 +370,39 @@ test('user-administration errors keep stable API codes and statuses @api', async
   }
 
   const defaultRole = await csrfWrite(request, 'POST', '/api/users', {
-    ...credentials('default-role'),
+    username: 'default-role',
     displayName: 'Default role',
   });
 
   expect(defaultRole.status()).toBe(201);
-  expect((await defaultRole.json()).role).toBe('Member');
+  expect((await defaultRole.json()).user.role).toBe('Member');
+
+  const suppliedPassword = credentials('supplied-password');
+  const ignored = await csrfWrite(request, 'POST', '/api/users', { ...suppliedPassword, displayName: 'Supplied password' });
+  const generated = (await ignored.json()).temporaryPassword;
+
+  expect(ignored.status()).toBe(201);
+  expect(generated).not.toBe(suppliedPassword.password);
+  expect((await csrfWrite(request, 'POST', '/api/auth/login', suppliedPassword)).status()).toBe(401);
+});
+
+test('theme preference persists in the session and SSR document @api', async ({ request, instance }) => {
+  const manager = bootstrapManager(instance);
+
+  expect((await login(request, manager)).theme).toBe('system');
+  expect(await (await request.get('/')).text()).toContain('data-theme-preference="system"');
+
+  const dark = await csrfWrite(request, 'PUT', '/api/auth/theme', { theme: 'dark' });
+
+  expect(dark.status()).toBe(204);
+  expect((await (await request.get('/api/auth/me')).json()).theme).toBe('dark');
+
+  const html = await (await request.get('/')).text();
+
+  expect(html).toContain('data-theme-preference="dark"');
+  expect(html).toMatch(/<html[^>]*tuiTheme="dark"/i);
+
+  expect((await csrfWrite(request, 'PUT', '/api/auth/theme', { theme: null })).status()).toBe(400);
 });
 
 test('member permissions and concurrent SSR identity stay isolated @api', async ({ request, playwright, instance }) => {
@@ -347,11 +410,7 @@ test('member permissions and concurrent SSR identity stay isolated @api', async 
 
   const managerProfile = await login(request, manager);
 
-  const member = credentials('member');
-
-  const created = await csrfWrite(request, 'POST', '/api/users', { ...member, displayName: 'Member display', role: 'Member' });
-
-  expect(created.status()).toBe(201);
+  const { account: member } = await createUser(request, 'member', 'Member display', 'Member');
 
   const memberContext = await playwright.request.newContext({ baseURL: instance.origin, ignoreHTTPSErrors: true });
 
@@ -413,10 +472,7 @@ test('disablement role changes and password reset revoke sessions @api', async (
 
   await login(request, manager);
 
-  const account = credentials('second');
-
-  const created = await csrfWrite(request, 'POST', '/api/users', { ...account, displayName: 'Second manager', role: 'Manager' });
-  const profile = await created.json();
+  const { profile, account } = await createUser(request, 'second', 'Second manager', 'Manager');
 
   const other = await playwright.request.newContext({ baseURL: instance.origin, ignoreHTTPSErrors: true });
 
@@ -470,11 +526,11 @@ test('disablement role changes and password reset revoke sessions @api', async (
 
     await login(other, permanent);
 
-    const reset = credentials('second');
+    const passwordReset = await csrfWrite(request, 'POST', `/api/users/${profile.id}/password`, {});
+    const reset = { username: account.username, password: (await passwordReset.json()).temporaryPassword };
 
-    const passwordReset = await csrfWrite(request, 'POST', `/api/users/${profile.id}/password`, { password: reset.password });
-
-    expect(passwordReset.status()).toBe(204);
+    expect(passwordReset.status()).toBe(200);
+    expect(reset.password).toMatch(/^[A-Za-z2-9]{4}(-[A-Za-z2-9]{4}){3}$/);
     expect((await other.get('/api/auth/me')).status()).toBe(401);
 
     expect((await login(other, reset)).mustChangePassword).toBe(true);
@@ -488,10 +544,7 @@ test('concurrent demotions preserve the last active manager @api', async ({ requ
 
   const first = await login(request, manager);
 
-  const account = credentials('second');
-
-  const created = await csrfWrite(request, 'POST', '/api/users', { ...account, displayName: 'Second manager', role: 'Manager' });
-  const second = await created.json();
+  const { profile: second, account } = await createUser(request, 'second', 'Second manager', 'Manager');
 
   const other = await playwright.request.newContext({ baseURL: instance.origin, ignoreHTTPSErrors: true });
 

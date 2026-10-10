@@ -1,0 +1,74 @@
+<div class="shell" *transloco="let t" [class.wide]="wide()" [class.compact]="!wide()" [class.navigation-hidden]="!navigationVisible()">
+  <header class="header">
+    <button
+      class="header-button"
+      id="navigation-toggle"
+      type="button"
+      aria-controls="primary-navigation"
+      [attr.aria-expanded]="navigationVisible()"
+      [attr.aria-label]="t(navigationVisible() ? 'shell.hideNavigation' : 'shell.showNavigation')"
+      [title]="t(navigationVisible() ? 'shell.hideNavigation' : 'shell.showNavigation')"
+      (click)="toggleNavigation()"
+    >
+      <span class="icon icon-menu" aria-hidden="true"></span>
+    </button>
+    <a class="logo-link" routerLink="/"><img class="logo" src="/images/monkey.png" alt="POCKET MONkEY" width="177" height="32" /></a>
+    <span class="spacer"></span>
+    @if (auth.user(); as user) {
+      <button
+        class="header-button"
+        id="user-toggle"
+        type="button"
+        popovertarget="user-menu"
+        aria-haspopup="menu"
+        [attr.aria-label]="user.displayName + ', ' + t('auth.' + user.role)"
+        [title]="user.displayName + ', ' + t('auth.' + user.role)"
+      >
+        <span class="icon icon-circle-user" aria-hidden="true"></span>
+      </button>
+      <div class="user-menu" id="user-menu" #userMenu popover role="menu" [attr.aria-label]="t('shell.userMenu')">
+        <div class="menu-user">
+          <span class="menu-user-name">{{ user.displayName }}</span>
+          <span class="menu-user-role">{{ t('auth.' + user.role) }}</span>
+        </div>
+        <div class="menu-divider" role="separator"></div>
+        <a class="menu-item" role="menuitem" routerLink="/administration"><span class="icon icon-user" aria-hidden="true"></span>{{ t('shell.profile') }}</a>
+        <button class="menu-item" type="button" role="menuitemcheckbox" [attr.aria-checked]="theme.dark()" (click)="toggleDark()">
+          <span class="icon icon-moon" aria-hidden="true"></span>{{ t('shell.darkMode') }}<span class="switch" aria-hidden="true" [attr.aria-checked]="theme.dark()"></span>
+        </button>
+        <button class="menu-item" type="button" role="menuitem" (click)="logout()"><span class="icon icon-log-out" aria-hidden="true"></span>{{ t('auth.logout') }}</button>
+      </div>
+    }
+  </header>
+
+  @if (!wide() && drawerOpen()) {
+    <div class="backdrop" (click)="toggleNavigation()"></div>
+  }
+
+  <aside class="drawer" id="primary-navigation" [attr.aria-label]="t('shell.navigation')" [hidden]="!navigationVisible()">
+    <nav class="navigation" [attr.aria-label]="t('shell.mainNavigation')">
+      <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }"
+        ><span class="icon icon-layout-dashboard" aria-hidden="true"></span>{{ t('shell.overview') }}</a
+      >
+      @if (auth.user()?.role === 'Manager') {
+        <a routerLink="/accounts" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: false }"
+          ><span class="icon icon-wallet" aria-hidden="true"></span>{{ t('accounts.title') }}</a
+        >
+      }
+      <a class="administration" routerLink="/administration" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><span class="icon icon-wrench" aria-hidden="true"></span>{{ t('shell.administration') }}</a
+      >
+    </nav>
+    <div class="application-info">
+      <span class="application-name">POCKET MONkEY</span>
+      <span class="application-version">{{ t('shell.version', { version }) }}</span>
+      <span class="repository-link" role="link" aria-disabled="true"><span class="icon icon-github" aria-hidden="true"></span>GitHub</span>
+    </div>
+  </aside>
+
+  <main class="workspace" id="main">
+    <div class="content">
+      <ng-content />
+    </div>
+  </main>
+</div>

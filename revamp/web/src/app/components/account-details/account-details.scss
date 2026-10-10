@@ -1,1 +1,154 @@
-@use '../../styles/accounts';
+.back-link {
+  margin-bottom: var(--space-7);
+}
+
+.details-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+
+  > .page-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  > .avatar,
+  > button {
+    flex-shrink: 0;
+  }
+
+  > .view-actions {
+    margin-inline-start: auto;
+  }
+}
+
+.saved {
+  margin-bottom: var(--space-5);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 27.5rem) minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: start;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.side {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.balance {
+  font: var(--type-display);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  overflow-wrap: anywhere;
+
+  &.muted {
+    font: var(--type-h2);
+  }
+}
+
+.transaction-form {
+  &[data-mode='deposit'] .segments input:checked + span {
+    background: var(--action-deposit);
+    color: var(--action-deposit-text);
+  }
+
+  &[data-mode='withdrawal'] .segments input:checked + span {
+    background: var(--action-withdrawal);
+    color: var(--action-withdrawal-text);
+  }
+
+  &[data-mode='deposit'] .input-prefix {
+    color: var(--amount-positive);
+  }
+
+  &[data-mode='withdrawal'] .input-prefix {
+    color: var(--amount-negative);
+  }
+
+  .icon {
+    font-size: 1rem;
+  }
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.type {
+  white-space: nowrap;
+}
+
+.phone-only,
+.meta {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 599px) {
+  .history {
+    thead,
+    .type,
+    .by,
+    .date {
+      display: none;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    td {
+      border: 0;
+      padding: 0.125rem var(--space-2);
+    }
+
+    .comment {
+      grid-column: 1;
+      grid-row: 1;
+      font-weight: var(--weight-medium);
+    }
+
+    .numeric {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      align-self: center;
+    }
+
+    .meta {
+      display: block;
+      grid-column: 1;
+      grid-row: 2;
+      font: var(--type-caption);
+      color: var(--text-secondary);
+    }
+  }
+
+  .phone-only {
+    display: inline;
+  }
+
+  .wide-only {
+    display: none;
+  }
+}

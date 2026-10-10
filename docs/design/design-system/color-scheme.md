@@ -1,6 +1,6 @@
 # Color Scheme
 
-Status: Draft. Brand colors are sampled from the supplied
+Status: Approved by the user on 2026-10-10. Brand colors are sampled from the supplied
 [logo](../assets/images/monkey.png); everything else is derived. Values are
 defined in [colors.css](styles/colors.css). Calculated contrast ratios are token
 pairs, not rendered-state test results.

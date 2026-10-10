@@ -34,6 +34,7 @@ public sealed class UserAdministration
             DisplayName = user.DisplayName,
             Role = await users.IsInRoleAsync(user, UserRole.Manager.ToIdentityName()) ? UserRole.Manager : UserRole.Member,
             Language = user.Language,
+            Theme = user.Theme,
             MustChangePassword = user.MustChangePassword
         };
     }

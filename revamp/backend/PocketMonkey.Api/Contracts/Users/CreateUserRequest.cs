@@ -3,7 +3,7 @@ using PocketMonkey.Api.Entities;
 
 namespace PocketMonkey.Api.Contracts.Users;
 
-/// <summary>Manager-created user with a temporary password.</summary>
+/// <summary>Manager-created user. API callers receive a generated temporary password; only host operators supply one.</summary>
 public sealed record CreateUserRequest
 {
     public string Username { get; init; } = string.Empty;

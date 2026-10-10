@@ -1,0 +1,50 @@
+// Maps Taiga's variables onto the design tokens; loaded after the Taiga theme so these win in both themes.
+:root,
+:root[tuiTheme] {
+  --tui-typography-family-text: var(--font-sans);
+  --tui-typography-family-display: var(--font-sans);
+  --tui-background-base: var(--surface-app);
+  --tui-background-base-alt: var(--surface-panel);
+  --tui-background-elevation-1: var(--surface-raised);
+  --tui-background-elevation-2: var(--surface-raised);
+  --tui-background-elevation-3: var(--surface-raised);
+  --tui-background-accent-1: var(--action-primary);
+  --tui-background-accent-1-hover: var(--action-primary-hover);
+  --tui-background-accent-1-pressed: var(--action-primary-active);
+  --tui-text-primary-on-accent-1: var(--action-primary-text);
+  --tui-text-primary: var(--text-primary);
+  --tui-text-secondary: var(--text-secondary);
+  --tui-text-tertiary: var(--text-muted);
+  --tui-text-action: var(--text-link);
+  --tui-text-action-hover: var(--text-link-hover);
+  --tui-text-positive: var(--amount-positive);
+  --tui-text-negative: var(--amount-negative);
+  --tui-status-negative: var(--action-danger);
+  --tui-border-normal: var(--border-default);
+  --tui-border-hover: var(--border-strong);
+  --tui-border-focus: var(--border-focus);
+  --tui-radius-s: var(--radius-sm);
+  --tui-radius-m: var(--radius-sm);
+  --tui-radius-l: var(--radius-md);
+  --tui-height-m: var(--control-md);
+}
+
+[tuiAppearance][data-appearance='pm-deposit'],
+[tuiAppearance][data-appearance='pm-withdrawal'] {
+  --t-bg: var(--action-deposit);
+  --t-bg-hover: var(--action-deposit-hover);
+
+  background: var(--t-bg);
+  color: var(--action-deposit-text);
+
+  &:hover:not(:disabled) {
+    background: var(--t-bg-hover);
+  }
+}
+
+[tuiAppearance][data-appearance='pm-withdrawal'] {
+  --t-bg: var(--action-withdrawal);
+  --t-bg-hover: var(--action-withdrawal-hover);
+
+  color: var(--action-withdrawal-text);
+}

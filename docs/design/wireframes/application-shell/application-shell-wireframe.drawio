@@ -70,7 +70,7 @@
         <mxCell id="KcBmQutoUwz2jsDE7AvI-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=middle;spacing=0;spacingLeft=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="App logo" vertex="1">
           <mxGeometry height="60" width="361" x="80" y="12" as="geometry" />
         </mxCell>
-        <mxCell id="application-name" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=middle;spacing=0;spacingLeft=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="Application name&lt;div&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Version&lt;/font&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="application-name" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=middle;spacing=0;spacingLeft=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="POCKET MONkEY&lt;div&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Version | [GitHub icon] GitHub&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="430" x="9" y="1012" as="geometry" />
         </mxCell>
         <mxCell id="KcBmQutoUwz2jsDE7AvI-2" parent="1" style="rounded=0;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
@@ -85,6 +85,7 @@
         <mxCell id="iZ-_UNUgJQ3VlEOhS_UT-16" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;flipV=1;legacyAnchorPoints=0;fillColor=#fff2cc;strokeColor=#d6b656;size=39;position=0.81;position2=0.95;align=center;fontSize=14;base=22;" value="&lt;span style=&quot;font-family: Calibri;&quot;&gt;Dropdown showing user name, the role, a link to profile (in administration), a switch for dark/bright mode, and a logout button&lt;/span&gt;" vertex="1">
           <mxGeometry height="110" width="260" x="1640" y="67" as="geometry" />
         </mxCell>
+        <mxCell id="repository-note" parent="1" style="shape=callout;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;" value="Sidebar footer: build version plus GitHub repository link, available to both roles. GitHub remains an unavailable placeholder until the future repository URL is known; do not link the current repository." vertex="1"><mxGeometry x="480" y="910" width="420" height="140" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

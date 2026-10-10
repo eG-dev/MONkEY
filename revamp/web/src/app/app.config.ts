@@ -17,6 +17,7 @@ import { BundledCatalogLoader } from './i18n/bundled-catalog/bundled-catalog.loa
 import { LANGUAGES } from './i18n/languages';
 import { AuthenticationService } from './services/authentication/authentication.service';
 import { AccountsService } from './services/accounts/accounts.service';
+import { ThemeService } from './services/theme/theme.service';
 
 registerLocaleData(germanLocale);
 registerLocaleData(englishLocale);
@@ -56,6 +57,7 @@ export const appConfig: ApplicationConfig = {
       const foundation = inject(FoundationService);
       const accounts = inject(AccountsService);
       inject(AuthenticationService).initialize();
+      inject(ThemeService).initialize();
 
       return Promise.all([language.initialize(), foundation.initialize(), accounts.initialize()]);
     }),

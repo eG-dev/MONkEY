@@ -1,1 +1,37 @@
-@use '../../styles/accounts';
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-weight: var(--weight-medium);
+
+  > a {
+    overflow-wrap: anywhere;
+  }
+
+  > button {
+    flex-shrink: 0;
+  }
+}
+
+.row-actions {
+  width: 1%;
+  text-align: end;
+}
+
+@media (max-width: 599px) {
+  .status {
+    grid-column: 1;
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .numeric {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .row-actions {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}

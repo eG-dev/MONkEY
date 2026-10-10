@@ -67,6 +67,8 @@
                 <mxCell id="login-note-4" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.86;position2=0.94;flipV=1;" value="&lt;b&gt;Phone&lt;/b&gt;: full-width form without the card; same states." vertex="1">
                     <mxGeometry height="70" width="340" x="1240" y="810" as="geometry"/>
                 </mxCell>
+                <mxCell id="login-footer" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=14;align=center;fontColor=#666666;" value="Version [build version]   |   [GitHub icon] GitHub" vertex="1"><mxGeometry x="720" y="1000" width="480" height="40" as="geometry"/></mxCell>
+                <mxCell id="login-footer-note" parent="1" style="shape=callout;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;" value="Bottom footer in all login states, including phones: build version and GitHub repository link. GitHub is an unavailable placeholder until the new repository URL is agreed; never point to the current repository. Footer flows below tall content without overlap." vertex="1"><mxGeometry x="1240" y="920" width="400" height="140" as="geometry"/></mxCell>
             </root>
         </mxGraphModel>
     </diagram>

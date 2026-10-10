@@ -106,7 +106,8 @@ app.use('/api', (request, response) => {
       ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users', '/api/accounts'].includes(path) ||
         /^\/api\/users\/[\w-]+\/password$/.test(path) ||
         /^\/api\/accounts\/[\w-]+\/(?:opening|transactions)$/.test(path)
-      : request.method === 'PUT' && (path === '/api/auth/language' || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path));
+      : request.method === 'PUT' &&
+        (['/api/auth/language', '/api/auth/theme'].includes(path) || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path));
 
   if (!allowed) {
     response.status(404).json({ status: 404, code: 'not_found' });

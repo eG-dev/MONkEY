@@ -34,7 +34,7 @@
         <mxCell id="undefined-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
           <mxGeometry x="884" y="130" width="300" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt;" vertex="1">
+        <mxCell id="undefined-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&gt;" vertex="1">
           <mxGeometry x="1184" y="130" width="232" height="48" as="geometry" />
         </mxCell>
         <mxCell id="undefined-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Noah" vertex="1">
@@ -46,7 +46,7 @@
         <mxCell id="undefined-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
           <mxGeometry x="884" y="178" width="300" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt;" vertex="1">
+        <mxCell id="undefined-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&gt;" vertex="1">
           <mxGeometry x="1184" y="178" width="232" height="48" as="geometry" />
         </mxCell>
         <mxCell id="undefined-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Mia" vertex="1">
@@ -58,7 +58,7 @@
         <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
           <mxGeometry x="884" y="226" width="300" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt;" vertex="1">
+        <mxCell id="undefined-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&gt;" vertex="1">
           <mxGeometry x="1184" y="226" width="232" height="48" as="geometry" />
         </mxCell>
         <mxCell id="undefined-21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Ben" vertex="1">
@@ -70,7 +70,7 @@
         <mxCell id="undefined-23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Not initialized" vertex="1">
           <mxGeometry x="884" y="274" width="300" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt;" vertex="1">
+        <mxCell id="undefined-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&gt;" vertex="1">
           <mxGeometry x="1184" y="274" width="232" height="48" as="geometry" />
         </mxCell>
         <mxCell id="undefined-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Lena" vertex="1">
@@ -82,7 +82,7 @@
         <mxCell id="undefined-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
           <mxGeometry x="884" y="322" width="300" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt;" vertex="1">
+        <mxCell id="undefined-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&gt;" vertex="1">
           <mxGeometry x="1184" y="322" width="232" height="48" as="geometry" />
         </mxCell>
         <mxCell id="undefined-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Paul" vertex="1">
@@ -94,22 +94,22 @@
         <mxCell id="undefined-31" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;" value="Active" vertex="1">
           <mxGeometry x="884" y="370" width="300" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=left;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&lt;u&gt;Edit&lt;/u&gt;" vertex="1">
+        <mxCell id="undefined-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;align=right;spacingLeft=12;spacingRight=12;strokeColor=#CCCCCC;fontColor=#1F4E9E;" value="&gt;" vertex="1">
           <mxGeometry x="1184" y="370" width="232" height="48" as="geometry" />
         </mxCell>
         <mxCell id="undefined-33" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Dedicated view for account management. The navigation entry is visible to Managers only." vertex="1">
           <mxGeometry x="30" y="460" width="420" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-34" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Clicking a row opens the account details. &quot;Edit&quot; opens the edit dialog. The opening amount is posted in the account details." vertex="1">
+        <mxCell id="undefined-34" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="No name editing in this list. The underlined name and trailing chevron-right icon open account details. Rename via the pencil beside the account-details heading." vertex="1">
           <mxGeometry x="480" y="460" width="420" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-35" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="No delete. Phone: the table becomes a list with an edit icon button per row." vertex="1">
+        <mxCell id="undefined-35" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="No delete or rename controls. Phone: the table becomes a list with a trailing chevron link. The chevron has an accessible name and tooltip." vertex="1">
           <mxGeometry x="930" y="460" width="420" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-36" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Create / edit dialog&lt;/b&gt;&lt;br&gt;Field: Name (1–40 characters, unique). The account image is changed in the account details. Buttons: Cancel and Create account / Save.&lt;br&gt;On success the dialog closes, the list updates (new accounts show &quot;Not initialized&quot;) and a confirmation appears. Escape or Cancel closes without saving; focus returns to the triggering button. Full-screen on phones." vertex="1">
+        <mxCell id="undefined-36" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Create dialog only&lt;/b&gt;&lt;br&gt;Field: Name (1-40 characters, unique). Buttons: Cancel and Create account. On success open account details; new accounts are not initialized. Rename and image changes are available only in account details. Full-screen on phones." vertex="1">
           <mxGeometry x="30" y="620" width="640" height="170" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-37" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Validation and errors&lt;/b&gt;&lt;br&gt;Errors are shown at the field and announced, e.g. &quot;An account with this name already exists.&quot; Input is kept on errors and retries. Only the name is editable; balance and history cannot be changed here." vertex="1">
+        <mxCell id="undefined-37" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Creation validation&lt;/b&gt;&lt;br&gt;Errors are announced, including duplicate names. Input is kept on errors and retries. No existing name, balance, or history is editable in this list." vertex="1">
           <mxGeometry x="700" y="620" width="650" height="170" as="geometry" />
         </mxCell>
       </root>

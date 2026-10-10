@@ -178,10 +178,10 @@
         <mxCell id="undefined-59" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Next ›" vertex="1">
           <mxGeometry x="772" y="496" width="120" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-60" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="&lt;b&gt;Account image&lt;/b&gt;: shows the image, or the first letter of the name if none is set. Managers click it to upload, replace, or remove the image (PNG, JPEG, WebP); a pencil badge marks it as editable. Members only see it." vertex="1">
+        <mxCell id="undefined-60" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="Managers: avatar edits the image (PNG/JPEG/WebP); pencil beside the heading renames (1-40 characters, unique). Errors keep input; Cancel keeps the name. Members see no edit controls. Rename is available only on this page." vertex="1">
           <mxGeometry x="300" y="8" width="560" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="undefined-61" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="The shell navigation keeps &quot;Overview&quot; selected; details are reached from an account card or the Accounts list." vertex="1">
+        <mxCell id="undefined-61" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;" value="View-level actions align right in the header: refresh sits at the right edge. Contextual rename stays beside the name. Keep this distinction on phones. Shell navigation keeps Accounts selected on account details." vertex="1">
           <mxGeometry x="900" y="20" width="380" height="90" as="geometry" />
         </mxCell>
         <mxCell id="undefined-62" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="Managers only. The mode is shown by color plus sign: deposit green (+), withdrawal red (−) on the selected toggle, the amount sign, and the button. Submitting disables the button until the backend confirms; retries reuse the same request so nothing is booked twice. Withdrawals may make the balance negative." vertex="1">
@@ -199,6 +199,8 @@
         <mxCell id="undefined-66" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;size=24;base=16;position=0.08;position2=0.02;flipV=1;" value="&lt;b&gt;Member&lt;/b&gt;: balance, allowance, and history only; no forms and no &quot;Set allowance&quot;. The backend enforces this regardless of the UI.&lt;br&gt;&lt;b&gt;Phone&lt;/b&gt;: stacked balance, allowance, &quot;Record transaction&quot; button (full-screen dialog), then history as two-line items (comment or type, date and author; amount right-aligned, never truncated)." vertex="1">
           <mxGeometry x="966" y="780" width="450" height="190" as="geometry" />
         </mxCell>
+        <mxCell id="rename-account" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=18;" value="[pencil]" vertex="1"><mxGeometry x="190" y="68" width="80" height="28" as="geometry" /></mxCell>
+        <mxCell id="refresh-view" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=14;fillColor=#FFFFFF;strokeColor=#666666;" value="[refresh]" vertex="1"><mxGeometry x="1320" y="56" width="96" height="48" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

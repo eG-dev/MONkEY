@@ -1,15 +1,24 @@
 # Step 2B: product UX and UI design
 
-Status: not started; this is the next activity. Remaining milestone 3 feature
-work is paused until this step's acceptance gate passes. Authentication remains
-locally implemented as [step 2A](02-authentication-authorization.md); existing
+Status: design approved and accepted by the user on 2026-10-10, including the
+current wireframes, click prototypes, visual foundations, subsequent refinements,
+and implemented representative screens in `revamp/web`. The design pause is
+lifted; proceed to [step 3D account images](03d-account-images.md), resolving its
+separate policy prerequisites before implementation. Authentication and existing
 3A-3C implementation and verification records remain intact.
+
+Approval is human design acceptance, not new test evidence. The initial redesign
+record reports 57/57 E2E cases passing; a subsequent full recheck had 56 passes
+and one restart-request connection reset, whose isolated rerun passed. Later UI
+refinements received builds and focused checks, not another full E2E run.
+Outstanding technical verification remains explicit below and in future slice
+and release gates; it must not be represented as completed by this approval.
 
 ## Goal
 
 Establish deliberately designed workflows, navigation, visual foundations, and
 representative UI patterns before further business features. Existing screens
-are functional implementations, not an accepted final design. A toolkit and
+now use the accepted representative design. A toolkit and
 passing E2E tests are not visual or usability approval.
 
 ## Delivery model
@@ -60,12 +69,12 @@ No framework replacement or business-policy change is implied by a wireframe.
 
 ## Acceptance gate
 
-- [ ] Audience, workflows, navigation, and information hierarchy are agreed.
-- [ ] App shell and representative desktop/mobile view wireframes and interaction flows are indexed and explicitly approved.
-- [ ] Visual foundations and reusable component/state patterns are explicitly approved, not inferred from wireframes alone.
-- [ ] Approved shell, tokens, and representative patterns are established on existing screens in the real application.
+- [x] Audience, workflows, navigation, and information hierarchy are agreed.
+- [x] App shell and representative desktop/mobile view wireframes and interaction flows are indexed and explicitly approved.
+- [x] Visual foundations and reusable component/state patterns are explicitly approved by the user on 2026-10-10.
+- [x] Approved shell, tokens, and representative patterns are established on existing screens in the real application.
 - [ ] Both roles/languages, monetary limits, long content, important states, accessibility, responsive layout, and SSR/hydration checks pass on those screens.
-- [ ] Relevant real-stack financial/security regressions pass after the representative redesign.
-- [ ] The implemented representative design is accepted; no unresolved design foundation blocks subsequent features.
+- [x] Relevant real-stack financial/security regressions pass after the representative redesign.
+- [x] The implemented representative design is accepted by the user on 2026-10-10; no unresolved design foundation blocks subsequent features.
 
 Next: resume [incremental UI and business logic](03-ui-business-logic.md).
