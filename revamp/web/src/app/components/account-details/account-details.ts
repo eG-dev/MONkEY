@@ -16,6 +16,7 @@ import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
 import { AccountAvatar } from '../account-avatar/account-avatar';
+import { AccountAllowance } from '../account-allowance/account-allowance';
 
 @Component({
   selector: 'app-account-details',
@@ -30,6 +31,7 @@ import { AccountAvatar } from '../account-avatar/account-avatar';
     NgTemplateOutlet,
     ModalDialog,
     AccountAvatar,
+    AccountAllowance,
   ],
   templateUrl: './account-details.html',
   styleUrl: './account-details.scss',

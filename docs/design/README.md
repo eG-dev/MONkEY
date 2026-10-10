@@ -91,6 +91,11 @@ deferred. Monthly reports are excluded from the product scope.
 
 ## Files and index
 
+Allowance configuration was aligned with [ADR-0015](../ADR/ADR-0015-monthly-allowance-configuration.md)
+and approved by the user on 2026-10-10: current versus next-month settings,
+retained amounts when disabled, and no executed-credit status in Step 3E.
+The existing allowance section and switch/amount modal layout are unchanged.
+
 Wireframe annotation formatting was refined on 2026-10-10: consolidate notes
 targeting the same area and use straight 3px arrows around a black 3px viewport
 border using draw.io's "Dashed (1)" preset.

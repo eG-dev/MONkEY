@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import { test, expect, bootstrapManager, csrfWrite, login, signIn } from '../../fixtures';
 import { createAccount, createReader } from '../../helpers/ledger';
 
@@ -12,9 +13,12 @@ test.describe('opening workflow', () => {
 
   test('opening entry, exact display and Member read-only workflow', async ({ page, request, browser, instance }) => {
     const manager = bootstrapManager(instance);
+
     await login(request, manager);
+
     const account = await createAccount(request, 'Pocket ledger');
     const maximum = await createAccount(request, 'Maximum ledger');
+
     expect(account.currency).toBe(currency);
     expect(maximum.currency).toBe(currency);
     expect(
@@ -25,6 +29,7 @@ test.describe('opening workflow', () => {
         })
       ).status(),
     ).toBe(200);
+
     const reader = await createReader(request);
     const labels = {
       username: 'Username',
@@ -40,6 +45,7 @@ test.describe('opening workflow', () => {
       maximum: `+92,233,720,368,547,758.07 ${symbol}`,
     };
     const errors: string[] = [];
+
     page.on('pageerror', (error) => errors.push(error.message));
 
     await signIn(page, manager, `/accounts/${account.id}`);
@@ -59,13 +65,16 @@ test.describe('opening workflow', () => {
     await expect(page.locator('#account-details-opening-confirm-dialog')).not.toBeVisible();
 
     const comment = '<script>private opening comment</script>';
+
     await expect(page.locator('#account-details-opening-comment')).toHaveAccessibleName(labels.comment);
+
     await page.locator('#account-details-opening-comment').fill(comment);
     await amount.fill(labels.input);
     await amount.press('Enter');
 
     await expect(page.locator('#account-details-opening-confirm-summary')).toContainText(labels.money);
     await expect(page.locator('#account-details-opening-confirm-submit')).toHaveText(labels.post);
+
     await page.locator('#account-details-opening-confirm-submit').click();
 
     await expect(page.locator('#account-details-saved')).toContainText(labels.saved);
@@ -78,13 +87,16 @@ test.describe('opening workflow', () => {
 
     await expect(balance).toHaveText(labels.money);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
     await page.screenshot({
       path: test.info().outputPath('opening-entry.png'),
       fullPage: true,
     });
 
     await expect(page.getByTestId('ledger-entry').first()).toContainText(comment);
+
     const persisted = await (await request.get(`/api/accounts/${account.id}`)).json();
+
     expect(persisted.balance).toBe('12.34');
     expect(persisted.currency).toBe(currency);
     expect(persisted.openingEntry.currency).toBe(currency);
@@ -93,6 +105,7 @@ test.describe('opening workflow', () => {
 
     await expect(balance).toHaveText(labels.maximum);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
     await page.screenshot({
       path: test.info().outputPath('maximum-balance.png'),
       fullPage: true,
@@ -106,6 +119,7 @@ test.describe('opening workflow', () => {
 
     try {
       const memberPage = await context.newPage();
+
       memberPage.on('pageerror', (error) => errors.push(error.message));
       await signIn(memberPage, reader, `/accounts/${account.id}`);
 

@@ -1,5 +1,6 @@
 import { request as apiRequest } from '@playwright/test';
 import { resolve } from 'node:path';
+
 import { test, expect, bootstrapManager, csrfWrite, login, docker, containerOrigin, waitReady, image } from '../../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });

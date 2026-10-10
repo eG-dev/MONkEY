@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import { test, expect, bootstrapManager, csrfWrite, login, signIn } from '../../fixtures';
 import { createAccount, createReader, openTransactionForm } from '../../helpers/ledger';
 
@@ -24,9 +25,12 @@ test.describe('transaction workflow', () => {
         })
       ).status(),
     ).toBe(204);
+
     await login(request, manager);
+
     const account = await createAccount(request, 'Manual ledger');
     const minimum = await createAccount(request, 'Minimum ledger');
+
     expect(
       (
         await csrfWrite(request, 'POST', `/api/accounts/${minimum.id}/opening`, {
@@ -35,8 +39,11 @@ test.describe('transaction workflow', () => {
         })
       ).status(),
     ).toBe(200);
+
     const reader = await createReader(request);
+
     await login(request, manager);
+
     const labels = {
       username: 'Username',
       password: 'Password',
@@ -57,6 +64,7 @@ test.describe('transaction workflow', () => {
       minimum: `-92,233,720,368,547,758.08 ${symbol}`,
     };
     const errors: string[] = [];
+
     page.on('pageerror', (error) => errors.push(error.message));
     await signIn(page, manager, `/accounts/${account.id}`);
 
@@ -69,15 +77,19 @@ test.describe('transaction workflow', () => {
     const entries = page.getByTestId('ledger-entry');
 
     await expect(page.locator('#account-details-opening-amount')).toHaveAccessibleName(labels.openingAmount);
+
     await page.locator('#account-details-opening-amount').fill(`-0${labels.decimal}01`);
     await page.locator('#account-details-opening-submit').click();
     await page.locator('#account-details-opening-confirm-submit').click();
 
     await expect(balance).toHaveText(`-0${labels.decimal}01 ${symbol}`);
     await expect(balance).toHaveClass(/amount-negative/);
+
     await openTransactionForm(page, labels.record);
     await page.screenshot({ path: test.info().outputPath('transaction-dialog.png'), fullPage: true });
+
     await expect(withdrawal).toHaveAccessibleName(labels.withdrawal);
+
     await withdrawal.check();
 
     await expect(page.locator('#account-details-transaction-form')).toHaveAttribute('data-mode', 'withdrawal');
@@ -87,14 +99,19 @@ test.describe('transaction workflow', () => {
     for (const value of ['0', '-1', `1${labels.decimal}001`]) {
       await amount.fill(value);
       await submit.click();
+
       await expect(error).toHaveRole('alert');
     }
 
     const comment = '<img src=x onerror="window.monkeyXss=true">';
+
     await amount.fill(`0${labels.decimal}02`);
+
     await expect(page.locator('#account-details-transaction-comment')).toHaveAccessibleName(labels.comment);
+
     await page.locator('#account-details-transaction-comment').fill(comment);
     await submit.click();
+
     await expect(balance).toHaveText(`-0${labels.decimal}03 ${symbol}`);
     await expect(page.locator('#account-details-transaction-dialog')).not.toBeVisible();
     await expect(entries.first()).toContainText(comment);
@@ -107,6 +124,7 @@ test.describe('transaction workflow', () => {
     expect(await page.evaluate(() => 'monkeyXss' in window)).toBe(false);
 
     const keys: string[] = [];
+
     await page.route(`**/api/accounts/${account.id}/transactions`, async (route) => {
       if (route.request().method() !== 'POST') {
         await route.continue();
@@ -114,6 +132,7 @@ test.describe('transaction workflow', () => {
       }
 
       keys.push(route.request().postDataJSON().idempotencyKey);
+
       const response = await route.fetch();
 
       if (keys.length === 1) {
@@ -124,18 +143,26 @@ test.describe('transaction workflow', () => {
     });
 
     await openTransactionForm(page, labels.record);
+
     await expect(deposit).toHaveAccessibleName(labels.deposit);
+
     await deposit.check();
+
     await expect(submit).toHaveText(labels.postDeposit);
+
     await amount.fill(`0${labels.decimal}01`);
     await submit.click();
+
     await expect(error).toHaveRole('alert');
+
     await submit.click();
+
     await expect(page.locator('#account-details-saved')).toContainText(labels.saved);
     await expect(balance).toHaveText(`-0${labels.decimal}02 ${symbol}`);
     expect(keys).toHaveLength(2);
     expect(new Set(keys).size).toBe(1);
     await expect(entries).toHaveCount(3);
+
     await page.unroute(`**/api/accounts/${account.id}/transactions`);
 
     for (let index = 0; index < 22; index++) {
@@ -152,10 +179,13 @@ test.describe('transaction workflow', () => {
     }
 
     await page.reload();
+
     await expect(entries).toHaveCount(20);
     await expect(entries.first()).toContainText('Page marker 21');
     await expect(page.locator('#account-details-history-next')).toHaveText(labels.next);
+
     await page.locator('#account-details-history-next').click();
+
     await expect(entries).toHaveCount(5);
     await expect(entries.filter({ hasText: comment })).toHaveCount(1);
     expect(
@@ -169,19 +199,24 @@ test.describe('transaction workflow', () => {
       ).status(),
     ).toBe(200);
     await expect(page.locator('#account-details-history-previous')).toHaveText(labels.previous);
+
     await page.locator('#account-details-history-previous').click();
+
     await expect(entries).toHaveCount(20);
     await expect(entries.first()).toContainText('Page marker 21');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
     await page.screenshot({
       path: test.info().outputPath('transaction-history.png'),
       fullPage: true,
     });
 
     await page.goto(`/accounts/${minimum.id}`);
+
     await expect(balance).toHaveText(labels.minimum);
     await expect(entries.first()).toContainText(labels.minimum);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
     await page.screenshot({
       path: test.info().outputPath('minimum-balance.png'),
       fullPage: true,
@@ -195,12 +230,16 @@ test.describe('transaction workflow', () => {
 
     try {
       const memberPage = await context.newPage();
+
       memberPage.on('pageerror', (error) => errors.push(error.message));
       await signIn(memberPage, reader, `/accounts/${account.id}`);
+
       await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(20);
       await expect(memberPage.getByRole('radio')).toHaveCount(0);
       await expect(memberPage.locator('#account-details-record-transaction')).toHaveCount(0);
+
       await memberPage.locator('#account-details-history-next').click();
+
       await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(6);
     } finally {
       await context.close();

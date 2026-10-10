@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { test as standalone } from '@playwright/test';
+
 import { test, expect, docker, image } from '../../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });
@@ -51,6 +52,7 @@ for (const mode of ['readonly', 'public-permissions']) {
   standalone(`storage rejects ${mode} data volumes`, async ({}, testInfo) => {
     const name = `monkey-storage-${randomUUID()}`;
     const volume = `${name}-data`;
+
     docker('volume', 'create', volume);
 
     try {

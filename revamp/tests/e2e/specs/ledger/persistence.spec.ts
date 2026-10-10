@@ -1,6 +1,7 @@
 import { request as apiRequest } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
+
 import {
   test,
   expect,
@@ -66,14 +67,19 @@ test('maximum exact balances, historical actor names and private SSR survive res
       })
     ).status(),
   ).toBe(204);
+
   await login(request, manager);
+
   const replay = await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, payload);
 
   expect(await replay.json()).toEqual(entry);
 
   const { account: secondManager } = await createUser(request, 'othermanager', 'Other Manager', 'Manager');
+
   await login(request, secondManager);
+
   const permanent = credentials(secondManager.username);
+
   expect(
     (
       await csrfWrite(request, 'POST', '/api/auth/password', {
@@ -82,13 +88,16 @@ test('maximum exact balances, historical actor names and private SSR survive res
       })
     ).status(),
   ).toBe(204);
+
   await login(request, permanent);
+
   const actorConflict = await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, payload);
 
   expect(actorConflict.status()).toBe(409);
   expect(await actorConflict.json()).toEqual({ code: 'idempotency_conflict' });
 
   await login(request, manager);
+
   const anonymous = await apiRequest.newContext({
     baseURL: instance.origin,
     ignoreHTTPSErrors: true,
@@ -108,6 +117,7 @@ test('maximum exact balances, historical actor names and private SSR survive res
 
   docker('restart', instance.container);
   await waitReady(containerOrigin(instance.container));
+
   const persisted = await (await request.get(`/api/accounts/${account.id}`)).json();
 
   expect(persisted.balance).toBe(payload.amount);
@@ -115,12 +125,15 @@ test('maximum exact balances, historical actor names and private SSR survive res
 
   docker('rm', '--force', instance.container);
   await waitReady(startContainer(instance.container, instance.volume, 'USD'));
+
   const relabeled = await (await request.get(`/api/accounts/${account.id}`)).json();
 
   expect(relabeled.balance).toBe(payload.amount);
   expect(relabeled.currency).toBe('USD');
   expect(relabeled.openingEntry).toEqual({ ...entry, currency: 'USD' });
+
   const replayed = await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, payload);
+
   expect(replayed.status()).toBe(200);
   expect(await replayed.json()).toEqual({ ...entry, currency: 'USD' });
 });

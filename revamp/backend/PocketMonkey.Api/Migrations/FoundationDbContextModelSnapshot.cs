@@ -181,6 +181,55 @@ namespace PocketMonkey.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AllowanceRevision", b =>
+                {
+                    b.Property<long>("SequenceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ActorId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("AmountMinorUnits")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EffectiveMonth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("OccurredAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PreviousRevisionId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("SequenceNumber");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("AccountId", "PreviousRevisionId")
+                        .IsUnique();
+
+                    b.ToTable("AllowanceRevisions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AllowanceRevisions_Amount", "(AmountMinorUnits IS NULL AND Enabled = 0) OR (typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits > 0)");
+
+                            t.HasCheckConstraint("CK_AllowanceRevisions_Month", "EffectiveMonth BETWEEN 101 AND 999912 AND EffectiveMonth % 100 BETWEEN 1 AND 12");
+                        });
+                });
+
             modelBuilder.Entity("PocketMonkey.Api.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -409,6 +458,15 @@ namespace PocketMonkey.Api.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AllowanceRevision", b =>
+                {
+                    b.HasOne("PocketMonkey.Api.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

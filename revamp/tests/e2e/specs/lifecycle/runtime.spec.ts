@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { test as standalone } from '@playwright/test';
+
 import { test, expect, docker, image } from '../../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });
@@ -42,6 +43,7 @@ standalone('runtime works with networking disabled and no development executable
             ],
             { encoding: 'utf8', timeout: 10_000 },
           );
+
           return check.status;
         },
         { timeout: 30_000, intervals: [100, 250, 500] },
@@ -61,6 +63,7 @@ standalone('runtime works with networking disabled and no development executable
     expect(docker('logs', name)).not.toContain('"event":"listening"');
 
     expect(docker('exec', name, 'dotnet', '--list-sdks')).toBe('');
+
     docker('exec', name, '/bin/sh', '-c', '! command -v npm && ! command -v ng && ! command -v playwright');
   } finally {
     docker('rm', '--force', '--volumes', name);

@@ -5,6 +5,7 @@ test.use({ ignoreHTTPSErrors: true });
 test('manager browser login, theme preference, and logout survive SSR', async ({ page, instance }) => {
   const manager = bootstrapManager(instance);
   const errors: string[] = [];
+
   page.on('pageerror', (error) => errors.push(error.message));
 
   await signIn(page, manager);
@@ -28,6 +29,7 @@ test('manager browser login, theme preference, and logout survive SSR', async ({
   const themeSaved = page.waitForResponse(
     (response) => new URL(response.url()).pathname === '/api/auth/theme' && response.request().method() === 'PUT',
   );
+
   await page.locator('#profile-dark-mode').click();
 
   expect((await themeSaved).status()).toBe(204);
@@ -121,6 +123,7 @@ test('manager browser creates a user and temporary password requires change', as
   await expect(page.locator('#users-reset-submit')).toHaveText('Reset password');
 
   const resetResponse = page.waitForResponse((response) => /\/api\/users\/[\w-]+\/password$/.test(new URL(response.url()).pathname));
+
   await page.locator('#users-reset-submit').click();
 
   expect((await resetResponse).status()).toBe(200);

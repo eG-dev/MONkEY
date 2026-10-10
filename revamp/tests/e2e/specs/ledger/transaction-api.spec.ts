@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import { test, expect, bootstrapManager, csrfWrite, login, docker, containerOrigin, waitReady } from '../../fixtures';
 import { createAccount, createReader } from '../../helpers/ledger';
 
@@ -17,6 +18,7 @@ test('manual transactions enforce roles, positive inputs, initialization and CSR
   expect((await csrfWrite(request, 'POST', '/api/accounts/missing/transactions', payload)).status()).toBe(401);
 
   await login(request, manager);
+
   const account = await createAccount(request, 'Signed transactions');
   const path = `/api/accounts/${account.id}/transactions`;
 
@@ -61,6 +63,7 @@ test('manual transactions enforce roles, positive inputs, initialization and CSR
   }
 
   const posted = await csrfWrite(request, 'POST', path, payload);
+
   expect(posted.status()).toBe(200);
   expect(await posted.json()).toMatchObject({
     amount: '-0.02',
@@ -76,7 +79,9 @@ test('manual transactions enforce roles, positive inputs, initialization and CSR
   expect(await (await request.get(`${path}?cursor=bad`)).json()).toEqual({
     code: 'invalid_history_cursor',
   });
+
   await createReader(request);
+
   expect((await request.get(path)).status()).toBe(200);
   expect(
     (
@@ -97,6 +102,7 @@ test('concurrent transactions, source-aware retries and snapshot history survive
   const other = await createAccount(request, 'Other history');
   const path = `/api/accounts/${account.id}/transactions`;
   const openingKey = randomUUID();
+
   expect(
     (
       await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, {
@@ -105,6 +111,7 @@ test('concurrent transactions, source-aware retries and snapshot history survive
       })
     ).status(),
   ).toBe(200);
+
   const headers = {
     'X-Monkey-CSRF': (await (await request.get('/api/auth/csrf')).json()).token,
   };
@@ -124,6 +131,7 @@ test('concurrent transactions, source-aware retries and snapshot history survive
 
   expect(writes.map((response) => response.status())).toEqual(Array(10).fill(200));
   expect((await (await request.get(`/api/accounts/${account.id}`)).json()).balance).toBe('-0.50');
+
   const payload = {
     amount: '0.10',
     source: 'deposit',
@@ -179,6 +187,7 @@ test('concurrent transactions, source-aware retries and snapshot history survive
 
   while (cursor) {
     const page = await (await request.get(`${path}?pageSize=3&cursor=${encodeURIComponent(cursor)}`)).json();
+
     original.push(...page.entries);
     cursor = page.nextCursor;
   }
@@ -200,8 +209,11 @@ test('concurrent transactions, source-aware retries and snapshot history survive
       })
     ).status(),
   ).toBe(204);
+
   await login(request, manager);
+
   const before = await (await request.get(path)).json();
+
   docker('restart', instance.container);
   await waitReady(containerOrigin(instance.container));
 
@@ -212,6 +224,7 @@ test('concurrent transactions, source-aware retries and snapshot history survive
 
 test('signed opening extremes reject overflowing transactions without changing history @api', async ({ request, instance }) => {
   const manager = bootstrapManager(instance);
+
   await login(request, manager);
 
   for (const boundary of [
@@ -219,6 +232,7 @@ test('signed opening extremes reject overflowing transactions without changing h
     { name: 'Lower', opening: '-92233720368547758.08', source: 'withdrawal' },
   ]) {
     const account = await createAccount(request, boundary.name);
+
     expect(
       (
         await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, {
@@ -227,6 +241,7 @@ test('signed opening extremes reject overflowing transactions without changing h
         })
       ).status(),
     ).toBe(200);
+
     const path = `/api/accounts/${account.id}/transactions`;
     const before = await (await request.get(path)).json();
     const overflow = await csrfWrite(request, 'POST', path, {

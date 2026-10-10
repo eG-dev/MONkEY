@@ -2,10 +2,26 @@
 
 Status: local foundation suite implemented and verified. On 2026-10-10, the user
 confirmed that all tests pass in GitHub Actions; hosted test execution is no
-longer pending. No run URL or exact hosted case count was supplied. Fork-specific
+longer pending for that earlier run. A subsequent supplied run passed 56 of 57
+cases but exposed an image-load assertion race; its focused local fix passes,
+and hosted confirmation of that fix remains pending. Fork-specific
 verification, publishing rehearsal, and real-host deployment remain separate
 gates. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
 and the [foundation guide](../../revamp/README.md). Extend with each feature.
+
+## Image loading regression
+
+[GitHub run 38083728753](https://github.com/eG-dev/MONkEY/actions/runs/38083728753)
+passed 56 of 57 cases. The desktop image workflow read `naturalWidth` as zero
+immediately after the image element became visible. Visibility does not prove
+that the image has loaded; the assertion now polls for the expected 512-pixel
+width, matching the existing replacement-image check. A permanently broken
+image still fails the assertion; no sleeps or unconditional retries were added.
+
+Both desktop and mobile image workflows passed locally against the production
+image with `npm --prefix revamp/tests/e2e test -- accounts/images-workflows.spec.ts`.
+The readability pass restores setup/action/assertion clusters with whitespace-only
+changes elsewhere in specs/helpers. The full suite was not run for this change.
 
 ## Strategy
 

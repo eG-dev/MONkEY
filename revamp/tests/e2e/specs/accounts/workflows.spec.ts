@@ -25,9 +25,11 @@ test('manager account creation/editing and member read-only workflow', async ({ 
     duplicate: 'An account with this name already exists.',
   };
   const errors: string[] = [];
+
   page.on('pageerror', (error) => errors.push(error.message));
 
   await login(request, manager);
+
   const member = await createMember(request);
 
   await page.goto('/accounts');
@@ -50,6 +52,7 @@ test('manager account creation/editing and member read-only workflow', async ({ 
   await expect(createDialog).toHaveAccessibleName(labels.create);
   await expect(createName).toHaveAccessibleName(labels.name);
   await expect(createName).toHaveAttribute('maxlength', '40');
+
   await createName.fill('  Ida  ');
   await page.locator('#accounts-create-submit').click();
 
@@ -114,6 +117,7 @@ test('manager account creation/editing and member read-only workflow', async ({ 
       expect(layout.statusAlignedWithName).toBe(true);
       expect(layout.noOverlap).toBe(true);
       expect(layout.noOverflow).toBe(true);
+
       await page.screenshot({ path: test.info().outputPath(`accounts-${width}.png`), fullPage: true });
     }
 
@@ -133,6 +137,7 @@ test('manager account creation/editing and member read-only workflow', async ({ 
 
   try {
     const memberPage = await context.newPage();
+
     memberPage.on('pageerror', (error) => errors.push(error.message));
     await signIn(memberPage, member, '/accounts');
 
@@ -153,6 +158,7 @@ test('manager account creation/editing and member read-only workflow', async ({ 
     await expect(memberPage.locator('#account-details-no-opening')).toHaveText(labels.noOpening);
     await expect(memberPage.getByRole('textbox')).toHaveCount(0);
     expect(await memberPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
     await memberPage.screenshot({ path: test.info().outputPath('member-account.png'), fullPage: true });
 
     await memberPage.goto('/accounts/missing');
@@ -161,6 +167,7 @@ test('manager account creation/editing and member read-only workflow', async ({ 
     await expect(memberPage.locator('#account-details-error')).toContainText(labels.missing);
 
     await login(request, manager);
+
     const users = await (await request.get('/api/users')).json();
     const reader = users.find((entry: { user: { username: string } }) => entry.user.username === member.username);
     const disabled = await csrfWrite(request, 'PUT', `/api/users/${reader.user.id}`, {
@@ -172,6 +179,7 @@ test('manager account creation/editing and member read-only workflow', async ({ 
     expect(disabled.status()).toBe(204);
 
     await expect(memberPage.locator('#account-details-retry')).toHaveText(labels.refresh);
+
     await memberPage.locator('#account-details-retry').click();
 
     await expect(memberPage.locator('#login-submit')).toHaveText(labels.login);

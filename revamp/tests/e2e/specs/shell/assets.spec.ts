@@ -3,12 +3,14 @@ import { test, expect } from '../../fixtures';
 test('hydrated English shell survives reload and uses local assets', async ({ page, instance }) => {
   const errors: string[] = [];
   const external: string[] = [];
+
   page.on('pageerror', (error) => errors.push(error.message));
   await page.route('**/*', (route) => {
     if (new URL(route.request().url()).origin !== instance.origin) {
       external.push(route.request().url());
       return route.abort();
     }
+
     return route.continue();
   });
 
@@ -22,7 +24,9 @@ test('hydrated English shell survives reload and uses local assets', async ({ pa
   await expect(page.locator('#login-language-en')).toBeEnabled();
   await expect(page.locator('#login-language-en')).toHaveAccessibleName('English');
   await expect(page.locator('#login-language-en')).toHaveAttribute('aria-pressed', 'true');
+
   await page.reload();
+
   await expect(page.locator('#login-title')).toHaveText('Sign in');
 
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('type', 'image/png');
@@ -31,7 +35,9 @@ test('hydrated English shell survives reload and uses local assets', async ({ pa
   expect(
     await page.evaluate(async () => {
       await document.fonts.ready;
+
       const families = [...document.fonts].filter((font) => font.status === 'loaded').map((font) => font.family.replaceAll('"', ''));
+
       return families.includes('Roboto');
     }),
   ).toBe(true);

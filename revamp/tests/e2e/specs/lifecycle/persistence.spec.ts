@@ -4,8 +4,11 @@ test.use({ ignoreHTTPSErrors: true });
 
 test('restart and container replacement preserve accounts and private keys', async ({ instance, request }) => {
   await login(request, bootstrapManager(instance));
+
   const created = await csrfWrite(request, 'POST', '/api/accounts', { name: 'Persistent account' });
+
   expect(created.status()).toBe(201);
+
   const before = await created.json();
   const keys = docker('exec', instance.container, 'find', '/data/keys', '-type', 'f', '-printf', '%f\n');
 

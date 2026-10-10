@@ -1,6 +1,6 @@
 # Step 3E: allowance configuration
 
-Status: not started. Depends on [ledger and opening balances](03b-ledger-opening-balances.md).
+Status: implementation in progress; policy approved by the user on 2026-10-10 in [ADR-0015](../../docs/ADR/ADR-0015-monthly-allowance-configuration.md). Depends on [ledger and opening balances](03b-ledger-opening-balances.md).
 Apply the [milestone delivery and verification rules](03-ui-business-logic.md).
 
 ## Outcome
@@ -11,8 +11,7 @@ that any credit has been executed.
 
 ## Decisions before implementation
 
-- Agree allowed amounts, enabled/disabled behavior, due date, effective-date semantics, and required configuration history.
-- Define how edits affect future periods so the executor can apply configuration deterministically, rather than reconstructing past settings from the latest value.
+- Resolved: positive exact amounts in the existing range, retained amount when disabled, first-of-month credits at 00:00 in `TZ`, next-month changes, immutable revision/audit history, and opening-entry prerequisite for enabling; see [ADR-0015](../../docs/ADR/ADR-0015-monthly-allowance-configuration.md).
 
 ## Work
 
@@ -25,7 +24,7 @@ that any credit has been executed.
 
 - [ ] Manager settings persist across reload/restart; members read settings but direct configuration writes fail.
 - [ ] Invalid values and CSRF attempts fail without partially saving configuration.
-- [ ] Both-language browser tests cover enabled/disabled state, effective-date behavior, and accessible desktop/mobile controls.
+- [ ] English/EUR browser tests cover enabled/disabled state, effective-date behavior, and accessible desktop/mobile controls; German/English catalog validation passes separately.
 - [ ] Saving configuration alone never creates a ledger credit or misleading execution-success state.
 
 Next: [allowance execution](03f-allowance-execution.md).

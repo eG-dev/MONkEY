@@ -16,9 +16,25 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<LedgerEntry> LedgerEntries => Set<LedgerEntry>();
 
+    public DbSet<AllowanceRevision> AllowanceRevisions => Set<AllowanceRevision>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AllowanceRevision>(revisionEntity =>
+        {
+            revisionEntity.HasKey(x => x.SequenceNumber);
+            revisionEntity.Property(x => x.SequenceNumber).ValueGeneratedOnAdd();
+            revisionEntity.HasIndex(x => x.Id).IsUnique();
+            revisionEntity.HasIndex(revision => new { revision.AccountId, revision.PreviousRevisionId }).IsUnique();
+            revisionEntity.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
+            revisionEntity.ToTable("AllowanceRevisions", table =>
+            {
+                table.HasCheckConstraint("CK_AllowanceRevisions_Amount", "(AmountMinorUnits IS NULL AND Enabled = 0) OR (typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits > 0)");
+                table.HasCheckConstraint("CK_AllowanceRevisions_Month", "EffectiveMonth BETWEEN 101 AND 999912 AND EffectiveMonth % 100 BETWEEN 1 AND 12");
+            });
+        });
 
         modelBuilder.Entity<ApplicationUser>(userEntity =>
         {

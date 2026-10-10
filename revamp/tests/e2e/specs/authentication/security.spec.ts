@@ -81,11 +81,14 @@ test('lockout recovery and restart session behavior are deliberate @api', async 
   const permanent = credentials(manager.username);
 
   await csrfWrite(request, 'POST', '/api/auth/password', { currentPassword: recovered.password, newPassword: permanent.password });
+
   const profile = await login(request, permanent);
 
   docker('stop', '--timeout', '25', instance.container);
   docker('start', instance.container);
+
   const origin = containerOrigin(instance.container);
+
   await waitReady(origin);
 
   const session = await request.get('/api/auth/me');

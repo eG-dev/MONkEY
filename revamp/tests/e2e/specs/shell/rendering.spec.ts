@@ -2,13 +2,16 @@ import { test, expect } from '../../fixtures';
 
 test('selected German language initializes the first SSR render and hydration @desktop', async ({ page, instance }) => {
   const errors: string[] = [];
+
   page.on('pageerror', (error) => errors.push(error.message));
   await page.context().addCookies([{ name: 'monkey-language', value: 'de', url: instance.origin }]);
 
   const response = await page.goto('/');
 
   expect(response?.status()).toBe(200);
+
   const html = await response!.text();
+
   expect(html).toContain('lang="de"');
   expect(html).toContain('Anmelden');
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');

@@ -1,5 +1,12 @@
 using RuntimeChecks.Tests;
 
+if (args is ["allowance-persistence"])
+{
+    await AllowancePersistenceCheck.RunAsync();
+
+    return;
+}
+
 if (args is ["image-persistence"])
 {
     await ImagePersistenceCheck.RunAsync();

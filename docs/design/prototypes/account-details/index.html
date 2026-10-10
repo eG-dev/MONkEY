@@ -145,12 +145,19 @@
       let text = `<div class="allowance-amount">${PM.esc(PM.t('noAllowance'))}</div>`;
 
       if (status.configured) {
-        const line = status.credited ? PM.t('creditedOn', { date: PM.date(status.credited, false) }) : PM.t('nextOn', { date: PM.date(status.next, false) });
-        text = `<div class="allowance-amount">${PM.t('perMonth', { amount: PM.amountHtml(status.amount) })}</div><div class="label">${PM.esc(line)}</div>`;
+        text = `<div class="allowance-amount">${PM.t('perMonth', { amount: PM.amountHtml(status.amount) })}</div>`;
+      }
 
-        if (status.failed && PM.isManager()) {
-          text += `<div class="message message-warning" style="margin-top:8px">${PM.icon('warning')}<div class="message-body">${PM.esc(PM.t('creditFailed'))}</div></div>`;
-        }
+      const scheduled = account.allowanceScheduled;
+
+      if (scheduled) {
+        text += `<p>${scheduled.enabled ? PM.t('allowanceScheduled', { amount: PM.amountHtml(scheduled.amount) }) : PM.esc(PM.t('allowanceDisabledFrom'))}</p>`;
+      }
+
+      const latest = scheduled ?? account.allowance;
+
+      if (!latest.enabled && latest.amount) {
+        text += `<p>${PM.t('allowanceRetained', { amount: PM.amountHtml(latest.amount) })}</p>`;
       }
 
       return `<div class="label" id="allowance-label">${PM.esc(PM.t('monthlyAllowance'))}</div><div class="allowance"><div>${text}</div>${PM.isManager() ? `<button class="button button-secondary" type="button" id="set-allowance">${PM.icon('calendar')}${PM.esc(PM.t('setAllowance'))}</button>` : ''}</div>`;
@@ -349,12 +356,13 @@
     }
 
     function openAllowance(account) {
-      let enabled = account.allowance.enabled;
+      const latest = account.allowanceScheduled ?? account.allowance;
+      let enabled = latest.enabled;
       const editor = PM.dialog({
         title: PM.t('setAllowance'),
         body: `<form class="form" id="allowance-form" novalidate>
           <div class="switch-row"><span class="field-label" id="allowance-enabled-label">${PM.esc(PM.t('allowanceEnabled'))}</span><button class="switch" type="button" role="switch" id="allowance-enabled" aria-labelledby="allowance-enabled-label" aria-checked="${enabled}"></button></div>
-          <div class="field"><label for="allowance-amount">${PM.esc(PM.t('amountPerMonth'))}</label><div class="input-wrap"><input class="input" id="allowance-amount" inputmode="decimal" autocomplete="off" value="${account.allowance.amount ? (account.allowance.amount / 100).toFixed(2) : ''}"><span class="input-suffix">EUR</span></div><span class="hint">${PM.esc(PM.t('allowanceHint'))}</span></div>
+          <div class="field"><label for="allowance-amount">${PM.esc(PM.t('amountPerMonth'))}</label><div class="input-wrap"><input class="input" id="allowance-amount" inputmode="decimal" autocomplete="off" value="${latest.amount ? (latest.amount / 100).toFixed(2) : ''}"><span class="input-suffix">EUR</span></div><span class="hint">${PM.esc(PM.t('allowanceHint'))}</span></div>
           <div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('allowanceInfo'))}</div></div>
         </form>`,
         footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="allowance-form" id="allowance-save">${PM.esc(PM.t('save'))}</button>`
@@ -374,7 +382,7 @@
       });
       editor.querySelector('form').addEventListener('submit', async event => {
         event.preventDefault();
-        const minor = enabled ? PM.parseAmount(amount.value) : 0;
+        const minor = enabled ? PM.parseAmount(amount.value) : latest.amount;
 
         if (enabled && !PM.fieldError(amount, minor === null || minor === 0 ? PM.t('allowanceInvalid') : '')) {
           amount.focus();
@@ -387,7 +395,7 @@
 
         try {
           await PM.request();
-          account.allowance = { enabled, amount: minor };
+          account.allowanceScheduled = { enabled, amount: minor };
           PM.saveData();
           editor.close();
           render();
@@ -412,8 +420,8 @@
           accountDetails: 'Account details', changeImage: 'Change image of {name}', accountImage: 'Account image', upload: 'Upload image', removeImage: 'Remove image', imageHint: 'PNG, JPEG, or WebP. Maximum 512 x 512 pixels and 2 MiB. Without an image, the first letter of the name is shown.', imageSaved: 'Image of {name} saved.', balance: 'Balance', loadFailed: 'The account could not be loaded.', notFound: 'This account does not exist.',
           monthlyAllowance: 'Monthly allowance', noAllowance: 'No monthly allowance', perMonth: '{amount} per month', creditedOn: 'Credited this month on {date}', nextOn: 'Next credit on {date}',
           creditFailed: 'This month\'s credit failed. It is retried automatically; no money was booked twice.', setAllowance: 'Set allowance', allowanceEnabled: 'Monthly allowance', amountPerMonth: 'Amount per month',
-          allowanceHint: 'Positive, at most two decimal places', allowanceInfo: 'The allowance is credited automatically each month. Saving does not book any money.', allowanceInvalid: 'Enter a positive amount with at most two decimal places.',
-          allowanceSaved: 'Monthly allowance for {name} saved.', allowanceOff: '{name} no longer receives a monthly allowance.',
+          allowanceHint: 'Positive, at most two decimal places', allowanceInfo: 'Changes apply from next month. Monthly credits are due on the first day in the business timezone. Disabling retains the amount. Saving does not book any money.', allowanceInvalid: 'Enter a positive amount with at most two decimal places.',
+          allowanceSaved: 'Monthly allowance for {name} saved.', allowanceOff: 'Monthly allowance for {name} is disabled from next month.', allowanceScheduled: 'From next month: {amount} per month', allowanceDisabledFrom: 'Disabled from next month', allowanceRetained: 'Retained amount: {amount}',
           recordTransaction: 'Record transaction', deposit: 'Deposit', withdrawal: 'Withdrawal', opening: 'Opening', allowance: 'Allowance', type: 'Type', amount: 'Amount', comment: 'Comment (optional)',
           amountHint: 'Positive, at most two decimal places', commentHint: 'Up to 500 characters', recordDeposit: 'Record deposit', recordWithdrawal: 'Record withdrawal',
           amountInvalid: 'Enter a positive amount with at most two decimal places.', deposited: '{amount} deposited to {name}.', withdrawn: '{amount} withdrawn from {name}.',
@@ -428,8 +436,8 @@
           accountDetails: 'Kontodetails', changeImage: 'Bild von {name} ändern', accountImage: 'Kontobild', upload: 'Bild hochladen', removeImage: 'Bild entfernen', imageHint: 'PNG, JPEG oder WebP. Maximal 512 x 512 Pixel und 2 MiB. Ohne Bild wird der erste Buchstabe des Namens angezeigt.', imageSaved: 'Bild von {name} gespeichert.', balance: 'Kontostand', loadFailed: 'Das Konto konnte nicht geladen werden.', notFound: 'Dieses Konto existiert nicht.',
           monthlyAllowance: 'Monatliches Taschengeld', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} pro Monat', creditedOn: 'Diesen Monat gutgeschrieben am {date}', nextOn: 'Nächste Gutschrift am {date}',
           creditFailed: 'Die Gutschrift für diesen Monat ist fehlgeschlagen. Sie wird automatisch wiederholt; es wurde nichts doppelt gebucht.', setAllowance: 'Taschengeld festlegen', allowanceEnabled: 'Monatliches Taschengeld', amountPerMonth: 'Betrag pro Monat',
-          allowanceHint: 'Positiv, höchstens zwei Nachkommastellen', allowanceInfo: 'Das Taschengeld wird jeden Monat automatisch gutgeschrieben. Das Speichern bucht kein Geld.', allowanceInvalid: 'Einen positiven Betrag mit höchstens zwei Nachkommastellen eingeben.',
-          allowanceSaved: 'Monatliches Taschengeld für {name} gespeichert.', allowanceOff: '{name} bekommt kein monatliches Taschengeld mehr.',
+          allowanceHint: 'Positiv, höchstens zwei Nachkommastellen', allowanceInfo: 'Änderungen gelten ab dem nächsten Monat. Monatliche Gutschriften sind am ersten Tag in der Geschäftszeitzone fällig. Beim Deaktivieren bleibt der Betrag erhalten. Das Speichern bucht kein Geld.', allowanceInvalid: 'Einen positiven Betrag mit höchstens zwei Nachkommastellen eingeben.',
+          allowanceSaved: 'Monatliches Taschengeld für {name} gespeichert.', allowanceOff: 'Monatliches Taschengeld für {name} ist ab dem nächsten Monat deaktiviert.', allowanceScheduled: 'Ab dem nächsten Monat: {amount} pro Monat', allowanceDisabledFrom: 'Deaktiviert ab dem nächsten Monat', allowanceRetained: 'Gespeicherter Betrag: {amount}',
           recordTransaction: 'Buchung erfassen', deposit: 'Einzahlung', withdrawal: 'Abhebung', opening: 'Eröffnung', allowance: 'Taschengeld', type: 'Art', amount: 'Betrag', comment: 'Kommentar (optional)',
           amountHint: 'Positiv, höchstens zwei Nachkommastellen', commentHint: 'Bis zu 500 Zeichen', recordDeposit: 'Einzahlung buchen', recordWithdrawal: 'Abhebung buchen',
           amountInvalid: 'Einen positiven Betrag mit höchstens zwei Nachkommastellen eingeben.', deposited: '{amount} auf das Konto von {name} eingezahlt.', withdrawn: '{amount} vom Konto von {name} abgehoben.',

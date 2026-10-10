@@ -8,6 +8,7 @@ import { SharedAccount } from '../../models/accounts/shared-account';
 import { OpeningEntry } from '../../models/accounts/opening-entry';
 import { LedgerEntry } from '../../models/accounts/ledger-entry';
 import { LedgerHistory } from '../../models/accounts/ledger-history';
+import { AllowanceState } from '../../models/accounts/allowance-state';
 
 const accountPageKey = makeStateKey<AccountPageState | null>('monkey-account-page');
 
@@ -89,6 +90,14 @@ export class AccountsService {
     return this.auth.write('PUT', `/api/accounts/${encodeURIComponent(id)}/image`, file);
   }
 
+  allowance(id: string): Promise<AllowanceState> {
+    return this.read<AllowanceState>(`/api/accounts/${encodeURIComponent(id)}/allowance`);
+  }
+
+  configureAllowance(id: string, enabled: boolean, amount: string | null, expectedRevisionId: string | null): Promise<AllowanceState> {
+    return this.auth.write<AllowanceState>('PUT', `/api/accounts/${encodeURIComponent(id)}/allowance`, { enabled, amount, expectedRevisionId });
+  }
+
   removeImage(id: string): Promise<void> {
     return this.auth.write('DELETE', `/api/accounts/${encodeURIComponent(id)}/image`, {});
   }
@@ -142,6 +151,8 @@ export class AccountsService {
     return typeof code === 'string' &&
       [
         'invalid_account_name',
+        'invalid_allowance_amount',
+        'allowance_conflict',
         'invalid_image',
         'image_too_large',
         'image_dimensions',

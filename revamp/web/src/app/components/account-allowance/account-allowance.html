@@ -1,0 +1,62 @@
+<section class="panel" *transloco="let t" aria-labelledby="account-details-allowance-title">
+  <h2 class="panel-title" id="account-details-allowance-title">{{ t('accounts.monthlyAllowance') }}</h2>
+  @if (loading()) {
+    <p class="muted" id="account-details-allowance-loading" role="status">{{ t('accounts.allowanceLoading') }}</p>
+  } @else if (error()) {
+    <div class="message message-danger" id="account-details-allowance-load-error" role="alert">{{ t(error()) }}</div>
+    <button tuiButton appearance="secondary" size="s" id="account-details-allowance-retry" type="button" (click)="load()">{{ t('tryAgain') }}</button>
+  } @else if (state(); as configuration) {
+    <div id="account-details-allowance-current">
+      @if (configuration.current?.enabled && configuration.current?.amount; as amount) {
+        <div class="allowance-amount">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : configuration.currency : true }) }}</div>
+      } @else {
+        <p class="muted">{{ t('accounts.noAllowance') }}</p>
+      }
+    </div>
+    @if (configuration.scheduled; as scheduled) {
+      <p id="account-details-allowance-scheduled">
+        @if (scheduled.enabled && scheduled.amount; as amount) {
+          {{ t('accounts.allowanceScheduled', { month: scheduled.effectiveMonth, amount: amount | currencyAmount: language.locale() : configuration.currency : true }) }}
+        } @else {
+          {{ t('accounts.allowanceDisabledFrom', { month: scheduled.effectiveMonth }) }}
+        }
+      </p>
+    }
+    @let latest = configuration.scheduled ?? configuration.current;
+    @if (latest && !latest.enabled && latest.amount; as retainedAmount) {
+      <p id="account-details-allowance-retained">{{ t('accounts.allowanceRetained', { amount: retainedAmount | currencyAmount: language.locale() : configuration.currency : true }) }}</p>
+    }
+    @if (saved()) {
+      <p class="message message-success" id="account-details-allowance-saved" role="status">{{ t('accounts.allowanceSaved') }}</p>
+    }
+    @if (auth.user()?.role === 'Manager') {
+      <button tuiButton appearance="secondary" size="s" id="account-details-allowance-edit" type="button" [disabled]="busy() || !interactive() || account().balance === null" (click)="open()">
+        <span class="icon icon-calendar" aria-hidden="true"></span>{{ t('accounts.setAllowance') }}
+      </button>
+      @if (account().balance === null) {
+        <p class="hint">{{ t('accounts.allowanceNeedsOpening') }}</p>
+      }
+    }
+    <app-modal-dialog dialogId="account-details-allowance-dialog" [open]="editing()" [heading]="t('accounts.setAllowance')" [dismissible]="!busy()" (closed)="editing.set(false)">
+      <form class="form" id="account-details-allowance-form" (ngSubmit)="save()">
+        @if (formError()) {
+          <div class="message message-danger" id="account-details-allowance-error" role="alert">{{ t(formError()) }}</div>
+        }
+        <div class="switch-row">
+          <span class="field-label" id="account-details-allowance-enabled-label">{{ t('accounts.monthlyAllowance') }}</span>
+          <button class="switch" id="account-details-allowance-enabled" type="button" role="switch" aria-labelledby="account-details-allowance-enabled-label" [attr.aria-checked]="enabled" [disabled]="busy()" (click)="enabled = !enabled"></button>
+        </div>
+        <div class="field">
+          <label for="account-details-allowance-amount">{{ t('accounts.allowanceAmount', { currency: configuration.currency }) }}</label>
+          <input class="input" id="account-details-allowance-amount" name="allowanceAmount" inputmode="decimal" maxlength="20" autocomplete="off" [required]="enabled" [disabled]="busy() || !enabled" [(ngModel)]="amount" aria-describedby="account-details-allowance-hint" />
+          <span class="hint" id="account-details-allowance-hint">{{ t('accounts.amountHint') }}</span>
+        </div>
+        <p class="message message-info" id="account-details-allowance-effective">{{ t('accounts.allowanceEffective', { month: configuration.nextEffectiveMonth }) }}</p>
+      </form>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" id="account-details-allowance-cancel" type="button" [disabled]="busy()" (click)="editing.set(false)">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" id="account-details-allowance-save" type="submit" form="account-details-allowance-form" [disabled]="busy()">{{ t('accounts.save') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+  }
+</section>

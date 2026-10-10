@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
+
 import { test, expect, bootstrapManager, credentials, createUser, csrfWrite, login, image } from '../../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });

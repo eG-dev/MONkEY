@@ -1,4 +1,5 @@
 import { APIRequestContext, Page } from '@playwright/test';
+
 import { expect, credentials, createUser, csrfWrite, login } from '../fixtures';
 
 export async function createAccount(request: APIRequestContext, name: string) {
@@ -15,6 +16,7 @@ export async function createReader(request: APIRequestContext) {
 
   await csrfWrite(request, 'POST', '/api/auth/logout', {});
   await login(request, temporary);
+
   const changed = await csrfWrite(request, 'POST', '/api/auth/password', {
     currentPassword: temporary.password,
     newPassword: permanent.password,
@@ -38,7 +40,9 @@ export async function openTransactionForm(page: Page, record: string) {
         !!(document.getElementById('account-details-refresh')!.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING),
     ),
   ).toBe(true);
+
   await trigger.click();
+
   await expect(page.locator('#account-details-transaction-dialog')).toHaveAccessibleName(record);
   await expect(page.locator('#account-details-transaction-form')).toBeVisible();
 }

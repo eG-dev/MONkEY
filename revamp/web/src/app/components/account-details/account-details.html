@@ -119,6 +119,8 @@
           </div>
         </section>
 
+        <app-account-allowance [account]="current" />
+
         @if (auth.user()?.role === 'Manager') {
           @if (current.balance === null) {
             <section class="panel" aria-labelledby="account-details-opening-title">

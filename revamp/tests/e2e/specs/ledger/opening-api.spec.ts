@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import { test, expect, bootstrapManager, csrfWrite, login } from '../../fixtures';
 import { createAccount, createReader } from '../../helpers/ledger';
 
@@ -15,6 +16,7 @@ test('opening APIs enforce Manager access, CSRF, exact amounts and explicit zero
   expect((await csrfWrite(request, 'POST', '/api/accounts/missing/opening', payload)).status()).toBe(401);
 
   await login(request, manager);
+
   const account = await createAccount(request, 'Opening');
   const path = `/api/accounts/${account.id}/opening`;
 
@@ -90,6 +92,7 @@ test('concurrent openings and retries are idempotent with conflicting-payload er
   const manager = bootstrapManager(instance);
 
   await login(request, manager);
+
   const account = await createAccount(request, 'Concurrent');
   const other = await createAccount(request, 'Other');
   const payload = {

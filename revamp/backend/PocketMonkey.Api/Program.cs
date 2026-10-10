@@ -35,6 +35,8 @@ builder.Services.AddLocalIdentity(builder.Environment.IsDevelopment());
 builder.Services.AddScoped<AccountAdministration>();
 builder.Services.AddScoped<LedgerAdministration>();
 builder.Services.AddScoped<AccountImages>();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<AllowanceAdministration>();
 if (!isOperatorCommand)
 {
 	builder.Services.AddHostedService<ImageCleanup>();
@@ -114,6 +116,7 @@ app.MapAccounts();
 app.MapAccountImages();
 app.MapOpeningBalances();
 app.MapTransactions();
+app.MapAllowances();
 
 if (app.Environment.IsDevelopment())
 {
