@@ -210,7 +210,12 @@ test('manager browser creates a user and temporary password requires change', as
 
     await memberPage.getByRole('textbox', { name: 'Benutzername', exact: true }).fill('member');
     await memberPage.getByLabel('Passwort', { exact: true }).fill(permanent.password);
+
+    const signInReload = memberPage.waitForEvent('framenavigated', (frame) => frame === memberPage.mainFrame());
+
     await memberPage.getByRole('button', { name: 'Anmelden', exact: true }).click();
+    await signInReload;
+    await memberPage.waitForLoadState('load');
 
     await expect(memberPage.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
 
