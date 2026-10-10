@@ -2,5 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "description": "Angular framework and CLI packages pin each other's exact versions as peers",
+      "extends": [
+        "monorepo:angular",
+        "monorepo:angularcli"
+      ],
+      "groupName": "angular"
+    }
   ]
 }
