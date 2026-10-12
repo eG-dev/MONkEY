@@ -17,4 +17,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <Target Name="ValidateMigrationLocation" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <MisplacedMigration Include="**/??????????????_*.cs;**/*ModelSnapshot.cs"
+                          Exclude="Storage/Migrations/**;bin/**;obj/**" />
+    </ItemGroup>
+    <Error Condition="'@(MisplacedMigration)' != ''"
+           Text="EF migrations and the model snapshot must live in Storage/Migrations. Misplaced files: @(MisplacedMigration). Use the migration command documented in revamp/README.md." />
+  </Target>
 </Project>

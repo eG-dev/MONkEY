@@ -5,7 +5,7 @@ import english from '../../../public/i18n/en/shell.json';
 
 export const LANGUAGES = {
   de: { id: 'de', name: 'Deutsch', locale: 'de-DE', direction: 'ltr', catalog: german, taiga: TUI_GERMAN_LANGUAGE },
-  en: { id: 'en', name: 'English', locale: 'en-GB', direction: 'ltr', catalog: english, taiga: TUI_ENGLISH_LANGUAGE },
+  en: { id: 'en', name: 'English', locale: 'en-US', direction: 'ltr', catalog: english, taiga: TUI_ENGLISH_LANGUAGE },
 } as const;
 
 export type LanguageId = keyof typeof LANGUAGES;

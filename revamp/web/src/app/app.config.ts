@@ -1,7 +1,7 @@
 import { ApplicationConfig, computed, inject, isDevMode, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import germanLocale from '@angular/common/locales/de';
-import englishLocale from '@angular/common/locales/en-GB';
+import englishLocale from '@angular/common/locales/en';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideClientHydration, withNoHttpTransferCache } from '@angular/platform-browser';
@@ -19,7 +19,7 @@ import { AccountsService } from './services/accounts/accounts.service';
 import { ThemeService } from './services/theme/theme.service';
 
 registerLocaleData(germanLocale);
-registerLocaleData(englishLocale);
+registerLocaleData(englishLocale, LANGUAGES.en.locale);
 
 export const appConfig: ApplicationConfig = {
   providers: [

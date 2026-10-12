@@ -12,5 +12,8 @@ public enum LedgerEntrySource
     Deposit,
 
     [JsonStringEnumMemberName("withdrawal")]
-    Withdrawal
+    Withdrawal,
+
+    [JsonStringEnumMemberName("allowance")]
+    Allowance
 }

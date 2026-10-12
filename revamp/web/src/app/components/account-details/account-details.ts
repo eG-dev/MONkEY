@@ -1,5 +1,5 @@
 import { afterNextRender, Component, DestroyRef, effect, inject, signal } from '@angular/core';
-import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -27,7 +27,6 @@ import { AccountAllowance } from '../account-allowance/account-allowance';
     TranslocoDirective,
     CurrencyAmountPipe,
     AmountTonePipe,
-    DatePipe,
     NgTemplateOutlet,
     ModalDialog,
     AccountAvatar,
@@ -64,6 +63,7 @@ export class AccountDetails {
   protected readonly confirmingOpening = signal(false);
   protected readonly transactionDialog = signal(false);
   protected readonly history = signal<LedgerEntry[]>([]);
+  protected readonly historyTimezone = signal('UTC');
   protected readonly historyLoading = signal(true);
   protected readonly historyError = signal('');
   protected readonly historyPage = signal(0);
@@ -369,6 +369,14 @@ export class AccountDetails {
     }
   }
 
+  protected historyDate(value: string, withTime = true): string {
+    return new Intl.DateTimeFormat(this.language.locale(), {
+      dateStyle: 'medium',
+      timeStyle: withTime ? 'medium' : undefined,
+      timeZone: this.historyTimezone(),
+    }).format(new Date(value));
+  }
+
   protected async nextHistory(): Promise<void> {
     const cursor = this.nextCursor();
 
@@ -382,6 +390,7 @@ export class AccountDetails {
     const cached = this.historyPages[page];
 
     if (cached && !this.historyLoading()) {
+      this.historyTimezone.set(cached.timezone);
       this.history.set(cached.entries);
       this.nextCursor.set(cached.nextCursor);
       this.historyPage.set(page);
@@ -466,6 +475,7 @@ export class AccountDetails {
       const result = await this.service.history(id, cursor);
 
       if (this.account()?.id === id) {
+        this.historyTimezone.set(result.timezone);
         this.history.set(result.entries);
         this.nextCursor.set(result.nextCursor);
         this.historyPage.set(page);

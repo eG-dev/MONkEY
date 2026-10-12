@@ -1,8 +1,8 @@
 # Milestone 3: incremental UI and business logic
 
-Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is locally implemented and verified on 2026-10-10. Step 3E allowance configuration is next, subject to its decision prerequisites.
+Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is locally implemented and verified on 2026-10-10. Steps 3E allowance configuration and 3F execution are locally implemented and verified on 2026-10-12; see the [final allowance acceptance evidence](03f-allowance-execution.md#delivery-evidence).
 Steps 3A, 3B, and the approved 3C scope remain locally implemented and verified on 2026-10-08;
-steps 3E, 3F, and 3H have not started. Dedicated correction/reversal workflows are deferred.
+step 3H has not started. Dedicated correction/reversal workflows are deferred.
 Depends on [step 2A authentication](02-authentication-authorization.md) and [step 2B product design](02b-ux-ui-design.md).
 
 Monthly reports are excluded from the product scope.
@@ -62,7 +62,7 @@ activity or a late cosmetic pass.
 - 3B resolved: exact two-decimal integer minor units, decimal-string API, explicit single opening entries, and EUR/USD display units; see [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md). The original nonnegative rule is superseded by 3C.
 - 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
 - 3D resolved: PNG/JPEG/WebP, 512 pixels per axis, 2 MiB, metadata-free re-encoding, and immutable-file/reference recovery; see [ADR-0014](../../docs/ADR/ADR-0014-private-account-images.md).
-- Before 3E/3F: allowance configuration/effective dates, due dates, catch-up, and subsequent timezone changes.
+- 3E/3F resolved: next-month immutable configuration, business-time due dates, historical catch-up, automatic durable retry, and credited-history preservation after timezone changes; see [ADR-0015](../../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 - Before destructive work in 3H: archival, deletion/anonymization, retention, and sensitive-action confirmation/re-authentication.
 
 Proposed defaults in the child plans remain proposals. Resolve affected business
@@ -86,12 +86,12 @@ gates remain open as recorded in the [migration overview](README.md).
 - Check direct unauthorized requests against the running API in addition to browser role scenarios; do not rely on hidden buttons or route guards.
 - Check SSR HTML, hydration, desktop/mobile layouts, and local font/image loading.
 - Review each slice against approved [design references](../../docs/design/README.md); complete application-wide visual/usability acceptance before cutover. Passing functional E2E tests does not approve the design.
-- Run core browser workflows in German and English, including authentication/validation errors, accessible labels, long-text layouts, and decimal/date input.
+- Run core browser workflows in English, retaining only the German desktop first-render/hydration exception in ADR-0005; verify German completeness and longer-text layouts separately through catalog checks and localized design review.
 - Verify changing language leaves ledger amounts, allowance periods, actor identity, and user-entered content unchanged.
 - Keep fixtures isolated and core services unmocked; attach traces and relevant logs when a scenario fails.
 - Update schema migrations and API contracts with each slice; keep the old application independently runnable.
 
-Current next activity: resolve the decision prerequisites for
-[step 3E allowance configuration](03e-allowance-configuration.md), then implement that slice.
+Current next activity: review the remaining scope and decision prerequisites for
+[step 3H management and lifecycle completion](03h-lifecycle.md).
 Remaining slice completion leads to
 [operations and cutover](04-operations-cutover.md).

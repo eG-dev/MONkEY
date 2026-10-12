@@ -2,9 +2,9 @@
 
 Store editable draw.io sources and synchronized PNG previews here for
 [step 2B: product UX and UI design](../../plans/migration/02b-ux-ui-design.md).
-The user approved the current wireframes, click prototypes, visual foundations,
+The user approved the then-current wireframes, click prototypes, visual foundations,
 and implemented representative design on 2026-10-10, including all subsequent
-refinements recorded below. Approval applies to the current working-tree revision;
+refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
@@ -96,6 +96,53 @@ and approved by the user on 2026-10-10: current versus next-month settings,
 retained amounts when disabled, and no executed-credit status in Step 3E.
 The existing allowance section and switch/amount modal layout are unchanged.
 
+Step 3F execution status in the account-details click prototype was explicitly
+approved by the user on 2026-10-12 ("prototype is approved"): the existing allowance
+panel shows only the latest successful credit timestamp or no credits, plus the oldest
+pending/failed month under a small "Credit runs" heading separated from the
+configuration by space. The allowance amount is not repeated in execution status;
+historical credit amounts remain in ledger history. Managers also see attempt details and a safe failure reason;
+the detailed-failure review state uses a generic placeholder reason, not a balance
+limit or advice to book a withdrawal. The account-details
+prototype includes dedicated execution review states in both languages. No new
+controls are introduced. The user separately approved the current wireframe on
+2026-10-12; both design approval gates for Angular execution status are satisfied.
+The revised
+prototype passed 96 combinations of desktop/360px, English/German, Manager/Member,
+light/dark, and six execution states without overflow. The configuration/status
+groups retain 20px separation; the latest-credit icon is centered with its text
+and outstanding status has at least 12px separation.
+
+The approved 2026-10-12 prototype includes the requested corrections: the success icon and
+text are vertically centered, with 12px before outstanding status. The latest
+credit line omits a redundant month; only catch-up credits whose period differs
+from the posting month retain a period label. The panel is limited to one latest
+successful credit and one oldest pending/failed month, not an expanding run list.
+Full credit history remains in the ledger. A catch-up review state illustrates
+the period distinction. The final detailed-failure state uses "Example failure
+reason." and its German equivalent, verified across 16 desktop/phone,
+language, theme, and role combinations. This is the prototype revision covered
+by the user's explicit prototype approval. The subsequent explicit wireframe
+approval covers the current user-edited source and its annotation arrangement.
+Its PNG was re-exported and visually inspected on 2026-10-12 without changing
+the source. The approved execution-status design is now implemented in Angular;
+the [Step 3F delivery record](../../plans/migration/03f-allowance-execution.md#delivery-evidence)
+documents the 17 passing real-stack checks and inspected desktop/mobile screenshots.
+The implementation uses existing spacing tokens with at least 20px between the
+configuration/status groups and 12px before outstanding status. Both explicit
+artifact approvals remain unchanged; local checks do not grant application-wide
+visual acceptance.
+
+A subsequent image-edit badge refinement requested on 2026-10-12 is a prototype
+draft: retain the circular badge, remove its outline, and use the panel background
+behind the pencil in both themes. This styling-only change leaves the approved
+wireframe layout and earlier execution-status approval intact. The changed
+prototype revision awaits explicit approval before changing the Angular badge.
+Verified 16 combinations of desktop/360px, English/German, light/dark, and
+Manager/Member: no badge border, centered pencil, opaque theme-aware background,
+working image dialog, Member read-only behavior, and no horizontal overflow.
+The phone header screenshot was visually inspected.
+
 Wireframe annotation formatting was refined on 2026-10-10: consolidate notes
 targeting the same area and use straight 3px arrows around a black 3px viewport
 border using draw.io's "Dashed (1)" preset.
@@ -124,7 +171,7 @@ wireframe first, then a detailed click prototype.
 | App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Approved 2026-10-10, including footer refinements | [Shell](prototypes/application-shell/index.html) |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
-| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Approved 2026-10-10, including unified transaction dialog and labelled header action after refresh | [Account details](prototypes/account-details/index.html) |
+| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; later borderless image-edit badge prototype refinement is a draft awaiting approval; approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved 2026-10-10, including version/GitHub footer | [Login](prototypes/login/index.html) |
@@ -138,8 +185,22 @@ and images are stored in [assets](assets/).
 
 ## Review rules
 
+The user explicitly approved the current account-details click prototype on
+2026-10-12 after the allowance execution-status corrections and replacement of
+the misleading balance-limit advice with a bilingual placeholder failure reason.
+That approval applies to the reviewed prototype revision. The user then
+separately explicitly approved the current account-details wireframe on
+2026-10-12 ("wireframe is approved to"), including their source edits and
+annotation arrangement. The PNG was re-exported from that source and visually
+inspected without modifying the source. Those approvals cover the then-reviewed
+references and the implemented execution status. The later image-edit badge
+prototype refinement remains a draft awaiting explicit approval; do not change
+the Angular badge based on that draft. The approved wireframe is unchanged.
+
 Committing a reference does not approve it. New or changed references are drafts
 until explicitly reviewed; record approval against the reviewed revision.
+Feedback, corrections, annotation readiness, business-policy acceptance, "proceed",
+and successful checks are not approval. Wait for explicit approval at each stage.
 Approved references guide implementation but do not override ADRs, backend
 security, exact money rules, or real-stack verification. Resolve policy conflicts
 before implementation rather than inferring decisions from diagrams.

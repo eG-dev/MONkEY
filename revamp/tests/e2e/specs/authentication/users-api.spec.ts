@@ -118,6 +118,10 @@ test('user-administration errors keep stable API codes and statuses @api', async
   expect(ignored.status()).toBe(201);
   expect(generated).not.toBe(suppliedPassword.password);
   expect((await csrfWrite(request, 'POST', '/api/auth/login', suppliedPassword)).status()).toBe(401);
+
+  const createdUser = await login(request, { username: suppliedPassword.username, password: generated });
+
+  expect(createdUser.language).toBe('en');
 });
 
 test('concurrent demotions preserve the last active manager @api', async ({ request, playwright, instance }) => {

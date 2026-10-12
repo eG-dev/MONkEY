@@ -34,7 +34,8 @@ internal static class GlobalizationCheck
         {
             timezone = timezone.Id,
             samples,
-            englishMonth = CultureInfo.GetCultureInfo("en-GB").DateTimeFormat.MonthNames[2],
+            englishMonth = CultureInfo.GetCultureInfo("en-US").DateTimeFormat.MonthNames[2],
+            englishDate = new DateTime(2026, 12, 31).ToString("d", CultureInfo.GetCultureInfo("en-US")),
             germanMonth = CultureInfo.GetCultureInfo("de-DE").DateTimeFormat.MonthNames[2]
         }));
     }

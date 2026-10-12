@@ -22,4 +22,6 @@ public sealed record LedgerEntryResponse
     public required LedgerEntrySource Source { get; init; }
 
     public string? Comment { get; init; }
+
+    public string? AllowanceMonth { get; init; }
 }

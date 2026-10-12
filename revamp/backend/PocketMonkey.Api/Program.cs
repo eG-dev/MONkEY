@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using PocketMonkey.Api.Configuration;
 using PocketMonkey.Api.Endpoints;
+using PocketMonkey.Api.HostedServices;
 using PocketMonkey.Api.Identity;
 using PocketMonkey.Api.Operations;
 using PocketMonkey.Api.Services;
@@ -37,9 +38,11 @@ builder.Services.AddScoped<LedgerAdministration>();
 builder.Services.AddScoped<AccountImages>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<AllowanceAdministration>();
+builder.Services.AddScoped<AllowanceExecutor>();
 if (!isOperatorCommand)
 {
 	builder.Services.AddHostedService<ImageCleanup>();
+	builder.Services.AddHostedService<AllowanceWorker>();
 }
 
 builder.Services.AddDbContext<FoundationDbContext>(options => options.UseSqlite(settings.ConnectionString));

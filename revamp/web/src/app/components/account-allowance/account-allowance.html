@@ -37,6 +37,39 @@
         <p class="hint">{{ t('accounts.allowanceNeedsOpening') }}</p>
       }
     }
+    <div class="allowance-execution" id="account-details-allowance-execution" aria-labelledby="account-details-credit-runs-title">
+      <h3 class="muted" id="account-details-credit-runs-title">{{ t('accounts.creditRuns') }}</h3>
+      @if (configuration.latestExecution; as credit) {
+        @if (credit.creditedAtUtc; as creditedAt) {
+          <p class="allowance-credit" id="account-details-last-credit">
+            <span class="icon icon-circle-check positive" aria-hidden="true"></span>
+            <span>{{ t('accounts.lastCredit', { date: timestamp(creditedAt) }) }}
+              @if (isCatchUp(credit)) {
+                {{ t('accounts.creditForMonth', { month: credit.businessMonth }) }}
+              }
+            </span>
+          </p>
+        }
+      } @else {
+        <p class="muted" id="account-details-no-credits">{{ t('accounts.noCredits') }}</p>
+      }
+      @if (configuration.outstandingExecution; as outstanding) {
+        <div class="message" [class.message-danger]="outstanding.status === 'failed'" [class.message-info]="outstanding.status !== 'failed'" id="account-details-credit-outstanding" role="status">
+          <span class="icon" [class.icon-circle-alert]="outstanding.status === 'failed'" [class.icon-info]="outstanding.status !== 'failed'" aria-hidden="true"></span>
+          <div class="message-body">
+            <span>{{ t(outstanding.status === 'failed' ? 'accounts.creditFailed' : 'accounts.creditPending', { month: outstanding.businessMonth }) }}</span>
+            @if (auth.user()?.role === 'Manager') {
+              @if (outstanding.lastAttemptAtUtc; as attemptedAt) {
+                <p id="account-details-credit-attempt">{{ t('accounts.creditAttempt', { date: timestamp(attemptedAt), attempts: outstanding.attempts }) }}</p>
+              }
+              @if (outstanding.errorCode) {
+                <p id="account-details-credit-failure-reason">{{ t(outstanding.errorCode === 'balance_overflow' ? 'accounts.creditRangeFailure' : 'accounts.creditStorageFailed') }}</p>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
     <app-modal-dialog dialogId="account-details-allowance-dialog" [open]="editing()" [heading]="t('accounts.setAllowance')" [dismissible]="!busy()" (closed)="editing.set(false)">
       <form class="form" id="account-details-allowance-form" (ngSubmit)="save()">
         @if (formError()) {

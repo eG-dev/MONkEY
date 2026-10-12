@@ -1,4 +1,6 @@
-namespace PocketMonkey.Api.Services;
+using PocketMonkey.Api.Services;
+
+namespace PocketMonkey.Api.HostedServices;
 
 public sealed class ImageCleanup : BackgroundService
 {

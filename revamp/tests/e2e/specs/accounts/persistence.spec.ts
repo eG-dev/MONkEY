@@ -47,7 +47,7 @@ test('accounts persist across restart and private SSR does not leak into anonymo
   const anonymous = await apiRequest.newContext({
     baseURL: instance.origin,
     ignoreHTTPSErrors: true,
-    extraHTTPHeaders: { 'Accept-Language': 'en-GB' },
+    extraHTTPHeaders: { 'Accept-Language': 'en-US' },
   });
 
   try {

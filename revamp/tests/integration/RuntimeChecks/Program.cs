@@ -1,5 +1,19 @@
 using RuntimeChecks.Tests;
 
+if (args is ["allowance-fixture", var path, var accountId, var mode])
+{
+    await AllowanceExecutionCheck.ConfigureFixtureAsync(path, accountId, mode);
+
+    return;
+}
+
+if (args is ["allowance-execution"])
+{
+    await AllowanceExecutionCheck.RunAsync();
+
+    return;
+}
+
 if (args is ["allowance-persistence"])
 {
     await AllowancePersistenceCheck.RunAsync();

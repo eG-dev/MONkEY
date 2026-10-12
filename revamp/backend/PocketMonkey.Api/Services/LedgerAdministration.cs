@@ -43,6 +43,13 @@ public sealed class LedgerAdministration
             : Task.FromResult<(LedgerEntryResponse?, LedgerError?)>((null, LedgerError.InvalidSource));
     }
 
+    internal Task<(LedgerEntryResponse? Entry, LedgerError? Error)> PostAllowanceAsync(
+        AllowanceExecution execution, long amount, DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        return PostAsync(execution.AccountId, CurrencyAmount.Format(amount), LedgerEntrySource.Allowance, null,
+            execution.IdempotencyKey, "system:monthly-allowance", cancellationToken, execution, now);
+    }
+
     public async Task<(LedgerHistoryResponse? History, LedgerError? Error)> HistoryAsync(
         string accountId,
         int pageSize,
@@ -110,6 +117,7 @@ public sealed class LedgerAdministration
 
         return (new LedgerHistoryResponse
         {
+            Timezone = settings.Timezone,
             Entries = visible.Select(entry => Describe(entry, settings.Currency)).ToList(),
             NextCursor = nextCursor
         }, null);
@@ -122,7 +130,9 @@ public sealed class LedgerAdministration
         string? commentInput,
         string idempotencyKey,
         string actor,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        AllowanceExecution? execution = null,
+        DateTimeOffset? occurredAtUtc = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(actor);
 
@@ -186,7 +196,7 @@ public sealed class LedgerAdministration
             return (null, LedgerError.BalanceOverflow);
         }
 
-        var actorName = await database.Users
+        var actorName = source == LedgerEntrySource.Allowance ? "POCKET MONkEY" : await database.Users
             .Where(user => user.Id == actor)
             .Select(user => user.DisplayName)
             .SingleAsync(cancellationToken);
@@ -199,10 +209,17 @@ public sealed class LedgerAdministration
             IdempotencyKey = key,
             ActorId = actor,
             ActorDisplayName = actorName,
-            OccurredAtUtc = DateTimeOffset.UtcNow,
+            OccurredAtUtc = occurredAtUtc ?? DateTimeOffset.UtcNow,
             Source = source,
-            Comment = comment
+            Comment = comment,
+            AllowanceMonth = execution?.BusinessMonth
         };
+
+        if (execution is not null)
+        {
+            execution.CreditedAtUtc = entry.OccurredAtUtc;
+            execution.ErrorCode = null;
+        }
 
         account.BalanceMinorUnits = balance;
         database.LedgerEntries.Add(entry);
@@ -210,7 +227,8 @@ public sealed class LedgerAdministration
         {
             ActorId = actor,
             SubjectId = accountId,
-            Action = source == LedgerEntrySource.Opening ? "opening_posted" : "transaction_posted",
+            Action = source == LedgerEntrySource.Opening ? "opening_posted"
+                : source == LedgerEntrySource.Allowance ? "allowance_posted" : "transaction_posted",
             OccurredAtUtc = entry.OccurredAtUtc
         });
 
@@ -230,6 +248,7 @@ public sealed class LedgerAdministration
         ActorDisplayName = entry.ActorDisplayName,
         OccurredAtUtc = entry.OccurredAtUtc,
         Source = entry.Source,
-        Comment = entry.Comment
+        Comment = entry.Comment,
+        AllowanceMonth = entry.AllowanceMonth is { } month ? $"{month / 100:D4}-{month % 100:D2}" : null
     };
 }

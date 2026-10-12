@@ -99,6 +99,38 @@ for (const job of Object.values(foundation.jobs)) {
 assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verification must not require secrets');
 console.log('PASS: Azure trigger isolation preserves legacy/shared changes; foundation PR checks are read-only, unfiltered, secret-free, and SHA-pinned');
 
+const apiDirectory = path.join(root, 'revamp/backend/PocketMonkey.Api');
+const migrationDirectory = path.join(apiDirectory, 'Storage/Migrations');
+
+function csharpFiles(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const filename = path.join(directory, entry.name);
+    if (entry.isDirectory()) return ['bin', 'obj'].includes(entry.name) ? [] : csharpFiles(filename);
+    return entry.name.endsWith('.cs') ? [filename] : [];
+  });
+}
+
+const migrationArtifacts = csharpFiles(apiDirectory).filter(filename => {
+  const source = fs.readFileSync(filename, 'utf8');
+  return /\bclass\s+\w+\s*:\s*(?:Migration|ModelSnapshot)\b|\[Migration\(/.test(source);
+});
+assert(migrationArtifacts.length, 'EF migration history is missing');
+for (const filename of migrationArtifacts) {
+  assert.equal(path.dirname(filename), migrationDirectory,
+    `${path.relative(root, filename)}: EF artifacts must live directly in Storage/Migrations`);
+  const source = fs.readFileSync(filename, 'utf8');
+  assert(/\bnamespace PocketMonkey\.Api\.Storage\.Migrations\s*[;{]/.test(source),
+    `${path.relative(root, filename)}: wrong EF migration namespace`);
+  if (filename.endsWith('.Designer.cs')) {
+    assert(fs.existsSync(filename.replace('.Designer.cs', '.cs')), `${filename}: migration implementation is missing`);
+  } else if (!filename.endsWith('ModelSnapshot.cs')) {
+    assert(fs.existsSync(filename.replace(/\.cs$/, '.Designer.cs')), `${filename}: migration metadata is missing`);
+  }
+}
+assert.deepEqual(migrationArtifacts.filter(filename => /\bclass\s+\w+\s*:\s*ModelSnapshot\b/.test(fs.readFileSync(filename, 'utf8'))),
+  [path.join(migrationDirectory, 'FoundationDbContextModelSnapshot.cs')], 'Keep exactly one EF model snapshot');
+console.log(`PASS: ${migrationArtifacts.length} EF artifacts in Storage/Migrations; matching namespace/pairs and one snapshot`);
+
 const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
 const markdown = ['.github/copilot-instructions.md'];
 if (fs.existsSync(path.join(root, 'revamp/README.md'))) markdown.push('revamp/README.md');

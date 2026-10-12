@@ -13,9 +13,10 @@ public static class AllowanceEndpoints
         ArgumentNullException.ThrowIfNull(app);
 
         app.MapGet("/api/accounts/{id}/allowance", async Task<IResult> (
-            string id, AllowanceAdministration administration, CancellationToken cancellationToken) =>
+            string id, ClaimsPrincipal principal, AllowanceAdministration administration, CancellationToken cancellationToken) =>
             {
-                var response = await administration.FindAsync(id, cancellationToken);
+                var response = await administration.FindAsync(id, cancellationToken,
+                    principal.IsInRole(UserRole.Manager.ToIdentityName()));
                 return response is null ? TypedResults.NotFound(new { code = "not_found" }) : TypedResults.Ok(response);
             })
             .RequireAuthorization("ReadyUser")

@@ -5,6 +5,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import { SharedAccount } from '../../models/accounts/shared-account';
 import { AllowanceState } from '../../models/accounts/allowance-state';
+import { AllowanceExecution } from '../../models/accounts/allowance-execution';
 import { AccountsService } from '../../services/accounts/accounts.service';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { LanguageService } from '../../services/language/language.service';
@@ -66,6 +67,30 @@ export class AccountAllowance {
     }
   }
 
+  protected timestamp(value: string): string {
+    return new Intl.DateTimeFormat(this.language.locale(), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: this.state()?.timezone ?? 'UTC',
+    }).format(new Date(value));
+  }
+
+  protected isCatchUp(execution: AllowanceExecution): boolean {
+    if (!execution.creditedAtUtc) {
+      return false;
+    }
+
+    const parts = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      timeZone: this.state()?.timezone ?? 'UTC',
+    }).formatToParts(new Date(execution.creditedAtUtc));
+    const year = parts.find((part) => part.type === 'year')?.value;
+    const month = parts.find((part) => part.type === 'month')?.value;
+
+    return execution.businessMonth !== `${year}-${month}`;
+  }
+
   protected open(): void {
     const state = this.state();
 
@@ -75,7 +100,8 @@ export class AccountAllowance {
 
     const configuration = state.scheduled ?? state.current;
     this.enabled = configuration?.enabled ?? false;
-    const separator = new Intl.NumberFormat(this.language.locale()).formatToParts(1.1).find(part => part.type === 'decimal')?.value ?? '.';
+    const separator =
+      new Intl.NumberFormat(this.language.locale()).formatToParts(1.1).find((part) => part.type === 'decimal')?.value ?? '.';
     this.amount = configuration?.amount?.replace('.', separator) ?? '';
     this.expectedRevisionId = state.latestRevisionId;
     this.formError.set('');
@@ -89,7 +115,8 @@ export class AccountAllowance {
     }
 
     const id = this.account().id;
-    const separator = new Intl.NumberFormat(this.language.locale()).formatToParts(1.1).find(part => part.type === 'decimal')?.value ?? '.';
+    const separator =
+      new Intl.NumberFormat(this.language.locale()).formatToParts(1.1).find((part) => part.type === 'decimal')?.value ?? '.';
     const amount = this.enabled ? this.amount.trim().replace(separator, '.') : null;
     this.busy.set(true);
     this.formError.set('');

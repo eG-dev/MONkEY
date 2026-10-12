@@ -21,14 +21,15 @@ public sealed class AllowanceAdministration
         this.clock = clock ?? throw new ArgumentNullException(nameof(clock));
     }
 
-    public async Task<AllowanceResponse?> FindAsync(string accountId, CancellationToken cancellationToken)
+    public async Task<AllowanceResponse?> FindAsync(string accountId, CancellationToken cancellationToken,
+        bool includeExecutionDetails = false)
     {
         if (!await database.Accounts.AnyAsync(account => account.Id == accountId, cancellationToken))
         {
             return null;
         }
 
-        return await DescribeAsync(accountId, clock.GetUtcNow(), cancellationToken);
+        return await DescribeAsync(accountId, clock.GetUtcNow(), cancellationToken, includeExecutionDetails);
     }
 
     public async Task<(AllowanceResponse? Configuration, string? Error)> SaveAsync(
@@ -74,7 +75,7 @@ public sealed class AllowanceAdministration
             if (latest is not null && latest.PreviousRevisionId == (request.ExpectedRevisionId ?? "") &&
                 latest.ActorId == actor && latest.Enabled == request.Enabled && latest.AmountMinorUnits == amount)
             {
-                return (await DescribeAsync(accountId, now, cancellationToken), null);
+                return (await DescribeAsync(accountId, now, cancellationToken, true), null);
             }
 
             return (null, "allowance_conflict");
@@ -84,7 +85,7 @@ public sealed class AllowanceAdministration
 
         if (latest is not null && latest.Enabled == request.Enabled && latest.AmountMinorUnits == amount)
         {
-            return (await DescribeAsync(accountId, now, cancellationToken), null);
+            return (await DescribeAsync(accountId, now, cancellationToken, true), null);
         }
 
         var revision = new AllowanceRevision
@@ -109,10 +110,11 @@ public sealed class AllowanceAdministration
         await database.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
-        return (await DescribeAsync(accountId, now, cancellationToken), null);
+        return (await DescribeAsync(accountId, now, cancellationToken, true), null);
     }
 
-    private async Task<AllowanceResponse> DescribeAsync(string accountId, DateTimeOffset now, CancellationToken cancellationToken)
+    private async Task<AllowanceResponse> DescribeAsync(string accountId, DateTimeOffset now,
+        CancellationToken cancellationToken, bool includeExecutionDetails)
     {
         var month = BusinessMonth(now);
         var monthKey = MonthKey(month);
@@ -121,14 +123,52 @@ public sealed class AllowanceAdministration
         var current = await revisions.Where(revision => revision.EffectiveMonth <= monthKey)
             .OrderByDescending(revision => revision.SequenceNumber).FirstOrDefaultAsync(cancellationToken);
 
+        var executions = database.AllowanceExecutions.AsNoTracking().Where(execution => execution.AccountId == accountId);
+        var latestExecution = await executions
+            .Where(execution => execution.CreditedAtUtc != null)
+            .OrderByDescending(execution => execution.BusinessMonth)
+            .FirstOrDefaultAsync(cancellationToken);
+        var outstandingExecution = await executions
+            .Where(execution => execution.CreditedAtUtc == null)
+            .OrderBy(execution => execution.BusinessMonth)
+            .FirstOrDefaultAsync(cancellationToken);
+
         return new AllowanceResponse
         {
             Currency = settings.Currency,
+            Timezone = settings.Timezone,
             BusinessMonth = month.ToString("yyyy-MM", CultureInfo.InvariantCulture),
             NextEffectiveMonth = month.AddMonths(1).ToString("yyyy-MM", CultureInfo.InvariantCulture),
             LatestRevisionId = latest?.Id,
             Current = Describe(current),
-            Scheduled = latest?.EffectiveMonth > monthKey ? Describe(latest) : null
+            Scheduled = latest?.EffectiveMonth > monthKey ? Describe(latest) : null,
+            LatestExecution = await DescribeExecutionAsync(latestExecution, cancellationToken, includeExecutionDetails),
+            OutstandingExecution = await DescribeExecutionAsync(outstandingExecution, cancellationToken, includeExecutionDetails)
+        };
+    }
+
+    private async Task<AllowanceExecutionResponse?> DescribeExecutionAsync(AllowanceExecution? execution,
+        CancellationToken cancellationToken, bool includeExecutionDetails)
+    {
+        if (execution is null)
+        {
+            return null;
+        }
+
+        var amount = await database.AllowanceRevisions.AsNoTracking()
+            .Where(revision => revision.Id == execution.RevisionId)
+            .Select(revision => revision.AmountMinorUnits)
+            .SingleAsync(cancellationToken);
+
+        return new AllowanceExecutionResponse
+        {
+            BusinessMonth = $"{execution.BusinessMonth / 100:D4}-{execution.BusinessMonth % 100:D2}",
+            Amount = CurrencyAmount.Format(amount!.Value),
+            Status = execution.CreditedAtUtc is not null ? "credited" : execution.ErrorCode is not null ? "failed" : "pending",
+            Attempts = includeExecutionDetails ? execution.Attempts : null,
+            LastAttemptAtUtc = includeExecutionDetails ? execution.LastAttemptAtUtc : null,
+            CreditedAtUtc = execution.CreditedAtUtc,
+            ErrorCode = includeExecutionDetails ? execution.ErrorCode : null
         };
     }
 

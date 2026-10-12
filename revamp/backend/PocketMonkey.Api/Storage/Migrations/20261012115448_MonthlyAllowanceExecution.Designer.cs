@@ -8,11 +8,11 @@ using PocketMonkey.Api.Storage;
 
 #nullable disable
 
-namespace PocketMonkey.Api.Migrations
+namespace PocketMonkey.Api.Storage.Migrations
 {
     [DbContext(typeof(FoundationDbContext))]
-    [Migration("20261008161657_SharedAccounts")]
-    partial class SharedAccounts
+    [Migration("20261012115448_MonthlyAllowanceExecution")]
+    partial class MonthlyAllowanceExecution
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,6 +154,13 @@ namespace PocketMonkey.Api.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
+                    b.Property<long?>("BalanceMinorUnits")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ImageKey")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -171,7 +178,110 @@ namespace PocketMonkey.Api.Migrations
 
                     b.ToTable("Accounts", null, t =>
                         {
+                            t.HasCheckConstraint("CK_Accounts_Balance", "BalanceMinorUnits IS NULL OR typeof(BalanceMinorUnits) = 'integer'");
+
                             t.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40");
+                        });
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AllowanceExecution", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BusinessMonth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset?>("CreditedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ErrorCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset?>("LastAttemptAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RevisionId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("RevisionId");
+
+                    b.HasIndex("AccountId", "BusinessMonth")
+                        .IsUnique();
+
+                    b.ToTable("AllowanceExecutions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AllowanceExecutions_Attempts", "Attempts >= 0");
+
+                            t.HasCheckConstraint("CK_AllowanceExecutions_Month", "BusinessMonth BETWEEN 101 AND 999912 AND BusinessMonth % 100 BETWEEN 1 AND 12");
+                        });
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AllowanceRevision", b =>
+                {
+                    b.Property<long>("SequenceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ActorId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("AmountMinorUnits")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EffectiveMonth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("OccurredAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PreviousRevisionId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("SequenceNumber");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("AccountId", "PreviousRevisionId")
+                        .IsUnique();
+
+                    b.ToTable("AllowanceRevisions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AllowanceRevisions_Amount", "(AmountMinorUnits IS NULL AND Enabled = 0) OR (typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits > 0)");
+
+                            t.HasCheckConstraint("CK_AllowanceRevisions_Month", "EffectiveMonth BETWEEN 101 AND 999912 AND EffectiveMonth % 100 BETWEEN 1 AND 12");
                         });
                 });
 
@@ -234,6 +344,13 @@ namespace PocketMonkey.Api.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(6)
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("system");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
 
@@ -250,7 +367,10 @@ namespace PocketMonkey.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AspNetUsers", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AspNetUsers_Theme", "Theme IN ('system', 'light', 'dark')");
+                        });
                 });
 
             modelBuilder.Entity("PocketMonkey.Api.Entities.AuditEvent", b =>
@@ -279,25 +399,78 @@ namespace PocketMonkey.Api.Migrations
                     b.ToTable("AuditEvents");
                 });
 
-            modelBuilder.Entity("PocketMonkey.Api.Entities.FoundationState", b =>
+            modelBuilder.Entity("PocketMonkey.Api.Entities.LedgerEntry", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("InitializedAtUtc")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SampleId")
+                    b.Property<string>("AccountId")
                         .IsRequired()
-                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ActorDisplayName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ActorId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("AllowanceMonth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AmountMinorUnits")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("OccurredAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("SequenceNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("FoundationState", null, t =>
+                    b.HasIndex("AccountId")
+                        .IsUnique()
+                        .HasFilter("Source = 'opening'");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("SequenceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("AccountId", "AllowanceMonth")
+                        .IsUnique()
+                        .HasFilter("AllowanceMonth IS NOT NULL");
+
+                    b.HasIndex("AccountId", "SequenceNumber")
+                        .IsDescending(false, true);
+
+                    b.ToTable("LedgerEntries", null, t =>
                         {
-                            t.HasCheckConstraint("CK_FoundationState_Singleton", "Id = 1");
+                            t.HasCheckConstraint("CK_LedgerEntries_AllowanceMonth", "(Source = 'allowance' AND AllowanceMonth IS NOT NULL AND AllowanceMonth BETWEEN 101 AND 999912 AND AllowanceMonth % 100 BETWEEN 1 AND 12) OR (Source <> 'allowance' AND AllowanceMonth IS NULL)");
+
+                            t.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND (Source = 'opening' OR (Source IN ('deposit', 'allowance') AND AmountMinorUnits > 0) OR (Source = 'withdrawal' AND AmountMinorUnits < 0))");
+
+                            t.HasCheckConstraint("CK_LedgerEntries_Comment", "Comment IS NULL OR length(Comment) <= 500");
+
+                            t.HasCheckConstraint("CK_LedgerEntries_Key", "length(IdempotencyKey) = 36");
+
+                            t.HasCheckConstraint("CK_LedgerEntries_Sequence", "typeof(SequenceNumber) = 'integer' AND SequenceNumber > 0");
+
+                            t.HasCheckConstraint("CK_LedgerEntries_Source", "Source IN ('opening', 'deposit', 'withdrawal', 'allowance')");
                         });
                 });
 
@@ -350,6 +523,45 @@ namespace PocketMonkey.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AllowanceExecution", b =>
+                {
+                    b.HasOne("PocketMonkey.Api.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PocketMonkey.Api.Entities.AllowanceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("RevisionId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.AllowanceRevision", b =>
+                {
+                    b.HasOne("PocketMonkey.Api.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.LedgerEntry", b =>
+                {
+                    b.HasOne("PocketMonkey.Api.Entities.Account", null)
+                        .WithMany("LedgerEntries")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Api.Entities.Account", b =>
+                {
+                    b.Navigation("LedgerEntries");
                 });
 #pragma warning restore 612, 618
         }

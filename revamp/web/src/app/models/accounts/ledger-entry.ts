@@ -6,6 +6,7 @@ export interface LedgerEntry {
   actorId: string;
   actorDisplayName: string;
   occurredAtUtc: string;
-  source: 'opening' | 'deposit' | 'withdrawal';
+  source: 'opening' | 'deposit' | 'withdrawal' | 'allowance';
   comment: string | null;
+  allowanceMonth: string | null;
 }

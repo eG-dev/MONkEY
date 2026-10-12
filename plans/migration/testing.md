@@ -3,11 +3,29 @@
 Status: local foundation suite implemented and verified. On 2026-10-10, the user
 confirmed that all tests pass in GitHub Actions; hosted test execution is no
 longer pending for that earlier run. A subsequent supplied run passed 56 of 57
-cases but exposed an image-load assertion race; its focused local fix passes,
-and hosted confirmation of that fix remains pending. Fork-specific
+cases but exposed an image-load assertion race. On 2026-10-12, the user confirmed
+that all tests pass in GitHub Actions again, closing the pending hosted rerun.
+No run URL or exact case count was supplied for this confirmation. Fork-specific
 verification, publishing rehearsal, and real-host deployment remain separate
 gates. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
 and the [foundation guide](../../revamp/README.md). Extend with each feature.
+
+## Allowance execution acceptance
+
+On 2026-10-12, the final allowance acceptance set passed all **17 checks** locally
+against the current production Linux image, using one worker and zero retries.
+It covers configuration API/SQLite and desktop/mobile workflows, durable worker
+startup recovery after forced process termination, automatic periodic retry after
+an atomic posting failure, Member API redaction and browser visibility, catch-up
+periods, business-timezone history dates, opening workflows, and existing SSR/
+hydration checks. German/English catalogs and E2E TypeScript checks passed
+separately. The [Step 3F delivery record](03f-allowance-execution.md#delivery-evidence)
+contains the reproducible command and exact fixture/recovery scope.
+
+This result is scoped local acceptance, not a full release-suite run or a new
+GitHub Actions success confirmation. Hosted verification for this revision and
+the operational/publication gates remain open; earlier hosted results above
+retain their original scope.
 
 ## Image loading regression
 
@@ -22,6 +40,7 @@ Both desktop and mobile image workflows passed locally against the production
 image with `npm --prefix revamp/tests/e2e test -- accounts/images-workflows.spec.ts`.
 The readability pass restores setup/action/assertion clusters with whitespace-only
 changes elsewhere in specs/helpers. The full suite was not run for this change.
+On 2026-10-12, the user confirmed the subsequent GitHub Actions tests all passed.
 
 ## Strategy
 

@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace PocketMonkey.Api.Migrations
+namespace PocketMonkey.Api.Storage.Migrations
 {
     /// <inheritdoc />
     public partial class ManualTransactions : Migration

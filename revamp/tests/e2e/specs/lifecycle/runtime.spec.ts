@@ -23,7 +23,7 @@ standalone('runtime works with networking disabled and no development executable
       '--env',
       'MONKEY_DATA_PATH=/data/offline',
       '--env',
-      'MONKEY_DEFAULT_LOCALE=en-GB',
+      'MONKEY_DEFAULT_LOCALE=en-US',
       '--env',
       'MONKEY_LOG_LEVEL=Warning',
       image,
@@ -55,7 +55,7 @@ standalone('runtime works with networking disabled and no development executable
       name,
       'node',
       '-e',
-      "fetch('http://127.0.0.1:8080/',{headers:{'Accept-Language':'en-GB'}}).then(response=>response.text()).then(html=>process.exit(html.includes('lang=\"en\"')&&html.includes('Sign in')?0:1))",
+      "fetch('http://127.0.0.1:8080/',{headers:{'Accept-Language':'en-US'}}).then(response=>response.text()).then(html=>process.exit(html.includes('lang=\"en\"')&&html.includes('Sign in')?0:1))",
     );
 
     expect(language).toBe('');
@@ -101,6 +101,7 @@ standalone('Linux Node and .NET agree at DST boundaries with German/English glob
   expect(result.samples.map((sample: { offsetMinutes: number }) => sample.offsetMinutes)).toEqual([60, 120, 120, 60]);
 
   expect(result.englishMonth).toBe('March');
+  expect(result.englishDate).toBe('12/31/2026');
   expect(result.germanMonth).toBe('M\u00e4rz');
 
   const nodeSamples = JSON.parse(
@@ -116,7 +117,7 @@ standalone('Linux Node and .NET agree at DST boundaries with German/English glob
       image,
       '-e',
       `const instants = ${JSON.stringify(result.samples.map((sample: { instant: string }) => sample.instant))};
-     const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+    const format = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
      console.log(JSON.stringify(instants.map(instant => { const parts = Object.fromEntries(format.formatToParts(new Date(instant)).map(part => [part.type, part.value])); return parts.year+'-'+parts.month+'-'+parts.day+' '+parts.hour+':'+parts.minute+':'+parts.second; })));`,
     ),
   );

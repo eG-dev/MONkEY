@@ -42,7 +42,7 @@ const locale = process.env['MONKEY_DEFAULT_LOCALE'] ?? 'de-DE';
 const defaultLanguage = Object.values(LANGUAGES).find((language) => language.locale === locale)?.id;
 
 if (!defaultLanguage) {
-  throw new Error('MONKEY_DEFAULT_LOCALE must be de-DE or en-GB.');
+  throw new Error('MONKEY_DEFAULT_LOCALE must be de-DE or en-US.');
 }
 
 const levels = ['Trace', 'Debug', 'Information', 'Warning', 'Error', 'Critical', 'None'];

@@ -25,7 +25,7 @@ flowchart LR
     W[Wireframe<br>structure and key behavior] --> A{Approved?}
     A -- changes --> W
     A -- yes --> P[Click prototype<br>details and behavior]
-    P --> R{Reviewed?}
+    P --> R{Explicitly approved?}
     R -- structural change --> W
     R -- detail change --> P
     R -- yes --> I[Angular implementation<br>verified end to end]
@@ -59,6 +59,7 @@ wireframe/prototype approval gates.
 
 ### Changes and approval
 
+- Require explicit user approval of the current wireframe revision before advancing to its click prototype, and explicit approval of the current prototype revision before Angular implementation. Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed, and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts. If corrections are requested, verify the revised drafts and wait for review without repeatedly prompting for approval.
 - Change structure in the wireframe first and then the prototype; change details or behavior in the prototype only.
 - Record approval per reference in the design index. Approved references guide the implementation but do not override ADRs, backend authorization, or exact money rules, and do not create business rules on their own.
 - Implement approved views in the Angular application using the design-system tokens and verify them as described in [ADR-0005](ADR-0005-e2e-first-verification.md).

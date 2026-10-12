@@ -1,10 +1,10 @@
-# POCKET MONkEY Foundation, Authentication, Accounts, Images, and Ledger
+# POCKET MONkEY Foundation, Authentication, Accounts, Images, Ledger, and Allowances
 
 The build/run/storage foundation, local authentication, manager user
 administration, shared accounts and private account images, signed opening balances, deposits/withdrawals,
-and paginated history are implemented. This is not a production-ready application.
-Dedicated reversals are deferred. Allowances have
-not been implemented.
+paginated history, monthly allowance configuration, and durable allowance credits
+are implemented. This is not a production-ready application.
+Dedicated reversals are deferred.
 
 Monthly reports are excluded from the product scope; no monthly-summary views,
 report snapshots, or report-generation jobs are planned.
@@ -27,6 +27,32 @@ with the display currency policy in [ADR-0011](../docs/ADR/ADR-0011-currency-dis
 Signed openings, overdrafts, manual transactions, and history follow
 [ADR-0012](../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md).
 Private images follow [ADR-0014](../docs/ADR/ADR-0014-private-account-images.md).
+Allowance configuration and execution follow
+[ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
+[ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
+
+## Monthly Allowances
+
+Managers configure exact positive monthly amounts or disable allowance while
+retaining the amount. Changes take effect next business month; saving settings
+never posts money. The backend scans at startup and once per minute, catches up
+every missed eligible historical month, skips disabled months, and automatically
+retries durable failures. Unique account/month identities and atomic ledger,
+balance, audit, and execution completion prevent duplicate or partial credits.
+
+Account details shows only the latest successful credit and oldest outstanding
+month. Managers see attempt details and safe reasons; Member API responses redact
+those details. Ledger credits show localized automatic provenance and their
+business period. Status and history dates use validated `TZ`; stored UTC events
+and credited month identities remain unchanged. Language never chooses the
+business timezone or financial period.
+
+The current wireframe and prototype were separately explicitly approved on
+2026-10-12. The [Step 3F delivery record](../plans/migration/03f-allowance-execution.md#delivery-evidence)
+documents **17 passing local production-image checks**, including forced restart,
+periodic retry, atomic failure, role security, configuration regressions, and
+SSR/hydration. It includes the exact reproducible command and remaining hosted/
+release gates; no production test-clock or failure-injection endpoint exists.
 
 ## Private Account Images
 
@@ -50,6 +76,12 @@ and German/English desktop/mobile workflows. Run from `revamp/` after the soluti
 and container builds: `npm --prefix tests/e2e test -- accounts/images --workers 1`.
 
 ## Verified Stack
+
+English uses `en-US` formatting; German uses `de-DE`. Set
+`MONKEY_DEFAULT_LOCALE=en-US` for an English instance default (German remains
+the unset default). Existing personal language IDs remain `en` and `de`.
+`en-GB` is no longer a supported value for this setting. This does not change
+the configured currency or business timezone.
 
 | Component | Verified version |
 | --- | --- |
@@ -116,14 +148,29 @@ and behavior by responsibility. Namespaces follow the folders:
 | Contracts/Authentication, Contracts/Users, Contracts/Accounts | Request/response models grouped by API feature |
 | Endpoints | Feature-specific HTTP routing, policies, and response mapping |
 | Services | Application behavior, transactional user/account administration, and typed error outcomes |
+| HostedServices | Host-managed background workers and scheduling; delegates scoped business behavior to Services |
 | Identity | Identity registration, cookie validation, policies, and claims |
 | Operations | Host-only manager bootstrap and recovery commands |
 | Storage | EF context, storage initialization, and readiness |
 | Configuration | Runtime options and validation |
-| Migrations | Generated schema history and model snapshot |
+| Storage/Migrations | All generated EF migration implementations, designer metadata, and the single model snapshot |
 
 Endpoints use contracts at the HTTP boundary; services operate on entities.
 Moving types between folders does not change routes, JSON contracts, or the schema.
+
+Generate migrations from `revamp/` using the pinned EF tool and explicit paths:
+
+```text
+dotnet tool restore
+dotnet ef migrations add <Name> --project backend/PocketMonkey.Api --context FoundationDbContext --output-dir Storage/Migrations --namespace PocketMonkey.Api.Storage.Migrations
+node ../plans/migration/verify-guardrails.mjs
+```
+
+Keep every migration and the single `FoundationDbContextModelSnapshot` in
+`Storage/Migrations`. Do not create a second folder or snapshot. The backend build
+rejects misplaced timestamped migration/snapshot files; the CI guard also checks
+namespace consistency, matching implementation/designer pairs, and one snapshot.
+Relocating generated history must preserve migration IDs and schema operations.
 
 User administration returns `UserAdministrationError?`, with `null` indicating
 success. The enum and its shared `ToCode()` conversion live beside the service.

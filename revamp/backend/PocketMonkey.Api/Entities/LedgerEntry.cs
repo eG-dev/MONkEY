@@ -21,4 +21,6 @@ public sealed class LedgerEntry
     public LedgerEntrySource Source { get; init; } = LedgerEntrySource.Opening;
 
     public string? Comment { get; init; }
+
+    public int? AllowanceMonth { get; init; }
 }

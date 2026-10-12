@@ -207,16 +207,18 @@
                       </td>
                       <td class="type">{{ t('accounts.sources.' + entry.source) }}</td>
                       <td class="comment">
-                        @if (entry.comment) {
+                        @if (entry.source === 'allowance' && entry.allowanceMonth) {
+                          {{ t('accounts.allowancePeriod', { month: entry.allowanceMonth }) }}
+                        } @else if (entry.comment) {
                           {{ entry.comment }}
                         } @else {
                           <span class="wide-only muted">—</span><span class="phone-only">{{ t('accounts.sources.' + entry.source) }}</span>
                         }
                       </td>
-                      <td class="by">{{ entry.actorDisplayName }}</td>
-                      <td class="meta">{{ entry.occurredAtUtc | date: 'mediumDate' : 'UTC' : language.locale() }} · {{ entry.actorDisplayName }}</td>
+                      <td class="by">{{ entry.source === 'allowance' ? t('accounts.automatic') : entry.actorDisplayName }}</td>
+                      <td class="meta">{{ historyDate(entry.occurredAtUtc, false) }} · {{ entry.source === 'allowance' ? t('accounts.automatic') : entry.actorDisplayName }}</td>
                       <td class="date">
-                        <time [attr.datetime]="entry.occurredAtUtc">{{ entry.occurredAtUtc | date: 'medium' : 'UTC' : language.locale() }}</time>
+                        <time [attr.datetime]="entry.occurredAtUtc">{{ historyDate(entry.occurredAtUtc) }}</time>
                       </td>
                     </tr>
                   }

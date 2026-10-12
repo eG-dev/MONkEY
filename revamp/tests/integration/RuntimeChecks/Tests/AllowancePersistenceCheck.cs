@@ -13,7 +13,7 @@ internal static class AllowancePersistenceCheck
     public static async Task RunAsync()
     {
         var path = Path.Combine(Path.GetTempPath(), $"allowance-{Guid.NewGuid():N}.db");
-        var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "Europe/Berlin", DefaultLocale = "en-GB" };
+        var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "Europe/Berlin", DefaultLocale = "en-US" };
         var options = new DbContextOptionsBuilder<FoundationDbContext>().UseSqlite($"Data Source={path};Foreign Keys=True;Default Timeout=30").Options;
         var clock = new ControlledClock { Now = DateTimeOffset.Parse("2026-09-30T21:59:59Z") };
         string accountId;

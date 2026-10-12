@@ -30,7 +30,7 @@ export function startContainer(container: string, volume: string, currency = 'EU
     '--env',
     'TZ=Europe/Berlin',
     '--env',
-    'MONKEY_DEFAULT_LOCALE=en-GB',
+    'MONKEY_DEFAULT_LOCALE=en-US',
     '--env',
     `MONKEY_CURRENCY=${currency}`,
     '--mount',

@@ -59,7 +59,7 @@
 
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true" viewBox="0 0 24 24">${ICONS[name]}</svg>`;
-  const locale = () => prefs.language === 'de' ? 'de-DE' : 'en-GB';
+  const locale = () => prefs.language === 'de' ? 'de-DE' : 'en-US';
 
   function t(key, params = {}) {
     const text = pageStrings[prefs.language][key] ?? shellStrings[prefs.language][key] ?? pageStrings.en[key] ?? shellStrings.en[key] ?? key;
@@ -112,6 +112,12 @@
   }
 
   const date = (iso, withTime = true) => new Intl.DateTimeFormat(locale(), { dateStyle: 'medium', ...(withTime ? { timeStyle: 'short' } : {}), timeZone: TIME_ZONE }).format(new Date(iso));
+  function businessMonth(iso) {
+    const parts = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', timeZone: TIME_ZONE }).formatToParts(new Date(iso));
+    const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+    return `${values.year}-${values.month}`;
+  }
+
   const balance = account => account.history.some(item => item.type === 'opening') ? account.history.reduce((sum, item) => sum + item.amount, 0) : null;
   const currentUser = () => data.users.find(user => user.id === prefs.user) ?? data.users[0];
   const isManager = () => currentUser().role === 'Manager';
@@ -428,7 +434,7 @@
   }
 
   window.PM = {
-    init, t, esc, icon, avatar, money, amountHtml, parseAmount, date, balance, allowanceStatus, request, toast, dialog, fieldError,
+    init, t, esc, icon, avatar, money, amountHtml, parseAmount, date, businessMonth, balance, allowanceStatus, request, toast, dialog, fieldError,
     get prefs() { return prefs; }, savePrefs, get data() { return data; }, saveData, currentUser, isManager, account, accountsByName, render
   };
 })();

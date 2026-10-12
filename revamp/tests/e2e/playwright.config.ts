@@ -11,7 +11,7 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   reporter: [['list'], ['html', { open: 'never' }]],
-  use: { locale: 'en-GB', extraHTTPHeaders: { 'Accept-Language': 'en-GB' }, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
+  use: { locale: 'en-US', extraHTTPHeaders: { 'Accept-Language': 'en-US' }, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
     {

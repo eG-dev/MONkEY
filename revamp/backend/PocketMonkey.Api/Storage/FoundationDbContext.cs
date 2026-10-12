@@ -18,9 +18,26 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<AllowanceRevision> AllowanceRevisions => Set<AllowanceRevision>();
 
+    public DbSet<AllowanceExecution> AllowanceExecutions => Set<AllowanceExecution>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AllowanceExecution>(stateEntity =>
+        {
+            stateEntity.HasKey(execution => execution.Id);
+            stateEntity.HasIndex(execution => new { execution.AccountId, execution.BusinessMonth }).IsUnique();
+            stateEntity.HasIndex(execution => execution.IdempotencyKey).IsUnique();
+            stateEntity.HasOne<Account>().WithMany().HasForeignKey(execution => execution.AccountId).OnDelete(DeleteBehavior.Restrict);
+            stateEntity.HasOne<AllowanceRevision>().WithMany().HasForeignKey(execution => execution.RevisionId)
+                .HasPrincipalKey(revision => revision.Id).OnDelete(DeleteBehavior.Restrict);
+            stateEntity.ToTable("AllowanceExecutions", table =>
+            {
+                table.HasCheckConstraint("CK_AllowanceExecutions_Month", "BusinessMonth BETWEEN 101 AND 999912 AND BusinessMonth % 100 BETWEEN 1 AND 12");
+                table.HasCheckConstraint("CK_AllowanceExecutions_Attempts", "Attempts >= 0");
+            });
+        });
 
         modelBuilder.Entity<AllowanceRevision>(revisionEntity =>
         {
@@ -93,6 +110,9 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
                 .HasIndex(x => x.IdempotencyKey)
                 .IsUnique();
 
+            entryEntity.HasIndex(entry => new { entry.AccountId, entry.AllowanceMonth })
+                .HasFilter("AllowanceMonth IS NOT NULL").IsUnique();
+
             entryEntity
                 .HasIndex(x => x.SequenceNumber)
                 .IsUnique();
@@ -114,8 +134,9 @@ public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
 
             entryEntity.ToTable("LedgerEntries", table =>
             {
-                table.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND (Source = 'opening' OR (Source = 'deposit' AND AmountMinorUnits > 0) OR (Source = 'withdrawal' AND AmountMinorUnits < 0))");
-                table.HasCheckConstraint("CK_LedgerEntries_Source", "Source IN ('opening', 'deposit', 'withdrawal')");
+                table.HasCheckConstraint("CK_LedgerEntries_Amount", "typeof(AmountMinorUnits) = 'integer' AND (Source = 'opening' OR (Source IN ('deposit', 'allowance') AND AmountMinorUnits > 0) OR (Source = 'withdrawal' AND AmountMinorUnits < 0))");
+                table.HasCheckConstraint("CK_LedgerEntries_Source", "Source IN ('opening', 'deposit', 'withdrawal', 'allowance')");
+                table.HasCheckConstraint("CK_LedgerEntries_AllowanceMonth", "(Source = 'allowance' AND AllowanceMonth IS NOT NULL AND AllowanceMonth BETWEEN 101 AND 999912 AND AllowanceMonth % 100 BETWEEN 1 AND 12) OR (Source <> 'allowance' AND AllowanceMonth IS NULL)");
                 table.HasCheckConstraint("CK_LedgerEntries_Sequence", "typeof(SequenceNumber) = 'integer' AND SequenceNumber > 0");
                 table.HasCheckConstraint("CK_LedgerEntries_Comment", "Comment IS NULL OR length(Comment) <= 500");
                 table.HasCheckConstraint("CK_LedgerEntries_Key", "length(IdempotencyKey) = 36");

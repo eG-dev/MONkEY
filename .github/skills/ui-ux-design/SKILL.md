@@ -9,6 +9,14 @@ Implements [ADR-0013](../../../docs/ADR/ADR-0013-wireframes-and-click-prototypes
 Follow the [design instructions](../../instructions/design.instructions.md) for
 the rules; this skill describes the steps.
 
+## Explicit Approval Gates
+
+- New or changed wireframes and click prototypes are drafts until the user explicitly approves the current revision of each artifact. Preserve earlier approvals as history; never carry them forward to changed references.
+- Feedback, requested corrections, annotation-placement confirmation, business-policy acceptance, "proceed", and successful automated checks are not design approval. A response that identifies remaining flaws leaves the artifact unapproved.
+- After wireframe export and inspection, present the draft and wait for explicit wireframe approval before advancing to its click prototype. After prototype verification, present the draft and wait for explicit prototype approval before Angular implementation. The user may explicitly approve both named current artifacts together.
+- Approval must identify the artifact and reviewed revision. Record the user's explicit approval and date in the design index only after it is given. Never mark a reference approved based on inference or implementation progress.
+- When corrections are requested, apply them to the draft, verify it, and return it for review. Do not repeatedly prompt for approval while the user is still reviewing or requesting fixes, and do not continue dependent implementation in the meantime.
+
 ## 1. Understand the change
 
 1. Read the [design index](../../../docs/design/README.md), the affected wireframe PNG, and the prototype.
@@ -39,6 +47,7 @@ the rules; this skill describes the steps.
 ```
 
 - Once the user confirms the arrangement, re-export and view the PNG. Check the dashed viewport, external note placement, readable text, one arrow per annotated area, and absence of annotation/control overlap before continuing.
+- Arrangement confirmation only permits export. Wait for explicit approval of the exported wireframe revision before starting or updating its dependent click prototype.
 
 ## 3. Click prototype
 
@@ -93,3 +102,4 @@ The integrated browser tab may be hidden: prefer `page.evaluate` with `requestSu
 - Update the [design index](../../../docs/design/README.md): links, and mark changed references as drafts until the user approves them.
 - Summarize what changed and what was verified; list open business questions instead of deciding them in the design.
 - Angular implementation happens separately after approval, following the [web instructions](../../instructions/revamp-web.instructions.md) and the E2E-first verification of [ADR-0005](../../../docs/ADR/ADR-0005-e2e-first-verification.md).
+- If either current artifact is still a draft, finish by stating what awaits review. Do not infer approval from feedback or a general instruction to continue.

@@ -64,7 +64,7 @@ public sealed class UserAdministration
         {
             UserName = request.Username.Trim(),
             DisplayName = request.DisplayName.Trim(),
-            Language = settings.DefaultLocale == "en-GB" ? "en" : "de",
+            Language = settings.DefaultLocale == "en-US" ? "en" : "de",
             MustChangePassword = !bootstrap
         };
 

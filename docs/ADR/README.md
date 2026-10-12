@@ -21,3 +21,4 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0013](ADR-0013-wireframes-and-click-prototypes.md) | View-only rough wireframes first, then detailed offline click prototypes on a shared shell |
 | [ADR-0014](ADR-0014-private-account-images.md) | Bounded private images, canonical PNG encoding, and immutable-file recovery |
 | [ADR-0015](ADR-0015-monthly-allowance-configuration.md) | Next-month allowance revisions, exact amounts, Manager configuration, and no credits on save |
+| [ADR-0016](ADR-0016-monthly-allowance-execution.md) | Historical monthly catch-up, disabled-period skipping, retry-safe credits, and timezone-change scheduling |

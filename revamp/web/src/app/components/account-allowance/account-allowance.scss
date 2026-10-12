@@ -18,3 +18,28 @@ button {
   max-width: 100%;
   white-space: normal;
 }
+
+.allowance-execution {
+  margin-top: var(--space-7);
+
+  h3 {
+    font: var(--type-label);
+    margin: 0 0 var(--space-2);
+  }
+
+  > .message {
+    margin-top: var(--space-5);
+  }
+}
+
+.allowance-credit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+
+  > .icon {
+    flex-shrink: 0;
+    color: var(--amount-positive);
+  }
+}

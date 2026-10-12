@@ -42,9 +42,9 @@ public sealed record InstanceSettings
         _ = TimeZoneInfo.FindSystemTimeZoneById(timezone);
 
         var locale = configuration["MONKEY_DEFAULT_LOCALE"] ?? "de-DE";
-        if (locale is not ("de-DE" or "en-GB"))
+        if (locale is not ("de-DE" or "en-US"))
         {
-            throw new InvalidOperationException("MONKEY_DEFAULT_LOCALE must be de-DE or en-GB.");
+            throw new InvalidOperationException("MONKEY_DEFAULT_LOCALE must be de-DE or en-US.");
         }
         _ = CultureInfo.GetCultureInfo(locale);
 

@@ -101,6 +101,21 @@ test.describe('opening workflow', () => {
     expect(persisted.currency).toBe(currency);
     expect(persisted.openingEntry.currency).toBe(currency);
 
+    const recordedAt = new Date(persisted.openingEntry.occurredAtUtc);
+    const history = await (await request.get(`/api/accounts/${account.id}/transactions`)).json();
+    expect(history.timezone).toBe('Europe/Berlin');
+    const englishDate = new Intl.DateTimeFormat('en-US', { timeZone: history.timezone, dateStyle: 'medium' }).format(recordedAt);
+    const englishTime = new Intl.DateTimeFormat('en-US', {
+      timeZone: history.timezone,
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(recordedAt);
+    const historyRow = page.getByTestId('ledger-entry').first();
+
+    await expect(historyRow.locator('.meta')).toContainText(englishDate);
+    await expect(historyRow.locator('time')).toHaveText(`${englishDate}, ${englishTime}`);
+
     await page.goto(`/accounts/${maximum.id}`);
 
     await expect(balance).toHaveText(labels.maximum);
