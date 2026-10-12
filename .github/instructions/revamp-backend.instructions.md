@@ -1,5 +1,5 @@
 ---
-description: "Use when implementing the replacement .NET backend: application services, authorization, exact money, persistence, migrations, and durable jobs."
+description: "Use when designing or implementing the replacement .NET backend: model/database/entity design, endpoint contracts, application services, authorization, exact money, persistence, migrations, and durable jobs."
 applyTo: "revamp/backend/**"
 ---
 # Backend
@@ -16,3 +16,11 @@ applyTo: "revamp/backend/**"
 - Keep new projects within the replacement's isolated NuGet/build configuration; do not make legacy package changes implicitly. Restore locked dependencies and build from `revamp/` so its SDK pin is applied.
 - Keep all EF migration implementations, designer metadata, and the single model snapshot directly in `revamp/backend/PocketMonkey.Api/Storage/Migrations`, using namespace `PocketMonkey.Api.Storage.Migrations`. Before generating, inspect the existing history/snapshot and use the exact scoped command in the foundation guide, with explicit `--output-dir Storage/Migrations` and `--namespace PocketMonkey.Api.Storage.Migrations`. Never generate a second migration folder or snapshot. Run the migration-layout guard and a real populated-schema upgrade check after generation or relocation; preserve existing migration IDs and operations.
 - Verify user-facing behavior through E2E tests; use focused real-persistence integration tests for rollback, constraints, migrations, concurrency, and controlled job failures. Do not add routine mock/unit suites or coverage quotas.
+
+## Design Review Gate
+
+- Use the combined [backend/data design workflow](../skills/backend-data-design/SKILL.md) before adding or changing entities, relationships, persisted fields, constraints/indexes, migrations, endpoint routes/contracts, authorization visibility, or application/hosted-service responsibilities. This applies to design proposals as well as implementation.
+- Summarize the anticipated design in the applicable migration plan: purpose/invariants, affected class names and namespaces with file links, data and API changes, populated-data implications, applicable ADRs/conflicts, and focused real-stack acceptance checks. Clearly distinguish existing types from proposed types and unresolved policies from agreed decisions.
+- Mark the proposal with a revision identifier. Wait for explicit approval identifying the current backend/data design proposal before changing implementation or generating migrations. Record the approval, date, and reviewed scope in that plan. Feedback, corrections, policy acceptance alone, a generic "proceed", or passing checks do not approve a design revision. Preserve previous approvals as history; material revisions require fresh approval, without repeatedly asking while review is ongoing.
+- Identify whether the proposal needs a new ADR or an update to an existing one. Obtain agreement on architectural conflicts before implementation, then record accepted enduring decisions under [ADR-0001](../../docs/ADR/ADR-0001-architecture-decision-records.md), updating the index and affected links. Unresolved ADR proposals remain in plans; a material replacement uses a new cross-linked ADR rather than silently rewriting history.
+- Formatting, test-only changes, and behavior-preserving fixes within an approved design do not require a new proposal. If a fix changes schema, contracts, authorization, business invariants, or responsibilities, the gate applies. Do not use this exception to bypass review or treat this instruction change as approval of any future backend design.

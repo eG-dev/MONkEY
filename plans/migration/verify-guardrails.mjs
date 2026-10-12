@@ -61,6 +61,17 @@ for (const [name, fixtures] of Object.entries(expected)) {
 }
 console.log(`PASS: YAML metadata; ${matches} intended path matches; ${legacy.length * Object.keys(expected).length} legacy exclusions`);
 
+const backendDesignSkill = '.github/skills/backend-data-design/SKILL.md';
+const skillSource = fs.readFileSync(path.join(root, backendDesignSkill), 'utf8');
+const skillFrontmatter = skillSource.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+assert(skillFrontmatter, `${backendDesignSkill}: missing frontmatter`);
+const skillMetadata = YAML.parse(skillFrontmatter[1], { uniqueKeys: true });
+assert.equal(skillMetadata.name, path.basename(path.dirname(backendDesignSkill)));
+assert(/^[a-z0-9-]{1,64}$/.test(skillMetadata.name));
+assert.equal(typeof skillMetadata.description, 'string');
+assert(skillMetadata.description.length > 30 && skillMetadata.description.length <= 1024);
+console.log('PASS: backend/data design skill discovery metadata and folder/name match');
+
 const replacementChanges = [
   'revamp/web/src/app/app.ts',
   'revamp/backend/PocketMonkey.Api/Program.cs',
@@ -132,7 +143,7 @@ assert.deepEqual(migrationArtifacts.filter(filename => /\bclass\s+\w+\s*:\s*Mode
 console.log(`PASS: ${migrationArtifacts.length} EF artifacts in Storage/Migrations; matching namespace/pairs and one snapshot`);
 
 const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
-const markdown = ['.github/copilot-instructions.md'];
+const markdown = ['.github/copilot-instructions.md', backendDesignSkill];
 if (fs.existsSync(path.join(root, 'revamp/README.md'))) markdown.push('revamp/README.md');
 for (const directory of directories) {
   for (const name of fs.readdirSync(path.join(root, directory))) {
