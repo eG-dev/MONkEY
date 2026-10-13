@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using PocketMonkey.Api.Storage;
+using PocketMonkey.Storage;
 
 namespace RuntimeChecks.Tests;
 

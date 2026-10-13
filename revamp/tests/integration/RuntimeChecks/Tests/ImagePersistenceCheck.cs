@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using PocketMonkey.Api.Configuration;
-using PocketMonkey.Api.Entities;
-using PocketMonkey.Api.Services;
-using PocketMonkey.Api.Storage;
+using PocketMonkey.Host.Configuration;
+using PocketMonkey.Storage.Entities;
+using PocketMonkey.Host.Services;
+using PocketMonkey.Storage;
 using SkiaSharp;
 
 namespace RuntimeChecks.Tests;

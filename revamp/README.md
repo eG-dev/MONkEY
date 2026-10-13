@@ -139,21 +139,26 @@ styles/             global tokens, fonts, Taiga mapping, base and component clas
 
 ## Backend Structure
 
-The [API project](backend/PocketMonkey.Api/PocketMonkey.Api.csproj) separates types
-and behavior by responsibility. Namespaces follow the folders:
+The [Host executable](backend/PocketMonkey.Host/PocketMonkey.Host.csproj) references
+the [Storage library](backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj),
+never the reverse. Both run in the same backend process. Follow
+[ADR-0017](../docs/ADR/ADR-0017-backend-project-boundaries.md).
+Namespaces follow the project and folder boundaries:
 
-| Folder | Responsibility |
+| Project / Folder | Responsibility |
 | --- | --- |
-| Entities | Persisted domain and Identity entities, not API payloads |
-| Contracts/Authentication, Contracts/Users, Contracts/Accounts | Request/response models grouped by API feature |
-| Endpoints | Feature-specific HTTP routing, policies, and response mapping |
-| Services | Application behavior, transactional user/account administration, and typed error outcomes |
-| HostedServices | Host-managed background workers and scheduling; delegates scoped business behavior to Services |
-| Identity | Identity registration, cookie validation, policies, and claims |
-| Operations | Host-only manager bootstrap and recovery commands |
-| Storage | EF context, storage initialization, and readiness |
-| Configuration | Runtime options and validation |
-| Storage/Migrations | All generated EF migration implementations, designer metadata, and the single model snapshot |
+| Storage / Entities | Persisted domain and Identity entities, not API payloads; ledger source enum and its existing serialization metadata |
+| Storage / PocketMonkeyDbContext | EF context and model mappings |
+| Storage / Migrations | All generated EF migration implementations, designer metadata, and the single model snapshot |
+| Host / Contracts/Authentication, Contracts/Users, Contracts/Accounts | Request/response models grouped by API feature |
+| Host / Endpoints | Feature-specific HTTP routing, policies, and response mapping |
+| Host / Services | Application behavior, transactional user/account administration, and typed error outcomes |
+| Host / HostedServices | Host-managed background workers and scheduling; delegates scoped business behavior to Services |
+| Host / Identity | Identity registration, role enum, cookie validation, policies, and claims |
+| Host / Operations | Host-only manager bootstrap and recovery commands |
+| Host / Startup | Migration execution, role initialization, and Data Protection validation |
+| Host / Health | Database and filesystem readiness |
+| Host / Configuration | Runtime options and validation |
 
 Endpoints use contracts at the HTTP boundary; services operate on entities.
 Moving types between folders does not change routes, JSON contracts, or the schema.
@@ -162,12 +167,12 @@ Generate migrations from `revamp/` using the pinned EF tool and explicit paths:
 
 ```text
 dotnet tool restore
-dotnet ef migrations add <Name> --project backend/PocketMonkey.Api --context PocketMonkeyDbContext --output-dir Storage/Migrations --namespace PocketMonkey.Api.Storage.Migrations
+dotnet ef migrations add <Name> --project backend/PocketMonkey.Storage --startup-project backend/PocketMonkey.Host --context PocketMonkeyDbContext --output-dir Migrations --namespace PocketMonkey.Storage.Migrations
 node ../plans/migration/verify-guardrails.mjs
 ```
 
 Keep every migration and the single `PocketMonkeyDbContextModelSnapshot` in
-`Storage/Migrations`. Do not create a second folder or snapshot. The backend build
+`backend/PocketMonkey.Storage/Migrations`. Do not create a second folder or snapshot. The backend build
 rejects misplaced timestamped migration/snapshot files; the CI guard also checks
 namespace consistency, matching implementation/designer pairs, and one snapshot.
 Relocating generated history must preserve migration IDs and schema operations.
@@ -328,8 +333,8 @@ echoing the password or placing it in command arguments. Passwords require at le
 For Docker, with the container running:
 
 ```text
-docker exec -it pocket-monkey-preview dotnet /app/backend/PocketMonkey.Api.dll bootstrap-manager
-docker exec -it pocket-monkey-preview dotnet /app/backend/PocketMonkey.Api.dll recover-manager
+docker exec -it pocket-monkey-preview dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
+docker exec -it pocket-monkey-preview dotnet /app/backend/PocketMonkey.Host.dll recover-manager
 ```
 
 Bootstrap works only while there are no users. Recovery resets an existing
@@ -347,7 +352,7 @@ $revampPath = (Resolve-Path './revamp').Path
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
 $env:MONKEY_DATA_PATH = Join-Path $revampPath '.local/dev'
 $env:MONKEY_PUBLIC_URL = 'http://127.0.0.1:4180'
-dotnet (Join-Path $revampPath 'backend/PocketMonkey.Api/bin/Release/net10.0/PocketMonkey.Api.dll') bootstrap-manager
+dotnet (Join-Path $revampPath 'backend/PocketMonkey.Host/bin/Release/net10.0/PocketMonkey.Host.dll') bootstrap-manager
 ```
 
 Use `recover-manager` in place of `bootstrap-manager` for recovery. Development
@@ -484,7 +489,7 @@ $env:ASPNETCORE_ENVIRONMENT = 'Development'
 $env:MONKEY_DATA_PATH = Join-Path $PWD.Path '.local/dev'
 $env:MONKEY_PUBLIC_URL = 'http://127.0.0.1:4180'
 $env:TZ = 'Europe/Berlin'
-dotnet run --no-build --configuration Release --project backend/PocketMonkey.Api --urls http://127.0.0.1:5180
+dotnet run --no-build --configuration Release --project backend/PocketMonkey.Host --urls http://127.0.0.1:5180
 ```
 
 Web-BFF/SSR:

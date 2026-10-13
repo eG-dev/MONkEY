@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11205.157
@@ -34,13 +34,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "revamp", "revamp", "{80EE9D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{2B511C0C-18E1-3617-CC8C-564C09E1934B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PocketMonkey.Api", "revamp\backend\PocketMonkey.Api\PocketMonkey.Api.csproj", "{D50AD472-7778-45B1-999A-EF038176A483}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PocketMonkey.Host", "revamp\backend\PocketMonkey.Host\PocketMonkey.Host.csproj", "{D50AD472-7778-45B1-999A-EF038176A483}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1B645DA1-5405-D6BC-A4CF-65AE1390E3E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integration", "integration", "{002EBA13-87E8-BE9F-ADC6-4BC864D5D920}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeChecks", "revamp\tests\integration\RuntimeChecks\RuntimeChecks.csproj", "{BC2FC23A-6332-4EDF-A95A-F126A21566F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PocketMonkey.Storage", "revamp\backend\PocketMonkey.Storage\PocketMonkey.Storage.csproj", "{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -160,6 +162,18 @@ Global
 		{BC2FC23A-6332-4EDF-A95A-F126A21566F4}.Release|x64.Build.0 = Release|Any CPU
 		{BC2FC23A-6332-4EDF-A95A-F126A21566F4}.Release|x86.ActiveCfg = Release|Any CPU
 		{BC2FC23A-6332-4EDF-A95A-F126A21566F4}.Release|x86.Build.0 = Release|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Debug|x64.Build.0 = Debug|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Debug|x86.Build.0 = Debug|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Release|x64.ActiveCfg = Release|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Release|x64.Build.0 = Release|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,6 +186,7 @@ Global
 		{1B645DA1-5405-D6BC-A4CF-65AE1390E3E6} = {80EE9DC9-E090-A240-734E-FBEFADA6280B}
 		{002EBA13-87E8-BE9F-ADC6-4BC864D5D920} = {1B645DA1-5405-D6BC-A4CF-65AE1390E3E6}
 		{BC2FC23A-6332-4EDF-A95A-F126A21566F4} = {002EBA13-87E8-BE9F-ADC6-4BC864D5D920}
+		{77BB1478-5417-4EE4-B41C-B0EA2405D0C7} = {2B511C0C-18E1-3617-CC8C-564C09E1934B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3277B199-B5EA-427F-B1BB-15ABD55B7463}

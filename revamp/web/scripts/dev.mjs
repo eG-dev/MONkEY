@@ -185,7 +185,7 @@ try {
       args: [
         'watch',
         '--project',
-        resolve(replacementRoot, 'backend/PocketMonkey.Api/PocketMonkey.Api.csproj'),
+        resolve(replacementRoot, 'backend/PocketMonkey.Host/PocketMonkey.Host.csproj'),
         '--non-interactive',
         'run',
         '--no-launch-profile',

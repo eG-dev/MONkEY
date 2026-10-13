@@ -14,8 +14,8 @@ const YAML = require('yaml');
 const { minimatch } = require('minimatch');
 const expected = {
   'revamp-web.instructions.md': ['revamp/web/src/app/app.ts', 'revamp/web/public/i18n/de/shell.json'],
-  'revamp-backend.instructions.md': ['revamp/backend/PocketMonkey.Api/Program.cs', 'revamp/backend/PocketMonkey.Api/PocketMonkey.Api.csproj'],
-  'revamp-csharp.instructions.md': ['revamp/backend/PocketMonkey.Api/Program.cs', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
+  'revamp-backend.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Host/PocketMonkey.Host.csproj', 'revamp/backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj'],
+  'revamp-csharp.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
   'revamp-typescript.instructions.md': ['revamp/web/src/foundation-server.ts', 'revamp/web/scripts/dev.mjs', 'revamp/tests/e2e/specs/shell.spec.ts'],
   'revamp-tests.instructions.md': ['revamp/tests/e2e/specs/shell.spec.ts', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
   'revamp-deployment.instructions.md': ['revamp/deploy/Dockerfile', '.github/workflows/revamp-foundation.yml', '.github/workflows/revamp-release.yaml'],
@@ -54,7 +54,7 @@ for (const [name, fixtures] of Object.entries(expected)) {
     }
   }
   if (name === 'revamp-typescript.instructions.md') {
-    for (const filename of ['revamp/backend/PocketMonkey.Api/Program.cs', 'revamp/web/public/i18n/de/shell.json']) {
+    for (const filename of ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/web/public/i18n/de/shell.json']) {
       assert(!applies(filename), `${name}: must exclude unrelated language ${filename}`);
     }
   }
@@ -74,7 +74,7 @@ console.log('PASS: backend/data design skill discovery metadata and folder/name 
 
 const replacementChanges = [
   'revamp/web/src/app/app.ts',
-  'revamp/backend/PocketMonkey.Api/Program.cs',
+  'revamp/backend/PocketMonkey.Host/Program.cs',
   'revamp/deploy/Dockerfile',
   'plans/migration/01-stack-foundation.md',
   'docs/ADR/ADR-0002-application-boundaries.md',
@@ -110,8 +110,8 @@ for (const job of Object.values(foundation.jobs)) {
 assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verification must not require secrets');
 console.log('PASS: Azure trigger isolation preserves legacy/shared changes; foundation PR checks are read-only, unfiltered, secret-free, and SHA-pinned');
 
-const apiDirectory = path.join(root, 'revamp/backend/PocketMonkey.Api');
-const migrationDirectory = path.join(apiDirectory, 'Storage/Migrations');
+const backendDirectory = path.join(root, 'revamp/backend');
+const migrationDirectory = path.join(backendDirectory, 'PocketMonkey.Storage/Migrations');
 
 function csharpFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
@@ -121,16 +121,16 @@ function csharpFiles(directory) {
   });
 }
 
-const migrationArtifacts = csharpFiles(apiDirectory).filter(filename => {
+const migrationArtifacts = csharpFiles(backendDirectory).filter(filename => {
   const source = fs.readFileSync(filename, 'utf8');
   return /\bclass\s+\w+\s*:\s*(?:Migration|ModelSnapshot)\b|\[Migration\(/.test(source);
 });
 assert(migrationArtifacts.length, 'EF migration history is missing');
 for (const filename of migrationArtifacts) {
   assert.equal(path.dirname(filename), migrationDirectory,
-    `${path.relative(root, filename)}: EF artifacts must live directly in Storage/Migrations`);
+    `${path.relative(root, filename)}: EF artifacts must live directly in PocketMonkey.Storage/Migrations`);
   const source = fs.readFileSync(filename, 'utf8');
-  assert(/\bnamespace PocketMonkey\.Api\.Storage\.Migrations\s*[;{]/.test(source),
+  assert(/\bnamespace PocketMonkey\.Storage\.Migrations\s*[;{]/.test(source),
     `${path.relative(root, filename)}: wrong EF migration namespace`);
   if (filename.endsWith('.Designer.cs')) {
     assert(fs.existsSync(filename.replace('.Designer.cs', '.cs')), `${filename}: migration implementation is missing`);
@@ -140,7 +140,7 @@ for (const filename of migrationArtifacts) {
 }
 assert.deepEqual(migrationArtifacts.filter(filename => /\bclass\s+\w+\s*:\s*ModelSnapshot\b/.test(fs.readFileSync(filename, 'utf8'))),
   [path.join(migrationDirectory, 'PocketMonkeyDbContextModelSnapshot.cs')], 'Keep exactly one EF model snapshot');
-console.log(`PASS: ${migrationArtifacts.length} EF artifacts in Storage/Migrations; matching namespace/pairs and one snapshot`);
+console.log(`PASS: ${migrationArtifacts.length} EF artifacts in PocketMonkey.Storage/Migrations; matching namespace/pairs and one snapshot`);
 
 const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
 const markdown = ['.github/copilot-instructions.md', backendDesignSkill];

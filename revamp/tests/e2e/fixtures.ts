@@ -60,7 +60,7 @@ export function credentials(username = 'manager') {
 }
 
 export function operator(instance: Instance, command: 'bootstrap-manager' | 'recover-manager', account: ReturnType<typeof credentials>) {
-  return spawnSync('docker', ['exec', '-i', instance.container, 'dotnet', '/app/backend/PocketMonkey.Api.dll', command], {
+  return spawnSync('docker', ['exec', '-i', instance.container, 'dotnet', '/app/backend/PocketMonkey.Host.dll', command], {
     input: `${account.username}\n${account.password}\n`,
     encoding: 'utf8',
     timeout: 30_000,

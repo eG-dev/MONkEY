@@ -8,10 +8,11 @@ RUN npm run build
 FROM mcr.microsoft.com/dotnet/sdk:10.0.401-noble@sha256:e70cdb7f80b0348f5cb85f19a8f670fca061f033d57eed12fa003d58b0e06317 AS backend-build
 WORKDIR /build
 COPY global.json Directory.Build.props Directory.Packages.props NuGet.Config ./
-COPY backend/PocketMonkey.Api/PocketMonkey.Api.csproj backend/PocketMonkey.Api/packages.lock.json ./backend/PocketMonkey.Api/
-RUN dotnet restore backend/PocketMonkey.Api/PocketMonkey.Api.csproj --locked-mode
+COPY backend/PocketMonkey.Host/PocketMonkey.Host.csproj backend/PocketMonkey.Host/packages.lock.json ./backend/PocketMonkey.Host/
+COPY backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj backend/PocketMonkey.Storage/packages.lock.json ./backend/PocketMonkey.Storage/
+RUN dotnet restore backend/PocketMonkey.Host/PocketMonkey.Host.csproj --locked-mode
 COPY backend/ ./backend/
-RUN dotnet publish backend/PocketMonkey.Api/PocketMonkey.Api.csproj --configuration Release --no-restore --output /publish /p:UseAppHost=false
+RUN dotnet publish backend/PocketMonkey.Host/PocketMonkey.Host.csproj --configuration Release --no-restore --output /publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.12-noble@sha256:222759b391a1aaf241166672c8f99b2d4ada452e7b5319f3c6e8f265a37b5ad4
 ARG BUILD_REVISION=local-uncommitted

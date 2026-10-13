@@ -22,3 +22,4 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0014](ADR-0014-private-account-images.md) | Bounded private images, canonical PNG encoding, and immutable-file recovery |
 | [ADR-0015](ADR-0015-monthly-allowance-configuration.md) | Next-month allowance revisions, exact amounts, Manager configuration, and no credits on save |
 | [ADR-0016](ADR-0016-monthly-allowance-execution.md) | Historical monthly catch-up, disabled-period skipping, retry-safe credits, and timezone-change scheduling |
+| [ADR-0017](ADR-0017-backend-project-boundaries.md) | Host executable, Storage library, one-way dependency, and EF ownership |

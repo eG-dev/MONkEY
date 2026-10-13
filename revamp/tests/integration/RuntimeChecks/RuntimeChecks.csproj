@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="../../../backend/PocketMonkey.Api/PocketMonkey.Api.csproj" />
+    <ProjectReference Include="../../../backend/PocketMonkey.Host/PocketMonkey.Host.csproj" />
+    <ProjectReference Include="../../../backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj" />
   </ItemGroup>
 </Project>

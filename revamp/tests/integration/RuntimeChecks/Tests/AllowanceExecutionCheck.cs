@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Logging.Abstractions;
-using PocketMonkey.Api.Configuration;
-using PocketMonkey.Api.Contracts.Accounts;
-using PocketMonkey.Api.Entities;
-using PocketMonkey.Api.Services;
-using PocketMonkey.Api.Storage;
+using PocketMonkey.Host.Configuration;
+using PocketMonkey.Host.Contracts.Accounts;
+using PocketMonkey.Storage.Entities;
+using PocketMonkey.Host.Services;
+using PocketMonkey.Storage;
 
 namespace RuntimeChecks.Tests;
 
