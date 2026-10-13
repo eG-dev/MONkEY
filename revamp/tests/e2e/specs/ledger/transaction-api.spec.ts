@@ -23,6 +23,7 @@ test('manual transactions enforce roles, positive inputs, initialization and CSR
   const path = `/api/accounts/${account.id}/transactions`;
 
   expect(await (await request.get(path)).json()).toEqual({
+    timezone: 'Europe/Berlin',
     entries: [],
     nextCursor: null,
   });
