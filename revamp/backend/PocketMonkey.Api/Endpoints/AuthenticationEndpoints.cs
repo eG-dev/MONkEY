@@ -54,7 +54,7 @@ public static class AuthenticationEndpoints
             LanguageRequest request,
             ClaimsPrincipal principal,
             UserManager<ApplicationUser> users,
-            FoundationDbContext database,
+            PocketMonkeyDbContext database,
             CancellationToken cancellationToken) =>
             {
                 if (request.Language is not ("de" or "en"))
@@ -77,7 +77,7 @@ public static class AuthenticationEndpoints
             ThemeRequest request,
             ClaimsPrincipal principal,
             UserManager<ApplicationUser> users,
-            FoundationDbContext database,
+            PocketMonkeyDbContext database,
             CancellationToken cancellationToken) =>
             {
                 if (request.Theme is not ("system" or "light" or "dark"))
@@ -143,7 +143,7 @@ public static class AuthenticationEndpoints
         UserManager<ApplicationUser> users,
         SignInManager<ApplicationUser> signin,
         UserAdministration administration,
-        FoundationDbContext database,
+        PocketMonkeyDbContext database,
         CancellationToken cancellationToken)
     {
         if (!UserAdministration.ValidPassword(request.NewPassword) ||

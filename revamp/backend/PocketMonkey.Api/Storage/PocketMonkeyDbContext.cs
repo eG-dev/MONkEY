@@ -4,9 +4,9 @@ using PocketMonkey.Api.Entities;
 
 namespace PocketMonkey.Api.Storage;
 
-public sealed class FoundationDbContext : IdentityDbContext<ApplicationUser>
+public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 {
-    public FoundationDbContext(DbContextOptions<FoundationDbContext> options) : base(options)
+    public PocketMonkeyDbContext(DbContextOptions<PocketMonkeyDbContext> options) : base(options)
     {
     }
 

@@ -162,11 +162,11 @@ Generate migrations from `revamp/` using the pinned EF tool and explicit paths:
 
 ```text
 dotnet tool restore
-dotnet ef migrations add <Name> --project backend/PocketMonkey.Api --context FoundationDbContext --output-dir Storage/Migrations --namespace PocketMonkey.Api.Storage.Migrations
+dotnet ef migrations add <Name> --project backend/PocketMonkey.Api --context PocketMonkeyDbContext --output-dir Storage/Migrations --namespace PocketMonkey.Api.Storage.Migrations
 node ../plans/migration/verify-guardrails.mjs
 ```
 
-Keep every migration and the single `FoundationDbContextModelSnapshot` in
+Keep every migration and the single `PocketMonkeyDbContextModelSnapshot` in
 `Storage/Migrations`. Do not create a second folder or snapshot. The backend build
 rejects misplaced timestamped migration/snapshot files; the CI guard also checks
 namespace consistency, matching implementation/designer pairs, and one snapshot.

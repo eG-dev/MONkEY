@@ -17,7 +17,7 @@ internal static class ImagePersistenceCheck
         var root = Path.Combine(Path.GetTempPath(), $"image-persistence-{Guid.NewGuid():N}");
         var settings = new InstanceSettings { DataPath = root, Timezone = "UTC", DefaultLocale = "de-DE" };
         settings.PrepareStorage();
-        var options = new DbContextOptionsBuilder<FoundationDbContext>().UseSqlite(settings.ConnectionString).Options;
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>().UseSqlite(settings.ConnectionString).Options;
         using var bitmap = new SKBitmap(512, 512);
         bitmap.Erase(SKColors.Red);
         using var encoded = SKImage.FromBitmap(bitmap).Encode(SKEncodedImageFormat.Png, 100);
@@ -26,7 +26,7 @@ internal static class ImagePersistenceCheck
 
         try
         {
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 await database.Database.MigrateAsync();
                 database.Accounts.Add(new Account { Id = "images", Name = "Images", NormalizedName = "IMAGES" });
@@ -42,7 +42,7 @@ internal static class ImagePersistenceCheck
                 await database.Database.ExecuteSqlRawAsync("CREATE TRIGGER fail_image BEFORE INSERT ON AuditEvents WHEN NEW.Action LIKE 'account_image_%' BEGIN SELECT RAISE(ABORT, 'probe'); END;");
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var service = new AccountImages(database, settings, NullLogger<AccountImages>.Instance);
 
@@ -52,7 +52,7 @@ internal static class ImagePersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 if ((await database.Accounts.SingleAsync()).ImageKey != key || await database.AuditEvents.CountAsync() != 1)
                 {
@@ -68,7 +68,7 @@ internal static class ImagePersistenceCheck
 
             try
             {
-                await using var database = new FoundationDbContext(options);
+                await using var database = new PocketMonkeyDbContext(options);
                 var service = new AccountImages(database, settings, NullLogger<AccountImages>.Instance);
 
                 if (await service.ReplaceAsync("images", "manager", Request(bytes), default) != "image_unavailable")
@@ -92,7 +92,7 @@ internal static class ImagePersistenceCheck
                 File.SetLastWriteTimeUtc(file, DateTime.UtcNow.AddDays(-2));
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var service = new AccountImages(database, settings, NullLogger<AccountImages>.Instance);
                 await service.CollectAsync(default);

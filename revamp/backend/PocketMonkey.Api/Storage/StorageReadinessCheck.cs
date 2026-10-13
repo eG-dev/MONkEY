@@ -18,7 +18,7 @@ public sealed class StorageReadinessCheck : IHealthCheck
         try
         {
             using var scope = scopeFactory.CreateScope();
-            var database = scope.ServiceProvider.GetRequiredService<FoundationDbContext>();
+            var database = scope.ServiceProvider.GetRequiredService<PocketMonkeyDbContext>();
             var settings = scope.ServiceProvider.GetRequiredService<InstanceSettings>();
             _ = await database.Accounts
                 .AsNoTracking()

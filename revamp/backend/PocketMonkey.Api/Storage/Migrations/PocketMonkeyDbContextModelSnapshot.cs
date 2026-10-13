@@ -9,8 +9,8 @@ using PocketMonkey.Api.Storage;
 
 namespace PocketMonkey.Api.Storage.Migrations
 {
-    [DbContext(typeof(FoundationDbContext))]
-    partial class FoundationDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(PocketMonkeyDbContext))]
+    partial class PocketMonkeyDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

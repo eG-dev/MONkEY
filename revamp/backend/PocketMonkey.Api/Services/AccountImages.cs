@@ -10,11 +10,11 @@ public sealed class AccountImages
 {
     public const int MaximumBytes = 2 * 1024 * 1024;
     public const int MaximumDimension = 512;
-    private readonly FoundationDbContext database;
+    private readonly PocketMonkeyDbContext database;
     private readonly InstanceSettings settings;
     private readonly ILogger<AccountImages> logger;
 
-    public AccountImages(FoundationDbContext database, InstanceSettings settings, ILogger<AccountImages> logger)
+    public AccountImages(PocketMonkeyDbContext database, InstanceSettings settings, ILogger<AccountImages> logger)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.settings = settings ?? throw new ArgumentNullException(nameof(settings));

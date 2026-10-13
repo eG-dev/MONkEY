@@ -10,7 +10,7 @@ using PocketMonkey.Api.Storage;
 
 namespace PocketMonkey.Api.Storage.Migrations
 {
-    [DbContext(typeof(FoundationDbContext))]
+    [DbContext(typeof(PocketMonkeyDbContext))]
     [Migration("20261008172508_OpeningLedger")]
     partial class OpeningLedger
     {

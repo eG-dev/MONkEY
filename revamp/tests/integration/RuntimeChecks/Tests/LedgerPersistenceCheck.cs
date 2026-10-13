@@ -16,13 +16,13 @@ internal static class LedgerPersistenceCheck
     {
         var path = Path.Combine(Path.GetTempPath(), $"ledger-persistence-{Guid.NewGuid():N}.db");
         var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "UTC", DefaultLocale = "de-DE" };
-        var options = new DbContextOptionsBuilder<FoundationDbContext>()
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>()
             .UseSqlite($"Data Source={path};Foreign Keys=True")
             .Options;
 
         try
         {
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var previous = database.Database.GetMigrations().Single(migration => migration.EndsWith("_SharedAccounts"));
                 await database.GetService<IMigrator>().MigrateAsync(previous);
@@ -63,7 +63,7 @@ internal static class LedgerPersistenceCheck
 
             var opening = new OpeningBalanceRequest { Amount = "0.00", IdempotencyKey = Guid.NewGuid().ToString() };
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var administration = new LedgerAdministration(database, settings);
                 var posted = await administration.PostOpeningAsync("existing", opening, "probe-manager", default);
@@ -87,7 +87,7 @@ internal static class LedgerPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 await database.Database.ExecuteSqlRawAsync("CREATE TRIGGER probe_fail_opening BEFORE INSERT ON AuditEvents WHEN NEW.Action = 'opening_posted' BEGIN SELECT RAISE(ABORT, 'probe'); END;");
                 var failed = false;
@@ -111,7 +111,7 @@ internal static class LedgerPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var openingEntries = await database.LedgerEntries
                     .Where(entry => entry.Source == LedgerEntrySource.Opening)
@@ -155,7 +155,7 @@ internal static class LedgerPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var administration = new LedgerAdministration(database, settings);
                 var openingResult = await administration.PostOpeningAsync("rollback", new OpeningBalanceRequest
@@ -202,7 +202,7 @@ internal static class LedgerPersistenceCheck
                 await database.Database.ExecuteSqlRawAsync("CREATE TRIGGER probe_fail_transaction BEFORE INSERT ON AuditEvents WHEN NEW.Action = 'transaction_posted' BEGIN SELECT RAISE(ABORT, 'probe'); END;");
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var failed = false;
 
@@ -226,7 +226,7 @@ internal static class LedgerPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var sequences = await database.LedgerEntries.OrderBy(entry => entry.SequenceNumber).Select(entry => entry.SequenceNumber).ToListAsync();
 

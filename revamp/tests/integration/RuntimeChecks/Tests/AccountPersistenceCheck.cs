@@ -14,7 +14,7 @@ internal static class AccountPersistenceCheck
     {
         var path = Path.Combine(Path.GetTempPath(), $"account-persistence-{Guid.NewGuid():N}.db");
         var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "UTC", DefaultLocale = "de-DE" };
-        var options = new DbContextOptionsBuilder<FoundationDbContext>()
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>()
             .UseSqlite($"Data Source={path};Foreign Keys=True")
             .Options;
 
@@ -22,7 +22,7 @@ internal static class AccountPersistenceCheck
         {
             string secondId;
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 await database.Database.MigrateAsync();
 
@@ -38,7 +38,7 @@ internal static class AccountPersistenceCheck
                 secondId = second.Account?.Id ?? throw new InvalidOperationException("Account identity was not returned.");
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var administration = new AccountAdministration(database, settings);
 
@@ -50,7 +50,7 @@ internal static class AccountPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var administration = new AccountAdministration(database, settings);
 
@@ -66,7 +66,7 @@ internal static class AccountPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var names = await database.Accounts
                     .OrderBy(account => account.Name)
@@ -79,7 +79,7 @@ internal static class AccountPersistenceCheck
                 }
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 database.Accounts.Add(new Account
                 {

@@ -13,10 +13,10 @@ internal static class IdentityUpgradeCheck
 
         try
         {
-            var options = new DbContextOptionsBuilder<FoundationDbContext>()
+            var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>()
                 .UseSqlite($"Data Source={path};Foreign Keys=True")
                 .Options;
-            await using var database = new FoundationDbContext(options);
+            await using var database = new PocketMonkeyDbContext(options);
             var migrator = database.Database.GetService<IMigrator>();
 
             await migrator.MigrateAsync(

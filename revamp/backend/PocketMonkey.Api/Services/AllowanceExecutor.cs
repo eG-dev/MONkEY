@@ -8,13 +8,13 @@ namespace PocketMonkey.Api.Services;
 
 public sealed class AllowanceExecutor
 {
-    private readonly FoundationDbContext database;
+    private readonly PocketMonkeyDbContext database;
     private readonly LedgerAdministration ledger;
     private readonly InstanceSettings settings;
     private readonly TimeProvider clock;
     private readonly ILogger<AllowanceExecutor> logger;
 
-    public AllowanceExecutor(FoundationDbContext database, LedgerAdministration ledger, InstanceSettings settings,
+    public AllowanceExecutor(PocketMonkeyDbContext database, LedgerAdministration ledger, InstanceSettings settings,
         TimeProvider clock, ILogger<AllowanceExecutor> logger)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));

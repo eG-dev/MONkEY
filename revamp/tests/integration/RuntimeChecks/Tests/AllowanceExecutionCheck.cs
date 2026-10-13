@@ -23,9 +23,9 @@ internal static class AllowanceExecutionCheck
         {
             DataPath = Path.GetDirectoryName(path)!, Timezone = "Europe/Berlin", DefaultLocale = "en-US"
         };
-        var options = new DbContextOptionsBuilder<FoundationDbContext>()
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>()
             .UseSqlite(settings.ConnectionString).Options;
-        await using var database = new FoundationDbContext(options);
+        await using var database = new PocketMonkeyDbContext(options);
         Require(await database.Accounts.AnyAsync(account => account.Id == accountId), "Fixture account is missing.");
 
         if (mode == "remove-failure")
@@ -81,7 +81,7 @@ internal static class AllowanceExecutionCheck
     public static async Task RunAsync()
     {
         var path = Path.Combine(Path.GetTempPath(), $"execution-{Guid.NewGuid():N}.db");
-        var options = new DbContextOptionsBuilder<FoundationDbContext>()
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>()
             .UseSqlite($"Data Source={path};Foreign Keys=True;Default Timeout=30").Options;
         var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "Europe/Berlin", DefaultLocale = "en-US" };
         var clock = new ControlledClock { Now = DateTimeOffset.Parse("2026-09-30T21:59:59Z") };
@@ -89,7 +89,7 @@ internal static class AllowanceExecutionCheck
 
         async Task ScanAsync(InstanceSettings? overrideSettings = null)
         {
-            await using var database = new FoundationDbContext(options);
+            await using var database = new PocketMonkeyDbContext(options);
             var selectedSettings = overrideSettings ?? settings;
             await new AllowanceExecutor(database, new LedgerAdministration(database, selectedSettings), selectedSettings,
                 clock, NullLogger<AllowanceExecutor>.Instance).RunAsync(default);
@@ -97,7 +97,7 @@ internal static class AllowanceExecutionCheck
 
         try
         {
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 await database.GetService<IMigrator>().MigrateAsync("20261010203039_AllowanceConfiguration");
                 database.Users.Add(new ApplicationUser { Id = "manager", UserName = "manager", DisplayName = "Manager" });
@@ -136,7 +136,7 @@ internal static class AllowanceExecutionCheck
 
             await ScanAsync();
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 Require(!await database.AllowanceExecutions.AnyAsync(), "A future month was credited early.");
             }
@@ -146,7 +146,7 @@ internal static class AllowanceExecutionCheck
             clock.Now = DateTimeOffset.Parse("2027-01-31T22:59:59Z");
             await ScanAsync();
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var entries = await database.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Allowance)
                     .OrderBy(entry => entry.SequenceNumber).ToListAsync();
@@ -162,7 +162,7 @@ internal static class AllowanceExecutionCheck
             clock.Now = DateTimeOffset.Parse("2027-01-31T23:00:00Z");
             await ScanAsync();
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var failed = await database.AllowanceExecutions.SingleAsync(execution => execution.BusinessMonth == 202702);
                 Require(failed.CreditedAtUtc is null && failed.ErrorCode == "execution_failed" && failed.Attempts == 1,
@@ -179,7 +179,7 @@ internal static class AllowanceExecutionCheck
             await Task.WhenAll(Task.Run(() => ScanAsync()), Task.Run(() => ScanAsync()));
             await ScanAsync();
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var execution = await database.AllowanceExecutions.SingleAsync(candidate => candidate.BusinessMonth == 202702);
                 var entry = await database.LedgerEntries.SingleAsync(candidate => candidate.AllowanceMonth == 202702);
@@ -191,7 +191,7 @@ internal static class AllowanceExecutionCheck
             await ScanAsync(new InstanceSettings { DataPath = settings.DataPath, Timezone = "Pacific/Honolulu", Currency = "USD", DefaultLocale = "en-US" });
             clock.Now = DateTimeOffset.Parse("2027-03-31T22:00:00Z");
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var revision = await database.AllowanceRevisions.OrderByDescending(candidate => candidate.SequenceNumber).FirstAsync();
                 database.AllowanceExecutions.Add(new AllowanceExecution
@@ -205,7 +205,7 @@ internal static class AllowanceExecutionCheck
             await ScanAsync();
             await ScanAsync(new InstanceSettings { DataPath = settings.DataPath, Timezone = "Pacific/Honolulu", DefaultLocale = "en-US" });
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var entries = await database.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Allowance).ToListAsync();
                 Require(entries.Count == 5 && entries.Select(entry => entry.AllowanceMonth).Distinct().Count() == 5 &&
@@ -229,7 +229,7 @@ internal static class AllowanceExecutionCheck
             await ScanAsync();
             await ScanAsync();
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var failure = await database.AllowanceExecutions.SingleAsync(execution => execution.AccountId != accountId);
                 Require(failure.ErrorCode == "balance_overflow" && failure.CreditedAtUtc is null && failure.Attempts == 2 &&

@@ -10,11 +10,11 @@ namespace PocketMonkey.Api.Services;
 
 public sealed class AllowanceAdministration
 {
-    private readonly FoundationDbContext database;
+    private readonly PocketMonkeyDbContext database;
     private readonly InstanceSettings settings;
     private readonly TimeProvider clock;
 
-    public AllowanceAdministration(FoundationDbContext database, InstanceSettings settings, TimeProvider clock)
+    public AllowanceAdministration(PocketMonkeyDbContext database, InstanceSettings settings, TimeProvider clock)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.settings = settings ?? throw new ArgumentNullException(nameof(settings));

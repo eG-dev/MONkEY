@@ -13,7 +13,7 @@ public static class FoundationStorage
         ArgumentNullException.ThrowIfNull(services);
 
         using var scope = services.CreateScope();
-        var database = scope.ServiceProvider.GetRequiredService<FoundationDbContext>();
+        var database = scope.ServiceProvider.GetRequiredService<PocketMonkeyDbContext>();
 
         await database.Database.MigrateAsync(cancellationToken);
 

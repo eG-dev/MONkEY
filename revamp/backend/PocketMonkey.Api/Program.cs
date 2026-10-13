@@ -45,7 +45,7 @@ if (!isOperatorCommand)
 	builder.Services.AddHostedService<AllowanceWorker>();
 }
 
-builder.Services.AddDbContext<FoundationDbContext>(options => options.UseSqlite(settings.ConnectionString));
+builder.Services.AddDbContext<PocketMonkeyDbContext>(options => options.UseSqlite(settings.ConnectionString));
 
 builder.Services
     .AddHealthChecks()

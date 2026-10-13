@@ -18,7 +18,7 @@ public static class UserEndpoints
             .WithTags("Users");
 
         management.MapGet("", async (
-            FoundationDbContext database,
+            PocketMonkeyDbContext database,
             UserAdministration administration,
             CancellationToken cancellationToken) =>
             {

@@ -12,11 +12,11 @@ namespace PocketMonkey.Api.Services;
 
 public sealed class UserAdministration
 {
-    private readonly FoundationDbContext database;
+    private readonly PocketMonkeyDbContext database;
     private readonly UserManager<ApplicationUser> users;
     private readonly InstanceSettings settings;
 
-    public UserAdministration(FoundationDbContext database, UserManager<ApplicationUser> users, InstanceSettings settings)
+    public UserAdministration(PocketMonkeyDbContext database, UserManager<ApplicationUser> users, InstanceSettings settings)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.users = users ?? throw new ArgumentNullException(nameof(users));

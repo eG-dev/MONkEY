@@ -139,7 +139,7 @@ for (const filename of migrationArtifacts) {
   }
 }
 assert.deepEqual(migrationArtifacts.filter(filename => /\bclass\s+\w+\s*:\s*ModelSnapshot\b/.test(fs.readFileSync(filename, 'utf8'))),
-  [path.join(migrationDirectory, 'FoundationDbContextModelSnapshot.cs')], 'Keep exactly one EF model snapshot');
+  [path.join(migrationDirectory, 'PocketMonkeyDbContextModelSnapshot.cs')], 'Keep exactly one EF model snapshot');
 console.log(`PASS: ${migrationArtifacts.length} EF artifacts in Storage/Migrations; matching namespace/pairs and one snapshot`);
 
 const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];

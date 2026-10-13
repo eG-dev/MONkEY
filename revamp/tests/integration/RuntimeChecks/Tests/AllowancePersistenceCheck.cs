@@ -14,14 +14,14 @@ internal static class AllowancePersistenceCheck
     {
         var path = Path.Combine(Path.GetTempPath(), $"allowance-{Guid.NewGuid():N}.db");
         var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "Europe/Berlin", DefaultLocale = "en-US" };
-        var options = new DbContextOptionsBuilder<FoundationDbContext>().UseSqlite($"Data Source={path};Foreign Keys=True;Default Timeout=30").Options;
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>().UseSqlite($"Data Source={path};Foreign Keys=True;Default Timeout=30").Options;
         var clock = new ControlledClock { Now = DateTimeOffset.Parse("2026-09-30T21:59:59Z") };
         string accountId;
         string firstRevision;
 
         try
         {
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 await database.Database.MigrateAsync();
                 database.Users.Add(new ApplicationUser { Id = "manager", UserName = "manager", DisplayName = "Manager" });
@@ -47,7 +47,7 @@ internal static class AllowancePersistenceCheck
 
             clock.Now = DateTimeOffset.Parse("2026-09-30T22:00:00Z");
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var allowance = new AllowanceAdministration(database, settings, clock);
                 var state = await allowance.FindAsync(accountId, default);
@@ -79,7 +79,7 @@ internal static class AllowancePersistenceCheck
                 Require(rejected, "Audit failure was not exercised.");
             }
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 Require(await database.AllowanceRevisions.CountAsync() == 2 &&
                     await database.AuditEvents.CountAsync(audit => audit.Action == "allowance_configured") == 2,
@@ -107,7 +107,7 @@ internal static class AllowancePersistenceCheck
 
             clock.Now = DateTimeOffset.Parse("2026-12-31T23:00:00Z");
 
-            await using (var database = new FoundationDbContext(options))
+            await using (var database = new PocketMonkeyDbContext(options))
             {
                 var state = await new AllowanceAdministration(database, settings, clock).FindAsync(accountId, default);
                 Require(state!.BusinessMonth == "2027-01" && state.NextEffectiveMonth == "2027-02" && !state.Current!.Enabled,

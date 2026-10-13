@@ -23,7 +23,7 @@ public static class IdentityConfiguration
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
             })
-            .AddEntityFrameworkStores<FoundationDbContext>()
+            .AddEntityFrameworkStores<PocketMonkeyDbContext>()
             .AddDefaultTokenProviders();
 
         services.ConfigureApplicationCookie(options =>

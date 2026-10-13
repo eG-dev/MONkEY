@@ -10,10 +10,10 @@ namespace PocketMonkey.Api.Services;
 
 public sealed class LedgerAdministration
 {
-    private readonly FoundationDbContext database;
+    private readonly PocketMonkeyDbContext database;
     private readonly InstanceSettings settings;
 
-    public LedgerAdministration(FoundationDbContext database, InstanceSettings settings)
+    public LedgerAdministration(PocketMonkeyDbContext database, InstanceSettings settings)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.settings = settings ?? throw new ArgumentNullException(nameof(settings));

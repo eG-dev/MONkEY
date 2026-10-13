@@ -10,7 +10,7 @@ using PocketMonkey.Api.Storage;
 
 namespace PocketMonkey.Api.Storage.Migrations
 {
-    [DbContext(typeof(FoundationDbContext))]
+    [DbContext(typeof(PocketMonkeyDbContext))]
     [Migration("20261004145713_InitialFoundation")]
     partial class InitialFoundation
     {
