@@ -65,20 +65,20 @@ the underlying form/navigation. It uses the current language/theme, keyboard
 tabs, native modal background inertness, and Close/Escape with opener focus return.
 
 Overview contains the web package version and the full unmodified
-`AGPL-3.0-only` project license. The inline text in
-[project-license.json](web/src/app/components/about-dialog/project-license.json)
-and locally served [license file](web/public/licenses/AGPL-3.0-only.txt) are
-mechanical copies of the root [LICENSE](../LICENSE); regenerate both from that
-canonical text if it changes. The About E2E workflow verifies both exact matches.
-The Docker build context is `revamp/`, so these local copies ship without relying
-on repository files outside that context or an external license service.
+`AGPL-3.0-only` project license. The [About build-input generator](web/scripts/prepare-about.mjs)
+derives inline text and the locally served `/licenses/AGPL-3.0-only.txt` from the
+root [LICENSE](../LICENSE), preserving its exact contents. Both are ignored build
+outputs, not manually maintained copies. The About E2E workflow verifies their
+fidelity, the license hash, and version/build agreement with container labels.
 
 This is still review content, not release-ready legal delivery. The component
 inventory and legal sections retain the approved, visibly marked placeholders.
 Complete shipped/transitive/runtime notices, rights/compatibility review, and
 final self-hosted legal wording remain outstanding. Repository/release-source URLs
-are unavailable until agreed, and this build explicitly reports its source
-revision as unavailable rather than presenting a placeholder as real build data.
+are unavailable until agreed. About now shows the captured source revision and
+whether this is a development build with uncommitted changes; source archives
+without Git explicitly report unavailable provenance. Dirty builds do not receive
+a misleading revision-matched source link.
 
 The [Step 3H delivery record](../plans/migration/03h-lifecycle.md#angular-delivery-evidence-2026-10-17)
 records 21 passing production-image checks and the separate German layout review.
@@ -87,6 +87,47 @@ Run the focused set from the repository root after building the image:
 ```text
 npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
 ```
+
+### Build Metadata and License Generation
+
+[ADR-0019](../docs/ADR/ADR-0019-build-identity-and-about-assets.md) defines the
+version/source rules. The web package is the single application-version source;
+both root lockfile versions must match it. Login, shell, About, and OCI labels use
+the generated identity, not independently edited constants.
+
+Run these commands from the repository root:
+
+```text
+npm --prefix revamp/web run prepare:about
+npm --prefix revamp/web run prepare:about -- --check
+npm --prefix revamp/web run check:about
+npm --prefix revamp/web run build:image
+```
+
+The npm `build`, `start`, `dev`, `watch`, and `ng` entry points automatically
+prepare assets before starting. If a version/license input changes while a watch
+server is running, rerun `prepare:about` or restart it. A clean checkout must run
+preparation or one of these entry points before directly invoking Angular tools.
+
+The [image wrapper](web/scripts/build-image.mjs) captures repository metadata and
+the canonical license in ignored `revamp/.build/about/` before invoking Docker.
+Docker validates that snapshot against package versions and label arguments,
+then generates its own web assets. This works without Git or the repository-root
+license inside the `revamp/` Docker context. A post-build check rejects input drift.
+Use this wrapper instead of the previous standalone `docker build` command;
+`--tag` can select a different local image tag.
+
+For eventual release-input validation, `prepare:about` and `build:image` accept
+`--release-tag` and `--repository-url`. The tag must exist at HEAD, exactly match
+the application version, and use clean source; the URL must be the explicitly
+agreed public HTTPS GitHub repository. No repository default is inferred or
+invented. These flags validate identity, not legal completeness or release approval.
+
+Public `/about/build-info.json` contains only the version, source/build identity,
+optional source links, and project-license hash. It contains no user/deployment
+secrets. The build-only SemVer parser and other build tools do not ship in the
+runtime image; notice inclusion is determined by redistributed material, not
+merely by `dependencies` versus `devDependencies` in a manifest.
 
 ## Private Account Images
 
@@ -232,7 +273,7 @@ npm --prefix web run check:catalogs
 npm --prefix web run build
 npm --prefix tests/e2e run check
 node ../plans/migration/verify-guardrails.mjs
-docker build --file deploy/Dockerfile --tag pocket-monkey:foundation .
+npm --prefix web run build:image
 npm --prefix tests/e2e exec -- playwright install chromium
 npm --prefix tests/e2e test
 ```

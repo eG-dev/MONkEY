@@ -24,3 +24,4 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0016](ADR-0016-monthly-allowance-execution.md) | Historical monthly catch-up, disabled-period skipping, retry-safe credits, and timezone-change scheduling |
 | [ADR-0017](ADR-0017-backend-project-boundaries.md) | Host executable, Storage library, one-way dependency, and EF ownership |
 | [ADR-0018](ADR-0018-project-license.md) | AGPLv3-only, commercial-use permissions, source-sharing obligations, and separate operator information |
+| [ADR-0019](ADR-0019-build-identity-and-about-assets.md) | One application version, validated build/source identity, and generated local project-license assets |

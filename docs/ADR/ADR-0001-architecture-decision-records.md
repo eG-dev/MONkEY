@@ -1,6 +1,7 @@
 # ADR-0001 Architecture Decision Records
 
 _Creation date_: 2026-10-04
+_Updated_: 2026-10-17
 
 ## Context
 
@@ -18,6 +19,7 @@ delivery steps, and instructions guide implementation.
 - Include an Alternatives section only when multiple alternatives were actually evaluated. Other sections are optional and should add meaningful information rather than template boilerplate.
 - Add fenced `mermaid` diagrams where they clarify architecture, interactions, or implementation approach; diagrams are not mandatory for every ADR.
 - Write ADRs from a greenfield product perspective: document enduring requirements, architectural choices, and rationale. Keep delivery sequencing and transition details in development plans, not ADRs.
+- Retain ADRs after delivery, independently of temporary plans. Plans may reference ADRs, but ADRs must stand alone and must not link to temporary plans; reference other ADRs or maintained product/operational documentation instead.
 - Record agreed decisions in ADRs; keep unresolved proposals in development plans until decided. Do not present unevaluated tooling suggestions as binding architecture.
 - GitHub Copilot instructions must require contributors and coding agents to read and follow applicable ADRs before changing code, plans, or instructions.
 - When a requested change conflicts with an ADR, identify the conflict and obtain agreement on the decision change before implementing it. Update the decision record alongside the approved change.

@@ -166,7 +166,7 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 | --- | --- | --- |
 | Application identity | Proposed single version source: [web package](../../revamp/web/package.json), with its lockfile root version kept equal. Release tag must be exactly `v<version>`, including any prerelease suffix. | The same application version in About, shell/login version labels, OCI labels, and release assets. Framework/package versions remain separate component versions. No manually maintained second application version. |
 | Build identity and source | Full Git commit and clean/dirty state captured before Docker packaging; the agreed public repository URL. Docker's `revamp/` context does not contain the repository root or Git metadata. | Build metadata bundled into the tested image; immutable revision-specific source links for clean builds, plus matching release source access. Local/PR builds are identified as development builds; dirty or unavailable provenance must not be presented as release-matched source. Release builds require clean, known provenance and matching tag/version/commit. |
-| Project license | Canonical root [LICENSE](../../LICENSE), `AGPL-3.0-only`. | Mechanically generated inline text and downloadable local file, replacing manual synchronization of the [current inline copy](../../revamp/web/src/app/components/about-dialog/project-license.json) and [served copy](../../revamp/web/public/licenses/AGPL-3.0-only.txt). Preserve the authoritative text exactly and verify equality. |
+| Project license | Canonical root [LICENSE](../../LICENSE), `AGPL-3.0-only`. | Mechanically generated inline text and downloadable local file through the [build-input generator](../../revamp/web/scripts/prepare-about.mjs), replacing manually synchronized copies. Preserve the authoritative text exactly and verify equality. |
 | Third-party notices | Resolved production npm dependencies and bundled browser/server output; NuGet lockfiles and published backend assets; exact runtime/base-image inputs, final OS package inventory, and bundled fonts/icons/images. | Release-matched component identities, versions, license expressions, applicable attributions/NOTICE content, and full license texts. Track provenance and content hashes. Include transitive, embedded, native, runtime, and redistributed asset components; exclude build-only tools unless their material actually ships. |
 | Operator/privacy information | Separately maintained German/English source documents, with stable document IDs, explicit revisions/review dates, and reviewed wording. | Locally bundled documents and their revisions, independent of the application version. Preserve prior revisions in Git. A language is not current until its matching revision is reviewed; package updates never silently rewrite these texts. No per-user consent or acceptance storage is introduced. |
 
@@ -212,6 +212,50 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 4. Exercise the complete artifact and release gates during the existing
 	non-publishing rehearsal and later operations/release work. Transaction retention
 	remains a separate backend/data design review, not part of this pipeline.
+
+### Build metadata and license implementation
+
+The user authorized the first implementation slice on 2026-10-17 ("proceed").
+[ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md) records the
+accepted application/build identity and automatic license-synchronization rules.
+Notice tooling, final legal wording/revisions, public repository URLs, and
+publication remain outside this delivered slice.
+
+- The [generator](../../revamp/web/scripts/prepare-about.mjs) uses the web package as the sole application SemVer input, verifies both lockfile version fields, and captures commit/cleanliness without borrowing an unrelated parent repository's identity. Generated files are ignored; the former tracked license copies are removed.
+- Npm build/server entry points prepare the metadata and exact inline/downloadable license assets. Login, shell, and About consume the same generated identity; German/English build labels distinguish release, clean development, dirty development, and unavailable revision states. The public metadata asset contains no household data or secrets.
+- The [Docker wrapper](../../revamp/web/scripts/build-image.mjs) prepares the restricted build context and passes matching OCI labels. The in-container generator validates snapshot/license/label agreement; the wrapper rechecks inputs after building. CI runs isolated build-input checks and uses the wrapper; no publishing permissions or release job was added.
+- Release identity validation rejects mismatched or non-HEAD tags, dirty/unknown provenance, inconsistent versions, and missing/unsafe repository URLs. No future repository URL is invented. A valid clean revision link alone does not satisfy all Corresponding Source or release-content obligations.
+- The existing real-image About tests now verify package/UI/OCI identity agreement and canonical license/hash fidelity. Offline runtime coverage includes metadata and license assets. Reproducible commands and watch-mode behavior are in the [foundation guide](../../revamp/README.md#build-metadata-and-license-generation).
+- Build-only `devDependencies`, including the metadata parser, are excluded from delivered-component notices unless their material actually ships. Inventory generation and its review remain pending; illustrative third-party rows have not been replaced.
+
+Verification on 2026-10-17 passed **13 isolated real-Git build-input checks**
+and **23 production-image checks**, including public/Manager/Member About behavior,
+SSR/hydration, canonical license/hash fidelity, UI/static/OCI identity agreement,
+and offline runtime assets. The isolated checks cover strict versions and
+prereleases, mismatched/missing/non-HEAD tags, dirty release rejection, unsafe or
+missing repository URLs, stale outputs, tampered snapshots, label disagreement,
+determinism, and unavailable/unrelated-parent Git provenance.
+
+Commands run from the repository root:
+
+```text
+npm --prefix revamp/web run check:about
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/web run build
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts specs/lifecycle/runtime.spec.ts --workers 1
+node plans/migration/verify-guardrails.mjs
+```
+
+Separate German browser review passed at actual 1440px/320px in both light/dark
+themes: four combinations, no revision/link overlap, overflow, or browser errors.
+Desktop/light and phone/dark screenshots were inspected under ignored
+`revamp/.local/build-metadata-review/`. The temporary review container was removed;
+no preview was left running. Release-input validation uses isolated fixture tags
+and an example repository, not an approved public project URL or publishing
+rehearsal. Hosted execution, complete notices, legal review, Corresponding Source
+delivery, and publication remain unverified/open.
 
 ## Transaction retention discussion
 

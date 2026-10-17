@@ -7,7 +7,7 @@ import { AuthenticationService } from '../../services/authentication/authenticat
 import { AboutService } from '../../services/about/about.service';
 import { LanguageService } from '../../services/language/language.service';
 import { LANGUAGES, LanguageId } from '../../i18n/languages';
-import packageJson from '../../../../package.json';
+import buildInfo from '../../../generated/about/build-info.json';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +20,7 @@ export class Login {
   protected readonly about = inject(AboutService);
   protected readonly language = inject(LanguageService);
   protected readonly languages = Object.values(LANGUAGES);
-  protected readonly version = packageJson.version;
+  protected readonly version = buildInfo.version;
 
   protected readonly busy = signal(false);
   protected readonly interactive = signal(false);

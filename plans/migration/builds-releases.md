@@ -66,6 +66,13 @@ on 2026-10-17. Follow the revisioned
 [input/artifact and verification proposal](03h-lifecycle.md#about-content-update-process);
 specific generator/scanner tooling and final legal content remain to be evaluated.
 
+Application/build identity and project-license generation are implemented under
+[ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md). Use
+`npm --prefix web run build:image` from `revamp/` to prepare metadata/license
+inputs and validate matching OCI labels; the foundation workflow uses this same
+non-publishing wrapper. Notice inventory tooling and final legal revisions remain
+pending. See the [current commands](../../revamp/README.md#build-metadata-and-license-generation).
+
 - Capture the application version, exact source revision, source cleanliness, and agreed repository/source references before Docker packaging; use the same identity in About, OCI labels, and release assets.
 - Generate local project-license assets from the canonical root license. Derive notices from the actual shipped npm/NuGet/runtime/container/font/icon/asset inputs and explicitly reviewed exceptions, not a manually maintained About list.
 - Keep reviewed German/English legal documents separately revisioned. Dependency updates regenerate inventory for review, not operator/privacy wording or acceptance state.

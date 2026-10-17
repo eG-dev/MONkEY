@@ -27,6 +27,11 @@ for (const role of ["Manager", "Member"] as const) {
 
     await signIn(page, account);
     await expect(page.locator("#shell-navigation-toggle")).toBeEnabled();
+    const metadataResponse = await page.request.get("/about/build-info.json");
+
+    expect(metadataResponse.status()).toBe(200);
+
+    const metadata: Record<string, unknown> = await metadataResponse.json();
 
     if (
       (await page
@@ -48,6 +53,7 @@ for (const role of ["Manager", "Member"] as const) {
       "shell-navigation-administration",
       "shell-navigation-about",
     ]);
+    await expect(page.locator("#shell-version")).toHaveText(`Version ${metadata["version"]}`);
     await expect(page.locator("#shell-navigation-about")).toHaveAccessibleName(
       "About",
     );
@@ -59,6 +65,11 @@ for (const role of ["Manager", "Member"] as const) {
     await expect(page.locator("#about-dialog")).toHaveCount(1);
     await expect(page.locator("#about-dialog")).toBeVisible();
     await expect(page.locator("#about-dialog")).toHaveAccessibleName("About");
+    await expect(page.locator("#about-version")).toHaveText(`Version ${metadata["version"]}`);
+
+    if (typeof metadata["revision"] === "string") {
+      await expect(page.locator("#about-revision")).toContainText(metadata["revision"]);
+    }
     await expect(page.locator("#about-tab-overview")).toHaveAttribute(
       "aria-selected",
       "true",

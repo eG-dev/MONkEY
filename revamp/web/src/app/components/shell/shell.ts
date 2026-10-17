@@ -7,7 +7,7 @@ import { filter } from 'rxjs';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { AboutService } from '../../services/about/about.service';
 import { ThemeService } from '../../services/theme/theme.service';
-import packageJson from '../../../../package.json';
+import buildInfo from '../../../generated/about/build-info.json';
 
 @Component({
   selector: 'app-shell',
@@ -20,7 +20,7 @@ export class Shell {
   protected readonly auth = inject(AuthenticationService);
   protected readonly about = inject(AboutService);
   protected readonly theme = inject(ThemeService);
-  protected readonly version = packageJson.version;
+  protected readonly version = buildInfo.version;
 
   private readonly wideQuery = isPlatformBrowser(inject(PLATFORM_ID)) ? matchMedia('(min-width: 1440px)') : null;
   protected readonly wide = signal(this.wideQuery?.matches ?? true);

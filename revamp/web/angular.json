@@ -52,6 +52,16 @@
                 "input": "public"
               },
               {
+                "glob": "AGPL-3.0-only.txt",
+                "input": "src/generated/about",
+                "output": "licenses"
+              },
+              {
+                "glob": "build-info.json",
+                "input": "src/generated/about",
+                "output": "about"
+              },
+              {
                 "glob": "lucide.{css,woff2,woff,ttf,eot,svg}",
                 "input": "node_modules/lucide-static/font",
                 "output": "assets/lucide"

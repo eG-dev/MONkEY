@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { createHash } from "node:crypto";
 
-import { test, expect, credentials } from "../../fixtures";
+import { test, expect, credentials, docker } from "../../fixtures";
 
 test("public About preserves sign-in values, supports keyboard tabs, and bundles the canonical license", async ({
   page,
@@ -27,6 +28,26 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   }
 
   await page.goto("/");
+  const metadataResponse = await page.request.get("/about/build-info.json");
+
+  expect(metadataResponse.status()).toBe(200);
+
+  const metadata: Record<string, unknown> = await metadataResponse.json();
+  const labels: Record<string, string> = JSON.parse(docker("inspect", instance.container, "--format", "{{json .Config.Labels}}"));
+  const manifest: Record<string, unknown> = JSON.parse(readFileSync(resolve(__dirname, "../../../../web/package.json"), "utf8"));
+
+  expect(metadata["schemaVersion"]).toBe(1);
+  expect(metadata["version"]).toBe(manifest["version"]);
+  expect(metadata["version"]).toBe(labels["org.opencontainers.image.version"]);
+  expect(metadata["revision"] ?? "unavailable").toBe(labels["org.opencontainers.image.revision"]);
+  expect(metadata["kind"]).toBe(labels["org.pocketmonkey.build.kind"]);
+  expect(String(metadata["dirty"])).toBe(labels["org.pocketmonkey.build.dirty"]);
+  expect(metadata["repositoryUrl"] ?? "").toBe(labels["org.opencontainers.image.source"]);
+  await expect(page.locator("#login-version")).toHaveText(`Version ${metadata["version"]}`);
+
+  const firstRender = await page.request.get("/");
+
+  expect(await firstRender.text()).toContain(`Version ${metadata["version"]}`);
   await expect(page.locator("#login-about")).toBeEnabled();
   await expect(page.locator("#login-about")).toHaveAccessibleName("About");
   await page.locator("#login-username").fill(unfinished.username);
@@ -38,6 +59,19 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveRole("dialog");
   await expect(dialog).toHaveAccessibleName("About");
+  await expect(page.locator("#about-version")).toHaveText(`Version ${metadata["version"]}`);
+
+  if (typeof metadata["revision"] === "string") {
+    await expect(page.locator("#about-revision")).toContainText(metadata["revision"]);
+    await expect(page.locator("#about-revision")).toContainText(metadata["kind"] === "release" ? "Release" : "Development build");
+
+    if (metadata["dirty"] === true) {
+      await expect(page.locator("#about-revision")).toContainText("uncommitted changes");
+      expect(metadata["sourceUrl"]).toBeNull();
+    }
+  } else {
+    await expect(page.locator("#about-revision")).toHaveText("Source revision unavailable in this build.");
+  }
   await expect(page.locator("#about-dialog-close")).toBeFocused();
   await expect(page.locator("#about-tab-overview")).toHaveAccessibleName(
     "Overview",
@@ -52,14 +86,13 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     "aria-selected",
     "true",
   );
-  await expect(page.locator("#about-github")).toHaveAttribute(
-    "aria-disabled",
-    "true",
-  );
-  await expect(page.locator("#about-source")).toHaveAttribute(
-    "aria-disabled",
-    "true",
-  );
+  for (const [selector, key] of [["#about-github", "repositoryUrl"], ["#about-source", "sourceUrl"]]) {
+    if (typeof metadata[key] === "string") {
+      await expect(page.locator(selector)).toHaveAttribute("href", metadata[key]);
+    } else {
+      await expect(page.locator(selector)).toHaveAttribute("aria-disabled", "true");
+    }
+  }
   expect(
     await dialog.evaluate(
       (element) => element.scrollWidth <= element.clientWidth,
@@ -144,6 +177,7 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   );
 
   expect(await page.locator("#about-license-text").textContent()).toBe(license);
+  expect(metadata["licenseSha256"]).toBe(createHash("sha256").update(license).digest("hex"));
   await expect(page.locator("#about-license-file")).toHaveAccessibleName(
     "Open full license file",
   );

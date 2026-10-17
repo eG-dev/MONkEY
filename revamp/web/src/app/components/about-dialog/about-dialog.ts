@@ -5,8 +5,8 @@ import { TuiButton } from '@taiga-ui/core';
 import { AboutService } from '../../services/about/about.service';
 import { LanguageService } from '../../services/language/language.service';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
-import packageJson from '../../../../package.json';
-import projectLicense from './project-license.json';
+import buildInfo from '../../../generated/about/build-info.json';
+import projectLicense from '../../../generated/about/project-license.json';
 
 type AboutTab = 'overview' | 'notices' | 'legal';
 
@@ -23,7 +23,15 @@ export class AboutDialog {
   private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
   private readonly content = viewChildren<ElementRef<HTMLElement>>('content');
 
-  protected readonly version = packageJson.version;
+  protected readonly build = buildInfo;
+  protected readonly version = buildInfo.version;
+  protected readonly revisionKey = !buildInfo.revision
+    ? 'about.revisionUnavailable'
+    : buildInfo.kind === 'release'
+      ? 'about.releaseRevision'
+      : buildInfo.dirty
+        ? 'about.dirtyRevision'
+        : 'about.developmentRevision';
   protected readonly projectLicense = projectLicense.text;
   protected readonly tabs: readonly AboutTab[] = ['overview', 'notices', 'legal'];
   protected readonly selected = signal<AboutTab>('overview');

@@ -56,6 +56,8 @@ jobs:
         run: npm --prefix web ci --ignore-scripts
       - name: Restore locked test tooling
         run: npm --prefix tests/e2e ci --ignore-scripts
+      - name: Verify About build-input generation and release validation
+        run: npm --prefix web run check:about
       - name: Verify instructions, ADRs, links, and workflow scopes
         run: node ../plans/migration/verify-guardrails.mjs
       - name: Verify translation catalogs
@@ -78,7 +80,7 @@ jobs:
             mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27 \
             /bin/sh -c "npx -y playwright@1.63.0 run-server --port 3000 --host 0.0.0.0"
       - name: Build production image
-        run: docker build --file deploy/Dockerfile --tag pocket-monkey:foundation --build-arg BUILD_REVISION="$GITHUB_SHA" .
+        run: npm --prefix web run build:image
       - name: Wait for Playwright browser server
         run: timeout 120 sh -c 'until docker logs playwright-browser 2>&1 | grep -q "Listening on"; do sleep 1; done' || { docker logs playwright-browser; exit 1; }
       - name: Verify the production image

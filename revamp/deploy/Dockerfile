@@ -3,7 +3,18 @@ WORKDIR /build/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY web/ ./
-RUN npm run build
+COPY .build/about/ /build/.build/about/
+ARG BUILD_VERSION
+ARG BUILD_REVISION
+ARG BUILD_KIND
+ARG BUILD_DIRTY
+ARG BUILD_REPOSITORY
+RUN MONKEY_PACKAGED_BUILD=1 \
+    MONKEY_BUILD_VERSION="${BUILD_VERSION}" \
+    MONKEY_BUILD_REVISION="${BUILD_REVISION}" \
+    MONKEY_BUILD_KIND="${BUILD_KIND}" \
+    MONKEY_BUILD_DIRTY="${BUILD_DIRTY}" \
+    MONKEY_BUILD_REPOSITORY="${BUILD_REPOSITORY}" npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0.401-noble@sha256:e70cdb7f80b0348f5cb85f19a8f670fca061f033d57eed12fa003d58b0e06317 AS backend-build
 WORKDIR /build
@@ -15,11 +26,18 @@ COPY backend/ ./backend/
 RUN dotnet publish backend/PocketMonkey.Host/PocketMonkey.Host.csproj --configuration Release --no-restore --output /publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.12-noble@sha256:222759b391a1aaf241166672c8f99b2d4ada452e7b5319f3c6e8f265a37b5ad4
-ARG BUILD_REVISION=local-uncommitted
+ARG BUILD_VERSION
+ARG BUILD_REVISION
+ARG BUILD_KIND
+ARG BUILD_DIRTY
+ARG BUILD_REPOSITORY
 LABEL org.opencontainers.image.title="POCKET MONkEY" \
     org.opencontainers.image.description="Foundation demonstration; not ready for production use" \
-    org.opencontainers.image.version="0.0.0-foundation" \
-    org.opencontainers.image.revision="${BUILD_REVISION}"
+    org.opencontainers.image.version="${BUILD_VERSION}" \
+    org.opencontainers.image.revision="${BUILD_REVISION}" \
+    org.opencontainers.image.source="${BUILD_REPOSITORY}" \
+    org.pocketmonkey.build.kind="${BUILD_KIND}" \
+    org.pocketmonkey.build.dirty="${BUILD_DIRTY}"
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends supervisor tini tzdata \
     && rm -rf /var/lib/apt/lists/* \

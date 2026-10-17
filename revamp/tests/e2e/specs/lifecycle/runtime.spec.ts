@@ -39,7 +39,7 @@ standalone('runtime works with networking disabled and no development executable
               name,
               'node',
               '-e',
-              "Promise.all(['/health/ready','/favicon.png','/assets/lucide/lucide.woff2','/assets/lucide/LICENSE','/'].map(path=>fetch('http://127.0.0.1:8080'+path))).then(responses=>process.exit(responses.every(response=>response.ok)?0:1)).catch(()=>process.exit(1))",
+              "Promise.all(['/health/ready','/favicon.png','/assets/lucide/lucide.woff2','/assets/lucide/LICENSE','/about/build-info.json','/licenses/AGPL-3.0-only.txt','/'].map(path=>fetch('http://127.0.0.1:8080'+path))).then(responses=>process.exit(responses.every(response=>response.ok)?0:1)).catch(()=>process.exit(1))",
             ],
             { encoding: 'utf8', timeout: 10_000 },
           );
