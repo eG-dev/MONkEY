@@ -4,6 +4,7 @@ import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { AboutService } from '../../services/about/about.service';
 import { LanguageService } from '../../services/language/language.service';
 import { LANGUAGES, LanguageId } from '../../i18n/languages';
 import packageJson from '../../../../package.json';
@@ -16,6 +17,7 @@ import packageJson from '../../../../package.json';
 })
 export class Login {
   protected readonly auth = inject(AuthenticationService);
+  protected readonly about = inject(AboutService);
   protected readonly language = inject(LanguageService);
   protected readonly languages = Object.values(LANGUAGES);
   protected readonly version = packageJson.version;

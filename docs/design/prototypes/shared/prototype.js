@@ -279,8 +279,8 @@
       <aside class="drawer" id="primary-drawer">
         <nav class="navigation" id="main-navigation">
           <a href="../accounts-overview/index.html" data-nav="overview">${icon('overview')}<span data-t="overview"></span></a>
-          <a class="administration" href="../administration/index.html" data-nav="administration">${icon('administration')}<span data-t="administration"></span></a>
           <a href="../accounts/index.html" data-nav="accounts" data-manager>${icon('wallet')}<span data-t="accounts"></span></a>
+          <a class="administration" href="../administration/index.html" data-nav="administration">${icon('administration')}<span data-t="administration"></span></a>
           <button class="about-navigation" type="button" data-about aria-haspopup="dialog">${icon('info')}<span data-t="about"></span></button>
         </nav>
         <div class="application-info"><span class="application-name">POCKET MONkEY</span><span class="application-version" data-t="version"></span></div>

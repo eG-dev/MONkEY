@@ -39,12 +39,16 @@ The project license is bundled verbatim for offline reading. Close the dialog on
 the direct review page to access its language/theme controls; reopening resets the
 selected tab to Overview. Other views retain the existing prototype settings.
 
-The latest login footer reads `Version | About` without an icon. The requested
-Administration-below-Overview wireframe was explicitly approved on 2026-10-17.
-All shared-shell prototypes now show Overview, Administration, Manager-only Accounts,
-and labelled About anchored at the bottom above the version. The wireframe's textual
-icon placeholders are represented by actual icons in the prototype. This current
-prototype revision is covered by the explicit 2026-10-17 approval.
+The latest login footer reads `Version | About` without an icon. The earlier
+Administration-below-Overview approval remains history. The user explicitly
+approved the revised Administration-last wireframe on 2026-10-17 ("Approve both
+current references"), then its updated shell prototype ("Approve current shell
+prototype and implement Angular"). All shared-shell prototypes now show Overview,
+Manager-only Accounts, Administration, and labelled About anchored at the bottom
+above the version. The revised prototype passed 16 role/language/theme/viewport
+combinations. The wireframe's textual icon placeholders remain actual icons in
+the prototype. The existing borderless account-image badge prototype was also
+explicitly approved in the first of these two confirmations.
 
 ## Prototype settings
 

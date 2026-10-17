@@ -55,13 +55,18 @@
 
 .avatar-badge {
   position: absolute;
-  inset-inline-end: 0;
-  bottom: 0;
+  inset-inline-end: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
   background: var(--surface-panel);
-  border: 1px solid var(--border-strong);
+  color: var(--icon-default);
+  border: 0;
   border-radius: 50%;
-  padding: var(--space-1);
-  font-size: 1rem;
+  padding: 0;
+  font-size: 14px;
 }
 
 .image-field {

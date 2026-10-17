@@ -24,7 +24,7 @@
         <button class="avatar-button" id="account-details-image-edit" type="button" [disabled]="busy() || !interactive()" (click)="openImage()"
           [attr.aria-label]="t('accounts.changeImage', { name: current.name })" [title]="t('accounts.changeImage', { name: current.name })">
           <app-account-avatar id="account-details-avatar" [name]="current.name" [imageUrl]="current.imageUrl" />
-          <span class="avatar-badge icon icon-pencil" aria-hidden="true"></span>
+          <span class="avatar-badge icon icon-pencil" id="account-details-image-edit-badge" aria-hidden="true"></span>
         </button>
       } @else {
         <app-account-avatar id="account-details-avatar" [name]="current.name" [imageUrl]="current.imageUrl" />

@@ -206,11 +206,12 @@ configuration/status groups and 12px before outstanding status. Both explicit
 artifact approvals remain unchanged; local checks do not grant application-wide
 visual acceptance.
 
-A subsequent image-edit badge refinement requested on 2026-10-12 is a prototype
-draft: retain the circular badge, remove its outline, and use the panel background
+A subsequent image-edit badge refinement requested on 2026-10-12 retains the
+circular badge, removes its outline, and uses the panel background
 behind the pencil in both themes. This styling-only change leaves the approved
-wireframe layout and earlier execution-status approval intact. The changed
-prototype revision awaits explicit approval before changing the Angular badge.
+wireframe layout and earlier execution-status approval intact. The user explicitly
+approved this current borderless badge prototype on 2026-10-17
+("Approve both current references"), together with the revised shell wireframe.
 Verified 16 combinations of desktop/360px, English/German, light/dark, and
 Manager/Member: no badge border, centered pencil, opaque theme-aware background,
 working image dialog, Member read-only behavior, and no horizontal overflow.
@@ -241,10 +242,10 @@ wireframe first, then a detailed click prototype.
 
 | Reference | Files | Status | Click prototype |
 | --- | --- | --- | --- |
-| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Administration-below-Overview refinement explicitly approved 2026-10-17, including user-edited icon placeholders and annotation arrangement; earlier approvals retained as history | [Shell](prototypes/application-shell/index.html), current shared About and menu-order prototype explicitly approved 2026-10-17 |
+| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Administration-last-in-top-group correction explicitly approved 2026-10-17 ("Approve both current references"); earlier approvals and user-edited icon placeholders/annotation arrangement retained as history | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
-| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; later borderless image-edit badge prototype refinement is a draft awaiting approval; approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
+| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Icon-free pipe-separated footer refinement explicitly approved 2026-10-17; earlier approvals retained as history | [Login](prototypes/login/index.html), current shared About and icon-free footer prototype explicitly approved 2026-10-17 |
@@ -261,6 +262,23 @@ and images are stored in [assets](assets/).
 
 ## Review rules
 
+The user requested two corrections on 2026-10-17 after the About implementation:
+the account-image pencil must use the existing borderless prototype styling, and
+Administration must always be the last item in the top navigation group. The
+revised shell wireframe shows Overview, Manager-only Accounts, Administration,
+with About / Info still anchored at the bottom. It preserves the user's icon
+placeholders and annotation positions. The user explicitly approved this current
+shell wireframe and the existing borderless image-edit badge prototype on
+2026-10-17 ("Approve both current references"). The shared menu prototype was
+then updated and verified across 16 role/language/theme/viewport combinations.
+The user separately explicitly approved this current shell prototype on
+2026-10-17 ("Approve current shell prototype and implement Angular"). Both
+corrections are now implemented in Angular. Eight production-image checks passed
+across desktop/mobile, including both menu roles and borderless, centered,
+panel-background image badges in both themes. The existing image upload,
+replacement, removal, and Member read-only workflow remains covered; phone
+light/dark badge screenshots were inspected. The About dialog design is unchanged.
+
 The user explicitly approved the current account-details click prototype on
 2026-10-12 after the allowance execution-status corrections and replacement of
 the misleading balance-limit advice with a bilingual placeholder failure reason.
@@ -270,8 +288,8 @@ separately explicitly approved the current account-details wireframe on
 annotation arrangement. The PNG was re-exported from that source and visually
 inspected without modifying the source. Those approvals cover the then-reviewed
 references and the implemented execution status. The later image-edit badge
-prototype refinement remains a draft awaiting explicit approval; do not change
-the Angular badge based on that draft. The approved wireframe is unchanged.
+prototype refinement was separately explicitly approved on 2026-10-17 as recorded
+above. The approved wireframe is unchanged.
 
 Committing a reference does not approve it. New or changed references are drafts
 until explicitly reviewed; record approval against the reviewed revision.

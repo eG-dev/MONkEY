@@ -38,6 +38,46 @@ test('account image upload, replacement, removal and fallback', async ({ page, i
   await expect(avatar).toHaveText('I');
   await expect(edit).toHaveAccessibleName(labels.change);
 
+  const badge = page.locator('#account-details-image-edit-badge');
+
+  for (const theme of ['light', 'dark']) {
+    if (theme === 'dark') {
+      await expect(page.locator('#shell-user-toggle')).toBeEnabled();
+      await page.locator('#shell-user-toggle').click();
+      await page.locator('#shell-user-menu-dark-mode').click();
+      await page.keyboard.press('Escape');
+    }
+
+    await expect(page.locator('html')).toHaveAttribute('tuiTheme', theme);
+    await expect(badge).toHaveCSS('border-top-width', '0px');
+    await expect(badge).toHaveCSS('border-right-width', '0px');
+    await expect(badge).toHaveCSS('border-bottom-width', '0px');
+    await expect(badge).toHaveCSS('border-left-width', '0px');
+    await expect(badge).toHaveCSS('border-radius', '50%');
+    await expect(badge).toHaveCSS('width', '26px');
+    await expect(badge).toHaveCSS('height', '26px');
+    await expect(badge).toHaveCSS('align-items', 'center');
+    await expect(badge).toHaveCSS('justify-items', 'center');
+
+    const colors = await badge.evaluate((element) => {
+      const reference = document.createElement('span');
+
+      reference.style.backgroundColor = 'var(--surface-panel)';
+      element.after(reference);
+
+      const actual = getComputedStyle(element).backgroundColor;
+      const expected = getComputedStyle(reference).backgroundColor;
+
+      reference.remove();
+
+      return { actual, expected };
+    });
+
+    expect(colors.actual).toBe(colors.expected);
+
+    await page.screenshot({ path: test.info().outputPath(`image-badge-${theme}.png`), fullPage: true });
+  }
+
   await edit.click();
 
   await expect(dialog).toHaveAccessibleName(labels.dialog);

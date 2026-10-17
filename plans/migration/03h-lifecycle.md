@@ -1,7 +1,10 @@
 # Step 3H: management and lifecycle completion
 
-Status: not started. Depends on the preceding features affected by each lifecycle
-operation. Apply the [milestone delivery and verification rules](03-ui-business-logic.md).
+Status: partially implemented. The approved shared About dialog and shell/login
+entry points are implemented with explicitly marked review content. Release-ready
+legal/notices content and the remaining lifecycle work are not complete. Depends
+on the preceding features affected by each operation. Apply the
+[milestone delivery and verification rules](03-ui-business-logic.md).
 
 ## Outcome
 
@@ -69,6 +72,78 @@ Angular"). Both UI design gates are satisfied; proceed with the shared Angular d
 and approved entry points. Earlier draft/prototype-gate notes above record the review
 sequence, not an outstanding gate. Legal wording, inventory completeness and future
 repository/source URLs remain unresolved and are not approved by the layout decision.
+
+### Angular delivery evidence (2026-10-17)
+
+The requested pre-implementation commit is `ef89c09` (`Approve About dialog designs
+and adopt AGPL-3.0-only`). The subsequent Angular implementation is delivered
+separately from that design/license commit.
+
+- [AboutDialog](../../revamp/web/src/app/components/about-dialog/about-dialog.ts) is hosted once by the root application. [AboutService](../../revamp/web/src/app/services/about/about.service.ts) opens the same dialog from public login/forced-password-change and either signed-in role; no backend contract, authorization rule, consent state, or persistence changed.
+- The existing native modal has an opt-in full-size layout. Header/tabs remain fixed while content scrolls; keyboard tab navigation, native modal background inertness, Close/Escape, opener focus return, and preservation of the underlying form/view are verified. Ordinary modal layout remains unchanged.
+- Login uses text-only `Version | About` / `Version | Info`. Shell order is Overview, Administration, Manager-only Accounts, then labelled About at the bottom above the smaller version. The former unavailable GitHub footer link moved into About.
+- The Overview tab uses the actual web package version, currently `0.0.0`, and explicitly reports that this build does not supply its source revision. Repository and version-specific source links remain unavailable rather than inventing release metadata. Both inline project-license text and the local license-file link match the canonical root license exactly.
+- Third-party rows remain the approved illustrative placeholders, not a complete shipped inventory. Operator responsibilities, warranty/liability, and privacy use the approved placeholder wording, not legally reviewed release text. Required rights/compatibility review, release-matched notices/source metadata, and final legal wording remain open; the About acceptance checkbox below is intentionally not complete.
+
+Commands run from the repository root:
+
+```text
+npm --prefix revamp/web run build
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+docker build --file revamp/deploy/Dockerfile --tag pocket-monkey:foundation revamp
+npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
+```
+
+The final production image passed **21 checks**: eight About cases across desktop
+and mobile plus nearby authentication, SSR/hydration, local-asset, and failure
+regressions. About coverage includes both roles, a 320px public viewport, form
+preservation, keyboard tabs, matching/empty search, component expansion, native
+modal inertness, exact inline/file license fidelity, pinned header, and focus
+return after Close/Escape. The public workflow blocks external requests and
+asserts no browser errors. Catalog/compiler/type checks and scoped new-file
+formatting checks also passed.
+
+Separate from the English E2E suite, a real-browser German localization review
+checked all three tabs at actual 1440px/320px widths in light/dark themes (12
+layout combinations), translated runtime-name search, and absence of browser
+errors/overflow. Uncropped screenshots were captured beneath the ignored
+`revamp/.local/about-review/`; desktop Overview and phone notice/legal screens
+were inspected. These local checks do not waive hosted/release gates or constitute
+application-wide visual or legal acceptance.
+
+### Subsequent UI corrections (2026-10-17)
+
+The user subsequently requested a borderless account-image pencil badge and
+Administration always last in the top navigation group. The earlier menu-order
+descriptions above record the initial delivery, not the current order. The user
+explicitly approved the revised shell wireframe and existing borderless badge
+prototype ("Approve both current references"), then separately approved the
+revised shell prototype ("Approve current shell prototype and implement Angular").
+The [design index](../../docs/design/README.md#review-rules) records these approvals.
+
+Angular now matches both references: the image badge is a centered 26px circle
+with no border and an opaque theme-aware panel background; the button's keyboard
+focus outline is retained. Menu order is Overview, Manager-only Accounts,
+Administration, with About still anchored at the bottom above the version.
+The shell wireframe PNG was re-exported and inspected without changing the
+user's annotation arrangement, and the shared prototype passed 16 combinations
+of role, language, theme, and desktop/phone width.
+
+The final production image passed **eight checks** using the following command
+from the repository root after the documented image build:
+
+```text
+npm --prefix revamp/tests/e2e test -- specs/accounts/images-workflows.spec.ts specs/authentication/about.spec.ts --workers 1
+```
+
+Coverage includes borderless/centered/panel-background badges in light/dark,
+upload/replacement/removal and Member read-only behavior, both roles' menu order,
+About focus/navigation preservation, and forced-password-change preservation on
+desktop/mobile. The phone badge screenshots in both themes were inspected.
+Angular production build, compiler, and E2E type checks passed. No backend or
+About-content behavior changed, and the pending legal/source/inventory gates
+remain unchanged.
 
 ## Transaction retention discussion
 

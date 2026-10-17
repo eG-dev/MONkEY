@@ -103,7 +103,8 @@
   overflow: auto;
   padding: var(--space-3);
 
-  a {
+  a,
+  .about-button {
     display: flex;
     align-items: center;
     gap: var(--space-4);
@@ -126,8 +127,15 @@
     }
   }
 
-  .administration {
+  .about-button {
     margin-top: auto;
+    flex-shrink: 0;
+    border: 0;
+    border-inline-start: 4px solid transparent;
+    background: transparent;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
   }
 }
 
@@ -138,9 +146,6 @@
   border-top: 1px solid var(--border-default);
   background: var(--surface-sunken);
 
-  .repository-link {
-    margin-top: var(--space-3);
-  }
 }
 
 .application-name {

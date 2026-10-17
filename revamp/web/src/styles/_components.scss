@@ -408,6 +408,32 @@ textarea.input {
   }
 }
 
+.dialog-full-size {
+  width: calc(100vw - 2rem);
+  height: calc(100dvh - 2rem);
+
+  &[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dialog-header {
+    flex-shrink: 0;
+  }
+
+  .dialog-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .dialog-footer {
+    display: none;
+  }
+}
+
 .temporary-password {
   display: flex;
   gap: var(--space-3);

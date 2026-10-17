@@ -5,9 +5,10 @@ import { TuiRoot } from '@taiga-ui/core';
 import { AuthenticationService } from './services/authentication/authentication.service';
 import { Login } from './components/login/login';
 import { Shell } from './components/shell/shell';
+import { AboutDialog } from './components/about-dialog/about-dialog';
 
 @Component({
-  imports: [TuiRoot, RouterOutlet, Login, Shell],
+  imports: [TuiRoot, RouterOutlet, Login, Shell, AboutDialog],
   selector: 'app-root',
   templateUrl: './app.html',
 })

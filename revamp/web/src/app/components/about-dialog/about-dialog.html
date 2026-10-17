@@ -1,0 +1,104 @@
+<ng-container *transloco="let t">
+  @if (about.opened()) {
+    <app-modal-dialog dialogId="about-dialog" [open]="true" [fullSize]="true" [heading]="t('about.title')" (closed)="close()">
+      <div class="about-layout">
+        <div class="about-tabs" role="tablist" [attr.aria-label]="t('about.title')">
+          @for (tab of tabs; track tab) {
+            <button
+              #tabButton
+              tuiButton
+              appearance="flat"
+              size="m"
+              type="button"
+              role="tab"
+              [id]="'about-tab-' + tab"
+              [attr.aria-selected]="selected() === tab"
+              [attr.aria-controls]="'about-panel-' + tab"
+              [tabIndex]="selected() === tab ? 0 : -1"
+              (click)="select(tab, true)"
+              (keydown)="navigateTabs($event, tab)"
+            >
+              {{ t('about.' + tab) }}
+            </button>
+          }
+        </div>
+        <div class="about-content" #content>
+          <div id="about-panel-overview" role="tabpanel" aria-labelledby="about-tab-overview" tabindex="0" [hidden]="selected() !== 'overview'">
+            <section aria-labelledby="about-product-title">
+              <div class="about-brand">
+                <img src="/images/monkey_face.png" alt="" width="44" height="44" />
+                <h3 id="about-product-title">POCKET MONkEY</h3>
+              </div>
+              <p class="muted" id="about-version">{{ t('shell.version', { version }) }}</p>
+              <p class="hint" id="about-revision">{{ t('about.revisionUnavailable') }}</p>
+              <div class="about-links">
+                <span role="link" id="about-github" aria-disabled="true"><span class="icon icon-external-link" aria-hidden="true"></span>{{ t('about.repository') }}</span>
+                <span role="link" id="about-source" aria-disabled="true"><span class="icon icon-code" aria-hidden="true"></span>{{ t('about.source') }}</span>
+              </div>
+              <p class="hint">{{ t('about.sourcePending') }}</p>
+            </section>
+            <section aria-labelledby="about-license-title">
+              <h3 id="about-license-title">{{ t('about.projectLicense') }}</h3>
+              <details id="about-project-license" class="notice-row">
+                <summary id="about-project-license-toggle">
+                  <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ t('about.licenseName') }}</span
+                  ><span class="notice-meta">AGPL-3.0-only</span>
+                </summary>
+                <a id="about-license-file" href="/licenses/AGPL-3.0-only.txt" target="_blank" rel="noopener">{{ t('about.openLicense') }}</a>
+                <pre id="about-license-text" tabindex="0" [attr.aria-label]="t('about.licenseText')">{{ projectLicense }}</pre>
+              </details>
+            </section>
+          </div>
+          <div id="about-panel-notices" role="tabpanel" aria-labelledby="about-tab-notices" tabindex="0" [hidden]="selected() !== 'notices'">
+            <section aria-labelledby="about-notices-title">
+              <h3 id="about-notices-title">{{ t('about.notices') }}</h3>
+              <div class="message message-info" id="about-inventory-review">
+                <span class="icon icon-info" aria-hidden="true"></span>
+                <p class="message-body">{{ t('about.inventoryDraft') }}</p>
+              </div>
+              <div class="field about-search">
+                <label for="about-search">{{ t('about.search') }}</label
+                ><input #searchInput id="about-search" class="input" type="search" autocomplete="off" [value]="search()" (input)="search.set(searchInput.value)" />
+              </div>
+              <p class="hint" id="about-search-status" role="status" aria-live="polite">{{ t('about.count', { count: filteredComponents().length }) }}</p>
+              @for (component of filteredComponents(); track component.id) {
+                <details class="notice-row" [attr.data-testid]="'about-component-' + component.id">
+                  <summary data-testid="about-component-toggle">
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ component.name }}</span
+                    ><span class="notice-meta">{{ t('about.versionPending') }} &middot; {{ t('about.licensePending') }}</span>
+                  </summary>
+                  <div class="notice-content">
+                    <p>{{ t('about.noticePlaceholder') }}</p>
+                    <p class="muted">{{ t('about.componentSourcePending') }}</p>
+                  </div>
+                </details>
+              } @empty {
+                <div class="empty" id="about-no-results">
+                  <p>{{ t('about.noResults') }}</p>
+                </div>
+              }
+            </section>
+          </div>
+          <div id="about-panel-legal" role="tabpanel" aria-labelledby="about-tab-legal" tabindex="0" [hidden]="selected() !== 'legal'">
+            <div class="message message-info" id="about-legal-review">
+              <span class="icon icon-info" aria-hidden="true"></span>
+              <p class="message-body">{{ t('about.legalDraft') }}</p>
+            </div>
+            <section aria-labelledby="about-operator-title">
+              <h3 id="about-operator-title">{{ t('about.operator') }}</h3>
+              <p class="muted">{{ t('about.operatorPlaceholder') }}</p>
+            </section>
+            <section aria-labelledby="about-warranty-title">
+              <h3 id="about-warranty-title">{{ t('about.warranty') }}</h3>
+              <p class="muted">{{ t('about.warrantyPlaceholder') }}</p>
+            </section>
+            <section aria-labelledby="about-privacy-title">
+              <h3 id="about-privacy-title">{{ t('about.privacy') }}</h3>
+              <p class="muted">{{ t('about.privacyPlaceholder') }}</p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </app-modal-dialog>
+  }
+</ng-container>

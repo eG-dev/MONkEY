@@ -57,14 +57,14 @@
           ><span class="icon icon-wallet" aria-hidden="true"></span>{{ t('accounts.title') }}</a
         >
       }
-      <a class="administration" id="shell-navigation-administration" routerLink="/administration" routerLinkActive="active" ariaCurrentWhenActive="page"
+      <a id="shell-navigation-administration" routerLink="/administration" routerLinkActive="active" ariaCurrentWhenActive="page"
         ><span class="icon icon-wrench" aria-hidden="true"></span>{{ t('shell.administration') }}</a
       >
+      <button class="about-button" id="shell-navigation-about" type="button" [disabled]="!interactive()" (click)="about.open()"><span class="icon icon-info" aria-hidden="true"></span>{{ t('about.title') }}</button>
     </nav>
     <div class="application-info">
       <span class="application-name">POCKET MONkEY</span>
       <span class="application-version">{{ t('shell.version', { version }) }}</span>
-      <span class="repository-link" role="link" aria-disabled="true"><span class="icon icon-github" aria-hidden="true"></span>GitHub</span>
     </div>
   </aside>
 

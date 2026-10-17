@@ -5,6 +5,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 
 import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { AboutService } from '../../services/about/about.service';
 import { ThemeService } from '../../services/theme/theme.service';
 import packageJson from '../../../../package.json';
 
@@ -17,6 +18,7 @@ import packageJson from '../../../../package.json';
 })
 export class Shell {
   protected readonly auth = inject(AuthenticationService);
+  protected readonly about = inject(AboutService);
   protected readonly theme = inject(ThemeService);
   protected readonly version = packageJson.version;
 

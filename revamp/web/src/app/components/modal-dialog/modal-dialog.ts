@@ -13,6 +13,7 @@ export class ModalDialog {
   readonly open = input(false);
   readonly heading = input.required<string>();
   readonly dismissible = input(true);
+  readonly fullSize = input(false);
   readonly closed = output<void>();
 
   protected readonly titleId = computed(() => `${this.dialogId()}-title`);

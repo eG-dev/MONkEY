@@ -54,6 +54,40 @@ periodic retry, atomic failure, role security, configuration regressions, and
 SSR/hydration. It includes the exact reproducible command and remaining hosted/
 release gates; no production test-clock or failure-injection endpoint exists.
 
+## About and Legal Review Content
+
+The approved shared About / Info dialog is available from public sign-in and
+forced-password-change screens and from either signed-in role. Login shows
+`Version | About`; the sidebar keeps Administration last in the top navigation
+group, after Overview and Manager-only Accounts,
+with labelled About anchored above the version. Opening the dialog preserves
+the underlying form/navigation. It uses the current language/theme, keyboard
+tabs, native modal background inertness, and Close/Escape with opener focus return.
+
+Overview contains the web package version and the full unmodified
+`AGPL-3.0-only` project license. The inline text in
+[project-license.json](web/src/app/components/about-dialog/project-license.json)
+and locally served [license file](web/public/licenses/AGPL-3.0-only.txt) are
+mechanical copies of the root [LICENSE](../LICENSE); regenerate both from that
+canonical text if it changes. The About E2E workflow verifies both exact matches.
+The Docker build context is `revamp/`, so these local copies ship without relying
+on repository files outside that context or an external license service.
+
+This is still review content, not release-ready legal delivery. The component
+inventory and legal sections retain the approved, visibly marked placeholders.
+Complete shipped/transitive/runtime notices, rights/compatibility review, and
+final self-hosted legal wording remain outstanding. Repository/release-source URLs
+are unavailable until agreed, and this build explicitly reports its source
+revision as unavailable rather than presenting a placeholder as real build data.
+
+The [Step 3H delivery record](../plans/migration/03h-lifecycle.md#angular-delivery-evidence-2026-10-17)
+records 21 passing production-image checks and the separate German layout review.
+Run the focused set from the repository root after building the image:
+
+```text
+npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
+```
+
 ## Private Account Images
 
 Managers upload, replace, and remove PNG/JPEG/WebP images from account details.

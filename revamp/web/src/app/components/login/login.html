@@ -89,6 +89,7 @@
   </div>
   <footer class="login-footer">
     <span>{{ t('shell.version', { version }) }}</span>
-    <span class="repository-link" role="link" aria-disabled="true"><span class="icon icon-github" aria-hidden="true"></span>GitHub</span>
+    <span aria-hidden="true">|</span>
+    <button id="login-about" type="button" [disabled]="!interactive()" (click)="about.open()">{{ t('about.title') }}</button>
   </footer>
 </div>

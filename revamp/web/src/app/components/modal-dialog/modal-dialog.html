@@ -1,4 +1,4 @@
-<dialog #dialog class="dialog" [id]="dialogId()" [attr.aria-labelledby]="titleId()" (cancel)="cancel($event)" (close)="onClose()" *transloco="let t">
+<dialog #dialog class="dialog" [class.dialog-full-size]="fullSize()" [id]="dialogId()" [attr.aria-labelledby]="titleId()" (cancel)="cancel($event)" (close)="onClose()" *transloco="let t">
   <div class="dialog-header">
     <h2 class="dialog-title" [id]="titleId()">{{ heading() }}</h2>
     @if (dismissible()) {
