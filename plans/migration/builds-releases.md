@@ -30,8 +30,12 @@ or performed yet. Confirm the owner/image namespace during publishing setup.
 
 ## Release workflow
 
-Proposed trigger: a protected version tag such as `v0.1.0` or `v0.1.0-beta.1`.
-Confirm the versioning/tag convention during migration and record it in an ADR.
+Follow the protected, immutable semantic-version tag convention agreed in
+[ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md), such as `v0.1.0` or
+`v0.1.0-beta.1`. Validate the tag against the single application version input;
+the [About content proposal](03h-lifecycle.md#about-content-update-process)
+defines the proposed source and metadata checks. Do not infer application versions
+from framework or dependency versions.
 
 1. Validate tag format, intended source commit, and that the commit belongs to the reviewed release history. Derive a consistent application/image/release version from the tag.
 2. Build the production image and deployment bundle from that exact source revision using the locked toolchain/dependencies.
@@ -54,6 +58,19 @@ Make publishing reruns deliberate and safe: reconcile partial draft/image upload
 never silently overwrite a published version with a different digest, and do not
 publish a release when a required check failed. Exact versions/digests are the
 recovery reference; convenience tags are not immutable release identifiers.
+
+## About content and release inputs
+
+The user accepted defining the About update process before further Step 3H work
+on 2026-10-17. Follow the revisioned
+[input/artifact and verification proposal](03h-lifecycle.md#about-content-update-process);
+specific generator/scanner tooling and final legal content remain to be evaluated.
+
+- Capture the application version, exact source revision, source cleanliness, and agreed repository/source references before Docker packaging; use the same identity in About, OCI labels, and release assets.
+- Generate local project-license assets from the canonical root license. Derive notices from the actual shipped npm/NuGet/runtime/container/font/icon/asset inputs and explicitly reviewed exceptions, not a manually maintained About list.
+- Keep reviewed German/English legal documents separately revisioned. Dependency updates regenerate inventory for review, not operator/privacy wording or acceptance state.
+- Bundle all outputs before testing the image. Check the completed image against its inventory and publish that tested digest without rebuilding or modifying it. Record resolved inputs and content checksums with release evidence.
+- Gate release publication on matching version/tag/source identity, complete reviewed notices and legal revisions, source access, and offline real-image About checks. Development placeholders do not satisfy these release gates.
 
 ## Release assets
 
@@ -81,6 +98,7 @@ satisfy the offline runtime requirements.
 - [ ] A clean GitHub-hosted runner builds the replacement and executes its current E2E suite without Azure or developer-machine dependencies.
 - [ ] Fork pull requests can run the intended checks without secrets or publishing permissions.
 - [ ] Failure artifacts make CI failures diagnosable; required checks cannot be bypassed by an incomplete publishing run.
+- [ ] About and release artifacts use matching application/build identity, synchronized project-license text, complete reviewed local third-party notices, and reviewed German/English legal revisions; source access matches the distributed revision.
 - [ ] A release rehearsal produces a matching version tag, tested container digest, deployment assets, and GitHub Release.
 - [ ] Failed verification does not publish a release or update stable image tags.
 - [ ] Release reruns handle partial publishing safely without changing already published version contents.

@@ -145,6 +145,74 @@ Angular production build, compiler, and E2E type checks passed. No backend or
 About-content behavior changed, and the pending legal/source/inventory gates
 remain unchanged.
 
+## About content update process
+
+### R1: build inputs, generated assets, and review gates
+
+On 2026-10-17, the user accepted clarifying this process before further Step 3H
+implementation ("sounds good, let use the recommendation"). The accepted direction
+is one application version, build-specific source information, mechanically
+synchronized project-license copies, generated/reviewed third-party notices,
+and separately maintained legal documents. This R1 makes that direction concrete;
+generator/scanner choices, new artifact schemas, final legal wording, and future
+repository URLs remain proposals or unresolved inputs, not approved release content.
+Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
+[ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md), and
+[ADR-0018](../../docs/ADR/ADR-0018-project-license.md).
+
+#### Authoritative inputs and outputs
+
+| Area | Authoritative input | Build/distribution output |
+| --- | --- | --- |
+| Application identity | Proposed single version source: [web package](../../revamp/web/package.json), with its lockfile root version kept equal. Release tag must be exactly `v<version>`, including any prerelease suffix. | The same application version in About, shell/login version labels, OCI labels, and release assets. Framework/package versions remain separate component versions. No manually maintained second application version. |
+| Build identity and source | Full Git commit and clean/dirty state captured before Docker packaging; the agreed public repository URL. Docker's `revamp/` context does not contain the repository root or Git metadata. | Build metadata bundled into the tested image; immutable revision-specific source links for clean builds, plus matching release source access. Local/PR builds are identified as development builds; dirty or unavailable provenance must not be presented as release-matched source. Release builds require clean, known provenance and matching tag/version/commit. |
+| Project license | Canonical root [LICENSE](../../LICENSE), `AGPL-3.0-only`. | Mechanically generated inline text and downloadable local file, replacing manual synchronization of the [current inline copy](../../revamp/web/src/app/components/about-dialog/project-license.json) and [served copy](../../revamp/web/public/licenses/AGPL-3.0-only.txt). Preserve the authoritative text exactly and verify equality. |
+| Third-party notices | Resolved production npm dependencies and bundled browser/server output; NuGet lockfiles and published backend assets; exact runtime/base-image inputs, final OS package inventory, and bundled fonts/icons/images. | Release-matched component identities, versions, license expressions, applicable attributions/NOTICE content, and full license texts. Track provenance and content hashes. Include transitive, embedded, native, runtime, and redistributed asset components; exclude build-only tools unless their material actually ships. |
+| Operator/privacy information | Separately maintained German/English source documents, with stable document IDs, explicit revisions/review dates, and reviewed wording. | Locally bundled documents and their revisions, independent of the application version. Preserve prior revisions in Git. A language is not current until its matching revision is reviewed; package updates never silently rewrite these texts. No per-user consent or acceptance storage is introduced. |
+
+#### Generation and update triggers
+
+1. Before development/CI packaging, capture application/build identity and derive
+	the project-license assets from the root source. Generate into build outputs;
+	do not require maintainers to edit duplicate license text or component versions
+	inside [AboutDialog](../../revamp/web/src/app/components/about-dialog/about-dialog.ts).
+2. Collect the notice inventory from the actual locked build and final runtime
+	inputs, not only direct dependency manifests. Dependency/lockfile, publish,
+	runtime/image, OS-package, or bundled-asset changes regenerate the inventory
+	and expose a reviewable added/changed/removed diff. A scanner or SBOM alone
+	does not establish complete notices, license compatibility, or licensing rights.
+3. Keep reviewed exceptions, multi-license selections, and missing metadata
+	resolutions as explicit source-controlled inputs tied to component/version
+	identity and authoritative evidence. Do not guess licenses or copyright holders.
+	Evaluate tooling against the shipped npm/NuGet/runtime/asset scope before choosing it.
+4. Assemble the metadata, license texts, notices, and legal documents during the
+	production build, before the image is tested. Inventory the final runtime
+	contents without counting build-stage tools. Reconcile the bundled inventory
+	against the completed image; never rebuild or mutate it after verification.
+5. Render these static artifacts through the existing approved About layout and
+	bundled translations. No new backend endpoint, user data, consent gate, runtime
+	registry/GitHub lookup, or external dependency for reading documents is needed.
+
+#### Verification and publication gates
+
+- Development builds may retain explicit unavailable/review states; generation/schema/source-fidelity checks must still run. Such states do not become release-ready merely because the ordinary build passes.
+- Release verification rejects missing/dirty source identity, tag/version/lockfile disagreement, unavailable repository or matching source access, illustrative component rows, unresolved notice/rights/compatibility review, and unreviewed or mismatched German/English legal revisions. Text hashes detect drift, not legal approval.
+- Verify deterministic generated content for the same recorded inputs; persist the inputs and approved overrides with release evidence. Verify that shipped component versions agree with the notice inventory, local texts match their authoritative inputs, and downloadable assets/checksums match the tested distribution.
+- Extend real-image coverage for public login and both signed-in roles: version/source agreement, search and complete local notice texts, license fidelity, long-content keyboard/mobile behavior, and reading while external networking is unavailable. Keep the established separate catalog/localization checks; do not duplicate workflows by language.
+- Integrate the checks with the [build/release plan](builds-releases.md#about-content-and-release-inputs). Passing them does not authorize publishing, waive application-wide acceptance, or complete the remaining legal/source review.
+
+#### Delivery order
+
+1. First implement application/build metadata and automatic project-license
+	synchronization, with checks for local/development and tagged-release inputs.
+2. Evaluate and select inventory tooling, then replace illustrative third-party
+	rows with generated, reviewed, locally complete notices.
+3. Review and bundle final German/English operator/privacy/warranty information;
+	finish repository/source URLs and content completeness checks.
+4. Exercise the complete artifact and release gates during the existing
+	non-publishing rehearsal and later operations/release work. Transaction retention
+	remains a separate backend/data design review, not part of this pipeline.
+
 ## Transaction retention discussion
 
 Configuration policy accepted by the user on 2026-10-17 ("you retention proposal
