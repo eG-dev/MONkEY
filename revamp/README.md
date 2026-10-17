@@ -120,10 +120,10 @@ the configured currency or business timezone.
 | Component | Verified version |
 | --- | --- |
 | .NET SDK / runtime / EF Core | 10.0.401 / 10.0.12 / 10.0.12 |
-| Node / Angular SSR | 24.21.0 / 22.2.1 |
-| Taiga / universal Web APIs | 5.26.0 / 5.4.0 |
+| Node / Angular SSR | 24.22.0 / 22.2.2 |
+| Taiga / universal Web APIs | 5.28.0 / 5.4.0 |
 | Transloco / MessageFormat integration | 8.4.0 / 8.4.0 |
-| Lucide static font | 1.52.0 |
+| Lucide static font | 1.55.0 |
 | Playwright | 1.63.0 |
 | Container platform | Linux x86-64 only |
 
@@ -573,6 +573,25 @@ Data Protection keys are not encrypted at rest: protect host storage/backups and
 do not publish them. No credentials are stored in ordinary application ENV values.
 
 ## Verification Record
+
+On 2026-10-17, the Renovate updates to Express 5.3.0, Prettier 3.9.10,
+Taiga UI 5.28.0, and Node 24.22.0 passed the Angular SSR and locked production-image
+builds, E2E typechecking, catalog validation, and repository guardrails. Docker
+and CI use Node 24.22.0, with the Docker base pinned to its verified digest; the
+production image reports `v24.22.0`. The web dependency audit found no vulnerabilities.
+All 38 selected production-image checks passed, covering desktop/mobile shell,
+About, authentication, account/image workflows, offline assets, persistence,
+configuration rejection, runtime/timezone agreement, and child-process failure.
+After building the image, reproduce this set from the repository root:
+
+```text
+npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/workflows.spec.ts specs/authentication/about.spec.ts specs/accounts/workflows.spec.ts specs/accounts/images-workflows.spec.ts specs/lifecycle --workers 1
+```
+
+The same update raised the legacy application's central Application Insights
+versions to 3.2.0 and Microsoft Identity Web versions to 4.16.1.
+`dotnet build MONkEY.sln --configuration Release` restored and built successfully;
+live Azure authentication and telemetry delivery were not tested locally.
 
 Verified locally on 2026-10-04 with Windows development tooling and a Linux x86-64
 Docker engine:
