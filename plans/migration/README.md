@@ -11,7 +11,7 @@ Status: Step 0 guardrails are implemented; milestone 1 has a locally verified bu
 - Members can read all accounts; no account assignments are required.
 - Angular SSR with Taiga UI and locally packaged Lucide icon fonts/assets.
 - German and English are available from the first release; localization must support additional community-contributed languages.
-- Intended publication as a GitHub open-source project; document how to contribute translations and choose the project license explicitly before publication.
+- Intended publication as a GitHub open-source project under `AGPL-3.0-only`; see [ADR-0018](../../docs/ADR/ADR-0018-project-license.md). Document translation contributions and verify licensing rights, third-party notices, and corresponding-source distribution before publication.
 - Builds and verification run through GitHub Actions; versioned distributions are published as GitHub Releases, with a Docker image as the primary runtime artifact.
 - ASP.NET Core backend; retaining .NET for business logic is acceptable.
 - Prefer one application container, with persistent storage outside its writable layer.
@@ -120,7 +120,7 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 
 - Currency, precision, and opening-entry guarantees are resolved in [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md). Signed openings, overdrafts, manual transactions, and history are recorded in [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md), superseding the original nonnegative rule. Account naming and the absence of a nine-account cap are recorded in [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md). Dedicated corrections/reversals remain a subsequent decision.
 - Deployment timezone value via `TZ`, monthly allowance due date, catch-up after downtime, and handling timezone changes after initial use.
-- Financial-history retention and archive versus permanent deletion semantics.
+- Transaction-history retention configuration is accepted: `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`, minimum positive `1`, `0` unlimited. Cleanup design, cutoff semantics, and preservation of balances/idempotency still need approval; see [step 3H](03h-lifecycle.md#transaction-retention-discussion). Account archival and user deletion/anonymization are removed from product scope, not deferred.
 - Manager recovery process and whether MFA is needed for the first release.
 - HTTPS termination, backup location, restore objectives, and supported host architectures.
 - Which authenticated routes benefit from SSR versus client rendering.

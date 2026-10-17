@@ -1,5 +1,7 @@
 // Shared click-prototype runtime: preferences, fictional data, formatting, dialogs, and the application shell.
 (() => {
+  const runtimeUrl = document.currentScript.src;
+  let aboutLoader;
   const PREFS_KEY = 'pm-prototype-preferences';
   const DATA_KEY = 'pm-prototype-data';
   const TODAY = new Date('2026-10-10T12:00:00+02:00');
@@ -36,14 +38,14 @@
 
   const shellStrings = {
     en: {
-      overview: 'Overview', accounts: 'Accounts', administration: 'Administration', profile: 'Profile', darkMode: 'Dark mode', signOut: 'Sign out',
+      overview: 'Overview', accounts: 'Accounts', administration: 'Administration', about: 'About', aboutUnavailable: 'About could not be opened. Please try again.', profile: 'Profile', darkMode: 'Dark mode', signOut: 'Sign out',
       Manager: 'Manager', Member: 'Member', version: 'Version 0.1.0', mainNavigation: 'Main navigation', drawer: 'Navigation', userMenu: 'User menu',
       showNavigation: 'Show navigation', hideNavigation: 'Hide navigation', close: 'Close', cancel: 'Cancel', save: 'Save', saving: 'Saving…',
       tryAgain: 'Try again', saveFailed: 'This could not be saved. Your input is kept; please try again.', required: 'This field is required.',
       notInitialized: 'Not initialized', automatic: 'Automatic'
     },
     de: {
-      overview: 'Übersicht', accounts: 'Konten', administration: 'Verwaltung', profile: 'Profil', darkMode: 'Dunkler Modus', signOut: 'Abmelden',
+      overview: 'Übersicht', accounts: 'Konten', administration: 'Verwaltung', about: 'Info', aboutUnavailable: 'Info konnte nicht geöffnet werden. Bitte versuche es erneut.', profile: 'Profil', darkMode: 'Dunkler Modus', signOut: 'Abmelden',
       Manager: 'Manager', Member: 'Mitglied', version: 'Version 0.1.0', mainNavigation: 'Hauptnavigation', drawer: 'Navigation', userMenu: 'Benutzermenü',
       showNavigation: 'Navigation anzeigen', hideNavigation: 'Navigation ausblenden', close: 'Schließen', cancel: 'Abbrechen', save: 'Speichern', saving: 'Wird gespeichert…',
       tryAgain: 'Erneut versuchen', saveFailed: 'Das konnte nicht gespeichert werden. Deine Eingaben bleiben erhalten; bitte versuche es erneut.', required: 'Dieses Feld ist erforderlich.',
@@ -225,6 +227,36 @@
     return !message;
   }
 
+  async function openAbout() {
+    try {
+      aboutLoader ??= Promise.all(['about.js', 'project-license.js'].map(file => new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = new URL(file, runtimeUrl).href;
+        script.onload = resolve;
+        script.onerror = () => {
+          script.remove();
+          reject(new Error('About asset unavailable'));
+        };
+        document.head.append(script);
+      })));
+      await aboutLoader;
+      window.PM_ABOUT.open();
+    } catch {
+      aboutLoader = null;
+      toast(t('aboutUnavailable'), 'error');
+    }
+  }
+
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('[data-about]');
+
+    if (trigger) {
+      event.preventDefault();
+      trigger.focus();
+      openAbout();
+    }
+  });
+
   // ---------- Shell ----------
   let shell;
   let wideViewport = matchMedia('(min-width: 1440px)');
@@ -247,10 +279,11 @@
       <aside class="drawer" id="primary-drawer">
         <nav class="navigation" id="main-navigation">
           <a href="../accounts-overview/index.html" data-nav="overview">${icon('overview')}<span data-t="overview"></span></a>
-          <a href="../accounts/index.html" data-nav="accounts" data-manager>${icon('wallet')}<span data-t="accounts"></span></a>
           <a class="administration" href="../administration/index.html" data-nav="administration">${icon('administration')}<span data-t="administration"></span></a>
+          <a href="../accounts/index.html" data-nav="accounts" data-manager>${icon('wallet')}<span data-t="accounts"></span></a>
+          <button class="about-navigation" type="button" data-about aria-haspopup="dialog">${icon('info')}<span data-t="about"></span></button>
         </nav>
-        <div class="application-info"><span class="application-name">POCKET MONkEY</span><span class="application-version" data-t="version"></span><span class="repository-link" role="link" aria-disabled="true">${icon('github')}GitHub</span></div>
+        <div class="application-info"><span class="application-name">POCKET MONkEY</span><span class="application-version" data-t="version"></span></div>
       </aside>
       <main class="workspace" id="workspace"><div class="content"></div></main>`;
     shell.querySelector('.content').append(content);
@@ -434,7 +467,7 @@
   }
 
   window.PM = {
-    init, t, esc, icon, avatar, money, amountHtml, parseAmount, date, businessMonth, balance, allowanceStatus, request, toast, dialog, fieldError,
+    init, t, esc, icon, avatar, money, amountHtml, parseAmount, date, businessMonth, balance, allowanceStatus, request, toast, dialog, fieldError, openAbout,
     get prefs() { return prefs; }, savePrefs, get data() { return data; }, saveData, currentUser, isManager, account, accountsByName, render
   };
 })();

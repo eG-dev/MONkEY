@@ -66,4 +66,17 @@ Use this repository's GitHub Issues tab for questions, bug reports, and feature 
 
 ## About This Project
 
-⚠️ This is a hobby project, developed by me alone, for non-commercial purposes and in my spare time.
+⚠️ This is a hobby project, developed by me alone and in my spare time.
+
+## License
+
+POCKET MONkEY is licensed under the **GNU Affero General Public License,
+version 3 only** (`AGPL-3.0-only`). See [LICENSE](LICENSE) for the full terms.
+
+Commercial use is permitted under the license. Covered distributions carry
+source-sharing obligations, and modified versions made available over a network
+must offer their corresponding source to remote users as required by section 13.
+The software is provided without warranty to the extent permitted by applicable law.
+
+Third-party dependencies, fonts, and other separately licensed assets retain their
+respective licenses and notices.

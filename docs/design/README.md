@@ -64,13 +64,84 @@ localized desktop/mobile transaction workflows verified a distinct display name,
 and the historical-name/restart API check passed. Both prototype labels were
 checked in the browser. Existing ledger snapshots were not modified.
 
-Login and app-shell footer updates are approved: show the build version and a
-GitHub icon/label. The repository link is an unavailable placeholder pending the
-future repository URL; it must not point to the current repository. The login
-footer sits at the bottom and flows below tall content on small screens.
+The 2026-10-10 Login and app-shell footer revision was approved: build version
+and GitHub icon/label. That remains the Angular revision; the current click
+prototype now has a shared About dialog and changed footer/navigation as a draft.
+The repository link is an unavailable
+placeholder pending the future repository URL; it must not point to the current
+repository. The login footer sits at the bottom and flows below tall content on small screens.
 The temporary foundation/system smoke-check panel has been removed from the
 login implementation to match the approved references. Operational health checks
 remain separate from the public sign-in screen.
+
+The user explicitly approved all three then-current R1 wireframes on 2026-10-17,
+clarifying "typo, 3 wireframes approved" after reporting source-only draw.io edits.
+Approval covers About and the related application-shell/login changes, including
+the current user-edited annotation arrangement. About / Info has an info icon
+below Administration (called Settings in the discussion) in the bottom sidebar
+group, with the smaller build version beneath; same arrangement in the mobile
+drawer. Login retains version and an About footer link. GitHub moves into About.
+The PNGs were re-exported and visually inspected after approval. The user then
+authorized removing stale draft labels from the About diagram title and the
+About/login notes; this metadata-only cleanup preserves all layout, behavior,
+annotation positions, and approvals. Prototype approval remains a separate gate.
+The user subsequently requested tabs and agreed their names: Overview / Übersicht
+as the default, and Third-party notices / Drittanbieterhinweise. That R2 layout
+was a draft, not approved. The user then requested Legal information / Rechtliche
+Hinweise as the last tab. R3 has three separate tab wireframes in that order.
+Overview retains project/version/source and the project license only; component
+search and expandable notices remain on the second tab. The last tab contains
+operator responsibilities, warranty/liability information, and privacy as distinct
+sections on one page, with placeholders pending legal wording review.
+The user explicitly approved all three then-current About R3 draw.io wireframes on
+2026-10-17 ("draw.io wireframes approved"), including their annotation arrangements.
+Their PNGs were re-exported and visually inspected to synchronize the approved
+references. On 2026-10-17 the user then requested a shared full-size About dialog
+from login and the app rather than separate page presentations. The current About
+R4 wireframes show near-full viewport on desktop, full-screen on phones,
+Close instead of Back, focus trapping/inert background, Escape dismissal and focus
+return to the opener. Header/tabs remain visible while content scrolls internally.
+The tab order/content is unchanged. The user explicitly approved the current three
+About R4 wireframes and matching shell/login entry-point notes on 2026-10-17
+("approved"), including their preserved annotation arrangements and exported
+previews. Earlier R3/R1 approvals remain history. The wireframe gate is satisfied
+for continuing the prototype; separate prototype approval is required before Angular.
+Neither layout approval nor placeholders approve legal wording or a complete inventory.
+
+The shared About dialog click prototype was built on 2026-10-17 and is a draft
+awaiting explicit approval. Both login and the shell open the same component;
+the direct About review page opens it automatically. It has keyboard-operated tabs,
+component filtering/empty results and expansion, inline verbatim AGPL text,
+disabled pending repository/source links, and clearly marked notice/legal placeholders.
+Checks covered 24 signed-in role/language/theme/width combinations and 12 public
+language/theme/width combinations at 1440px, 360px and 320px. Login and forced-password
+form values, session-expiry messages, inert background, focus containment/return,
+and Escape dismissal were checked. Desktop/phone screenshots were inspected.
+The final inline-license refinement passed eight desktop/phone language/theme checks,
+including Escape from the text, exact text preservation, and no horizontal overflow.
+No script errors were observed in those runs; Angular remains unchanged.
+
+The user then requested an icon-free `Version | About` login footer, implemented
+as a draft cosmetic prototype refinement and synchronized in the login wireframe.
+Six language/width checks passed for the footer, dialog opening and focus return.
+The user selected retaining About text and moving Administration (called Settings
+in discussion) directly below Overview. The user explicitly approved the current
+wireframes on 2026-10-17 ("wireframes approved"), including their shell source edits
+replacing drawn icons with textual icon placeholders and the current annotation
+arrangement. The icon-free login footer wireframe is also covered by that approval.
+The shared prototype now applies the menu move across all shell views, retaining
+real icons and labels: Overview, Administration, Manager-only Accounts, with About
+anchored at the bottom above the version. Checks passed 24 role/language/theme/width
+combinations at 1440px, 360px and 320px, including menu order, role visibility,
+vertical spacing, About focus return and no horizontal overflow or script errors.
+Prior approvals remain history; the three About R4 dialog wireframes themselves
+are unchanged and remain approved. The user explicitly approved all three current
+click prototypes (About dialog, updated shell menu and login footer) on 2026-10-17
+("Approve all three current prototypes; commit and implement Angular"). Both design
+gates are satisfied for Angular implementation. This approval covers presentation
+and interaction, not placeholder legal wording, an audited notice inventory or
+unagreed repository/source URLs.
+See the [About requirement](../../plans/migration/03h-lifecycle.md#about-page-and-third-party-notices).
 
 | Reference | Scope |
 | --- | --- |
@@ -81,13 +152,15 @@ remain separate from the public sign-in screen.
 | Settings | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration |
 | User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection |
 | Login | Sign-in, forced-password change, and session-expiry states |
+| About | Shared dialog from login/app with Overview, Third-party notices and Legal information tabs; current R4 wireframes approved 2026-10-17, with R3 and earlier R1 approvals retained as history |
 
 Use desktop/mobile and Manager/Member variants where relevant. Forms, dialogs,
 image upload, confirmations, and validation/retry states can be named pages in
 the owning view's source, not additional top-level views. The overview links to
 the dedicated Accounts view for management instead of embedding Manager controls.
-Legal views depend on the lifecycle scope review; dedicated reversals remain
-deferred. Monthly reports are excluded from the product scope.
+About is being designed under the lifecycle scope review; final operator/privacy
+wording remains pending. Dedicated reversals remain deferred. Monthly reports are
+excluded from the product scope.
 
 ## Files and index
 
@@ -168,13 +241,16 @@ wireframe first, then a detailed click prototype.
 
 | Reference | Files | Status | Click prototype |
 | --- | --- | --- | --- |
-| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Approved 2026-10-10, including footer refinements | [Shell](prototypes/application-shell/index.html) |
+| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Administration-below-Overview refinement explicitly approved 2026-10-17, including user-edited icon placeholders and annotation arrangement; earlier approvals retained as history | [Shell](prototypes/application-shell/index.html), current shared About and menu-order prototype explicitly approved 2026-10-17 |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
 | Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; later borderless image-edit badge prototype refinement is a draft awaiting approval; approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
-| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved 2026-10-10, including version/GitHub footer | [Login](prototypes/login/index.html) |
+| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Icon-free pipe-separated footer refinement explicitly approved 2026-10-17; earlier approvals retained as history | [Login](prototypes/login/index.html), current shared About and icon-free footer prototype explicitly approved 2026-10-17 |
+| About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | R4 shared dialog explicitly approved 2026-10-17, including annotation arrangement and preview; R3/R1 approvals retained as history | [About](prototypes/about/index.html), current prototype explicitly approved 2026-10-17 |
+| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | R4 shared dialog explicitly approved 2026-10-17, including annotation arrangement and preview; R3 approval retained as history | [About](prototypes/about/index.html), current prototype explicitly approved 2026-10-17; example inventory only |
+| About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | R4 shared dialog explicitly approved 2026-10-17, including annotation arrangement and preview; R3 approval retained as history; legal wording not approved | [About](prototypes/about/index.html), current prototype explicitly approved 2026-10-17; legal placeholders only |
 
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).

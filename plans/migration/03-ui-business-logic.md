@@ -63,7 +63,7 @@ activity or a late cosmetic pass.
 - 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
 - 3D resolved: PNG/JPEG/WebP, 512 pixels per axis, 2 MiB, metadata-free re-encoding, and immutable-file/reference recovery; see [ADR-0014](../../docs/ADR/ADR-0014-private-account-images.md).
 - 3E/3F resolved: next-month immutable configuration, business-time due dates, historical catch-up, automatic durable retry, and credited-history preservation after timezone changes; see [ADR-0015](../../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md).
-- Before destructive work in 3H: archival, deletion/anonymization, retention, and sensitive-action confirmation/re-authentication.
+- 3H scope: account archival and user deletion/anonymization are removed, not deferred. Transaction retention configuration was accepted on 2026-10-17: `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`, minimum positive `1`, `0` unlimited. Its backend/data cleanup design and append-only ADR exception still require approval before implementation. Review sensitive-action confirmation/re-authentication only for workflows actually in scope.
 
 Proposed defaults in the child plans remain proposals. Resolve affected business
 policies before implementing them; record approved enduring decisions in ADRs

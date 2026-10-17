@@ -27,7 +27,8 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - Include example translation changes, placeholder/pluralization rules, local preview commands, and the same validation command used by CI.
 - Require German and English completeness and validate syntax/key/placeholder consistency on translation pull requests. Define an explicit completeness policy for additional languages.
 - Document review expectations for translated privacy/terms content; do not treat community wording as automatically legally equivalent.
-- Choose the OSS license explicitly and review third-party asset/translation licensing and repository history for private data or credentials before public publication.
+- Use the selected `AGPL-3.0-only` license under [ADR-0018](../../docs/ADR/ADR-0018-project-license.md). Review third-party asset/translation licensing, project/contributor licensing rights, and repository history for private data or credentials before public publication.
+- Follow the [self-hosted legal-content direction](03h-lifecycle.md#self-hosted-legal-content-and-license): fresh German/English operator notices, responsibility for hosting/updates/backups, and legally qualified warranty/liability disclaimers consistent with AGPL. Include the license and required notices in source and release distributions, and make the corresponding source for the distributed revision available. Artifact packaging, source-offer presentation, and rights/notice review remain release gates, not completed by selecting the license.
 - External translation platforms are optional future tooling, not required for contributors or for running the application.
 
 ## Backup, restore, and upgrades
@@ -74,6 +75,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - [ ] The [GitHub publishing acceptance gates](builds-releases.md#acceptance-gates) pass; the released assets and public container digest correspond to the verified source revision.
 - [ ] Targeted integration checks cover agreed database/job risks; release does not depend on a unit-test suite or unit-coverage percentage.
 - [ ] German and English cover all shipped UI, with a documented and tested path for adding languages.
+- [ ] The project OSS license is explicitly selected and included with required notices; reviewed self-hosted legal information distinguishes operator responsibilities from project obligations and does not reuse the cloud-service terms.
 - [ ] Container restart and job retry do not corrupt or duplicate financial activity.
 - [ ] No required email, Azure, external identity, or runtime CDN dependency exists.
 - [ ] One documented application container and its persistent volume can run the system.
