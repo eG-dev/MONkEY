@@ -154,7 +154,7 @@ responsibility boundary is recorded in
 [ADR-0001](../../docs/ADR/ADR-0001-architecture-decision-records.md), and linked from
 the ADR index and affected instructions.
 
-The [backend instructions](../../.github/instructions/revamp-backend.instructions.md)
+The [backend instructions](../../.github/instructions/backend.instructions.md)
 previously required migrations inside the executable project. Approved R1 replaces
 that rule with `revamp/backend/PocketMonkey.Storage/Migrations` and
 `PocketMonkey.Storage.Migrations`, together with the build/layout guards.

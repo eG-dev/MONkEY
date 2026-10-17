@@ -8,7 +8,7 @@ on:
       - "revamp/**"
       - ".github/workflows/revamp-*.yml"
       - ".github/workflows/revamp-*.yaml"
-      - ".github/instructions/revamp-*.instructions.md"
+      - ".github/instructions/*.instructions.md"
       - ".github/copilot-instructions.md"
       - "docs/ADR/**"
       - "plans/migration/**"

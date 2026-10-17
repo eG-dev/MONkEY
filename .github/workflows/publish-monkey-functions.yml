@@ -9,7 +9,7 @@ on:
       - "revamp/**"
       - "plans/migration/**"
       - "docs/ADR/**"
-      - ".github/instructions/revamp-*.instructions.md"
+      - ".github/instructions/*.instructions.md"
       - ".github/copilot-instructions.md"
       - ".github/workflows/revamp-*.yml"
       - ".github/workflows/revamp-*.yaml"

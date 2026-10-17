@@ -62,11 +62,11 @@ runtime probe, and deployment files. See the [foundation guide](../../revamp/REA
 
 | Area | Planned paths | Instructions |
 | --- | --- | --- |
-| Angular/Web-BFF | `revamp/web/**` | [Web](../../.github/instructions/revamp-web.instructions.md) |
-| .NET backend | `revamp/backend/**` | [Backend](../../.github/instructions/revamp-backend.instructions.md) |
-| E2E/integration tests | `revamp/tests/e2e/**`, `revamp/tests/integration/**` | [Tests](../../.github/instructions/revamp-tests.instructions.md) |
-| Docker and new CI | `revamp/deploy/**`, `.github/workflows/revamp-*.yml`, `.github/workflows/revamp-*.yaml` | [Deployment](../../.github/instructions/revamp-deployment.instructions.md) |
-| Translation catalogs | `revamp/web/public/i18n/**/*.json` | [Translations](../../.github/instructions/revamp-translations.instructions.md) |
+| Angular/Web-BFF | `revamp/web/**` | [Web](../../.github/instructions/web.instructions.md) |
+| .NET backend | `revamp/backend/**` | [Backend](../../.github/instructions/backend.instructions.md) |
+| E2E/integration tests | `revamp/tests/e2e/**`, `revamp/tests/integration/**` | [Tests](../../.github/instructions/tests.instructions.md) |
+| Docker and new CI | `revamp/deploy/**`, `.github/workflows/revamp-*.yml`, `.github/workflows/revamp-*.yaml` | [Deployment](../../.github/instructions/deployment.instructions.md) |
+| Translation catalogs | `revamp/web/public/i18n/**/*.json` | [Translations](../../.github/instructions/translations.instructions.md) |
 
 Translation JSON intentionally also receives web instructions. If the validated
 translation library needs another catalog location, update the path and scope

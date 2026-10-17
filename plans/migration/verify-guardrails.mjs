@@ -13,13 +13,13 @@ const require = createRequire(path.join(toolingRoot, 'package.json'));
 const YAML = require('yaml');
 const { minimatch } = require('minimatch');
 const expected = {
-  'revamp-web.instructions.md': ['revamp/web/src/app/app.ts', 'revamp/web/public/i18n/de/shell.json'],
-  'revamp-backend.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Host/PocketMonkey.Host.csproj', 'revamp/backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj'],
-  'revamp-csharp.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
-  'revamp-typescript.instructions.md': ['revamp/web/src/foundation-server.ts', 'revamp/web/scripts/dev.mjs', 'revamp/tests/e2e/specs/shell.spec.ts'],
-  'revamp-tests.instructions.md': ['revamp/tests/e2e/specs/shell.spec.ts', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
-  'revamp-deployment.instructions.md': ['revamp/deploy/Dockerfile', '.github/workflows/revamp-foundation.yml', '.github/workflows/revamp-release.yaml'],
-  'revamp-translations.instructions.md': ['revamp/web/public/i18n/de/shell.json', 'revamp/web/public/i18n/en/shell.json'],
+  'web.instructions.md': ['revamp/web/src/app/app.ts', 'revamp/web/public/i18n/de/shell.json'],
+  'backend.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Host/PocketMonkey.Host.csproj', 'revamp/backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj'],
+  'csharp.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
+  'typescript.instructions.md': ['revamp/web/src/foundation-server.ts', 'revamp/web/scripts/dev.mjs', 'revamp/tests/e2e/specs/shell.spec.ts'],
+  'tests.instructions.md': ['revamp/tests/e2e/specs/shell.spec.ts', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
+  'deployment.instructions.md': ['revamp/deploy/Dockerfile', '.github/workflows/revamp-foundation.yml', '.github/workflows/revamp-release.yaml'],
+  'translations.instructions.md': ['revamp/web/public/i18n/de/shell.json', 'revamp/web/public/i18n/en/shell.json'],
 };
 const legacy = [
   'WebApp/Program.cs',
@@ -48,12 +48,12 @@ for (const [name, fixtures] of Object.entries(expected)) {
     matches++;
   }
   for (const filename of legacy) assert(!applies(filename), `${name}: must exclude ${filename}`);
-  if (name === 'revamp-csharp.instructions.md') {
+  if (name === 'csharp.instructions.md') {
     for (const filename of ['revamp/web/src/app/app.ts', 'revamp/tests/e2e/specs/shell.spec.ts']) {
       assert(!applies(filename), `${name}: must exclude non-C# ${filename}`);
     }
   }
-  if (name === 'revamp-typescript.instructions.md') {
+  if (name === 'typescript.instructions.md') {
     for (const filename of ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/web/public/i18n/de/shell.json']) {
       assert(!applies(filename), `${name}: must exclude unrelated language ${filename}`);
     }
@@ -78,7 +78,7 @@ const replacementChanges = [
   'revamp/deploy/Dockerfile',
   'plans/migration/01-stack-foundation.md',
   'docs/ADR/ADR-0002-application-boundaries.md',
-  '.github/instructions/revamp-web.instructions.md',
+  '.github/instructions/web.instructions.md',
   '.github/copilot-instructions.md',
   '.github/workflows/revamp-foundation.yml',
 ];

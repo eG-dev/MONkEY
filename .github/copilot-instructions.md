@@ -15,7 +15,7 @@
 
 ## Backend Design Review
 
-- Before designing or changing replacement backend models, database schemas, entities, endpoint contracts, or service responsibilities, load the combined [backend/data design skill](skills/backend-data-design/SKILL.md) and follow the [backend review gate](instructions/revamp-backend.instructions.md), including when work starts in a plan rather than a backend file.
+- Before designing or changing replacement backend models, database schemas, entities, endpoint contracts, or service responsibilities, load the combined [backend/data design skill](skills/backend-data-design/SKILL.md) and follow the [backend review gate](instructions/backend.instructions.md), including when work starts in a plan rather than a backend file.
 - Present a revisioned design proposal with class, namespace, and file references, then wait for explicit approval before implementing the reviewed design. Identify applicable ADRs and proposed architectural decisions; record accepted enduring decisions according to ADR-0001, not every implementation detail.
 
 ## Incremental Migration

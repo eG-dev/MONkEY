@@ -5,7 +5,7 @@ description: "Combined backend, database, and API design review for POCKET MONkE
 
 # Backend and Data Design Workflow
 
-Follow the [backend instructions](../../instructions/revamp-backend.instructions.md#design-review-gate).
+Follow the [backend instructions](../../instructions/backend.instructions.md#design-review-gate).
 This is one combined review workflow, not separate database and API approvals.
 It applies to the replacement backend, not the legacy Azure application.
 

@@ -23,4 +23,4 @@ const result = condition
 - Use strict types and `unknown` with narrowing for untrusted data; avoid `any` and unexplained casts/non-null assertions. Make public API parameter/return contracts explicit where helpful, while allowing obvious local values to be inferred. Define reusable interfaces in their own files.
 - Follow existing standalone Angular, `inject()`, signal, and provider patterns. Keep components focused on presentation and interaction, and use services for shared frontend behavior; do not move backend business rules into Angular.
 - Preserve request-scoped SSR state, browser/server boundaries, middleware order, promise error propagation, and cleanup while improving readability. Formatting is not permission to change behavior.
-- Keep E2E setup/action/assertion groups readable as required by the [test instructions](revamp-tests.instructions.md); do not force multi-stage workflows into one oversized action block.
+- Keep E2E setup/action/assertion groups readable as required by the [test instructions](tests.instructions.md); do not force multi-stage workflows into one oversized action block.

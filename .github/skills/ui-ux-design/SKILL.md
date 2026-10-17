@@ -101,5 +101,5 @@ The integrated browser tab may be hidden: prefer `page.evaluate` with `requestSu
 
 - Update the [design index](../../../docs/design/README.md): links, and mark changed references as drafts until the user approves them.
 - Summarize what changed and what was verified; list open business questions instead of deciding them in the design.
-- Angular implementation happens separately after approval, following the [web instructions](../../instructions/revamp-web.instructions.md) and the E2E-first verification of [ADR-0005](../../../docs/ADR/ADR-0005-e2e-first-verification.md).
+- Angular implementation happens separately after approval, following the [web instructions](../../instructions/web.instructions.md) and the E2E-first verification of [ADR-0005](../../../docs/ADR/ADR-0005-e2e-first-verification.md).
 - If either current artifact is still a draft, finish by stating what awaits review. Do not infer approval from feedback or a general instruction to continue.
