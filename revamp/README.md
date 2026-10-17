@@ -326,8 +326,11 @@ launcher rather than being duplicated in editor-specific tasks.
 ### First Manager and Recovery
 
 There is no public registration/setup route, default password, or email recovery.
-Run operator commands on the host; they prompt for a username and password without
-echoing the password or placing it in command arguments. Passwords require at least
+Run operator commands on the host; they prompt for a username, password, and password
+confirmation without echoing either password entry or placing it in command arguments.
+Both bootstrap and recovery reject a mismatch without changing credentials; run the
+command again to retry. Redirected input must supply all three lines in that order.
+Passwords require at least
 12 characters, uppercase/lowercase letters, and a digit.
 
 For Docker, with the container running:

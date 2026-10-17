@@ -14,12 +14,30 @@ import {
 test.use({ ignoreHTTPSErrors: true });
 
 test('bootstrap is one-time and CSRF and forged identity are rejected @api', async ({ request, instance }) => {
+  const unconfirmed = credentials();
+
+  for (const confirmation of ['Different-Aa1-password', '']) {
+    const rejected = operator(instance, 'bootstrap-manager', unconfirmed, confirmation);
+
+    expect(rejected.status).toBe(1);
+    expect(rejected.stdout).toContain('Confirm password:');
+    expect(rejected.stdout).toContain('password_confirmation_mismatch');
+    expect(rejected.stdout + rejected.stderr).not.toContain(unconfirmed.password);
+  }
+
   const manager = bootstrapManager(instance);
 
   const repeatedBootstrap = operator(instance, 'bootstrap-manager', credentials('another'));
 
   expect(repeatedBootstrap.status).toBe(1);
   expect(repeatedBootstrap.stdout).toContain('already_initialized');
+
+  const unconfirmedRecovery = credentials(manager.username);
+  const rejectedRecovery = operator(instance, 'recover-manager', unconfirmedRecovery, 'Different-Aa1-password');
+
+  expect(rejectedRecovery.status).toBe(1);
+  expect(rejectedRecovery.stdout).toContain('password_confirmation_mismatch');
+  expect(rejectedRecovery.stdout + rejectedRecovery.stderr).not.toContain(unconfirmedRecovery.password);
 
   expect((await request.get('/api/setup')).status()).toBe(404);
 

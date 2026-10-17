@@ -26,6 +26,17 @@ public static class OperatorCommands
         Console.Write("Password: ");
         var password = ReadPassword();
 
+        Console.Write("Confirm password: ");
+        var confirmation = ReadPassword();
+
+        if (!string.Equals(password, confirmation, StringComparison.Ordinal))
+        {
+            Console.WriteLine("Passwords do not match. No changes were made.");
+            Console.WriteLine("password_confirmation_mismatch");
+
+            return 1;
+        }
+
         UserAdministrationError? error;
 
         if (command == "bootstrap-manager")
