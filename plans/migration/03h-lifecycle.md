@@ -394,6 +394,244 @@ cleanup design or authorization to delete existing transactions.
 - Decide treatment of opening entries, audit details, and allowance execution records explicitly. Deleting visible history is not necessarily erasing every record of a transaction. Take a backup before any first destructive cleanup; disabling retention later cannot recover deleted history.
 - Automatic history removal requires a reviewed exception to the append-only policy in [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md) and must preserve [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md). Next, present a revisioned class/namespace-linked backend/data proposal for approval before changing schema, runtime configuration, or jobs. Record the accepted enduring retention design in an ADR, preserving the existing decision history; configuration-policy acceptance alone does not approve cleanup implementation.
 
+### Transaction retention backend/data proposal R1
+
+**R1 approved by the user on 2026-10-18:** "reviewed the proposal, sound good to
+me". Approval covers the calendar-month cutoff, permanent opening/audit/allowance
+metadata and retired-key retention, durable sequence allocation, expired-key
+`409` semantics, cursor invalidation, and explicit backup/activation safeguard
+described below. This is approval of R1, not merely the earlier environment-setting
+policy. Preserve its stated boundaries: the exact operator activation procedure,
+timezone-boundary resolution and additive history-disclosure contract need the
+narrow follow-up identified by R1 before dependent implementation. Approval does
+not authorize activation against an operator database or deletion of existing
+financial data in this workspace. No schema, runtime configuration, job or
+endpoint behavior has been changed by recording this approval.
+
+#### Proposed behavior and boundaries
+
+- Keep the accepted setting: `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`,
+	`0` unlimited, positive values at least `1`. Validate a nonnegative integer at
+	startup; reject malformed or unrepresentable values. Configuration remains
+	deployment-only, not a Manager preference or new settings endpoint.
+- Proposed cutoff: the first instant of the current business month in `TZ`, minus
+	the configured number of calendar months. Convert that boundary to UTC once per
+	run and delete only entries strictly before it. For example, October 2026 with
+	`24` retains October 2024 onward. Resolve skipped/ambiguous local boundaries
+	explicitly using the existing business-timezone policy before implementation;
+	never substitute the host timezone or a fixed days-per-month duration. Clamp
+	subtraction at the earliest representable month for very large durations.
+- Prune deposit, withdrawal and credited allowance ledger rows only. Keep opening
+	entries permanently as initialization/provenance anchors, including zero and
+	negative openings. Do not change account balances, create financial credits,
+	or reinterpret an old entry after a timezone/configuration change.
+- Retain existing financial audit events, allowance revisions and allowance
+	execution records. They are not covered by this transaction-detail retention
+	policy. In particular, retain account/business-month credit identities forever
+	so downtime, retries and `TZ` changes cannot re-credit a pruned allowance.
+	This is history retention, not erasure of all transaction-related metadata.
+- Shortening the duration makes more history eligible at the next run; increasing
+	it or setting `0` does not restore deleted rows. Read history continues to show
+	retained rows, including the permanent opening. Current balances remain
+	authoritative; opening plus remaining visible deltas will no longer necessarily
+	reconstruct them. No synthetic adjustment or silent financial rewrite occurs.
+- Require an operator-confirmed, recoverable backup before the first destructive
+	run. Proposed safeguard: cleanup stays blocked until an explicit local operator
+	activation records that confirmation. The activation command and backup
+	verification procedure must be included in implementation review; do not infer
+	consent from the default `24` or from database startup/migration alone.
+
+#### Types, model and persistence
+
+Existing ownership stays unchanged: Host owns behavior/jobs; Storage owns entities,
+mapping and migrations. Existing references:
+
+- `PocketMonkey.Host.Services.LedgerAdministration` in
+	[LedgerAdministration.cs](../../revamp/backend/PocketMonkey.Host/Services/LedgerAdministration.cs):
+	its current ledger-only key lookup and `MAX(SequenceNumber) + 1` allocation must
+	be changed atomically with cleanup support, not after deletion is enabled.
+- `PocketMonkey.Storage.PocketMonkeyDbContext` in
+	[PocketMonkeyDbContext.cs](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs):
+	retain existing money, opening, sequence, account and allowance-month constraints.
+- `PocketMonkey.Storage.Entities.LedgerEntry` in
+	[LedgerEntry.cs](../../revamp/backend/PocketMonkey.Storage/Entities/LedgerEntry.cs)
+	remains the retained immutable financial record; do not add nullable financial
+	fields or overwrite entries to simulate deletion.
+- `PocketMonkey.Storage.Entities.AllowanceExecution` in
+	[AllowanceExecution.cs](../../revamp/backend/PocketMonkey.Storage/Entities/AllowanceExecution.cs)
+	keeps its unique account/month and posting-key identities and credited outcome.
+
+Proposed new types/paths, not files created by this proposal:
+
+| Type and namespace | Proposed path | Responsibility / fields |
+| --- | --- | --- |
+| `PocketMonkey.Storage.Entities.LedgerMaintenanceState` | `revamp/backend/PocketMonkey.Storage/Entities/LedgerMaintenanceState.cs` | Singleton primary key constrained to `1`; nonnegative `long LastAllocatedSequenceNumber` and `long RetentionRevision`; nullable UTC `ActivatedAtUtc` and `LastCompletedAtUtc`. Durable sequence high-water mark, cleanup activation and cursor generation. No secrets or financial amounts. |
+| `PocketMonkey.Storage.Entities.RetiredLedgerKey` | `revamp/backend/PocketMonkey.Storage/Entities/RetiredLedgerKey.cs` | Required canonical 36-character `IdempotencyKey` primary key and non-null UTC `RetiredAtUtc`. No comment, amount or actor snapshot; no foreign key to a deleted ledger row. Keep indefinitely to reject reuse, not replay deleted payloads. |
+| `PocketMonkey.Host.Services.TransactionRetention` | `revamp/backend/PocketMonkey.Host/Services/TransactionRetention.cs` | Scoped cleanup coordinator using the configured duration and injectable time source. Select bounded eligible rows, retain their keys, delete rows and advance the retention revision in one serializable SQLite transaction per batch. |
+| `PocketMonkey.Host.HostedServices.TransactionRetentionWorker` | `revamp/backend/PocketMonkey.Host/HostedServices/TransactionRetentionWorker.cs` | Wake at startup and daily; persisted activation and current eligibility control work. Resume safely after interruption; do not hold a database transaction during backup/filesystem/network operations. |
+
+Extend existing Host instance configuration with the validated retention duration.
+The owning type is `PocketMonkey.Host.Configuration.InstanceSettings` in
+[InstanceSettings.cs](../../revamp/backend/PocketMonkey.Host/Configuration/InstanceSettings.cs);
+propose an `int TransactionRetentionMonths` property populated by `Read`.
+`PocketMonkey.Host.Services.AllowanceExecutor` in
+[AllowanceExecutor.cs](../../revamp/backend/PocketMonkey.Host/Services/AllowanceExecutor.cs)
+already skips months with retained credited execution records; preserve that
+behavior and verify it after ledger pruning rather than rebuilding those records
+from visible history.
+
+Use a proposed `(OccurredAtUtc, SequenceNumber)` eligibility index with a query
+representation proven to compare UTC instants correctly in SQLite. Inspect actual
+timestamp storage before choosing index/query SQL; do not rely on unsupported EF
+`DateTimeOffset` ordering or lexical comparisons across differing offsets.
+
+The migration initializes the singleton high-water mark from the existing maximum
+sequence without changing ledger rows, balances, execution outcomes or keys.
+Initialize activation to null: migrating populated data never starts deletion.
+Each new posting allocates and persists the next sequence within its existing
+serializable financial transaction, checking overflow. Cleanup uses the same
+database serialization boundary and never lowers that counter. Retired-key lookup
+must occur inside posting's transaction before a new key can be accepted; moving
+keys and deleting rows must commit or roll back together. Retain unique indexes
+and protect against a key existing in both live and retired storage through the
+shared serialized posting/cleanup path, not a preflight application-only check.
+
+Before pruning an allowance row, require its matching execution to be durably
+credited with the same account/month/key. A mismatch blocks that candidate and
+produces a bounded diagnostic; never discard uncertain execution evidence. Retry
+jobs and posting must remain safe against cleanup running concurrently.
+
+#### API, visibility and compatibility
+
+- No new public cleanup, transaction-delete or retention-setting endpoint.
+	Existing ready Manager writes and Manager/Member history visibility remain;
+	backend authorization and antiforgery are unchanged.
+- Live-key retries retain their original replay/conflict semantics. A retired key
+	must never post again. Proposed response: HTTP `409` with stable code
+	`transaction_history_expired`, regardless of supplied payload, because the
+	original entry is no longer available to replay or compare. Do not retain full
+	comments/response payloads merely to emulate deletion. This deliberately changes
+	permanent original-entry replay and requires explicit approval.
+- Extend the existing opaque history cursor with `RetentionRevision`. After any
+	committed pruning batch, a cursor from an older revision receives HTTP `409`,
+	stable code `history_retention_changed`; callers restart at the first page.
+	Reject pre-upgrade cursors through that same restart path. New postings alone
+	preserve the existing snapshot-bound keyset behavior. Use the global revision
+	conservatively, even if another account was pruned, to avoid ambiguous cursors.
+- Keep `LedgerEntryResponse` and money transport unchanged. The existing
+	`LedgerHistoryResponse`, cursor/error mapping and history caller need review for
+	an additive retention disclosure and restart handling before implementation.
+	This proposal does not approve new UI wording/layout; any visible changes must
+	follow the existing German/English design process.
+
+Concrete existing integration targets are
+`PocketMonkey.Host.Endpoints.TransactionEndpoints` in
+[TransactionEndpoints.cs](../../revamp/backend/PocketMonkey.Host/Endpoints/TransactionEndpoints.cs),
+`PocketMonkey.Host.Services.LedgerHistoryCursor` in
+[LedgerHistoryCursor.cs](../../revamp/backend/PocketMonkey.Host/Services/LedgerHistoryCursor.cs),
+and `PocketMonkey.Host.Contracts.Accounts.LedgerHistoryResponse` in
+[LedgerHistoryResponse.cs](../../revamp/backend/PocketMonkey.Host/Contracts/Accounts/LedgerHistoryResponse.cs).
+Add the two error cases to the existing `LedgerError` mapping and GET OpenAPI
+`409` metadata. The affected routes remain `GET` and `POST`
+`/api/accounts/{id}/transactions`; opening replay is unchanged because openings
+are never pruned. Update the existing
+[history caller](../../revamp/web/src/app/components/account-details/account-details.ts)
+and [history model](../../revamp/web/src/app/models/accounts/ledger-history.ts),
+including clearing cached pages before restarting, rather than creating a second
+history transport or silently showing stale cached pages as current.
+
+#### Operations, architecture and verification
+
+Write one nonfinancial audit event per committed cleanup batch, with UTC time and
+a stable action; log bounded counts/cutoff/outcome without amounts, comments,
+credentials or actor snapshots. Batch failures roll back keys and deletions
+together and retry later; business posting and readiness must not depend on a
+successful cleanup run. Completed batches remain valid after interruption.
+Disabling cleanup prevents new batches, not recovery of deleted data. Backups
+may still contain old history; document that separately. Disk-space reclamation
+and `VACUUM` are not part of the job or an implicit privacy guarantee.
+
+Applicable decisions: [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md),
+[ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md),
+[ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md), and
+[ADR-0017](../../docs/ADR/ADR-0017-backend-project-boundaries.md).
+R1 conflicts with ADR-0012's append-only/permanent replay and cursor behavior:
+after approval, update that authoritative record with the explicit bounded
+retention exception and dated rationale before implementation. Record durable
+allowance-identity preservation in ADR-0016 where needed. Do not amend approved
+decisions as if this draft were accepted.
+
+Focused acceptance checks must cover a real populated SQLite upgrade with zero
+deletions before activation; default/zero/invalid/changed duration; exact cutoff
+and timezone edge cases under controlled time; preserved signed balances/openings;
+monotonic sequence allocation even after all eligible rows are gone; retired-key
+rejection and live replay/conflict; concurrent posting/cleanup and interrupted
+batches; no duplicate old allowance credits after restart or `TZ` changes; stale
+cursor restart and normal posting snapshots; Manager/Member reads, direct Member
+write denials and antiforgery; and the operator backup/activation/recovery path.
+Use existing E2E/integration harnesses rather than routine mock/unit suites.
+Extend the real-persistence slices in
+[LedgerPersistenceCheck.cs](../../revamp/tests/integration/RuntimeChecks/Tests/LedgerPersistenceCheck.cs)
+and [AllowanceExecutionCheck.cs](../../revamp/tests/integration/RuntimeChecks/Tests/AllowanceExecutionCheck.cs);
+their current existence is not a claim that retention has been tested.
+Rollback after deletion requires restoring a tested backup, not a down migration.
+
+**Approval outcome:** R1's cutoff, permanent opening/audit/allowance metadata and
+retired-key retention, expired-key `409` semantics, cursor invalidation, and
+explicit backup/activation safeguard were approved on 2026-10-18. Exact operator
+command, existing configuration/caller integration and time-boundary handling
+still need the stated narrow follow-up before dependent implementation. Do not
+reopen the accepted policy choices or infer approval of unspecified contracts.
+
+#### Implementation-detail addendum A1
+
+**Draft for review, 2026-10-18. Not included in the R1 approval.** These details
+close R1's explicit open points without reopening its accepted retention policy.
+
+1. **Operator activation:** propose `activate-retention` as a local Host command,
+	following the operator-only routing in
+	[Program.cs](../../revamp/backend/PocketMonkey.Host/Program.cs). It prints the
+	resolved data directory and configured duration, requires an interactive
+	confirmation that a complete, recoverable instance backup exists, then records
+	`ActivatedAtUtc` and a nonfinancial activation audit atomically. An absent
+	confirmation or `0` duration changes nothing and exits unsuccessfully. An
+	already activated instance reports its activation time without resetting it.
+	The command does not run cleanup, start HTTP or hosted workers, accept remote
+	requests, or treat Manager access as operator authority. Do not introduce a
+	silent command-line confirmation flag. The documented prerequisite is an
+	offline backup of the entire persistent data directory, tested by restoring it
+	to an isolated instance, checking SQLite integrity and verifying balances,
+	history, account images and authentication keys. The command records operator
+	attestation, not a technical guarantee that an arbitrary backup can restore.
+2. **Timezone boundary:** determine the target calendar month first, then resolve
+	its first local instant. For an ambiguous midnight choose the earlier UTC
+	instant; for a skipped midnight choose the first valid local instant in that
+	month. If a valid boundary cannot be established, skip that run with a bounded
+	diagnostic rather than deleting against a guessed boundary. Preserve strict
+	`OccurredAtUtc < cutoff` comparison. Implementation must prove exact candidate
+	comparison against actual persisted UTC timestamps; an index/query choice may
+	not change that rule. Historical timestamps are never rewritten merely to
+	make a query sortable.
+3. **History contract/caller:** propose additive `int RetentionMonths`,
+	`DateTimeOffset? RetentionCutoffUtc` and `bool RetentionActivated` properties on
+	[LedgerHistoryResponse.cs](../../revamp/backend/PocketMonkey.Host/Contracts/Accounts/LedgerHistoryResponse.cs).
+	The cutoff describes configured eligibility, not proof that every eligible row
+	was removed; use null for unlimited retention. Both roles receive the same
+	policy information and retained rows, without operator backup locations or
+	private execution diagnostics. Keep the existing cursor opaque and use its
+	retention revision for the approved `409` restart behavior. On
+	`history_retention_changed`, the caller clears all cached pages for that
+	account and reloads the first page once; repeated conflicts surface through
+	the existing error path rather than an unbounded retry loop. No new visible
+	wording/layout is approved here; any retention notice needs the separate
+	German/English UI design review already required by R1.
+
+A1 implementation verification must exercise canceled/failed/successful/repeated
+operator activation, no deletion or workers during that command, a real isolated
+backup restore, skipped/ambiguous month boundaries, truthful inactive/unlimited
+history metadata, and bounded cursor restart. Do not run activation or prune
+operator data as part of implementation checks; use isolated fixtures only.
+
 ## Acceptance gate
 
 - [ ] Each newly delivered workflow has real-stack browser coverage for both roles and direct API denials; verify German/English catalogs and follow the established language-testing policy rather than duplicating workflows by language.
