@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -53,6 +54,25 @@ try {
     prepareAbout({ root, repository, check: true });
     assert(readFileSync(resolve(generated, 'build-info.json')).equals(before));
   });
+  for (const [name, newline] of [['LF', '\n'], ['CRLF', '\r\n']]) {
+    check(`${name} license input preserved in inline, downloadable, and container assets`, () => {
+      const bytes = Buffer.from(license.toString('utf8').replace(/\r\n|\r|\n/g, newline));
+
+      try {
+        writeFileSync(resolve(temporary, 'LICENSE'), bytes);
+        const info = prepareAbout({ root, repository });
+
+        assert(readFileSync(resolve(snapshot, 'LICENSE')).equals(bytes));
+        assert(readFileSync(resolve(generated, 'AGPL-3.0-only.txt')).equals(bytes));
+        assert.equal(JSON.parse(readFileSync(resolve(generated, 'project-license.json'), 'utf8')).text, bytes.toString('utf8'));
+        assert.equal(info.licenseSha256, createHash('sha256').update(bytes).digest('hex'));
+        prepareAbout({ root, repository, check: true });
+      } finally {
+        writeFileSync(resolve(temporary, 'LICENSE'), license);
+        prepareAbout({ root, repository });
+      }
+    });
+  }
   check('stale generated license rejected', () => {
     writeFileSync(resolve(generated, 'AGPL-3.0-only.txt'), 'stale');
     assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
