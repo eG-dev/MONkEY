@@ -17,6 +17,27 @@ scope by the user's decision on 2026-10-17, not deferred to a later release.
 Existing user disablement remains available; do not add archival flags, screens,
 cleanup jobs, or deletion/anonymization endpoints for these removed workflows.
 
+## Current Work Order
+
+On 2026-10-18, after postponing the unsatisfactory notice approach, the user
+selected ORT and approved preparation and cleanup. Follow the
+[ORT preparation guide](../../revamp/notices/README.md) and current
+[ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md). The bespoke
+audit dump and findings worksheet are superseded; preserve N09's first-party
+artwork confirmation and the reusable exact-copy delivery checks. Detailed
+scanning/review and About integration are not completed by this preparation.
+
+Continue the remaining non-notice Step 3H work. The next concrete implementation
+gap is transaction retention: prepare its backend/data design proposal under the
+[accepted configuration policy](#transaction-retention-discussion), then obtain
+explicit approval before changing schema, configuration or cleanup behavior.
+Final self-hosted operator/privacy wording and operations/deployment acceptance
+remain separate work; postponing third-party work does not waive their gates.
+
+Revisit third-party scope, rights, notices, source obligations and About notice
+integration during final release preparation, before publication. Existing
+placeholders and successful packaging tests are not approval or publication permission.
+
 ## Decisions before implementation
 
 - The transaction-retention configuration policy below is accepted. Review and approve its backend/data cleanup design separately from the removed account/user lifecycle workflows before implementing automatic deletion.
@@ -149,6 +170,12 @@ remain unchanged.
 
 ### R1: build inputs, generated assets, and review gates
 
+The notice generation/reconciliation parts of this R1 are superseded by the
+[approved simplification](#approved-notice-simplification-2026-10-18) and
+[ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md). Retain
+them as proposal history; application/build identity and project-license
+generation remain in force.
+
 On 2026-10-17, the user accepted clarifying this process before further Step 3H
 implementation ("sounds good, let use the recommendation"). The accepted direction
 is one application version, build-specific source information, mechanically
@@ -205,8 +232,9 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 
 1. First implement application/build metadata and automatic project-license
 	synchronization, with checks for local/development and tagged-release inputs.
-2. Evaluate and select inventory tooling, then replace illustrative third-party
-	rows with generated, reviewed, locally complete notices.
+2. Establish the ORT dependency/license overview and reviewed local notice document under
+	[ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md), complete
+	the human review, then integrate reviewed notices into the approved About UI.
 3. Review and bundle final German/English operator/privacy/warranty information;
 	finish repository/source URLs and content completeness checks.
 4. Exercise the complete artifact and release gates during the existing
@@ -256,6 +284,103 @@ no preview was left running. Release-input validation uses isolated fixture tags
 and an example repository, not an approved public project URL or publishing
 rehearsal. Hosted execution, complete notices, legal review, Corresponding Source
 delivery, and publication remain unverified/open.
+
+### Inventory collection implementation (2026-10-18)
+
+**Historical evaluation, superseded below.** Its local checks are retained here
+as evidence of that experiment, not requirements for current builds.
+
+The user authorized continuing with the inventory collector after confirming the
+preceding revision passed GitHub checks. The evaluated hybrid approach is retained
+as an alternative in [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md);
+the current process is in the
+[maintained build guide](../../revamp/README.md#third-party-notices).
+
+- Angular statistics select positive emitted-byte npm contributions and copied assets. NuGet collection now runs in an intermediate Docker stage using that build's locked restore, package archives and published output. Structured XML/ZIP parsers remain build-only.
+- NuGet evidence preserves declarations, copyright and original license/NOTICE bytes, separates locked content hashes from signed-archive hashes, and verifies actual published bytes against archive entries. Build-only exclusions and metadata-only dependencies remain explicit.
+- Final-image collection verifies embedded build identities and published hashes, then runs digest-pinned Syft 1.54.1 against the exact exported image with no container networking or Docker socket mount. The OCI index/configuration mismatch is resolved by hashing exported configuration bytes, not by weakening identity checks.
+- Combined evidence links native binaries to verified NuGet payloads, retains upstream Node/.NET notices and distinguishes first-party assemblies. Temporary exported archives/backend copies are removed; raw SBOMs and reconciled JSON remain ignored review outputs. CI collects those outputs in a separate short-lived diagnostic artifact with existing read-only permissions.
+
+The real-image scan identifies **112 web components**, **18 NuGet dependency
+identities** (17 with published payload, one metadata-only), **141 runtime/image
+records**, and **two copied-asset groups**. These sets overlap and must not be
+summed as a distinct-component count. All 18 NuGet identities match scanner
+evidence; no published NuGet payload is undetected. Twenty restore packages are
+excluded as build-only. Existing redistributed Windows/macOS/native architecture
+payloads are included without advertising execution support for those platforms.
+
+All **12 isolated inventory input checks** pass: deterministic normalized evidence,
+original text/binary fidelity, native ownership inputs, metadata-only/build-only
+distinction, lock/version/hash agreement, archive/publish tampering, nuspec identity,
+file-based licenses, missing declared text, unsafe paths and ambiguous frameworks.
+Actual Linux production-image build and final-image reconciliation pass locally.
+Repeating collection for the same immutable image produces identical reconciled
+JSON, including its source-evidence hashes. Ten production-image checks also pass:
+public/Manager/Member About, forced-password-change preservation, exact project
+license/hash identity, desktop/mobile behavior, offline assets/no development
+executables, and Linux Node/.NET globalization. The final image contains neither
+the NuGet cache nor web `node_modules`/build directories.
+
+The experiment used isolated inventory fixtures, a real image build, repeated
+final-image scans, the focused About/runtime E2E suite and the guardrail validator.
+Its collectors and their npm commands are now removed. This slice was not
+verified on hosted CI before supersession.
+
+**Not complete:** three runtime records still lack declarations and 109 lack
+attached full text. These are evidence-coverage flags, not a legal conclusion;
+shared/common-license and embedded-code review is still required. Resolve missing
+NuGet texts, Debian/common licenses, runtime/native attributions, font version and
+artwork rights through the maintained local document and human release review.
+About's illustrative rows, final operator/privacy
+wording and public source URLs remain unchanged. Successful collection does not
+mark notices reviewed, mutate a tested image or authorize publication.
+
+### Approved notice simplification (2026-10-18)
+
+**Historical preparation, refined by the ORT selection below.** The seeded dump
+and worksheet described here are no longer current inputs or review evidence.
+
+The user explicitly approved replacing the mandatory hybrid inventory approach
+with a simple reviewed component list and local required texts, without replacing
+obligations with external links. [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md)
+records that choice, retaining the earlier automated approach under Alternatives.
+The user explicitly approved merging ADR-0020 and ADR-0021 on 2026-10-18, then
+approved maintaining one authoritative record per topic under
+[ADR-0001](../../docs/ADR/ADR-0001-architecture-decision-records.md). Approved
+decision changes now update that topic's record with concise dated rationale;
+separate supersession records are not mandatory.
+
+- Removed the three collectors, fixture suite, XML/ZIP parser dependencies, automatic Angular statistics, intermediate Docker inventory stage and mandatory CI scan/artifact upload. Normal build/version/project-license generation and upstream runtime notices remain intact.
+- The single maintained [root notice document](../../THIRD-PARTY-NOTICES.txt), beside the project license, contains the component index and available license/copyright/NOTICE texts. The existing preparation helper copies its exact bytes into ignored Docker inputs and generated assets with freshness checks; Angular bundles that copy without regenerating its content. The initial draft was mechanically seeded once from existing audit evidence and upstream OS/runtime files, sharing only identical texts and retaining explicit associations.
+- The short [review checklist](../../revamp/notices/README.md) covers shipped dependency/transitive/native/asset/runtime changes, final installed OS inputs, optional initial/release audits and independent source/relinking checks. No generic templates or package links silently resolve missing material.
+- The existing network-disabled image test checks availability and byte fidelity. The baseline remains explicitly draft; complete attribution, missing texts, rights, compatibility and release review are not implied by successful copying or test results.
+- About remains on its approved illustrative UI. Integrating the reviewed document/content, final operator/privacy wording, source URLs and publication remain open; no design approval or release gate has been inferred from the simplification approval.
+
+Local verification on 2026-10-18 passed the simplified production-image build,
+E2E TypeScript check, all **10 focused About/runtime image tests** (including exact
+offline notice bytes), and the guardrail validator. Lockfile synchronization
+reported zero audit vulnerabilities. The one-time seed check preserved all 273
+source-text occurrences as 176 distinct texts with associations and LF endings;
+the seed utility was then removed. Hosted verification of this simplification and
+the substantive licensing/rights review remain open. No preview, commit, push or
+publication was performed.
+
+### ORT selection and cleanup (2026-10-18)
+
+The user explicitly selected ORT and requested preparation plus removal of
+superseded material. [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md)
+now selects ORT's dependency/license overview; original notice collection may
+remain manual. The [preparation guide](../../revamp/notices/README.md) replaces
+the bespoke findings worksheet and preserves the supplied N09 artwork-authorship
+confirmation. The large unreviewed root audit dump is replaced by an explicit
+development-only placeholder, not a claim that notices are no longer required.
+
+Keep the existing exact-copy packaging, freshness and offline delivery tests,
+project-license/build metadata, and upstream runtime/OS notices. Do not restore
+the bespoke collectors or mandatory image reconciliation. ORT version pinning,
+tested invocation, reports and supplemental coverage remain implementation work;
+no scan or licensing approval is claimed. Complete reviewed distribution texts,
+source obligations and About integration remain release gates.
 
 ## Transaction retention discussion
 

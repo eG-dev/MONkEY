@@ -52,6 +52,16 @@ Internet connectivity and an external identity provider must not be required at 
 
 ## Milestones
 
+Work-order update (2026-10-18): the user selected ORT and approved preparing for
+it while removing the superseded notice approach. The bespoke audit dump and
+review worksheet are replaced by an [ORT preparation guide](../../revamp/notices/README.md),
+preserving the artwork-authorship confirmation and reusable notice delivery.
+Detailed scanning/review and About integration remain release-preparation work.
+Continue the non-notice
+[Step 3H work](03h-lifecycle.md#current-work-order), starting with the required
+transaction-retention design review. This is a sequencing decision, not removal
+of licensing/source obligations or release gates.
+
 | Order | Plan | Outcome |
 | --- | --- | --- |
 | 1 | [Stack foundation](01-stack-foundation.md) | Runnable .NET + Angular SSR + storage in Docker |

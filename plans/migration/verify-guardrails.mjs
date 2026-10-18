@@ -73,6 +73,7 @@ assert(skillMetadata.description.length > 30 && skillMetadata.description.length
 console.log('PASS: backend/data design skill discovery metadata and folder/name match');
 
 const replacementChanges = [
+  'THIRD-PARTY-NOTICES.txt',
   'revamp/web/src/app/app.ts',
   'revamp/backend/PocketMonkey.Host/Program.cs',
   'revamp/deploy/Dockerfile',
@@ -98,6 +99,7 @@ for (const [name, own, other] of [
   assert(Object.hasOwn(workflow.on, 'workflow_dispatch'), `${name}: keep manual deployment available`);
 }
 const foundation = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/revamp-foundation.yml'), 'utf8'));
+assert(foundation.on.push.paths.some(pattern => minimatch('THIRD-PARTY-NOTICES.txt', pattern, { dot: true })), 'Root notice changes must trigger foundation push verification');
 assert(Object.hasOwn(foundation.on, 'pull_request'));
 assert(!foundation.on.pull_request?.paths && !foundation.on.pull_request?.['paths-ignore']);
 assert(!Object.hasOwn(foundation.on, 'pull_request_target'));

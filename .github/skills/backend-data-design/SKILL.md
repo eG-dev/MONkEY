@@ -51,10 +51,13 @@ Keep the review readable without requiring the user to infer behavior from code.
 Follow [ADR-0001](../../../docs/ADR/ADR-0001-architecture-decision-records.md).
 Not every entity, endpoint, or migration needs an ADR: record enduring architectural
 choices and rationale, not a class inventory or delivery steps. Keep unresolved
-decisions in the plan until agreed. After approval, add or update relevant ADRs
-before dependent implementation, update the [ADR index](../../../docs/ADR/README.md),
-and link affected plans/instructions. Preserve materially replaced decisions with
-a new ADR and cross-linked supersession notes. Do not add Status or Reviewers.
+decisions in the plan until agreed. After approval, update the authoritative ADR
+for each affected topic before dependent implementation; add a new record only
+for a genuinely distinct topic or justified topic split. Keep the topic's number
+and filename stable, record significant changes with concise dated rationale,
+and use Git for complete earlier wording. Update the
+[ADR index](../../../docs/ADR/README.md) and affected plans/instructions. Do not
+add Status or Reviewers.
 
 ## 5. Implement and Verify
 

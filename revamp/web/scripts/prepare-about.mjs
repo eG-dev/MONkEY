@@ -77,6 +77,7 @@ export function prepareAbout({ root = webRoot, check = false, packaged = false, 
   assert.equal(lock.packages[''].version, manifest.version, 'Package and lockfile root versions disagree.');
 
   const license = readFileSync(packaged ? resolve(snapshotRoot, 'LICENSE') : resolve(repositoryRoot, 'LICENSE'));
+  const notices = readFileSync(resolve(packaged ? snapshotRoot : repositoryRoot, 'THIRD-PARTY-NOTICES.txt'));
   let info;
 
   if (packaged) {
@@ -130,12 +131,14 @@ export function prepareAbout({ root = webRoot, check = false, packaged = false, 
 
   if (!packaged) {
     output(resolve(snapshotRoot, 'LICENSE'), license, check);
+    output(resolve(snapshotRoot, 'THIRD-PARTY-NOTICES.txt'), notices, check);
     output(resolve(snapshotRoot, 'build-info.json'), metadata, check);
   }
 
   output(resolve(generatedRoot, 'build-info.json'), metadata, check);
   output(resolve(generatedRoot, 'project-license.json'), `${JSON.stringify({ text: license.toString('utf8') })}\n`, check);
   output(resolve(generatedRoot, 'AGPL-3.0-only.txt'), license, check);
+  output(resolve(generatedRoot, 'THIRD-PARTY-NOTICES.txt'), notices, check);
 
   return info;
 }

@@ -63,20 +63,28 @@ recovery reference; convenience tags are not immutable release identifiers.
 
 The user accepted defining the About update process before further Step 3H work
 on 2026-10-17. Follow the revisioned
-[input/artifact and verification proposal](03h-lifecycle.md#about-content-update-process);
-specific generator/scanner tooling and final legal content remain to be evaluated.
+[input/artifact and verification proposal](03h-lifecycle.md#about-content-update-process).
+The approved ORT-assisted notice process is recorded in
+[ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md), with mandatory
+bespoke per-build collection/reconciliation retained as an evaluated alternative.
+Follow the [ORT preparation guide](../../revamp/notices/README.md); scanner
+version/invocation and reporting still need verification. Complete reviewed
+notices and final legal content remain pending.
 
 Application/build identity and project-license generation are implemented under
 [ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md). Use
 `npm --prefix web run build:image` from `revamp/` to prepare metadata/license
 inputs and validate matching OCI labels; the foundation workflow uses this same
-non-publishing wrapper. Notice inventory tooling and final legal revisions remain
-pending. See the [current commands](../../revamp/README.md#build-metadata-and-license-generation).
+non-publishing wrapper. Ordinary builds copy the maintained local notice document;
+they no longer require bespoke inventory collectors or image scanning. The
+offline runtime test checks the served document against its checked-in bytes,
+not its legal completeness. See the [current build commands](../../revamp/README.md#build-metadata-and-license-generation)
+and [notice review guidance](../../revamp/README.md#third-party-notices).
 
 - Capture the application version, exact source revision, source cleanliness, and agreed repository/source references before Docker packaging; use the same identity in About, OCI labels, and release assets.
-- Generate local project-license assets from the canonical root license. Derive notices from the actual shipped npm/NuGet/runtime/container/font/icon/asset inputs and explicitly reviewed exceptions, not a manually maintained About list.
-- Keep reviewed German/English legal documents separately revisioned. Dependency updates regenerate inventory for review, not operator/privacy wording or acceptance state.
-- Bundle all outputs before testing the image. Check the completed image against its inventory and publish that tested digest without rebuilding or modifying it. Record resolved inputs and content checksums with release evidence.
+- Generate local project-license assets from the canonical root license. Use ORT for the dependency/license overview and assemble reviewed required license/copyright/NOTICE text in the root distribution document; manual original-notice collection is acceptable. Review actual shipped npm/NuGet/runtime/container/font/icon/asset material, including transitives/native payloads and gaps in scan coverage; external package links do not replace required text. The current placeholder is not release-ready.
+- Keep reviewed German/English legal documents separately revisioned. Shipped dependency/runtime/asset changes trigger human notice review, not automatic changes to operator/privacy wording or acceptance state. Inspect final OS package inputs before release even if the manifest did not change. Optional initial/release audits assist that review without mandatory per-build archive reconciliation.
+- Bundle all outputs before testing the image and publish that tested digest without rebuilding or modifying it. Record reviewed inputs, reviewer/date, unresolved findings and release content checksums. Resolve applicable source delivery, source-offer, relinking and other obligations separately from notices.
 - Gate release publication on matching version/tag/source identity, complete reviewed notices and legal revisions, source access, and offline real-image About checks. Development placeholders do not satisfy these release gates.
 
 ## Release assets

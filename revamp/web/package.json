@@ -13,13 +13,11 @@
     "start": "ng serve",
     "prebuild": "node scripts/prepare-about.mjs",
     "build": "ng build",
-    "postbuild": "node scripts/collect-web-inventory.mjs",
     "prewatch": "node scripts/prepare-about.mjs",
     "watch": "ng build --watch --configuration development",
     "prepare:about": "node scripts/prepare-about.mjs",
     "check:about": "node scripts/check-about.mjs",
     "build:image": "node scripts/build-image.mjs",
-    "inventory:image": "node scripts/collect-image-inventory.mjs",
     "check:catalogs": "node scripts/check-catalogs.mjs",
     "serve:ssr:web": "node dist/web/server/server.mjs"
   },

@@ -1,0 +1,17 @@
+POCKET MONkEY - Third-Party Notices
+=================================
+
+DEVELOPMENT PLACEHOLDER - INCOMPLETE. NOT APPROVED FOR RELEASE.
+
+The previous unreviewed audit dump was removed on 2026-10-18 when ORT was
+selected for the dependency/license overview. This placeholder does not replace
+required third-party license, copyright, attribution or NOTICE material.
+
+Before publication, replace this file with reviewed notices matching the actual
+distribution, including applicable transitive, native, runtime, OS and asset
+components. Original notice collection may be manual. Resolve applicable source,
+source-offer and relinking obligations separately. Preserve upstream notices
+already supplied with runtime and OS components.
+
+ORT preparation and remaining coverage/review work: revamp/notices/README.md.
+Successful copying, scanning or testing does not establish legal completeness.

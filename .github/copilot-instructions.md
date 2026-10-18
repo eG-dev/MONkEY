@@ -8,6 +8,7 @@
 
 - Read and follow applicable ADRs in `docs/ADR/` before changing code, plans, or instructions. ADRs are the authoritative record of agreed architectural decisions; do not silently depart from them.
 - Follow [ADR-0001](../docs/ADR/ADR-0001-architecture-decision-records.md) when creating or updating decision records: concise Markdown, required Context and Decision, no Reviewers or Status, optional Alternatives only when evaluated, and Mermaid diagrams where useful.
+- Maintain one authoritative ADR per coherent topic. Update it in place after approval, keeping its number/filename and concise dated change rationale; add a new record for a distinct topic rather than a revised decision. Use commit-specific references for historical wording.
 - Write ADRs from a greenfield product perspective. Document enduring architecture and rationale, not revamping history, legacy comparisons for their own sake, or migration sequencing; those details belong in the plans.
 - If a request or existing implementation conflicts with an ADR, identify the conflict and obtain agreement on the decision change before implementing it. Record the approved change and preserve history as specified in ADR-0001.
 - Add decision records during the relevant migration phase, not speculative ADRs for unresolved proposals. Link affected plans and instructions to the applicable records.

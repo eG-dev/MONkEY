@@ -46,14 +46,13 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "statsJson": true,
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
               },
               {
-                "glob": "AGPL-3.0-only.txt",
+                "glob": "{AGPL-3.0-only,THIRD-PARTY-NOTICES}.txt",
                 "input": "src/generated/about",
                 "output": "licenses"
               },

@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "revamp/**"
+      - "THIRD-PARTY-NOTICES.txt"
       - ".github/workflows/revamp-*.yml"
       - ".github/workflows/revamp-*.yaml"
       - ".github/instructions/*.instructions.md"

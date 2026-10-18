@@ -1,12 +1,16 @@
 # POCKET MONkEY Architecture Decisions
 
 Read and follow applicable records before changing code, plans, or instructions.
-Write new records using [ADR-0001](ADR-0001-architecture-decision-records.md).
+Maintain one authoritative record per coherent topic using
+[ADR-0001](ADR-0001-architecture-decision-records.md). Update that record for
+approved changes; add another for a distinct topic, not just a revised decision.
+References mean the current decision; use a commit-specific reference for earlier
+wording.
 Records describe agreed product decisions; unresolved proposals stay in the plans.
 
 | Record | Decision |
 | --- | --- |
-| [ADR-0001](ADR-0001-architecture-decision-records.md) | Concise greenfield decision records |
+| [ADR-0001](ADR-0001-architecture-decision-records.md) | Authoritative topic records, explicit change approval, and concise history |
 | [ADR-0002](ADR-0002-application-boundaries.md) | Angular/Web-BFF and .NET ownership boundaries |
 | [ADR-0003](ADR-0003-shared-instance-access.md) | Shared accounts and local Manager/Member access |
 | [ADR-0004](ADR-0004-language-and-timezone.md) | Extensible German/English UI and separate business timezone |
@@ -25,3 +29,4 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0017](ADR-0017-backend-project-boundaries.md) | Host executable, Storage library, one-way dependency, and EF ownership |
 | [ADR-0018](ADR-0018-project-license.md) | AGPLv3-only, commercial-use permissions, source-sharing obligations, and separate operator information |
 | [ADR-0019](ADR-0019-build-identity-and-about-assets.md) | One application version, validated build/source identity, and generated local project-license assets |
+| [ADR-0020](ADR-0020-shipped-component-inventory.md) | ORT dependency/license overview, local distribution notices, and human release review gates |

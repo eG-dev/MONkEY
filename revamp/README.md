@@ -129,6 +129,43 @@ secrets. The build-only SemVer parser and other build tools do not ship in the
 runtime image; notice inclusion is determined by redistributed material, not
 merely by `dependencies` versus `devDependencies` in a manifest.
 
+### Third-Party Notices
+
+[ADR-0020](../docs/ADR/ADR-0020-shipped-component-inventory.md) selects ORT for the
+dependency/license overview instead of a bespoke inventory. See the
+[ORT preparation checklist](notices/README.md) for the remaining version pinning,
+reproducible invocation, reporting and coverage checks. ORT is not installed or
+required by CI yet. Original notices may still be collected manually.
+
+The [root notice document](../THIRD-PARTY-NOTICES.txt), beside the project license,
+is the canonical distribution output, not a second dependency database. The old
+unreviewed audit dump has been removed; the current file is explicitly a
+development placeholder, not a notice bundle approved for publication.
+
+The existing About preparation helper copies the root document byte-for-byte
+into the ignored Docker build-input snapshot and generated assets, with freshness
+checks alongside the project license. Angular's normal asset copy bundles it at
+`/licenses/THIRD-PARTY-NOTICES.txt`. Maintain only the root document; do not edit
+generated copies. No runtime downloads,
+XML/ZIP parser dependencies, inventory Docker stage or required image scan remain.
+The existing project-license/build-identity generation is unchanged. Upstream
+Node/.NET/OS notices remain in the image. Build with the usual `build:image`
+command; the existing offline runtime E2E check verifies the notice document's
+exact bytes from the network-disabled production image.
+
+Review ORT coverage and supplemental evidence whenever shipped dependencies,
+assets or runtime inputs change, and before release. Include transitive/native/
+embedded and OS material, not just direct manifests. Apt results can change
+without source edits. Store manual original texts with exact package/version and
+provenance associations; establish that mapping after inspecting real ORT output.
+
+The preparation guide preserves the user's project-artwork authorship
+confirmation. Complete attribution, required original texts, compatibility, font
+provenance and applicable source/relinking obligations remain release gates.
+About's illustrative rows, final legal wording and source URLs remain unchanged.
+Replace the placeholder with reviewed release-matched notices before testing the
+release image. Copy/hash checks establish delivery, not legal completeness.
+
 ## Private Account Images
 
 Managers upload, replace, and remove PNG/JPEG/WebP images from account details.

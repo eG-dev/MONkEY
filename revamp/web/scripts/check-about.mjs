@@ -13,6 +13,7 @@ const generated = resolve(root, 'src/generated/about');
 const snapshot = resolve(temporary, 'revamp/.build/about');
 const repository = 'https://github.com/example/project';
 const license = readFileSync(resolve(webRoot, '../../LICENSE'));
+const notices = Buffer.from('Fixture third-party notices\r\nAll rights retained.\r\n');
 let passed = 0;
 
 function git(...args) {
@@ -30,6 +31,7 @@ try {
   writeFileSync(resolve(root, 'package.json'), JSON.stringify({ version: '1.2.3' }));
   writeFileSync(resolve(root, 'package-lock.json'), JSON.stringify({ version: '1.2.3', packages: { '': { version: '1.2.3' } } }));
   writeFileSync(resolve(temporary, 'LICENSE'), license);
+  writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
   writeFileSync(resolve(temporary, '.gitignore'), 'revamp/.build/\nrevamp/web/src/generated/\n');
   git('init', '--quiet');
   git('config', 'core.autocrlf', 'false');
@@ -45,6 +47,8 @@ try {
     assert.equal(info.revision, git('rev-parse', 'HEAD'));
     assert.equal(info.sourceUrl, `${repository}/tree/${info.revision}`);
     assert(readFileSync(resolve(generated, 'AGPL-3.0-only.txt')).equals(license));
+    assert(readFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt')).equals(notices));
+    assert(readFileSync(resolve(snapshot, 'THIRD-PARTY-NOTICES.txt')).equals(notices));
     assert.equal(JSON.parse(readFileSync(resolve(generated, 'project-license.json'), 'utf8')).text, license.toString('utf8'));
   });
   check('deterministic generation and freshness verification', () => {
@@ -54,7 +58,10 @@ try {
     prepareAbout({ root, repository, check: true });
     assert(readFileSync(resolve(generated, 'build-info.json')).equals(before));
   });
-  for (const [name, newline] of [['LF', '\n'], ['CRLF', '\r\n']]) {
+  for (const [name, newline] of [
+    ['LF', '\n'],
+    ['CRLF', '\r\n'],
+  ]) {
     check(`${name} license input preserved in inline, downloadable, and container assets`, () => {
       const bytes = Buffer.from(license.toString('utf8').replace(/\r\n|\r|\n/g, newline));
 
@@ -73,6 +80,35 @@ try {
       }
     });
   }
+  for (const [name, newline] of [
+    ['LF', '\n'],
+    ['CRLF', '\r\n'],
+  ]) {
+    check(`${name} notice input preserved in downloadable and container assets`, () => {
+      const bytes = Buffer.from(`Fixture third-party notices${newline}All rights retained.${newline}`);
+
+      try {
+        writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), bytes);
+        prepareAbout({ root, repository });
+
+        assert(readFileSync(resolve(snapshot, 'THIRD-PARTY-NOTICES.txt')).equals(bytes));
+        assert(readFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt')).equals(bytes));
+        prepareAbout({ root, repository, check: true });
+      } finally {
+        writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
+        prepareAbout({ root, repository });
+      }
+    });
+  }
+  check('stale notice assets and changed source rejected', () => {
+    writeFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt'), 'stale');
+    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
+    prepareAbout({ root, repository });
+    writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), 'updated notices');
+    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
+    writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
+    prepareAbout({ root, repository });
+  });
   check('stale generated license rejected', () => {
     writeFileSync(resolve(generated, 'AGPL-3.0-only.txt'), 'stale');
     assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
@@ -160,6 +196,7 @@ try {
     }
 
     assert.deepEqual(prepareAbout({ root, packaged: true }), info);
+    assert(readFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt')).equals(notices));
     process.env['MONKEY_BUILD_VERSION'] = '9.9.9';
     assert.throws(() => prepareAbout({ root, packaged: true }), /label input disagrees/);
     process.env['MONKEY_BUILD_VERSION'] = info.version;
@@ -174,6 +211,7 @@ try {
     writeFileSync(resolve(nested, 'package.json'), readFileSync(resolve(root, 'package.json')));
     writeFileSync(resolve(nested, 'package-lock.json'), readFileSync(resolve(root, 'package-lock.json')));
     writeFileSync(resolve(nested, '../../LICENSE'), license);
+    writeFileSync(resolve(nested, '../../THIRD-PARTY-NOTICES.txt'), notices);
 
     assert.equal(prepareAbout({ root: nested }).revision, null);
     rmSync(resolve(temporary, 'archive'), { recursive: true });
