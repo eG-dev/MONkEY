@@ -62,10 +62,12 @@
           <div id="about-panel-notices" role="tabpanel" aria-labelledby="about-tab-notices" tabindex="0" [hidden]="selected() !== 'notices'">
             <section aria-labelledby="about-notices-title">
               <h3 id="about-notices-title">{{ t('about.notices') }}</h3>
-              <div class="message message-info" id="about-inventory-review">
-                <span class="icon icon-info" aria-hidden="true"></span>
-                <p class="message-body">{{ t('about.inventoryDraft') }}</p>
-              </div>
+              @if (noticesCoverage === 'partial') {
+                <div class="message message-info" id="about-inventory-review">
+                  <span class="icon icon-info" aria-hidden="true"></span>
+                  <p class="message-body">{{ t('about.inventoryPartial') }}</p>
+                </div>
+              }
               <div class="field about-search">
                 <label for="about-search">{{ t('about.search') }}</label
                 ><input #searchInput id="about-search" class="input" type="search" autocomplete="off" [value]="search()" (input)="search.set(searchInput.value)" />
@@ -75,11 +77,29 @@
                 <details class="notice-row" [attr.data-testid]="'about-component-' + component.id">
                   <summary data-testid="about-component-toggle">
                     <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ component.name }}</span
-                    ><span class="notice-meta">{{ t('about.versionPending') }} &middot; {{ t('about.licensePending') }}</span>
+                    >
+                    @for (member of component.members; track member.id) {
+                      <span class="notice-meta">
+                        {{ member.version ?? t('about.versionPending') }} &middot;
+                        {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}
+                      </span>
+                    }
                   </summary>
                   <div class="notice-content">
-                    <p>{{ t('about.noticePlaceholder') }}</p>
-                    <p class="muted">{{ t('about.componentSourcePending') }}</p>
+                    @for (member of component.members; track member.id) {
+                      <div [attr.data-testid]="'about-member-' + member.id">
+                        <h4>{{ member.name }} {{ member.version ?? t('about.versionPending') }}</h4>
+                        <p>{{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</p>
+                        @if (member.reviewStatus !== 'reviewed') {
+                          <p class="hint">{{ t('about.reviewPending') }}</p>
+                        }
+                        <p><a [href]="member.upstreamUrl" target="_blank" rel="noopener">{{ t('about.componentSource') }}</a></p>
+                        @for (document of member.documents; track document.id) {
+                          <a data-testid="about-document-file" [href]="document.url" target="_blank" rel="noopener">{{ t('about.openDocument', { document: document.id }) }}</a>
+                          <pre data-testid="about-document-text" tabindex="0" [attr.aria-label]="t('about.documentText', { document: document.id })">{{ document.text }}</pre>
+                        }
+                      </div>
+                    }
                   </div>
                 </details>
               } @empty {

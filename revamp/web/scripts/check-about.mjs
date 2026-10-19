@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 
 import { prepareAbout, webRoot } from './prepare-about.mjs';
+import { assembleNotices } from './assemble-notices.mjs';
 
 const temporary = mkdtempSync(resolve(tmpdir(), 'pocket-monkey-about-'));
 const root = resolve(temporary, 'revamp/web');
@@ -13,7 +14,10 @@ const generated = resolve(root, 'src/generated/about');
 const snapshot = resolve(temporary, 'revamp/.build/about');
 const repository = 'https://github.com/example/project';
 const license = readFileSync(resolve(webRoot, '../../LICENSE'));
-const notices = Buffer.from('Fixture third-party notices\r\nAll rights retained.\r\n');
+const originalNotices = Buffer.from('Fixture third-party notices\r\nAll rights retained.\r\n');
+const fixtureDocument = resolve(temporary, 'revamp/notices/originals/fixture/1.0/LICENSE.txt');
+const fixtureCatalogPath = resolve(temporary, 'revamp/notices/catalog.json');
+let notices;
 let passed = 0;
 
 function git(...args) {
@@ -26,12 +30,62 @@ function check(name, action) {
   console.log(`PASS: ${name}`);
 }
 
+function replaceNotices(bytes) {
+  const catalog = JSON.parse(readFileSync(fixtureCatalogPath, 'utf8'));
+
+  catalog.documents[0].sha256 = createHash('sha256').update(bytes).digest('hex');
+  writeFileSync(fixtureDocument, bytes);
+  writeFileSync(fixtureCatalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
+  const assembled = assembleNotices({ inputRoot: temporary });
+
+  writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), assembled.bundle);
+  return assembled.bundle;
+}
+
 try {
   mkdirSync(root, { recursive: true });
   writeFileSync(resolve(root, 'package.json'), JSON.stringify({ version: '1.2.3' }));
   writeFileSync(resolve(root, 'package-lock.json'), JSON.stringify({ version: '1.2.3', packages: { '': { version: '1.2.3' } } }));
   writeFileSync(resolve(temporary, 'LICENSE'), license);
-  writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
+  mkdirSync(resolve(fixtureDocument, '..'), { recursive: true });
+  writeFileSync(resolve(root, 'fixture-font'), 'fixture');
+  writeFileSync(
+    fixtureCatalogPath,
+    JSON.stringify({
+      schemaVersion: 1,
+      coverage: 'complete',
+      entries: [{ id: 'fixture', displayName: 'Fixture', componentIds: ['fixture'] }],
+      components: [
+        {
+          id: 'fixture',
+          kind: 'asset',
+          name: 'Fixture',
+          version: '1.0',
+          licenseExpression: 'MIT',
+          licensingStatus: 'licensed',
+          reviewStatus: 'reviewed',
+          upstreamUrl: 'https://example.test/fixture/1.0',
+          documentIds: ['fixture'],
+          versionEvidence: {
+            kind: 'files',
+            description: 'Fixture evidence',
+            files: [{ path: 'revamp/web/fixture-font', sha256: createHash('sha256').update('fixture').digest('hex') }],
+          },
+        },
+      ],
+      documents: [
+        {
+          id: 'fixture',
+          kind: 'license',
+          path: 'revamp/notices/originals/fixture/1.0/LICENSE.txt',
+          upstreamUrl: 'https://example.test/fixture/1.0/LICENSE',
+          revision: '1.0',
+          sha256: '',
+        },
+      ],
+    }),
+  );
+  notices = replaceNotices(originalNotices);
   writeFileSync(resolve(temporary, '.gitignore'), 'revamp/.build/\nrevamp/web/src/generated/\n');
   git('init', '--quiet');
   git('config', 'core.autocrlf', 'false');
@@ -88,24 +142,25 @@ try {
       const bytes = Buffer.from(`Fixture third-party notices${newline}All rights retained.${newline}`);
 
       try {
-        writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), bytes);
+        const bundle = replaceNotices(bytes);
         prepareAbout({ root, repository });
 
-        assert(readFileSync(resolve(snapshot, 'THIRD-PARTY-NOTICES.txt')).equals(bytes));
-        assert(readFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt')).equals(bytes));
+        assert(readFileSync(resolve(snapshot, 'THIRD-PARTY-NOTICES.txt')).equals(bundle));
+        assert(readFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt')).equals(bundle));
+        assert(readFileSync(resolve(generated, 'notices/fixture.txt')).equals(bytes));
         prepareAbout({ root, repository, check: true });
       } finally {
-        writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
+        replaceNotices(originalNotices);
         prepareAbout({ root, repository });
       }
     });
   }
   check('stale notice assets and changed source rejected', () => {
     writeFileSync(resolve(generated, 'THIRD-PARTY-NOTICES.txt'), 'stale');
-    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
+    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale (generated|assembled)/);
     prepareAbout({ root, repository });
     writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), 'updated notices');
-    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
+    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale assembled/);
     writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
     prepareAbout({ root, repository });
   });
@@ -204,6 +259,24 @@ try {
     assert.throws(() => prepareAbout({ root, packaged: true }), /license input hash mismatch/);
     prepareAbout({ root, repository });
   });
+  check('manual generated assets and prepared input drift rejected', () => {
+    prepareAbout({ root, repository });
+    const metadata = JSON.parse(readFileSync(resolve(generated, 'third-party.json'), 'utf8'));
+
+    assert.equal(metadata.entries[0].components[0].version, '1.0');
+    assert.equal(metadata.documents[0].text, originalNotices.toString('utf8'));
+    assert(readFileSync(resolve(generated, 'notices/fixture.txt')).equals(originalNotices));
+    writeFileSync(resolve(generated, 'third-party.json'), 'stale');
+    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
+    prepareAbout({ root, repository });
+    writeFileSync(resolve(snapshot, 'inputs/revamp/notices/originals/fixture/1.0/LICENSE.txt'), 'changed');
+    assert.throws(() => prepareAbout({ root, packaged: true }), /Document hash mismatch/);
+    prepareAbout({ root, repository });
+    writeFileSync(resolve(root, 'fixture-font'), 'changed');
+    assert.throws(() => prepareAbout({ root, packaged: true }), /Packaged web input drift/);
+    writeFileSync(resolve(root, 'fixture-font'), 'fixture');
+    prepareAbout({ root, repository });
+  });
   check('nested source archives do not borrow parent Git provenance', () => {
     const nested = resolve(temporary, 'archive/revamp/web');
 
@@ -212,6 +285,13 @@ try {
     writeFileSync(resolve(nested, 'package-lock.json'), readFileSync(resolve(root, 'package-lock.json')));
     writeFileSync(resolve(nested, '../../LICENSE'), license);
     writeFileSync(resolve(nested, '../../THIRD-PARTY-NOTICES.txt'), notices);
+
+    for (const [path, bytes] of assembleNotices({ inputRoot: temporary }).inputs) {
+      const filename = resolve(nested, '../..', path);
+
+      mkdirSync(resolve(filename, '..'), { recursive: true });
+      writeFileSync(filename, bytes);
+    }
 
     assert.equal(prepareAbout({ root: nested }).revision, null);
     rmSync(resolve(temporary, 'archive'), { recursive: true });
@@ -224,6 +304,163 @@ try {
     assert.equal(info.dirty, null);
     assert.equal(info.sourceUrl, null);
     assert.throws(() => prepareAbout({ root, repository, releaseTag: 'v1.2.3' }));
+  });
+
+  const manualRoot = resolve(temporary, 'manual-proof');
+  const documentPath = 'revamp/notices/originals/fixture/1.0.0/LICENSE.txt';
+  const evidencePath = 'revamp/backend/fixture/packages.lock.json';
+  const assetPath = 'revamp/web/public/fonts/fixture.woff2';
+  const originalText = Buffer.from('Fixture original copyright\r\nFixture license text.\r\n');
+  const asset = Buffer.from('Fixture font bytes');
+
+  function store(path, bytes) {
+    mkdirSync(resolve(manualRoot, path, '..'), { recursive: true });
+    writeFileSync(resolve(manualRoot, path), bytes);
+  }
+
+  store(documentPath, originalText);
+  store(evidencePath, JSON.stringify({ dependencies: { 'net10.0': { Fixture: { resolved: '1.0.0' } } } }));
+  store(assetPath, asset);
+  const manualCatalog = {
+    schemaVersion: 1,
+    coverage: 'partial',
+    entries: [{ id: 'fixture', displayName: 'Fixture group', componentIds: ['managed', 'font'] }],
+    components: [
+      {
+        id: 'managed',
+        kind: 'nuget',
+        name: 'Managed fixture',
+        version: '1.0.0',
+        licenseExpression: 'MIT',
+        licensingStatus: 'licensed',
+        reviewStatus: 'reviewed',
+        upstreamUrl: 'https://example.test/fixture/v1.0.0',
+        documentIds: ['fixture-license'],
+        versionEvidence: { kind: 'nuget', path: evidencePath, framework: 'net10.0', package: 'Fixture' },
+      },
+      {
+        id: 'font',
+        kind: 'asset',
+        name: 'Font fixture',
+        version: '2.0',
+        licenseExpression: 'OFL-1.1',
+        licensingStatus: 'licensed',
+        reviewStatus: 'reviewed',
+        upstreamUrl: 'https://example.test/font/2.0',
+        documentIds: ['fixture-license'],
+        versionEvidence: {
+          kind: 'files',
+          description: 'Fixture embedded version 2.0',
+          files: [{ path: assetPath, sha256: createHash('sha256').update(asset).digest('hex') }],
+        },
+      },
+    ],
+    documents: [
+      {
+        id: 'fixture-license',
+        kind: 'license',
+        path: documentPath,
+        upstreamUrl: 'https://example.test/original/LICENSE',
+        revision: 'fixture-original-1',
+        sha256: createHash('sha256').update(originalText).digest('hex'),
+      },
+    ],
+  };
+
+  function catalogCheck(change = () => {}, options = {}) {
+    const catalog = structuredClone(manualCatalog);
+
+    change(catalog);
+    store('revamp/notices/catalog.json', JSON.stringify(catalog));
+    return assembleNotices({ inputRoot: manualRoot, ...options });
+  }
+
+  check('manual grouping, exact original bytes and deterministic bundle', () => {
+    const first = catalogCheck();
+    const second = catalogCheck();
+
+    assert(first.bundle.equals(second.bundle));
+    assert(first.bundle.includes(originalText));
+    assert(first.files.get('notices/fixture-license.txt').equals(originalText));
+    assert.equal(first.about.entries[0].components.length, 2);
+    assert.equal(first.about.documents.length, 1);
+    assert.equal(first.about.documents[0].url, '/licenses/notices/fixture-license.txt');
+    assert.deepEqual(first.files, second.files);
+    assert(first.inputs.has('revamp/notices/catalog.json'));
+  });
+  check('manual inputs survive a standalone container snapshot', () => {
+    const first = catalogCheck();
+    const copiedRoot = resolve(temporary, 'standalone-inputs');
+
+    for (const [path, bytes] of first.inputs) {
+      mkdirSync(resolve(copiedRoot, path, '..'), { recursive: true });
+      writeFileSync(resolve(copiedRoot, path), bytes);
+    }
+
+    assert.deepEqual(assembleNotices({ inputRoot: copiedRoot }).files, first.files);
+  });
+  check('manual duplicate identities and dangling references rejected', () => {
+    for (const collection of ['entries', 'components', 'documents']) {
+      assert.throws(() => catalogCheck((catalog) => catalog[collection].push(catalog[collection][0])), /Duplicate/);
+    }
+
+    assert.throws(() => catalogCheck((catalog) => catalog.entries[0].componentIds.push('missing')), /Unknown component/);
+    assert.throws(() => catalogCheck((catalog) => catalog.components[0].documentIds.push('missing')), /Unknown document/);
+    assert.throws(() => catalogCheck((catalog) => catalog.entries[0].componentIds.pop()), /Unmapped component/);
+  });
+  check('manual version, document hash, asset drift and unsafe paths rejected', () => {
+    assert.throws(
+      () =>
+        catalogCheck((catalog) => {
+          catalog.components[0].version = '9.9.9';
+        }),
+      /Stale component version/,
+    );
+    assert.throws(
+      () =>
+        catalogCheck((catalog) => {
+          catalog.documents[0].sha256 = '0'.repeat(64);
+        }),
+      /Document hash mismatch/,
+    );
+    assert.throws(
+      () =>
+        catalogCheck((catalog) => {
+          catalog.documents[0].path = 'revamp/notices/originals/../../outside';
+        }),
+      /escapes root/,
+    );
+    assert.throws(
+      () =>
+        catalogCheck((catalog) => {
+          catalog.documents[0].path = '/outside';
+        }),
+      /under notices\/originals/,
+    );
+    store(assetPath, 'changed');
+    assert.throws(() => catalogCheck(), /Asset hash mismatch/);
+    store(assetPath, asset);
+  });
+  check('manual npm evidence and release review boundaries', () => {
+    store('revamp/web/package-lock.json', JSON.stringify({ packages: { 'node_modules/fixture': { version: '1.0.0' } } }));
+    const npm = catalogCheck((catalog) => {
+      catalog.components[0].kind = 'npm';
+      catalog.components[0].versionEvidence = { kind: 'npm', path: 'revamp/web/package-lock.json', package: 'fixture' };
+    });
+
+    assert.equal(npm.about.entries[0].components[0].version, '1.0.0');
+    assert.throws(() => catalogCheck(undefined, { release: true }), /coverage is partial/);
+    assert.throws(
+      () =>
+        catalogCheck(
+          (catalog) => {
+            catalog.coverage = 'complete';
+            catalog.components[0].reviewStatus = 'unresolved';
+          },
+          { release: true },
+        ),
+      /unresolved components/,
+    );
   });
 
   console.log(`PASS: ${passed} isolated About build-input checks`);

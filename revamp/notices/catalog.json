@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "coverage": "partial",
+  "entries": [
+    {
+      "id": "ef-core",
+      "displayName": "Entity Framework Core",
+      "componentIds": ["microsoft-entityframeworkcore"]
+    },
+    {
+      "id": "roboto",
+      "displayName": "Roboto",
+      "componentIds": ["roboto-fonts"]
+    }
+  ],
+  "components": [
+    {
+      "id": "microsoft-entityframeworkcore",
+      "kind": "nuget",
+      "name": "Microsoft.EntityFrameworkCore",
+      "version": "10.0.12",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@10.0.12",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.EntityFrameworkCore"
+      },
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.12",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "roboto-fonts",
+      "kind": "asset",
+      "name": "Roboto (Light, Regular, Medium, Bold)",
+      "version": "3.015",
+      "versionEvidence": {
+        "kind": "files",
+        "description": "All four local WOFF2 name tables inspected with fontTools 4.61.1: Version 3.015; 2026; Roboto Project Authors copyright; SIL OFL 1.1. User supplied Google Fonts as the download source on 2026-10-19.",
+        "files": [
+          {
+            "path": "revamp/web/public/fonts/roboto/Roboto-Light.woff2",
+            "sha256": "6f18d3d468ae1177702ac7d9849ee337d630453b7ec89c7670bc4ecb781e1db6"
+          },
+          {
+            "path": "revamp/web/public/fonts/roboto/Roboto-Regular.woff2",
+            "sha256": "6aea89c9ad26c0f595fb46e6bbd6698d61282fb70ca3eb02fbac704014f68272"
+          },
+          {
+            "path": "revamp/web/public/fonts/roboto/Roboto-Medium.woff2",
+            "sha256": "83299155d5a8264721233782b57e5532e8ae37215bacf58ca7250d06dc456e8c"
+          },
+          {
+            "path": "revamp/web/public/fonts/roboto/Roboto-Bold.woff2",
+            "sha256": "a0afd46281f76453205e0074fb4479a5462686ca866c0726fb6a03125200ac29"
+          }
+        ]
+      },
+      "upstreamUrl": "https://fonts.google.com/specimen/Roboto/license",
+      "licenseExpression": "OFL-1.1",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["roboto-ofl"]
+    }
+  ],
+  "documents": [
+    {
+      "id": "ef-core-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/microsoft-entityframeworkcore/10.0.12/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/efcore/v10.0.12/LICENSE.txt",
+      "revision": "v10.0.12",
+      "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+    },
+    {
+      "id": "roboto-ofl",
+      "kind": "license",
+      "path": "revamp/notices/originals/roboto/3.015/OFL.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/google/fonts/2e69e0bf1bd2662d6775bb54a398bded758e87cf/ofl/roboto/OFL.txt",
+      "revision": "2e69e0bf1bd2662d6775bb54a398bded758e87cf",
+      "sha256": "061402327a96aadb0bfb694a960ed289ecd38d383e396243831ab81feb109c41"
+    }
+  ]
+}

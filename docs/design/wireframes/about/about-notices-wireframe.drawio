@@ -1,5 +1,5 @@
 <mxfile host="app.diagrams.net">
-  <diagram id="about-notices-r4" name="About - Third-party notices">
+  <diagram id="about-notices-r5" name="About - Third-party notices (R5 draft)">
     <mxGraphModel grid="1" gridSize="10" page="1" pageScale="1" pageWidth="2700" pageHeight="1240" background="#FFFFFF">
       <root>
         <mxCell id="0" />
@@ -23,10 +23,13 @@
           <mxGeometry x="640" y="330" width="200" height="48" as="geometry" />
         </mxCell>
         <mxCell id="tab-notices" parent="1" vertex="1" value="Third-party notices" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fontStyle=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;">
-          <mxGeometry x="840" y="330" width="300" height="48" as="geometry" />
+          <mxGeometry x="1100" y="330" width="300" height="48" as="geometry" />
         </mxCell>
         <mxCell id="tab-legal" parent="1" vertex="1" value="Legal information" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
-          <mxGeometry x="1140" y="330" width="300" height="48" as="geometry" />
+          <mxGeometry x="1400" y="330" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-license" parent="1" vertex="1" value="Project license" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="840" y="330" width="260" height="48" as="geometry" />
         </mxCell>
         <mxCell id="notices-heading" parent="1" vertex="1" value="Third-party notices" style="text;html=1;fontFamily=Calibri;fontSize=20;fontStyle=1;align=left;">
           <mxGeometry x="640" y="410" width="1320" height="32" as="geometry" />
@@ -43,7 +46,7 @@
         <mxCell id="component-more" parent="1" vertex="1" value="[Further component rows]" style="text;html=1;fontFamily=Calibri;fontSize=16;align=left;">
           <mxGeometry x="640" y="650" width="1320" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="tabs-note" parent="1" vertex="1" value="Shared modal from login or app, for both roles. Close / Schließen or Escape restores focus to the opener; background stays inert. Tab order: Overview / Übersicht (default), Third-party notices / Drittanbieterhinweise (selected), Legal information / Rechtliche Hinweise. Only third-party content here; operator/privacy content is on the last tab." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+        <mxCell id="tabs-note" parent="1" vertex="1" value="Shared modal from login or app, for both roles. Close / Schließen or Escape restores focus; background stays inert. R5 draft tab order: Overview / Übersicht (default), Project license / Projektlizenz, Third-party notices / Drittanbieterhinweise (selected), Legal information / Rechtliche Hinweise. Only third-party content here; operator/privacy content stays last." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
           <mxGeometry x="40" y="200" width="480" height="180" as="geometry" />
         </mxCell>
         <mxCell id="search-note" parent="1" vertex="1" value="Search filters component names. Provide an empty-result state without hiding the tabs or search field. Expanded rows reveal complete applicable licenses, attribution/NOTICE texts and available component/source links. Authoritative texts remain unchanged; controls and status text are German/English." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">

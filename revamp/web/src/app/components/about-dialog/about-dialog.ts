@@ -1,5 +1,5 @@
 import { Component, ElementRef, computed, inject, signal, viewChildren } from '@angular/core';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { TuiButton } from '@taiga-ui/core';
 
 import { AboutService } from '../../services/about/about.service';
@@ -7,6 +7,7 @@ import { LanguageService } from '../../services/language/language.service';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
 import buildInfo from '../../../generated/about/build-info.json';
 import projectLicense from '../../../generated/about/project-license.json';
+import thirdParty from '../../../generated/about/third-party.json';
 
 type AboutTab = 'overview' | 'notices' | 'legal';
 
@@ -19,7 +20,6 @@ type AboutTab = 'overview' | 'notices' | 'legal';
 export class AboutDialog {
   protected readonly about = inject(AboutService);
   private readonly language = inject(LanguageService);
-  private readonly translation = inject(TranslocoService);
   private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
   private readonly content = viewChildren<ElementRef<HTMLElement>>('content');
 
@@ -36,22 +36,25 @@ export class AboutDialog {
   protected readonly tabs: readonly AboutTab[] = ['overview', 'notices', 'legal'];
   protected readonly selected = signal<AboutTab>('overview');
   protected readonly search = signal('');
-  private readonly components = [
-    { id: 'angular', name: 'Angular' },
-    { id: 'dotnet', name: '.NET runtime' },
-    { id: 'roboto', name: 'Roboto' },
-    { id: 'lucide', name: 'Lucide' },
-  ];
+  protected readonly noticesCoverage = thirdParty.coverage;
+  private readonly components = thirdParty.entries.map((entry) => ({
+    id: entry.id,
+    name: entry.displayName,
+    members: entry.components.map((component) => ({
+      ...component,
+      documents: thirdParty.documents.filter((document) => component.documentIds.includes(document.id)),
+    })),
+  }));
   protected readonly filteredComponents = computed(() => {
     const locale = this.language.locale();
     const query = this.search().trim().toLocaleLowerCase(locale);
 
-    return this.components
-      .map((component) => ({
-        ...component,
-        name: component.id === 'dotnet' ? this.translation.translate('about.runtime') : component.name,
-      }))
-      .filter((component) => component.name.toLocaleLowerCase(locale).includes(query));
+    return this.components.filter((entry) =>
+      [entry.name, ...entry.members.flatMap((component) => [component.name, component.version, component.licenseExpression])]
+        .join(' ')
+        .toLocaleLowerCase(locale)
+        .includes(query),
+    );
   });
 
   protected select(tab: AboutTab, focus = false): void {

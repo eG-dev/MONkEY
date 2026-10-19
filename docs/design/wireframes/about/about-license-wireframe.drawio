@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="about-license-r5" name="About - Project license (R5 draft)">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageScale="1" pageWidth="2700" pageHeight="1240" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="viewport" parent="1" vertex="1" value="" style="rounded=0;fillColor=none;strokeColor=#000000;strokeWidth=3;dashed=1;">
+          <mxGeometry x="600" y="200" width="1440" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="dialog" parent="1" vertex="1" value="" style="rounded=0;fillColor=#FFFFFF;strokeColor=#999999;">
+          <mxGeometry x="620" y="220" width="1400" height="820" as="geometry" />
+        </mxCell>
+        <mxCell id="heading" parent="1" vertex="1" value="About" style="text;html=1;fontFamily=Calibri;fontSize=28;fontStyle=1;align=left;">
+          <mxGeometry x="640" y="230" width="1240" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="close" parent="1" vertex="1" value="&#215;" style="rounded=0;html=1;fontFamily=Calibri;fontSize=28;fillColor=#FFFFFF;strokeColor=#999999;">
+          <mxGeometry x="1956" y="230" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="header-rule" parent="1" vertex="1" value="" style="fillColor=#999999;strokeColor=none;">
+          <mxGeometry x="640" y="300" width="1360" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-overview" parent="1" vertex="1" value="Overview" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="640" y="330" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-license" parent="1" vertex="1" value="Project license" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fontStyle=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;">
+          <mxGeometry x="840" y="330" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-notices" parent="1" vertex="1" value="Third-party notices" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="1100" y="330" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-legal" parent="1" vertex="1" value="Legal information" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="1400" y="330" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="license-heading" parent="1" vertex="1" value="Project license - AGPL-3.0-only" style="text;html=1;fontFamily=Calibri;fontSize=20;fontStyle=1;align=left;">
+          <mxGeometry x="640" y="410" width="1320" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="license-file" parent="1" vertex="1" value="Open full license file" style="text;html=1;fontFamily=Calibri;fontSize=16;fontStyle=4;align=left;">
+          <mxGeometry x="640" y="455" width="1320" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="license-text" parent="1" vertex="1" value="GNU AFFERO GENERAL PUBLIC LICENSE&lt;br&gt;Version 3, 19 November 2007&lt;br&gt;&lt;br&gt;[Complete, unmodified bundled license text is immediately visible here and continues below the viewport.]" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;">
+          <mxGeometry x="640" y="510" width="1360" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="tabs-note" parent="1" vertex="1" value="R5 draft tab order: Overview / Übersicht (default), Project license / Projektlizenz (selected), Third-party notices / Drittanbieterhinweise, Legal information / Rechtliche Hinweise. Shared modal, public and both roles. Keyboard tabs, Close/Escape and opener focus return remain unchanged. No consent or acceptance gate." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="40" y="200" width="480" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="license-note" parent="1" vertex="1" value="Show the entire canonical project-license text immediately when selecting this tab. No details/summary, accordion, expand button or collapsed state. Preserve the bundled AGPL text verbatim, including line breaks; translate navigation/labels only. Project license remains AGPL-3.0-only. The dashed text box represents flowing text, not a framed fixed-height tool." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="2140" y="500" width="480" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="file-note" parent="1" vertex="1" value="Keep a local link to the complete original license file, identical to the inline text and root LICENSE. No external network access is needed. This tab does not replace project/source links on Overview or third-party license obligations on the notices tab." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="2140" y="250" width="480" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="phone-note" parent="1" vertex="1" value="Desktop: near-full viewport; phone: full-screen. Header/tabs remain fixed while the license flows in the existing dialog scroll area. Keep centred content stable with balanced scrollbar gutters. Wrap long lines without horizontal content overflow; do not add a nested license scroll box. Tab strip can scroll horizontally on phones." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="40" y="750" width="480" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="tabs-arrow" parent="1" edge="1" source="tabs-note" target="tab-license" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="license-arrow" parent="1" edge="1" source="license-note" target="license-text" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="file-arrow" parent="1" edge="1" source="file-note" target="license-file" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="phone-arrow" parent="1" edge="1" source="phone-note" target="license-text" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=0;entryY=0.8;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

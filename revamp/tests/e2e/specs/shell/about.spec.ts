@@ -143,24 +143,81 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
 
   await expect(page.locator("#about-tab-notices")).toBeFocused();
   await expect(page.locator("#about-panel-notices")).toBeVisible();
-  await page.locator("#about-search").fill("LUCIDE");
+  const noticesResponse = await page.request.get("/about/third-party.json");
 
-  await expect(page.locator("#about-search-status")).toHaveText(
-    "Matching components: 1",
-  );
-  await expect(page.getByTestId("about-component-angular")).toHaveCount(0);
-  await page
-    .getByTestId("about-component-lucide")
-    .getByTestId("about-component-toggle")
-    .click();
+  expect(noticesResponse.status()).toBe(200);
 
-  await expect(page.getByTestId("about-component-lucide")).toContainText(
-    "required NOTICE text",
-  );
-  await page.screenshot({
-    path: test.info().outputPath("about-notices.png"),
-    fullPage: true,
-  });
+  const notices: {
+    coverage: string;
+    entries: {
+      id: string;
+      displayName: string;
+      components: { id: string; name: string; version: string; licenseExpression: string; documentIds: string[] }[];
+    }[];
+    documents: { id: string; url: string; text: string; sha256: string }[];
+  } = await noticesResponse.json();
+
+  expect(notices.coverage).toBe("partial");
+  await expect(page.locator("#about-inventory-review")).toContainText("Partial component collection.");
+
+  for (const entry of notices.entries) {
+    await page.locator("#about-search").fill(entry.displayName.toUpperCase());
+
+    const row = page.getByTestId(`about-component-${entry.id}`);
+
+    await expect(page.locator("#about-search-status")).toHaveText("Matching components: 1");
+    await expect(row).toBeVisible();
+
+    const collapsedNotices = await page.locator("#about-panel-notices").boundingBox();
+
+    await row.getByTestId("about-component-toggle").focus();
+    await page.keyboard.press("Enter");
+
+    const expandedNotices = await page.locator("#about-panel-notices").boundingBox();
+
+    expect(collapsedNotices).not.toBeNull();
+    expect(expandedNotices?.x).toBe(collapsedNotices?.x);
+    expect(expandedNotices?.width).toBe(collapsedNotices?.width);
+
+    for (const component of entry.components) {
+      const member = row.getByTestId(`about-member-${component.id}`);
+
+      await expect(member).toContainText(component.name);
+      await expect(member).toContainText(component.version);
+      await expect(member).toContainText(component.licenseExpression);
+
+      for (const documentId of component.documentIds) {
+        const document = notices.documents.find((candidate) => candidate.id === documentId);
+
+        if (!document) {
+          throw new Error(`Missing mapped original: ${documentId}`);
+        }
+
+        const link = member.getByTestId("about-document-file").filter({ hasText: document.id });
+        const originalText = member.getByTestId("about-document-text")
+          .and(page.getByLabel(`Original document: ${document.id}`, { exact: true }));
+
+        await expect(link).toHaveAttribute("href", document.url);
+        expect(await originalText.textContent()).toBe(document.text);
+
+        const download = await page.request.get(document.url);
+
+        expect(download.status()).toBe(200);
+        expect(createHash("sha256").update(await download.body()).digest("hex")).toBe(document.sha256);
+        expect(await originalText.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+        await originalText.focus();
+        await page.keyboard.press("Control+End");
+      }
+    }
+
+    expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+    await page.screenshot({ path: test.info().outputPath(`about-notices-${entry.id}.png`), fullPage: true });
+  }
+
+  await page.locator("#about-search").fill("OFL-1.1");
+
+  await expect(page.getByTestId("about-component-roboto")).toBeVisible();
+  await expect(page.getByTestId("about-component-ef-core")).toHaveCount(0);
   await page.locator("#about-search").fill("no-such-component");
 
   await expect(page.locator("#about-no-results")).toHaveText(
@@ -169,7 +226,16 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
 
   await page.locator("#about-tab-notices").focus();
   await page.keyboard.press("Home");
+
+  const collapsedOverview = await page.locator("#about-panel-overview").boundingBox();
+
   await page.locator("#about-project-license-toggle").click();
+
+  const expandedOverview = await page.locator("#about-panel-overview").boundingBox();
+
+  expect(collapsedOverview).not.toBeNull();
+  expect(expandedOverview?.x).toBe(collapsedOverview?.x);
+  expect(expandedOverview?.width).toBe(collapsedOverview?.width);
 
   const license = readFileSync(
     resolve(__dirname, "../../../../../LICENSE"),

@@ -143,6 +143,76 @@ and interaction, not placeholder legal wording, an audited notice inventory or
 unagreed repository/source URLs.
 See the [About requirement](../../plans/migration/03h-lifecycle.md#about-page-and-third-party-notices).
 
+On 2026-10-19 the user approved the About design review and explicitly confirmed
+"Yes, reuse the existing design for real notice data". This approves reusing the
+current About R4 wireframes and matching shared dialog click prototype without
+changing their layout or interactions. Replace illustrative component rows with
+the generated manual catalog, retaining search, expandable local original texts
+and explicit partial coverage. No new layout revision is introduced. This does
+not approve legal wording, complete inventory coverage or future design changes.
+
+The approved reuse is implemented in Angular on 2026-10-19. The two manual entries
+show their real component/version/license associations, unmodified original texts
+and local document links. Nine production-image About/offline checks passed,
+including desktop/320px public reading and both signed-in roles. English desktop/
+mobile screenshots were inspected. German labels and original-text wrapping passed
+four browser checks at 1440px/360px in light/dark themes without overflow or script
+errors. Legal placeholders remain unchanged; the collection is explicitly partial.
+
+### Current Drafts (2026-10-19)
+
+The user requested two subsequent corrections. The login click prototype now
+constrains its main wrapper to the 440px card width; the review note can no longer
+widen the wrapper and offset the card. This correction is a draft pending review;
+the already-centred login wireframe is unchanged. Browser checks passed 12
+English/German, light/dark combinations at 1440px, 360px and 320px with zero
+horizontal centre offset, no page overflow and no note/footer overlap. The old
+auto-width wrapper reproduced a 329px offset at 1440px. The forced-password-change
+form also remained centred at 1440px/360px. Angular was not changed for this fix.
+
+About R5 is a **wireframe revision approved on 2026-10-19**.
+The user explicitly answered "Wireframe approved" after the
+four-tab proposal and current project-license source edits. Approval covers the
+current R5 references and annotation arrangements; earlier R4 approvals remain history.
+It separates the project license into its own second tab: Overview / Übersicht,
+Project license / Projektlizenz, Third-party notices / Drittanbieterhinweise,
+Legal information / Rechtliche Hinweise. Overview keeps only product/version/
+source information. Selecting Project license shows the complete original
+`AGPL-3.0-only` text immediately, without expansion, plus its local file link.
+The existing dialog scroll area, fixed header/tabs, stable centred content and
+phone tab-strip scrolling remain; there is no nested license scroll box.
+
+All four R5 sources parse, preserve the 1440px viewport and share the same tab
+order. PNGs were exported and inspected; the project-license preview was
+synchronized from the current user-edited source without changing annotations.
+The wireframe gate is closed. The shared About click prototype implements
+R5 and was **explicitly approved on 2026-10-19** with "prototype approved, create
+a commit with it". It adds Project license
+as the second tab, removes the license accordion from Overview and renders the
+entire original text immediately with its local file link. Balanced scrollbar
+gutters keep the content centred. This explicit R5 approval, rather than the
+earlier R4/reuse approvals, satisfies the changed prototype's gate. Angular still
+retains R4; the dedicated license-tab implementation follows separately.
+
+Prototype verification passed 12 public review combinations and 24 signed-in
+Manager/Member combinations in English/German, light/dark at 1440px, 360px and
+320px, plus four public login checks preserving typed form values. Checks covered
+tab order and selection, no license expansion controls, exact text, stable
+centring, no horizontal content overflow, internal scrolling with the header
+fixed, Escape dismissal and focus return. Desktop/phone screenshots were inspected;
+no script errors were observed. The integrated browser page remained hidden, so
+control activation and keyboard-handler checks used DOM-dispatched events, not
+native keyboard-input verification.
+
+The existing offline `project-license.js` copy had CRLF line endings while the
+canonical root license now uses LF. It was mechanically regenerated from the
+root text without changing legal wording. The displayed 34,522-character text
+matches the root SHA-256 exactly:
+`7a269a0312054cacb0ec0c09671703c90c456747fcd3a45b523a0b0a4c32e29e`.
+JavaScript syntax and repository guardrails passed. Both R5 design gates are
+satisfied; Angular implementation can follow the requested approval commit. The earlier
+login-centering prototype correction remains pending its own review.
+
 | Reference | Scope |
 | --- | --- |
 | App shell | Shared navigation, identity/role controls, content boundaries, and responsive structure, without specific view content |
@@ -152,7 +222,7 @@ See the [About requirement](../../plans/migration/03h-lifecycle.md#about-page-an
 | Settings | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration |
 | User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection |
 | Login | Sign-in, forced-password change, and session-expiry states |
-| About | Shared dialog from login/app with Overview, Third-party notices and Legal information tabs; current R4 wireframes approved 2026-10-17, with R3 and earlier R1 approvals retained as history |
+| About | R5 wireframes and shared prototype explicitly approved 2026-10-19: Overview, Project license, Third-party notices and Legal information; Angular still R4 |
 
 Use desktop/mobile and Manager/Member variants where relevant. Forms, dialogs,
 image upload, confirmations, and validation/retry states can be named pages in
@@ -248,10 +318,11 @@ wireframe first, then a detailed click prototype.
 | Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
-| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Icon-free pipe-separated footer refinement explicitly approved 2026-10-17; earlier approvals retained as history | [Login](prototypes/login/index.html), current shared About and icon-free footer prototype explicitly approved 2026-10-17 |
-| About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | R4 shared dialog explicitly approved 2026-10-17, including annotation arrangement and preview; R3/R1 approvals retained as history | [About](prototypes/about/index.html), current prototype explicitly approved 2026-10-17 |
-| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | R4 shared dialog explicitly approved 2026-10-17, including annotation arrangement and preview; R3 approval retained as history | [About](prototypes/about/index.html), current prototype explicitly approved 2026-10-17; example inventory only |
-| About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | R4 shared dialog explicitly approved 2026-10-17, including annotation arrangement and preview; R3 approval retained as history; legal wording not approved | [About](prototypes/about/index.html), current prototype explicitly approved 2026-10-17; legal placeholders only |
+| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved wireframe unchanged; icon-free footer approval 2026-10-17 retained | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
+| About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | R5 explicitly approved 2026-10-19; project license removed from Overview; prior approvals retained as history | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Project license | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png) | R5 explicitly approved 2026-10-19, including current source/annotations; full AGPL text without expansion | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | R5 explicitly approved 2026-10-19; synchronized four-tab strip; prior approvals retained as history | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | R5 explicitly approved 2026-10-19; synchronized four-tab strip; legal wording not approved | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19; legal placeholders only |
 
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).

@@ -1,4 +1,4 @@
-# ORT Preparation
+# Manual Notices and ORT Preparation
 
 [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md) selects the OSS
 Review Toolkit (ORT) for the dependency/license overview. The previous bespoke
@@ -50,19 +50,21 @@ Source-only publication and image/release checks remain distinct as above.
 
 ## Manual Mapping Concept R1
 
-**Draft for review, 2026-10-19.** Define and exercise the manual input-to-About
-mapping before implementing ORT or another discovery adapter. This proposal does
-not create a catalog, collect original documents or change the UI. ADR-0020 still
-selects ORT; the proposed data contract is deliberately independent of that tool.
+**Approved, 2026-10-19:** the user answered "okay approved" after the R1 ownership
+review and the concrete Roboto mapping. Implement the manual input-to-About
+contract first with one managed package and Roboto. ADR-0020 records the approved
+originals/mappings ownership; ORT remains selected for later discovery, while the
+data contract is independent of that tool. UI changes retain their design gates.
 
 ### Input Contract
 
-Use one proposed `revamp/notices/catalog.json` containing three collections:
+The implemented [catalog](catalog.json) uses `schemaVersion: 1`, an explicit
+`coverage` of `partial` or `complete`, and three collections:
 
-| Collection | Purpose | Proposed Fields |
+| Collection | Purpose | Fields |
 | --- | --- | --- |
 | `components` | Exact reviewed package, runtime, engine or asset identities; not a complete dependency graph | Stable `id`, `kind`, `name`, exact `version`, optional package URL (PURL), `versionEvidence`, `upstreamUrl`, `licenseExpression` where verified, `licensingStatus`, `reviewStatus`, `documentIds` |
-| `entries` | Curated grouping and ordering for About | Stable `id`, `displayName` or translation key, `componentIds`; array order is presentation order |
+| `entries` | Curated grouping and ordering for About | Stable `id`, `displayName`, `componentIds`; array order is presentation order |
 | `documents` | Original local texts and their provenance | Stable `id`, `kind`, repository-relative `path`, original `upstreamUrl` and revision/version evidence, `sha256` |
 
 Components reference document IDs; entries reference component IDs. Resolve paths
@@ -102,26 +104,24 @@ version or license to a mixed group.
 
 | Location | Role |
 | --- | --- |
-| Proposed `revamp/notices/catalog.json` | Maintained reviewed identities, explicit mappings and provenance; manual first, later supplemented by proposed adapter changes |
-| Proposed `revamp/notices/originals/<component-id>/<version>/...` | Tracked, unmodified upstream license/NOTICE/copyright/evidence documents; shared documents reference one physical file where appropriate |
+| `revamp/notices/catalog.json` | Maintained reviewed identities, explicit mappings and provenance; manual first, later supplemented by proposed adapter changes |
+| `revamp/notices/originals/<component-id>/<version>/...` | Tracked, unmodified upstream license/NOTICE/copyright/evidence documents; shared documents reference one physical file where appropriate |
 | Root `THIRD-PARTY-NOTICES.txt` | Canonical assembled distribution output, deterministically generated and committed for source recipients; not independently hand-edited |
 | Existing ignored `revamp/web/src/generated/about/` | Generated About entry data with resolved local document references/texts, plus downloadable documents; no second maintained catalog |
 | Existing ignored `revamp/.build/about/` | Prepared container inputs, extended to capture this same catalog/document set before packaging |
 
-The assembler would generate both the root document and About assets from the
-same reviewed inputs. Order output deterministically and associate every text
-with its applicable component/version. Keep existing exact-copy checks so the
-root document shipped by the tested image matches the committed distribution
-output. Generated asset URLs are derived by the assembler under the existing
+The [assembler](../web/scripts/assemble-notices.mjs) generates both the root
+document and About assets from the same reviewed inputs. Output is deterministic
+and associates each text with its applicable components/versions. Exact-copy
+checks verify the root document shipped by the tested image matches the committed
+distribution output. Generated asset URLs are derived under the existing
 `/licenses/` location, not entered separately in the catalog or Angular component.
 The container build must receive the original inputs as well as verify the
 assembled output; it must not rely on files outside its prepared build context.
 
-This changes the current ownership rule: today the root notice file is maintained
-and copied, while this concept makes originals/mappings authoritative and the
-root file a generated distribution output. Amend ADR-0020 after concept approval
-before implementing that change. Do not maintain both a hand-edited root bundle
-and independently edited original texts.
+ADR-0020 now makes originals/mappings authoritative and the root file a generated
+distribution output. Do not maintain both a hand-edited root bundle and
+independently edited original texts.
 
 ### Manual Workflow And Later Automation
 
@@ -174,9 +174,75 @@ the dependency graph or recreate the removed inventory/reconciliation pipeline.
   implementation, following the existing UI approval gates. Verify search,
   keyboard/mobile reading and network-independent access with the real image.
 
-**Review requested:** agree the three-collection mapping, tracked originals and
-generated-root ownership before adding input files, assemblers or UI integration.
-File names/fields above are proposed, not implemented or an approved schema.
+**Review gate closed, 2026-10-19:** the three-collection mapping, tracked originals
+and generated-root ownership are approved for the manual proof. Implementation
+and verification evidence follow separately; approval does not establish notice
+completeness or approve changed UI artifacts.
+
+### Implemented Manual Proof (2026-10-19)
+
+The catalog deliberately covers only two entries, not the full initial set:
+
+| Entry | Exact input and legal material |
+| --- | --- |
+| Entity Framework Core | `Microsoft.EntityFrameworkCore` `10.0.12`, checked against the Storage NuGet lockfile; original MIT `LICENSE.txt` from the matching upstream `v10.0.12` release |
+| Roboto | All four local Light/Regular/Medium/Bold WOFF2 files identify `Version 3.015; 2026`, Roboto Project Authors and SIL OFL 1.1 in their name tables; original Google Fonts `OFL.txt` pinned to commit `2e69e0bf1bd2662d6775bb54a398bded758e87cf` |
+
+The user supplied [Google Fonts](https://fonts.google.com/specimen/Roboto/license)
+as the download source on 2026-10-19. All four local font name tables were inspected
+with disposable `fontTools[woff]` `4.61.1`; no Python dependency was added to the
+project. The catalog records each local font hash, document hashes, immutable
+legal-source revisions and provenance. Git attributes preserve original document
+bytes, including upstream line endings and trailing spaces.
+
+Run from the repository root after changing reviewed inputs:
+
+```text
+npm --prefix revamp/web run assemble:notices
+node revamp/web/scripts/assemble-notices.mjs --check
+npm --prefix revamp/web run prepare:about
+npm --prefix revamp/web run prepare:about -- --check
+npm --prefix revamp/web run check:about
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/authentication/about.spec.ts specs/lifecycle/runtime.spec.ts --grep "About|runtime works with networking disabled" --workers 1
+```
+
+Ordinary preparation checks the tracked root bundle; it does not silently rewrite
+it. It generates `/about/third-party.json` and `/licenses/notices/<document-id>.txt`
+alongside the root bundle download. The JSON retains grouped components, each
+version/license/document association, coverage and full original texts. The
+existing container snapshot captures the catalog, originals and lockfile/font
+evidence under `revamp/.build/about/inputs/`. Packaged preparation validates those
+inputs and rejects drift in web evidence against the actual build context.
+
+Supported evidence is `npm` (lockfile `path`, `package`), `nuget` (lockfile `path`,
+`framework`, `package`), or `files` (review description and `path`/`sha256` records).
+File hashes bind manually reviewed runtime/asset evidence; the assembler does not
+infer font or runtime versions. Release-input validation rejects partial coverage
+and unresolved mapped components; marking coverage complete is not legal approval.
+
+Verified locally: 24 isolated build-input checks, real preparation/freshness,
+production-image build, E2E typecheck and three image-backed checks (offline
+runtime plus public About on desktop/mobile). Offline verification fetches the
+generated mappings and checks each original document's served SHA-256 against
+the tracked catalog; it also checks the exact assembled bundle.
+
+On 2026-10-19 the user explicitly approved reuse of the existing R4 dialog and
+matching prototype for real notice data without layout/interaction changes. The
+About component now imports the generated JSON at build time, preserves grouped
+component/version/license associations and displays the exact original texts with
+local document links. Search matches entry/member names, versions and license
+identifiers. The partial-coverage warning and UI labels are German/English;
+original legal texts are not translated. No runtime fetch or backend endpoint was
+added. The legal tab remains review content.
+
+Angular/catalog/type checks and the production-image build passed. All nine
+focused About/offline image checks passed, including exact inline original texts,
+download hashes, license search, keyboard expansion, public desktop/320px reading,
+both roles and form preservation. English screenshots were inspected; four German
+browser checks at 1440px/360px in light/dark passed without overflow or script errors.
+Remaining initial components and later ORT expansion are separate follow-up work.
 
 ## ORT Implementation Checklist
 
@@ -200,8 +266,8 @@ File names/fields above are proposed, not implemented or an approved schema.
   mapping contract above; later assess ORT output as an adapter to that contract,
   not as the format the UI must consume. Do not build another dependency parser
   or competing inventory. Automated download/scanning is optional.
-- Evaluate ORT reporting/notice output before choosing how to assemble the
-  canonical distribution document. Review required text, copyright, NOTICE,
+- Evaluate ORT reporting/notice output as a possible input adapter to the existing
+  assembly contract. Review required text, copyright, NOTICE,
   compatibility and source/source-offer/relinking duties. A scan is not approval.
 
 ## Retained Delivery
@@ -215,7 +281,7 @@ must not be edited. Preserve upstream runtime and OS notices supplied in the
 image. Project-license generation and build/source metadata are independent of
 ORT and remain unchanged.
 
-Replace the temporary document only with reviewed, release-matched material,
+Extend the partial proof through reviewed inputs, regenerate the document,
 bundle it before image verification, and publish only the tested artifact.
 Incomplete distribution notices and unresolved source obligations remain public
 image/release blockers; the source-only publication checks above remain separate.

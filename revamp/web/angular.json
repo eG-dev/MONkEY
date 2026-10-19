@@ -57,9 +57,14 @@
                 "output": "licenses"
               },
               {
-                "glob": "build-info.json",
+                "glob": "{build-info,third-party}.json",
                 "input": "src/generated/about",
                 "output": "about"
+              },
+              {
+                "glob": "*.txt",
+                "input": "src/generated/about/notices",
+                "output": "licenses/notices"
               },
               {
                 "glob": "lucide.{css,woff2,woff,ttf,eot,svg}",

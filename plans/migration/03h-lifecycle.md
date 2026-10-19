@@ -60,14 +60,41 @@ preserve accompanying upstream material and resolve distribution obligations or
 withhold the affected artifact. See the
 [staged delivery checklist](../../revamp/notices/README.md#staged-delivery).
 
-The next notice task is concept review, not immediate collection or ORT setup:
+The approved manual proof is implemented locally, not an ORT setup:
 the user requested a manual-first package/component-to-About mapping with explicit
 artifact locations and associations. See
 [manual mapping concept R1](../../revamp/notices/README.md#manual-mapping-concept-r1).
-It proposes separate component, About-entry and original-document records, then
-one deterministic assembly path reusable by later automation. The input format,
-tracked-originals/generated-root ownership change and UI integration are drafts;
-review them before implementation or amending ADR-0020's current ownership rule.
+It uses separate component, About-entry and original-document records, then
+one deterministic assembly path reusable by later automation. On 2026-10-19 the
+user explicitly approved R1 with "okay approved" after the ownership review and
+Roboto example. ADR-0020 records the tracked-originals/generated-root ownership.
+The [two-entry delivery evidence](#manual-mapping-proof-2026-10-19) covers one
+managed package and Roboto. On 2026-10-19 the user approved the About design review
+and explicitly confirmed reuse of the existing R4 dialog and matching prototype
+for real notice data, keeping layout and interactions unchanged. That approval
+closes the reuse gate: render the mapped data in the existing presentation, then
+extend the agreed initial set. Future design changes retain their separate gates;
+ORT remains later work.
+
+The user's subsequent 2026-10-19 request moves the full project license to a
+dedicated tab without expansion and corrects login-prototype centring. The login
+prototype correction is locally verified and draft pending review; Angular login
+is unchanged. About now has four R5 draft wireframes, including Project license
+as the second tab. See the [current design drafts](../../docs/design/README.md#current-drafts-2026-10-19).
+On 2026-10-19 the user explicitly confirmed "Wireframe approved" for the current
+R5 references, including the current project-license source/annotations. The
+wireframe gate is satisfied. The shared R5 About click prototype is now updated
+and verified: separate project-license tab, immediately visible full
+AGPL text, no accordion and stable scrollbar gutters. Forty review cases passed
+(12 public review, 24 signed-in and four login form-preservation checks), with
+desktop/phone screenshots inspected and no script errors. Hidden-browser control/
+keyboard-handler checks used DOM-dispatched events rather than native input.
+The offline license copy was regenerated to match root text exactly after
+detecting CRLF/LF drift. The user explicitly approved the current R5 prototype on
+2026-10-19 with "prototype approved, create a commit with it" and selected all
+pending About/notice work for that commit. Both R5 design gates are satisfied.
+The dedicated Angular license-tab implementation follows separately after this
+approval commit; the previous R4 implementation remains in place meanwhile.
 
 ## Decisions before implementation
 
@@ -412,6 +439,71 @@ the bespoke collectors or mandatory image reconciliation. ORT version pinning,
 tested invocation, reports and supplemental coverage remain implementation work;
 no scan or licensing approval is claimed. Complete reviewed distribution texts,
 source obligations and About integration remain release gates.
+
+### Manual mapping proof (2026-10-19)
+
+Approved R1 is implemented with EF Core `10.0.12` and all four local Roboto
+`3.015` font files. The [catalog](../../revamp/notices/catalog.json) binds exact
+component/version/license identities to retained upstream MIT/OFL originals,
+About entries, provenance and hashes. Roboto's name tables were inspected with
+disposable fontTools `4.61.1`, consistent with the user's Google Fonts source.
+No project Python dependency or custom font parser was added.
+
+The assembler generates the tracked root bundle and ignored About JSON/document
+assets from those inputs. Normal preparation rejects stale assembled output;
+the container snapshot retains originals, catalog and evidence. Packaged builds
+check captured input integrity and actual web evidence. Coverage is explicitly
+partial and therefore cannot pass release-input validation.
+
+Local delivery evidence:
+
+- 24 isolated `check:about` checks passed, including grouped/shared documents,
+	LF/CRLF original fidelity, duplicate/dangling references, version/hash/path
+	rejection, prepared-input drift and release validation.
+- Real `prepare:about` and its `--check` mode passed; `build:image` built the
+	production artifact with the new metadata and individual original texts.
+- E2E TypeScript check and three production-image checks passed: the existing
+	network-disabled runtime check verifies mapped entries and served original
+	hashes against the catalog, and public About passes on desktop/mobile.
+
+See the [manual proof guide](../../revamp/notices/README.md#implemented-manual-proof-2026-10-19)
+for reproducible commands, paths and evidence fields. This assembly proof did not
+change the UI artifacts; the subsequent approved reuse is delivered below.
+No full initial collection, ORT scan, complete distribution review, hosted CI or
+publication approval is claimed.
+
+### About mapped-data delivery (2026-10-19)
+
+The user explicitly approved the About design review and confirmed "Yes, reuse
+the existing design for real notice data". The current R4 wireframes and matching
+click prototype remain unchanged; approval covers reusing their layout and
+interactions, not legal wording or complete component coverage. Approval and
+verification are recorded in the [design index](../../docs/design/README.md#reference-inventory).
+
+About now uses the generated catalog instead of illustrative component rows.
+Grouped entries retain each member's exact version, license and original-document
+association. Full original texts render as escaped text, with local download
+links. Names, versions and license identifiers are searchable. German/English UI
+labels and the partial-coverage warning are included; original legal texts remain
+untranslated. No backend contract, runtime download, consent state, layout or
+legal-tab wording changed.
+
+Angular build, catalog validation, E2E typecheck and production-image build passed.
+The focused About/offline command in the manual proof guide passed all nine tests:
+public desktop/320px real notices, exact inline text/download hashes, keyboard
+expansion/search, both roles, forced-password form preservation and offline assets.
+English desktop/mobile screenshots were inspected. Four German browser checks at
+1440px/360px in light/dark verified translated labels and original-text wrapping
+without horizontal overflow or script errors. Remaining initial collection and
+ORT expansion remain separate work; no release approval is implied.
+
+A subsequent scrollbar-stability fix on 2026-10-19 reserves balanced gutter space
+in the About scroll area. Before the fix, expanding a component or the AGPL text
+moved the centred desktop panel left by 7.5px as a 15px scrollbar appeared; the
+same browser measurement now reports no shift. The production-image build,
+E2E typecheck and both public desktop/mobile About checks passed, with regression
+assertions for unchanged panel position and width on each expansion. This restores
+the approved centred presentation without changing layout or interactions.
 
 ## Transaction retention discussion
 

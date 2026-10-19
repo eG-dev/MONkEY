@@ -71,8 +71,9 @@ root [LICENSE](../LICENSE), preserving its exact contents. Both are ignored buil
 outputs, not manually maintained copies. The About E2E workflow verifies their
 fidelity, the license hash, and version/build agreement with container labels.
 
-This is still review content, not release-ready legal delivery. The component
-inventory and legal sections retain the approved, visibly marked placeholders.
+This is still review content, not release-ready legal delivery. The third-party
+tab shows the real two-entry manual collection with explicit partial coverage;
+the legal sections retain the approved, visibly marked placeholders.
 Complete shipped/transitive/runtime notices, rights/compatibility review, and
 final self-hosted legal wording remain outstanding. Repository/release-source URLs
 are unavailable until agreed. About now shows the captured source revision and
@@ -98,6 +99,8 @@ the generated identity, not independently edited constants.
 Run these commands from the repository root:
 
 ```text
+npm --prefix revamp/web run assemble:notices
+node revamp/web/scripts/assemble-notices.mjs --check
 npm --prefix revamp/web run prepare:about
 npm --prefix revamp/web run prepare:about -- --check
 npm --prefix revamp/web run check:about
@@ -155,33 +158,52 @@ SQLite coverage includes its .NET provider and `SQLitePCLRaw` bindings/native
 bundle. The SQLite engine is public domain; wrapper/package terms are separate.
 
 The [root notice document](../THIRD-PARTY-NOTICES.txt), beside the project license,
-is the canonical distribution output, not a second dependency database. The old
-unreviewed audit dump has been removed; the current file is explicitly a
-development placeholder, not a notice bundle approved for publication.
+is the canonical generated distribution output, not an independently maintained
+dependency database. Approved Manual Mapping R1 is implemented as a two-entry
+partial proof: EF Core `10.0.12` (MIT) and the four local Roboto `3.015` fonts
+(OFL-1.1). Maintain the [catalog](notices/catalog.json) and original upstream texts,
+then run `assemble:notices`; commit those inputs and the assembled root together.
+This does not complete the agreed initial set or approve publication.
 
-The existing About preparation helper copies the root document byte-for-byte
-into the ignored Docker build-input snapshot and generated assets, with freshness
-checks alongside the project license. Angular's normal asset copy bundles it at
-`/licenses/THIRD-PARTY-NOTICES.txt`. Maintain only the root document; do not edit
-generated copies. No runtime downloads,
+About preparation checks the root document against the catalog rather than
+rewriting it implicitly, then copies its exact bytes into ignored Docker inputs
+and generated assets. It also generates `/about/third-party.json`, preserving
+grouped component/version/license/document associations, and original text files
+at `/licenses/notices/<document-id>.txt`. Angular bundles these static assets
+alongside `/licenses/THIRD-PARTY-NOTICES.txt`. Do not edit generated copies.
+The container snapshot includes the catalog, originals and supporting lockfile/
+font evidence; packaged preparation validates them against the actual web context.
+No runtime downloads,
 XML/ZIP parser dependencies, inventory Docker stage or required image scan remain.
 The existing project-license/build-identity generation is unchanged. Upstream
 Node/.NET/OS notices remain in the image. Build with the usual `build:image`
 command; the existing offline runtime E2E check verifies the notice document's
-exact bytes from the network-disabled production image.
+exact bundle bytes, generated mappings and individual original-document hashes
+from the network-disabled production image. The 24 isolated build-input checks
+cover grouping, byte fidelity, stale versions/assets, invalid references, snapshot
+drift and release-input boundaries. Partial coverage blocks release validation.
 
 Review ORT coverage and supplemental evidence whenever shipped dependencies,
 assets or runtime inputs change, and before release. Include transitive/native/
 embedded and OS material, not just direct manifests. Apt results can change
 without source edits. Store manual original texts with exact package/version and
-provenance associations; establish that mapping after inspecting real ORT output.
+provenance associations in the existing mapping contract. Later ORT adapters
+propose reviewed changes to that contract rather than defining the UI format.
 
 The preparation guide preserves the user's project-artwork authorship
 confirmation. Complete attribution, required original texts, compatibility, font
 provenance and applicable source/relinking obligations remain release gates.
-About's illustrative rows, final legal wording and source URLs remain unchanged.
-Replace the placeholder with reviewed release-matched notices before testing the
-release image. Copy/hash checks establish delivery, not legal completeness.
+The user explicitly approved reuse of the existing R4 dialog and matching prototype
+for real notice data on 2026-10-19. About now renders the generated entries within
+that unchanged layout and interactions: names/versions/license identifiers,
+component-specific original texts and local document links. Search covers entry/
+component names, versions and licenses. German/English labels and the explicit
+partial-coverage warning are bundled; original legal text is not translated.
+Nine focused About/offline production-image checks passed, plus four German
+desktop/phone, light/dark browser checks. Legal wording and source URLs remain
+unchanged; future design changes retain their separate approval gates.
+Extend the partial proof with reviewed release-matched material before testing
+the release image. Copy/hash checks establish delivery, not legal completeness.
 
 ## Private Account Images
 

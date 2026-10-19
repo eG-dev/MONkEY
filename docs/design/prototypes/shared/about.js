@@ -4,7 +4,7 @@
   const logoUrl = new URL('../../assets/images/monkey_face.png', assetUrl).href;
   const strings = {
     en: {
-      overview: 'Overview', notices: 'Third-party notices', legal: 'Legal information',
+      overview: 'Overview', license: 'Project license', notices: 'Third-party notices', legal: 'Legal information',
       revision: 'Source revision: [review build]', repository: 'GitHub project', source: 'Source for this version',
       sourcePending: 'Repository and release-source URLs are pending.', projectLicense: 'Project license',
       licenseName: 'GNU Affero General Public License, version 3 only', licenseText: 'Full GNU AGPL version 3 license text',
@@ -21,7 +21,7 @@
       privacyText: '[Reviewed information about actual instance data processing and the instance operator\'s responsibilities. No private household details or cloud-policy assumptions.]'
     },
     de: {
-      overview: 'Übersicht', notices: 'Drittanbieterhinweise', legal: 'Rechtliche Hinweise',
+      overview: 'Übersicht', license: 'Projektlizenz', notices: 'Drittanbieterhinweise', legal: 'Rechtliche Hinweise',
       revision: 'Quellcode-Revision: [Prüfversion]', repository: 'GitHub-Projekt', source: 'Quellcode dieser Version',
       sourcePending: 'Repository- und versionsbezogene Quellcode-URLs stehen noch nicht fest.', projectLicense: 'Projektlizenz',
       licenseName: 'GNU Affero General Public License, nur Version 3', licenseText: 'Vollständiger Lizenztext der GNU AGPL Version 3',
@@ -39,7 +39,7 @@
     }
   };
   const components = ['Angular', 'runtime', 'Roboto', 'Lucide'];
-  const tabNames = ['overview', 'notices', 'legal'];
+  const tabNames = ['overview', 'license', 'notices', 'legal'];
   let activeDialog;
 
   function text(key, params = {}) {
@@ -68,10 +68,11 @@
             <p class="muted">${PM.esc(PM.t('version'))} &middot; ${html('revision')}</p>
             <div class="about-links"><span role="link" aria-disabled="true">${PM.icon('github')}${html('repository')}</span><span role="link" aria-disabled="true">${PM.icon('info')}${html('source')}</span></div><p class="hint">${html('sourcePending')}</p>
           </section>
-          <section class="about-section" aria-labelledby="about-license-title"><h3 id="about-license-title">${html('projectLicense')}</h3>
-            <details class="about-notice" id="about-project-license"><summary>${PM.icon('right')}<span class="about-notice-name">${html('licenseName')}</span><span class="about-notice-meta">AGPL-3.0-only</span></summary>
-              <div class="about-notice-content"><a href="${PM.esc(licenseUrl)}" target="_blank" rel="noopener">${html('openLicense')}</a><pre class="about-license-text" id="about-license-text" tabindex="0" aria-label="${html('licenseText')}"></pre></div>
-            </details>
+        </div>
+        <div id="about-panel-license" role="tabpanel" aria-labelledby="about-tab-license" tabindex="0" hidden>
+          <section class="about-section" aria-labelledby="about-license-title"><h3 id="about-license-title">${html('projectLicense')} &middot; AGPL-3.0-only</h3>
+            <a href="${PM.esc(licenseUrl)}" target="_blank" rel="noopener">${html('openLicense')}</a>
+            <pre class="about-license-text" id="about-license-text" tabindex="0" aria-label="${html('licenseText')}"></pre>
           </section>
         </div>
         <div id="about-panel-notices" role="tabpanel" aria-labelledby="about-tab-notices" tabindex="0" hidden>
@@ -153,13 +154,7 @@
       });
     });
     dialog.querySelector('#about-search').addEventListener('input', renderComponents);
-    dialog.querySelector('#about-project-license').addEventListener('toggle', event => {
-      const container = dialog.querySelector('#about-license-text');
-
-      if (event.target.open && !container.textContent) {
-        container.textContent = window.PM_PROJECT_LICENSE;
-      }
-    });
+    dialog.querySelector('#about-license-text').textContent = window.PM_PROJECT_LICENSE;
     renderComponents();
     dialog.querySelector('[data-close]').focus();
   }

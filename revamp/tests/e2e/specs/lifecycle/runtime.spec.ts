@@ -68,6 +68,30 @@ standalone(
         createHash("sha256").update(notices).digest("hex"),
       );
 
+      const catalog: {
+        coverage: string;
+        entries: { id: string }[];
+        documents: { id: string; sha256: string }[];
+      } = JSON.parse(readFileSync(resolve(__dirname, "../../../../notices/catalog.json"), "utf8"));
+      const mappedNotices = docker(
+        "exec", name, "node", "-e",
+        [
+          "const {createHash}=require('node:crypto');const origin='http://127.0.0.1:8080';",
+          "fetch(origin+'/about/third-party.json').then(async response=>{if(!response.ok)throw Error('Missing notice metadata');",
+          "const data=await response.json();const documents=await Promise.all(data.documents.map(async document=>{",
+          "const result=await fetch(origin+document.url);if(!result.ok)throw Error('Missing original document');",
+          "const bytes=Buffer.from(await result.arrayBuffer());return [document.id,createHash('sha256').update(bytes).digest('hex')];}));",
+          "console.log(JSON.stringify({coverage:data.coverage,entries:data.entries.map(entry=>entry.id),documents:Object.fromEntries(documents)}));",
+          "}).catch(error=>{console.error(error.message);process.exit(1)});",
+        ].join(""),
+      );
+
+      expect(JSON.parse(mappedNotices)).toEqual({
+        coverage: catalog.coverage,
+        entries: catalog.entries.map((entry) => entry.id),
+        documents: Object.fromEntries(catalog.documents.map((document) => [document.id, document.sha256])),
+      });
+
       const language = docker(
         "exec",
         name,

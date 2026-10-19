@@ -35,6 +35,7 @@
   min-height: 0;
   padding: var(--space-7);
   overflow: auto;
+  scrollbar-gutter: stable both-edges;
 
   [role='tabpanel'] {
     max-width: var(--content-max-width);

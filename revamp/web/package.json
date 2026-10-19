@@ -16,6 +16,7 @@
     "prewatch": "node scripts/prepare-about.mjs",
     "watch": "ng build --watch --configuration development",
     "prepare:about": "node scripts/prepare-about.mjs",
+    "assemble:notices": "node scripts/assemble-notices.mjs",
     "check:about": "node scripts/check-about.mjs",
     "build:image": "node scripts/build-image.mjs",
     "check:catalogs": "node scripts/check-catalogs.mjs",

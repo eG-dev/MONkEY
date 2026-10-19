@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import semver from 'semver';
+
+import { assembleNotices } from './assemble-notices.mjs';
 
 export const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -114,6 +116,20 @@ export function prepareAbout({ root = webRoot, check = false, packaged = false, 
   }
 
   validate(info, manifest.version, license);
+  const assembled = assembleNotices({
+    inputRoot: packaged ? resolve(snapshotRoot, 'inputs') : repositoryRoot,
+    release: info.kind === 'release',
+  });
+
+  assert(notices.equals(assembled.bundle), 'Stale assembled THIRD-PARTY-NOTICES.txt; run assemble:notices.');
+
+  if (packaged) {
+    for (const [path, bytes] of assembled.inputs) {
+      if (path.startsWith('revamp/web/')) {
+        assert(readFileSync(resolve(root, path.slice('revamp/web/'.length))).equals(bytes), `Packaged web input drift: ${path}`);
+      }
+    }
+  }
 
   if (packaged) {
     for (const [variable, expected] of [
@@ -130,6 +146,14 @@ export function prepareAbout({ root = webRoot, check = false, packaged = false, 
   const metadata = `${JSON.stringify(info, null, 2)}\n`;
 
   if (!packaged) {
+    if (!check) {
+      rmSync(resolve(snapshotRoot, 'inputs'), { recursive: true, force: true });
+    }
+
+    for (const [path, bytes] of assembled.inputs) {
+      output(resolve(snapshotRoot, 'inputs', path), bytes, check);
+    }
+
     output(resolve(snapshotRoot, 'LICENSE'), license, check);
     output(resolve(snapshotRoot, 'THIRD-PARTY-NOTICES.txt'), notices, check);
     output(resolve(snapshotRoot, 'build-info.json'), metadata, check);
@@ -139,6 +163,14 @@ export function prepareAbout({ root = webRoot, check = false, packaged = false, 
   output(resolve(generatedRoot, 'project-license.json'), `${JSON.stringify({ text: license.toString('utf8') })}\n`, check);
   output(resolve(generatedRoot, 'AGPL-3.0-only.txt'), license, check);
   output(resolve(generatedRoot, 'THIRD-PARTY-NOTICES.txt'), notices, check);
+
+  if (!check) {
+    rmSync(resolve(generatedRoot, 'notices'), { recursive: true, force: true });
+  }
+
+  for (const [path, bytes] of assembled.files) {
+    output(resolve(generatedRoot, path), bytes, check);
+  }
 
   return info;
 }
