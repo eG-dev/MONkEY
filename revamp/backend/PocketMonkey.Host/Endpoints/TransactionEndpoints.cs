@@ -34,7 +34,8 @@ public static class TransactionEndpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status409Conflict);
 
         transactions.MapPost("", async Task<IResult> (
             string id,
@@ -81,6 +82,10 @@ public static class TransactionEndpoints
         LedgerError.InvalidPageSize => Failure("invalid_page_size", StatusCodes.Status400BadRequest),
 
         LedgerError.InvalidCursor => Failure("invalid_history_cursor", StatusCodes.Status400BadRequest),
+
+        LedgerError.TransactionHistoryExpired => Failure("transaction_history_expired", StatusCodes.Status409Conflict),
+
+        LedgerError.HistoryRetentionChanged => Failure("history_retention_changed", StatusCodes.Status409Conflict),
 
         _ => throw new ArgumentOutOfRangeException(nameof(error), error, "Unsupported transaction error.")
     };

@@ -18,6 +18,7 @@ Read configuration at startup and validate it before readiness succeeds.
 | `MONKEY_LOG_LEVEL` | `Information` | Shared application log level, mapped explicitly to both runtime logging systems. |
 | `MONKEY_DEFAULT_LOCALE` | `de-DE` | Instance fallback presentation locale; German and English are initially supported. Users may override it without changing timezone or currency. |
 | `MONKEY_CURRENCY` | `EUR` | Instance-wide display unit: `EUR` or `USD`. Its symbol follows localized amounts; changing it relabels values without conversion. |
+| `MONKEY_TRANSACTION_RETENTION_MONTHS` | `24` | UTC calendar-month transaction-detail retention. Integers `1` through `120` (10 years) enable automatic startup/daily cleanup; `0` keeps unlimited history. |
 | `MONKEY_TRUSTED_PROXIES` | Empty: trust none | Explicit proxy IP addresses or CIDRs allowed to supply forwarded headers. |
 
 ## Configuration rules
@@ -25,6 +26,7 @@ Read configuration at startup and validate it before readiness succeeds.
 - The backend reads `TZ` explicitly for business rules; setting the OS timezone alone is not the scheduling implementation.
 - Include timezone data and required globalization support in the image. Verify the configured IANA ID in both runtimes and fail startup on invalid values.
 - Persist timestamps in UTC; derive allowance months in the configured business timezone, not the browser timezone.
+- Derive retention cutoffs from UTC calendar months, independently of `TZ`. Validate an integer from `0` through `120` at startup; use `0` for retention beyond 10 years. Preserve openings, balances, audit and durable allowance/key identities under [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Set retention to `0` before starting a restored database when automatic pruning must remain disabled; increasing retention cannot recover removed details. There is no separate activation gate.
 - Timezone changes require a restart and a deliberate policy for existing schedules/periods. Never silently reinterpret recorded allowance periods or duplicate credits.
 - Derive `monkey.db`, `images/`, and `keys/` beneath `MONKEY_DATA_PATH`; do not expose independent path variables until a real need exists.
 - The host bind-mount path is a Docker/Compose setting, not an application variable. For example, mount `/srv/monkey` on the host to `/data` in the container; no `MONKEY_DATA_PATH` override is needed.

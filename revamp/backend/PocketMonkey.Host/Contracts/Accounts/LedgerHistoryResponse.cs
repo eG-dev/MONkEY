@@ -8,4 +8,8 @@ public sealed record LedgerHistoryResponse
     public required IReadOnlyList<LedgerEntryResponse> Entries { get; init; }
 
     public string? NextCursor { get; init; }
+
+    public int RetentionMonths { get; init; }
+
+    public DateTimeOffset? RetentionCutoffUtc { get; init; }
 }

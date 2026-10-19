@@ -548,7 +548,8 @@ production-image cases passed on 2026-10-08.
 
 Opening errors retain stable `invalid_opening_amount`, `invalid_comment`,
 `invalid_idempotency_key`, `not_found`, `already_initialized`, and
-`idempotency_conflict` codes.
+`idempotency_conflict` codes. Reusing a retired transaction key through the opening
+endpoint returns `transaction_history_expired` with HTTP 409.
 
 On 2026-10-08, Step 3B passed the locked backend/runtime-check build, real-SQLite
 `ledger-persistence` probe, Angular SSR/image builds, catalog checks, E2E
@@ -567,7 +568,7 @@ An account needs one opening before a Manager can post manual transactions.
 500 characters, and a GUID `idempotencyKey`. Deposits persist positive deltas;
 withdrawals persist negative deltas. Overdrafts are allowed. Checked balance
 overflow returns `balance_overflow` with no partial financial writes.
-Successful posts and matching replays return the original entry with HTTP 200.
+Successful posts and matching replays of retained entries return the original entry with HTTP 200.
 The key is shared across opening/manual postings; source is part of conflict matching.
 
 `GET /api/accounts/{id}/transactions?pageSize=20` returns `entries` and
@@ -591,6 +592,50 @@ the full suite used `CI=true`, one worker, zero retries, and took 10.4 minutes.
 Desktop/mobile German/English screenshots and checks cover negative extremes,
 overdrafts, escaped comments, response-loss retries, pagination during new posts,
 and unchanged persisted history on language changes. Hosted acceptance remains open.
+
+### Transaction Retention
+
+Set `MONKEY_TRANSACTION_RETENTION_MONTHS` in the backend/container environment.
+The default is `24`; `0` keeps unlimited transaction history. Positive integers
+from `1` to `120` (10 years) are accepted; use `0` for longer retention.
+Invalid values prevent startup. Restart the application after changing deployment
+settings.
+
+Ledger timestamps retain `DateTimeOffset` application/API contracts and full
+100-nanosecond precision, using UTC `DateTime` provider values for indexed EF
+queries. The `LedgerUtcDateTimeMapping` startup upgrade normalizes supported
+existing UTC text without changing instants. Malformed, unexpected or nonzero-offset
+stored timestamps abort the upgrade atomically with an unsupported-timestamp
+diagnostic; investigate and correct the data before retrying, rather than guessing
+an instant. Setting retention to `0` disables pruning, not upgrade validation.
+
+Cleanup runs automatically at startup and daily in atomic batches of at most 200
+entries. The cutoff is midnight on the first day of the current **UTC** month
+minus the configured number of calendar months, clamped to the earliest
+representable month. Only strictly older deposits, withdrawals and safely
+credited allowance rows are eligible. `TZ` still controls allowance scheduling
+and timestamp display, not cleanup.
+
+Openings, exact account balances, financial audits, allowance revisions/executions
+and minimal used-key records remain. Opening plus visible remaining deltas may
+therefore no longer reconstruct the current balance. Retired keys cannot post
+again: HTTP 409, `transaction_history_expired`. Sequence allocation remains
+monotonic independently of remaining ledger rows.
+
+History pages include `retentionMonths` and `retentionCutoffUtc`. Null cutoff
+means unlimited; otherwise it describes eligibility, not completed deletion.
+Pruning invalidates older cursors with HTTP 409, `history_retention_changed`.
+The browser discards cached pages and restarts once; ordinary new postings still
+respect snapshot pagination. Manager/Member read access and Manager-only writes
+are unchanged. Cleanup failures leave committed batches intact and retry on a
+later scan without taking readiness or financial posting offline.
+
+There is no activation command. Keep recoverable backups as normal operational
+practice. A restored database can be pruned immediately at startup: set retention
+to `0` **before starting** a restore when cleanup must stay disabled. Increasing
+retention cannot recover deleted details; restore a verified backup instead of
+attempting a schema rollback. This policy does not erase retained metadata or
+historical backups, and does not promise disk-space reclamation.
 
 ### Manual Built Preview
 

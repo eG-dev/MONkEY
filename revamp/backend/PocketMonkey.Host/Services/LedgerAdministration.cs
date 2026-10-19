@@ -12,11 +12,13 @@ public sealed class LedgerAdministration
 {
     private readonly PocketMonkeyDbContext database;
     private readonly InstanceSettings settings;
+    private readonly TimeProvider time;
 
-    public LedgerAdministration(PocketMonkeyDbContext database, InstanceSettings settings)
+    public LedgerAdministration(PocketMonkeyDbContext database, InstanceSettings settings, TimeProvider? time = null)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        this.time = time ?? TimeProvider.System;
     }
 
     public Task<(LedgerEntryResponse? Entry, LedgerError? Error)> PostOpeningAsync(
@@ -91,6 +93,16 @@ public sealed class LedgerAdministration
             }
         }
 
+        await using var historyTransaction = await database.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable, cancellationToken);
+        var revision = await database.LedgerMaintenanceStates.AsNoTracking()
+            .Select(state => state.RetentionRevision).SingleAsync(cancellationToken);
+
+        if (continuation is not null && continuation.RetentionRevision != revision)
+        {
+            return (null, LedgerError.HistoryRetentionChanged);
+        }
+
         var entries = database.LedgerEntries.AsNoTracking().Where(entry => entry.AccountId == accountId);
         var snapshot = continuation?.Snapshot ?? await entries.MaxAsync(entry => (long?)entry.SequenceNumber, cancellationToken) ?? 0;
         entries = entries.Where(entry => entry.SequenceNumber <= snapshot);
@@ -110,6 +122,7 @@ public sealed class LedgerAdministration
             ? Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(new LedgerHistoryCursor
             {
                 AccountId = accountId,
+                RetentionRevision = revision,
                 Snapshot = snapshot,
                 Before = visible[^1].SequenceNumber
             }))
@@ -118,6 +131,8 @@ public sealed class LedgerAdministration
         return (new LedgerHistoryResponse
         {
             Timezone = settings.Timezone,
+            RetentionMonths = settings.TransactionRetentionMonths,
+            RetentionCutoffUtc = TransactionRetention.Cutoff(time.GetUtcNow(), settings.TransactionRetentionMonths),
             Entries = visible.Select(entry => Describe(entry, settings.Currency)).ToList(),
             NextCursor = nextCursor
         }, null);
@@ -158,6 +173,12 @@ public sealed class LedgerAdministration
         var key = requestId.ToString();
 
         await using var transaction = await database.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+
+        if (await database.RetiredLedgerKeys.AnyAsync(entry => entry.IdempotencyKey == key, cancellationToken))
+        {
+            return (null, LedgerError.TransactionHistoryExpired);
+        }
+
         var existing = await database.LedgerEntries.SingleOrDefaultAsync(entry => entry.IdempotencyKey == key, cancellationToken);
 
         if (existing is not null)
@@ -200,7 +221,9 @@ public sealed class LedgerAdministration
             .Where(user => user.Id == actor)
             .Select(user => user.DisplayName)
             .SingleAsync(cancellationToken);
-        var sequence = checked((await database.LedgerEntries.MaxAsync(entry => (long?)entry.SequenceNumber, cancellationToken) ?? 0) + 1);
+        var maintenance = await database.LedgerMaintenanceStates.SingleAsync(cancellationToken);
+        var sequence = checked(maintenance.LastAllocatedSequenceNumber + 1);
+        maintenance.LastAllocatedSequenceNumber = sequence;
         var entry = new LedgerEntry
         {
             AccountId = accountId,
@@ -209,7 +232,7 @@ public sealed class LedgerAdministration
             IdempotencyKey = key,
             ActorId = actor,
             ActorDisplayName = actorName,
-            OccurredAtUtc = occurredAtUtc ?? DateTimeOffset.UtcNow,
+            OccurredAtUtc = (occurredAtUtc ?? time.GetUtcNow()).ToUniversalTime(),
             Source = source,
             Comment = comment,
             AllowanceMonth = execution?.BusinessMonth

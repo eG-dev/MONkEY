@@ -20,9 +20,33 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<AllowanceExecution> AllowanceExecutions => Set<AllowanceExecution>();
 
+    public DbSet<LedgerMaintenanceState> LedgerMaintenanceStates => Set<LedgerMaintenanceState>();
+
+    public DbSet<RetiredLedgerKey> RetiredLedgerKeys => Set<RetiredLedgerKey>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<LedgerMaintenanceState>(stateEntity =>
+        {
+            stateEntity.HasKey(x => x.Id);
+            stateEntity.Property(x => x.Id).ValueGeneratedNever();
+            stateEntity.ToTable("LedgerMaintenanceStates", table =>
+            {
+                table.HasCheckConstraint("CK_LedgerMaintenanceStates_Singleton", "Id = 1");
+                table.HasCheckConstraint("CK_LedgerMaintenanceStates_Sequence", "typeof(LastAllocatedSequenceNumber) = 'integer' AND LastAllocatedSequenceNumber >= 0");
+                table.HasCheckConstraint("CK_LedgerMaintenanceStates_Revision", "typeof(RetentionRevision) = 'integer' AND RetentionRevision >= 0");
+            });
+        });
+
+        modelBuilder.Entity<RetiredLedgerKey>(stateEntity =>
+        {
+            stateEntity.HasKey(x => x.IdempotencyKey);
+            stateEntity.Property(x => x.IdempotencyKey).HasMaxLength(36).IsRequired();
+            stateEntity.ToTable("RetiredLedgerKeys", table =>
+                table.HasCheckConstraint("CK_RetiredLedgerKeys_Key", "length(IdempotencyKey) = 36"));
+        });
 
         modelBuilder.Entity<AllowanceExecution>(stateEntity =>
         {
@@ -99,6 +123,14 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<LedgerEntry>(entryEntity =>
         {
             entryEntity.HasKey(x => x.Id);
+
+            entryEntity.HasIndex(entry => new { entry.OccurredAtUtc, entry.SequenceNumber });
+
+            entryEntity
+                .Property(x => x.OccurredAtUtc)
+                .HasConversion(
+                    value => value.UtcDateTime,
+                    value => new DateTimeOffset(DateTime.SpecifyKind(value, DateTimeKind.Utc)));
 
             entryEntity
                 .Property(x => x.Source)

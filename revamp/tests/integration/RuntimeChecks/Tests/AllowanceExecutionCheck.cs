@@ -237,6 +237,46 @@ internal static class AllowanceExecutionCheck
                     "Overflow was not isolated, retryable, and financially atomic.");
             }
 
+            long? balanceBeforeRetention;
+            int attemptsBeforeRetention;
+
+            await using (var database = new PocketMonkeyDbContext(options))
+            {
+                balanceBeforeRetention = await database.Accounts.Where(account => account.Id == accountId)
+                    .Select(account => account.BalanceMinorUnits).SingleAsync();
+                attemptsBeforeRetention = await database.AllowanceExecutions.Where(execution => execution.AccountId == accountId)
+                    .SumAsync(execution => execution.Attempts);
+                var execution = await database.AllowanceExecutions.SingleAsync(candidate => candidate.AccountId == accountId && candidate.BusinessMonth == 202610);
+                var creditedAt = execution.CreditedAtUtc;
+                execution.CreditedAtUtc = null;
+                await database.SaveChangesAsync();
+                var removed = await new TransactionRetention(database, settings with { TransactionRetentionMonths = 1 },
+                    clock, NullLogger<TransactionRetention>.Instance).RunAsync(default);
+                Require(removed == 2 && await database.LedgerEntries.AnyAsync(entry => entry.AccountId == accountId && entry.AllowanceMonth == 202610),
+                    "Allowance cleanup discarded a row without matching credited execution evidence.");
+
+                execution = await database.AllowanceExecutions.SingleAsync(candidate => candidate.AccountId == accountId && candidate.BusinessMonth == 202610);
+                execution.CreditedAtUtc = creditedAt;
+                await database.SaveChangesAsync();
+                removed = await new TransactionRetention(database, settings with { TransactionRetentionMonths = 1 },
+                    clock, NullLogger<TransactionRetention>.Instance).RunAsync(default);
+                Require(removed == 1, "Allowance cleanup did not resume when credited execution evidence was restored.");
+            }
+
+            await ScanAsync();
+            await ScanAsync(settings with { Timezone = "Pacific/Honolulu" });
+
+            await using (var database = new PocketMonkeyDbContext(options))
+            {
+                Require(await database.AllowanceExecutions.CountAsync(execution => execution.AccountId == accountId && execution.CreditedAtUtc != null) == 5 &&
+                    await database.LedgerEntries.CountAsync(entry => entry.AccountId == accountId && entry.Source == LedgerEntrySource.Allowance) == 2 &&
+                    await database.RetiredLedgerKeys.CountAsync() == 3 &&
+                    await database.AllowanceRevisions.CountAsync(revision => revision.AccountId == accountId) == 5 &&
+                    await database.AllowanceExecutions.Where(execution => execution.AccountId == accountId).SumAsync(execution => execution.Attempts) == attemptsBeforeRetention &&
+                    await database.Accounts.Where(account => account.Id == accountId).Select(account => account.BalanceMinorUnits).SingleAsync() == balanceBeforeRetention,
+                    "Pruned allowance history was re-credited or lost execution/configuration identity after restart/TZ change.");
+            }
+
             Console.WriteLine("allowance_execution_passed");
         }
         finally

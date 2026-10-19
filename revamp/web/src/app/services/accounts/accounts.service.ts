@@ -95,7 +95,11 @@ export class AccountsService {
   }
 
   configureAllowance(id: string, enabled: boolean, amount: string | null, expectedRevisionId: string | null): Promise<AllowanceState> {
-    return this.auth.write<AllowanceState>('PUT', `/api/accounts/${encodeURIComponent(id)}/allowance`, { enabled, amount, expectedRevisionId });
+    return this.auth.write<AllowanceState>('PUT', `/api/accounts/${encodeURIComponent(id)}/allowance`, {
+      enabled,
+      amount,
+      expectedRevisionId,
+    });
   }
 
   removeImage(id: string): Promise<void> {
@@ -129,6 +133,19 @@ export class AccountsService {
     }
 
     return this.read<LedgerHistory>(`/api/accounts/${encodeURIComponent(id)}/transactions?${query}`);
+  }
+
+  historyRetentionChanged(failure: unknown): boolean {
+    const payload: unknown = failure instanceof HttpErrorResponse ? failure.error : null;
+
+    return (
+      failure instanceof HttpErrorResponse &&
+      failure.status === 409 &&
+      typeof payload === 'object' &&
+      payload !== null &&
+      'code' in payload &&
+      payload.code === 'history_retention_changed'
+    );
   }
 
   errorKey(failure: unknown): string {

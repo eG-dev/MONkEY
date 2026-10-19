@@ -27,10 +27,9 @@ audit dump and findings worksheet are superseded; preserve N09's first-party
 artwork confirmation and the reusable exact-copy delivery checks. Detailed
 scanning/review and About integration are not completed by this preparation.
 
-Continue the remaining non-notice Step 3H work. The next concrete implementation
-gap is transaction retention: prepare its backend/data design proposal under the
-[accepted configuration policy](#transaction-retention-discussion), then obtain
-explicit approval before changing schema, configuration or cleanup behavior.
+Continue the remaining non-notice Step 3H work. Transaction retention follows the
+approved [R1 and 2026-10-19 amendments](#transaction-retention-backenddata-proposal-r1)
+and its [local delivery evidence](#retention-delivery-evidence-2026-10-19).
 Final self-hosted operator/privacy wording and operations/deployment acceptance
 remain separate work; postponing third-party work does not waive their gates.
 
@@ -40,7 +39,7 @@ placeholders and successful packaging tests are not approval or publication perm
 
 ## Decisions before implementation
 
-- The transaction-retention configuration policy below is accepted. Review and approve its backend/data cleanup design separately from the removed account/user lifecycle workflows before implementing automatic deletion.
+- Transaction-retention R1 and its automatic-cleanup, UTC-boundary and history-contract amendments are approved; keep this separate from the removed account/user lifecycle workflows. Local implementation checks do not waive hosted or release acceptance.
 - Draft new self-hosted legal information consistent with the selected AGPLv3-only license and review wording/acceptance requirements before publishing it. Do not reuse the cloud terms or privacy declaration as the replacement's legal text.
 - Agree which sensitive actions require confirmation and re-authentication.
 
@@ -388,13 +387,59 @@ Configuration policy accepted by the user on 2026-10-17 ("you retention proposal
 sounds good to me"). This accepts the setting and values below, not a backend/data
 cleanup design or authorization to delete existing transactions.
 
-- Accepted: Docker environment setting `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`, minimum positive value `1`, and `0` meaning unlimited retention. Configure duration independently of `TZ`; the minimum is a product choice, not a SQLite limit. Disabling cleanup cannot restore previously deleted history.
+- Accepted: Docker environment setting `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`, positive values from `1` through `120` (10 years), and `0` meaning unlimited retention. The maximum was accepted on 2026-10-19; use `0` when more than 10 years are needed. Configure duration independently of `TZ`; the range is a product choice, not a SQLite limit. Disabling cleanup cannot restore previously deleted history.
 - Still to design: whether the cutoff uses calendar months in the configured business timezone, which records it covers, and what happens when the value changes. The accepted default must not trigger deletion before the cleanup design is reviewed and implemented.
 - A plain age-based delete is not safe: [LedgerAdministration](../../revamp/backend/PocketMonkey.Host/Services/LedgerAdministration.cs) uses stored ledger entries for idempotency and posting sequence allocation. The [model](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs) also enforces opening-entry and account/month uniqueness. Preserve balances, initialization, retry guarantees, allowance credit identities, and consistent pagination before removing history.
 - Decide treatment of opening entries, audit details, and allowance execution records explicitly. Deleting visible history is not necessarily erasing every record of a transaction. Take a backup before any first destructive cleanup; disabling retention later cannot recover deleted history.
 - Automatic history removal requires a reviewed exception to the append-only policy in [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md) and must preserve [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md). Next, present a revisioned class/namespace-linked backend/data proposal for approval before changing schema, runtime configuration, or jobs. Record the accepted enduring retention design in an ADR, preserving the existing decision history; configuration-policy acceptance alone does not approve cleanup implementation.
 
 ### Transaction retention backend/data proposal R1
+
+**Current approved design, amended 2026-10-19:** R1's initial approval below is
+historical. The user rejected separate activation, accepted UTC cleanup while
+retaining `TZ` for allowance execution, and approved the history recommendation
+with "For A3 I'll go with your recommendation". These amendments supersede the
+activation and local-boundary requirements in the original text below:
+
+- Run cleanup automatically at application startup and daily for positive
+	durations; default `24`, `0` unlimited. No activation command, confirmation
+	prompt, `ActivatedAtUtc` or `RetentionActivated` field. Backups remain normal
+	operational guidance, not an application-enforced prerequisite. A restored
+	database may be pruned at startup; set `0` before starting it when cleanup must
+	remain disabled.
+- On 2026-10-19 the user limited positive durations to `1` through `120` months
+	(10 years), with `0` for longer/unlimited history. Enforce this in
+	`PocketMonkey.Host.Configuration.InstanceSettings.Read`, reject `121` and larger
+	values at startup, and cover `0`, `120` and `121` in the existing
+	`LedgerPersistenceCheck`. This configuration-only amendment changes no schema,
+	API contract, cleanup responsibility or R2 timestamp mapping.
+- Calculate the cutoff once per run as `00:00:00Z` on the first day of the current
+	UTC month minus the configured number of calendar months, clamped to the
+	earliest representable month. Prune only timestamps strictly before it. Do not
+	use `TZ`, host-local time or fixed day counts. Keep `TZ` for allowance execution
+	and timestamp display; do not rewrite stored UTC timestamps.
+- Add `int RetentionMonths` and `DateTimeOffset? RetentionCutoffUtc` to
+	`PocketMonkey.Host.Contracts.Accounts.LedgerHistoryResponse`. A null cutoff
+	means unlimited; otherwise it describes configured eligibility, not proof that
+	cleanup has finished. Both roles receive the same information. On
+	`history_retention_changed`, clear all cached pages for that account and reload
+	page one once; another conflict uses the existing error path, not a retry loop.
+	No new visible wording/layout is approved by this contract decision.
+- `LedgerMaintenanceState` keeps the proposed sequence high-water mark,
+	retention revision and nullable UTC `LastCompletedAtUtc`, but no activation
+	state. Worker eligibility depends only on duration and UTC cutoff. The schema
+	upgrade itself does not delete rows; the worker may prune afterward.
+- Retain all other approved R1 safeguards: permanent openings, audits, allowance
+	revisions/executions and retired keys; exact unchanged balances; durable
+	sequence allocation; atomic bounded cleanup and cursor invalidation. Verify a
+	populated upgrade, automatic startup cleanup, default/zero/invalid/changed
+	duration, exact UTC boundaries and `TZ` independence, concurrent posting,
+	rollback/restart, retired-key rejection, allowance deduplication, truthful
+	history metadata and bounded restart using isolated fixtures only.
+
+The remaining R1/A1 text records the original review, not the current activation
+or cutoff policy. There are no outstanding A1/A2/A3 policy decisions. See the
+delivery evidence below for actual implementation and verification scope.
 
 **R1 approved by the user on 2026-10-18:** "reviewed the proposal, sound good to
 me". Approval covers the calendar-month cutoff, permanent opening/audit/allowance
@@ -585,8 +630,10 @@ reopen the accepted policy choices or infer approval of unspecified contracts.
 
 #### Implementation-detail addendum A1
 
-**Draft for review, 2026-10-18. Not included in the R1 approval.** These details
-close R1's explicit open points without reopening its accepted retention policy.
+**Historical draft, 2026-10-18; resolved on 2026-10-19.** The numbered topics
+below were discussed as A1/A2/A3. Activation was rejected, UTC cutoff accepted,
+and history metadata/restart approved. The current amended design at the start
+of R1 is authoritative; this original draft is retained as review history.
 
 1. **Operator activation:** propose `activate-retention` as a local Host command,
 	following the operator-only routing in
@@ -631,6 +678,202 @@ operator activation, no deletion or workers during that command, a real isolated
 backup restore, skipped/ambiguous month boundaries, truthful inactive/unlimited
 history metadata, and bounded cursor restart. Do not run activation or prune
 operator data as part of implementation checks; use isolated fixtures only.
+
+### Ledger UTC mapping amendment R2
+
+**Approved for implementation, 2026-10-19.** The user explicitly approved R2 with
+"it's fine, go with it", quoting its application/API `DateTimeOffset`, UTC
+`DateTime` provider mapping, lossless populated-data conversion, LINQ cleanup and
+fail-closed handling of unexpected stored formats. Approval covers this narrow
+amendment, not conversion or pruning of an operator database. R1, accepted
+A1/A2/A3 policies and the 120-month finite configuration limit remain unchanged.
+The separate R1/R2 delivery evidence below distinguishes the earlier raw-SQL
+implementation from the mapped LINQ implementation.
+
+#### Scope and mapping
+
+- Keep `PocketMonkey.Storage.Entities.LedgerEntry.OccurredAtUtc` in
+	[LedgerEntry.cs](../../revamp/backend/PocketMonkey.Storage/Entities/LedgerEntry.cs)
+	as a non-null `DateTimeOffset`. Preserve the existing API response fields,
+	UTC instants, full 100-nanosecond precision, financial data and actor snapshots.
+- In `PocketMonkey.Storage.PocketMonkeyDbContext` in
+	[PocketMonkeyDbContext.cs](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs),
+	configure that property with an inline EF value converter: write
+	`DateTimeOffset.UtcDateTime` as provider `DateTime`; on read explicitly mark the
+	provider value as `DateTimeKind.Utc` and construct a zero-offset
+	`DateTimeOffset`. Do not interpret database values in host-local time. SQLite
+	still stores readable `TEXT`, now in the provider's canonical `DateTime` format.
+- Keep the existing `(OccurredAtUtc, SequenceNumber)` index and all other ledger
+	constraints. No new columns, entities, interfaces or converter helper class.
+	Do not change audit, allowance-execution/revision, maintenance or retired-key
+	timestamp mappings; this amendment is limited to the ledger query requirement.
+
+#### Populated-data upgrade
+
+- Add the `LedgerUtcDateTimeMapping` migration under the existing Storage
+	`Migrations` directory and namespace, updating the sole model snapshot. Keep
+	all existing migration IDs and operations, including `TransactionRetention`.
+- Normalize existing application-written UTC ledger strings into the provider
+	`DateTime` representation before serving or starting cleanup. Support the
+	existing space/`T` separators and zero-offset suffixes without changing the
+	instant. Preserve fractional seconds exactly; do not use SQLite `datetime()`
+	or `strftime()` to round-trip timestamp precision, truncate to milliseconds,
+	or append a second independently maintained timestamp column.
+- Validate supported UTC representations and calendar values before conversion.
+	Unexpected/malformed/nonzero-offset persisted values abort the upgrade
+	atomically with an actionable diagnostic, rather than guessing an offset,
+	partially converting history or silently skipping rows. Future nonzero-offset
+	application values are normalized to UTC by the write converter.
+- One-time data-normalization SQL in the migration is acceptable; the goal is
+	to remove handwritten selection SQL from business services, not to prohibit
+	migration SQL. A reverse representation conversion must preserve instants and
+	precision; it cannot restore transaction details removed by retention.
+
+#### Cleanup and unchanged contracts
+
+- Replace both raw selection queries in
+	`PocketMonkey.Host.Services.TransactionRetention` in
+	[TransactionRetention.cs](../../revamp/backend/PocketMonkey.Host/Services/TransactionRetention.cs)
+	with EF LINQ: eligible source and timestamp predicates, matching credited
+	allowance execution through `Any`, timestamp/sequence ordering and `Take(200)`.
+	Filtering, existence checks, ordering and the limit must execute in SQLite,
+	not through `AsEnumerable` or a full-ledger materialization.
+- Remove string-formatted boundaries, suffix inspection and the unsupported-text
+	diagnostic. Keep the missing-credit-evidence warning, serializable batch
+	transactions, retired-key insertion, deletion, audit, revision increments and
+	interrupted-batch recovery. Do not change worker ownership, cadence or activation.
+- HTTP routes, DTO types, money transport, roles, authorization, antiforgery,
+	history metadata and bounded cursor restart are unaffected. No Angular,
+	translation, UI-design or deployment change is required.
+
+#### Architecture and verification
+
+Follow [ADR-0004](../../docs/ADR/ADR-0004-language-and-timezone.md),
+[ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md) and
+[ADR-0017](../../docs/ADR/ADR-0017-backend-project-boundaries.md). ADR-0012 records
+the approved provider mapping with a dated rationale; no new architecture record
+or change to UTC retention/business-timezone scheduling.
+
+Extend the existing real SQLite
+[LedgerPersistenceCheck.cs](../../revamp/tests/integration/RuntimeChecks/Tests/LedgerPersistenceCheck.cs)
+with populated pre-R2 upgrades covering old UTC representations, seven-digit
+fractions, unchanged instants/balances/provenance, atomic rejection of malformed
+data and round-trip normalization under non-UTC host timezones. Prove LINQ
+translation, actual index use, chronological ordering and strict cutoff behavior
+one tick before/at/after the boundary. Retain the existing rollback, concurrency,
+sequence/key, allowance-evidence and deduplication checks. Rerun focused real-image
+desktop/mobile startup-retention tests, EF pending-model and migration-layout
+checks. Use isolated databases only; do not convert or prune an operator database.
+
+**Review gate closed:** R2's mapping, lossless conversion and fail-closed upgrade
+behavior were explicitly approved on 2026-10-19. Implementation must pass the
+focused verification above; approval alone is not verification.
+
+### R2 mapping delivery evidence, 2026-10-19
+
+Implemented the approved inline UTC `DateTime` converter, retaining application/API
+`DateTimeOffset` and all other timestamp mappings. Both cleanup selections now use
+LINQ with database-side predicates, credited-execution existence checks,
+timestamp/sequence ordering and a 200-row limit. No boundary formatting or stored
+suffix inspection remains in the service; missing allowance evidence still blocks
+deletion. The 120-month finite setting cap and unlimited `0` remain unchanged.
+
+Added `20261019113107_LedgerUtcDateTimeMapping` and its generated metadata in the
+existing Storage folder, with one snapshot and unchanged prior migration IDs.
+The data-only upgrade validates supported UTC formats and calendar values before
+updating anything, normalizes space/`T` and `+00:00`/`Z` forms without date-function
+rounding, and trims only insignificant fractional zeroes. Invalid data aborts
+atomically with a diagnostic. Down conversion restores the zero-offset suffix;
+it cannot recover details already pruned by retention.
+
+Actual focused verification:
+
+- Locked Release Host build passed. From `revamp/`, both
+	`dotnet run --configuration Release --project tests/integration/RuntimeChecks -p:RestoreLockedMode=true -- ledger-persistence`
+	and the corresponding `-- allowance-execution` probe passed.
+- The extended ledger probe covers populated pre-R2 data, leap/calendar edge
+	cases, seven-digit fractions, minimum/maximum instants, unchanged balances and
+	provenance, nonzero-offset write normalization, downgrade/re-upgrade and atomic
+	rejection of 15 malformed/unexpected persisted representations. It verifies
+	chronological ordering and cutoff exclusion at/after the boundary, retaining
+	the original batching, rollback, key/sequence and concurrency checks.
+- A test-only command interceptor captures the actual LINQ candidate command and
+	its parameters. SQLite `EXPLAIN QUERY PLAN` confirms use of
+	`IX_LedgerEntries_OccurredAtUtc_SequenceNumber` without a temporary sort; the
+	executed command includes the database-side 200-row limit.
+- `dotnet ef migrations has-pending-model-changes --project backend/PocketMonkey.Storage --startup-project backend/PocketMonkey.Host --context PocketMonkeyDbContext`
+	reported no model changes. The production image built successfully using
+	`npm --prefix revamp/web run build:image`.
+- `npm --prefix revamp/tests/e2e test -- ledger/persistence.spec.ts ledger/transaction-workflows.spec.ts --grep "history restarts once|ledger persistence" --workers=1`
+	selected and passed both desktop/mobile retention restart cases. The separately
+	named SQLite case was not selected by that filter; the complete ledger probe
+	was instead run directly in the production Linux image as UID 10001, network
+	disabled, test binaries mounted read-only, and `TZ=Pacific/Honolulu`. It returned
+	`ledger_persistence_passed`, including all R2 upgrade/precision checks.
+- Editor diagnostics were clear for touched C# files; tracked whitespace checks
+	passed. All checks used disposable SQLite files or fixture volumes, not an
+	operator database. No commit or push was performed.
+
+Full release-suite and hosted CI verification remain separate gates.
+
+### Retention delivery evidence, 2026-10-19
+
+Historical R1 results below describe the pre-R2 raw-SQL implementation. The R2
+section above is authoritative for the current mapping and selection queries.
+
+Implemented the accepted R1 amendments in Storage/Host and the existing history
+caller. Added `TransactionRetention` migration under the sole Storage migration
+directory; it creates durable maintenance/key state, initializes the counter from
+existing history and adds the timestamp/sequence eligibility index without
+deleting financial rows. Posting allocates durable sequences and rejects retired
+keys inside its financial transaction. The hosted worker prunes bounded atomic
+batches at startup/daily; duration `0` disables cleanup without activation state.
+
+The indexed query handles the application's persisted UTC text representation,
+including subsecond timestamps, and rechecks candidate instants before deletion.
+Unsupported offset representations and allowance rows lacking matching credited
+execution evidence are preserved with a bounded diagnostic rather than guessed
+away. Openings, balances, financial audit and allowance identities remain intact.
+History reads bind page/snapshot/revision in one transaction; old and pre-upgrade
+cursors restart via `409`. Angular clears cached pages and retries page one once.
+No visible layout/text or catalog keys were added.
+
+Actual local verification:
+
+- Locked .NET Release build and Angular SSR build passed; production Linux image
+	built with `npm --prefix revamp/web run build:image`.
+- Real SQLite `ledger-persistence` probe passed: populated upgrade, signed money,
+	configuration boundaries/default/unlimited, exact UTC month/year/tick cutoff,
+	clamping, atomic rollback, committed-batch interruption/restart, retired keys,
+	monotonic sequence after high rows are pruned, legacy/stale cursors, history
+	metadata, and concurrent posting/cleanup with normal snapshot behavior.
+- Real SQLite `allowance-execution` probe passed: missing credit evidence blocks
+	cleanup; restoration permits it; retained revisions/executions prevent repeated
+	credit attempts or balance changes after pruning, restart and `TZ` changes.
+- `npm --prefix revamp/tests/e2e test -- ledger/ --workers=1` initially passed
+	13/14 cases, including the new desktop/mobile startup-retention flow. The sole
+	failure was a test-runner exact-output mismatch from an extra success line, not
+	a financial failure; the original output contract was restored.
+- `npm --prefix revamp/tests/e2e test -- ledger/persistence.spec.ts accounts/allowance-execution.spec.ts --workers=1`
+	then passed all 7 cases, including the repaired caller and desktop/mobile
+	allowance crash/retry/recovery checks.
+- After adding the opening-endpoint expired-key mapping and rebuilding the image,
+	`npm --prefix revamp/tests/e2e test -- ledger/transaction-workflows.spec.ts --grep "history restarts once" --workers=1`
+	passed both desktop/mobile cases. These use real login, BFF, backend, SQLite and
+	worker startup; they assert a real `409` followed by one successful reload,
+	cleared previous-page cache, permanent signed opening/balance, expired-key
+	rejection across posting endpoints, identical Member history and denied writes.
+- E2E TypeScript checking passed. All fixtures used disposable databases and
+	named Docker volumes; no operator database was activated or pruned.
+- EF `has-pending-model-changes` reported none. Guardrails passed for all 23
+	Storage migration artifacts and the updated links/ADRs; tracked diff whitespace
+	checks passed. Compose configuration verified forwarding of default `24`,
+	unlimited `0` and custom `37` without starting an instance. See the maintained
+	[environment contract](configuration.md#environment-contract).
+
+The full release suite and hosted CI were not run for this revision. Final
+operator/legal wording, ORT/notices review and deployment/publication gates remain
+separate; this delivery does not mark the complete Step 3H acceptance gate done.
 
 ## Acceptance gate
 

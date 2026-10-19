@@ -10,6 +10,7 @@ public sealed record InstanceSettings
     public required string Timezone { get; init; }
     public required string DefaultLocale { get; init; }
     public string Currency { get; init; } = "EUR";
+    public int TransactionRetentionMonths { get; init; } = 24;
     public LogLevel LogLevel { get; init; }
 
     public string ImagesPath => Path.Combine(DataPath, "images");
@@ -61,6 +62,12 @@ public sealed record InstanceSettings
         }
 
         var publicUrl = configuration["MONKEY_PUBLIC_URL"];
+        if (!int.TryParse(configuration["MONKEY_TRANSACTION_RETENTION_MONTHS"] ?? "24",
+            NumberStyles.None, CultureInfo.InvariantCulture, out var retentionMonths) || retentionMonths > 120)
+        {
+            throw new InvalidOperationException("MONKEY_TRANSACTION_RETENTION_MONTHS must be an integer from 0 to 120; 0 means unlimited retention.");
+        }
+
         if (!environment.IsDevelopment() || publicUrl is not null)
         {
             if (!Uri.TryCreate(publicUrl, UriKind.Absolute, out var origin)
@@ -87,6 +94,7 @@ public sealed record InstanceSettings
             Timezone = timezone,
             DefaultLocale = locale,
             Currency = currency,
+            TransactionRetentionMonths = retentionMonths,
             LogLevel = logLevel
         };
     }

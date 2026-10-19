@@ -41,10 +41,13 @@ builder.Services.AddScoped<AccountImages>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<AllowanceAdministration>();
 builder.Services.AddScoped<AllowanceExecutor>();
+builder.Services.AddScoped<TransactionRetention>();
+
 if (!isOperatorCommand)
 {
 	builder.Services.AddHostedService<ImageCleanup>();
 	builder.Services.AddHostedService<AllowanceWorker>();
+	builder.Services.AddHostedService<TransactionRetentionWorker>();
 }
 
 builder.Services.AddDbContext<PocketMonkeyDbContext>(options => options.UseSqlite(settings.ConnectionString));

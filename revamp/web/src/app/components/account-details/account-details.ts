@@ -472,7 +472,23 @@ export class AccountDetails {
     this.historyError.set('');
 
     try {
-      const result = await this.service.history(id, cursor);
+      let result: LedgerHistory;
+
+      try {
+        result = await this.service.history(id, cursor);
+      } catch (failure: unknown) {
+        if (!this.service.historyRetentionChanged(failure) || this.account()?.id !== id) {
+          throw failure;
+        }
+
+        this.historyPages = [];
+        this.history.set([]);
+        this.nextCursor.set(null);
+        this.historyPage.set(0);
+        cursor = null;
+        page = 0;
+        result = await this.service.history(id, null);
+      }
 
       if (this.account()?.id === id) {
         this.historyTimezone.set(result.timezone);

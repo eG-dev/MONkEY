@@ -12,5 +12,7 @@ public enum LedgerError
     IdempotencyConflict,
     BalanceOverflow,
     InvalidPageSize,
-    InvalidCursor
+    InvalidCursor,
+    TransactionHistoryExpired,
+    HistoryRetentionChanged
 }

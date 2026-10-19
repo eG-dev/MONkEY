@@ -7,4 +7,6 @@ internal sealed record LedgerHistoryCursor
     public long Snapshot { get; init; }
 
     public long Before { get; init; }
+
+    public long? RetentionRevision { get; init; }
 }

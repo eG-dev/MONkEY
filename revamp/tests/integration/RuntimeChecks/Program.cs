@@ -1,5 +1,12 @@
 using RuntimeChecks.Tests;
 
+if (args is ["retention-fixture", var retentionPath, var retentionAccount])
+{
+    await LedgerPersistenceCheck.ConfigureRetentionFixtureAsync(retentionPath, retentionAccount);
+
+    return;
+}
+
 if (args is ["allowance-fixture", var path, var accountId, var mode])
 {
     await AllowanceExecutionCheck.ConfigureFixtureAsync(path, accountId, mode);

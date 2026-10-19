@@ -26,6 +26,8 @@ test('manual transactions enforce roles, positive inputs, initialization and CSR
     timezone: 'Europe/Berlin',
     entries: [],
     nextCursor: null,
+    retentionMonths: 24,
+    retentionCutoffUtc: expect.any(String),
   });
   expect(await (await csrfWrite(request, 'POST', path, payload)).json()).toEqual({ code: 'not_initialized' });
   expect(

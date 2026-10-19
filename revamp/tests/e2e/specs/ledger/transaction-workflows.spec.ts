@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import { resolve } from 'node:path';
 
-import { test, expect, bootstrapManager, csrfWrite, login, signIn } from '../../fixtures';
+import { test, expect, bootstrapManager, csrfWrite, login, signIn, docker, image, waitReady, containerOrigin } from '../../fixtures';
 import { createAccount, createReader, openTransactionForm } from '../../helpers/ledger';
 
 test.use({ ignoreHTTPSErrors: true });
@@ -86,7 +87,10 @@ test.describe('transaction workflow', () => {
     await expect(balance).toHaveClass(/amount-negative/);
 
     await openTransactionForm(page, labels.record);
-    await page.screenshot({ path: test.info().outputPath('transaction-dialog.png'), fullPage: true });
+    await page.screenshot({
+      path: test.info().outputPath('transaction-dialog.png'),
+      fullPage: true,
+    });
 
     await expect(withdrawal).toHaveAccessibleName(labels.withdrawal);
 
@@ -247,4 +251,129 @@ test.describe('transaction workflow', () => {
 
     expect(errors).toEqual([]);
   });
+});
+
+test('history restarts once after startup retention invalidates cached pages', async ({ page, request, instance }) => {
+  const manager = bootstrapManager(instance);
+
+  await login(request, manager);
+
+  const account = await createAccount(request, 'Retention history');
+  const reader = await createReader(request);
+
+  await login(request, manager);
+
+  expect(
+    (
+      await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, {
+        amount: '-0.01',
+        idempotencyKey: randomUUID(),
+      })
+    ).status(),
+  ).toBe(200);
+
+  const path = `/api/accounts/${account.id}/transactions`;
+  const expired = {
+    amount: '0.01',
+    source: 'deposit',
+    idempotencyKey: randomUUID(),
+    comment: 'Expired detail',
+  };
+
+  for (let index = 0; index < 25; index++) {
+    expect(
+      (
+        await csrfWrite(
+          request,
+          'POST',
+          path,
+          index === 0
+            ? expired
+            : {
+                ...expired,
+                idempotencyKey: randomUUID(),
+              },
+        )
+      ).status(),
+    ).toBe(200);
+  }
+
+  const before = await (await request.get(`${path}?pageSize=20`)).json();
+
+  await signIn(page, manager, `/accounts/${account.id}`);
+  await expect(page.getByTestId('ledger-entry')).toHaveCount(20);
+  await page.locator('#account-details-history-next').click();
+  await expect(page.getByTestId('ledger-entry')).toHaveCount(6);
+  await page.locator('#account-details-history-previous').click();
+  await expect(page.getByTestId('ledger-entry')).toHaveCount(20);
+
+  docker('stop', instance.container);
+
+  expect(
+    docker(
+      'run',
+      '--rm',
+      '--network',
+      'none',
+      '--user',
+      '10001:10001',
+      '--entrypoint',
+      'dotnet',
+      '--mount',
+      `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0')},target=/checks,readonly`,
+      '--mount',
+      `type=volume,source=${instance.volume},target=/data`,
+      image,
+      '/checks/RuntimeChecks.dll',
+      'retention-fixture',
+      '/data/monkey.db',
+      account.id,
+    ),
+  ).toBe('retention_fixture_ready');
+
+  docker('start', instance.container);
+  await waitReady(containerOrigin(instance.container));
+  await expect.poll(async () => (await (await request.get(path)).json()).entries.length).toBe(1);
+
+  const conflicts = await request.get(`${path}?cursor=${encodeURIComponent(before.nextCursor)}`);
+
+  expect(conflicts.status()).toBe(409);
+  expect(await conflicts.json()).toEqual({ code: 'history_retention_changed' });
+  expect(await (await csrfWrite(request, 'POST', path, expired)).json()).toEqual({ code: 'transaction_history_expired' });
+  const expiredOpening = await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, expired);
+
+  expect(expiredOpening.status()).toBe(409);
+  expect(await expiredOpening.json()).toEqual({
+    code: 'transaction_history_expired',
+  });
+  expect((await (await request.get(`/api/accounts/${account.id}`)).json()).balance).toBe('0.24');
+
+  const statuses: number[] = [];
+
+  page.on('response', (response) => {
+    if (response.request().method() === 'GET' && new URL(response.url()).pathname === path) {
+      statuses.push(response.status());
+    }
+  });
+
+  await page.locator('#account-details-history-next').click();
+  await expect(page.getByTestId('ledger-entry')).toHaveCount(1);
+  await expect(page.getByTestId('ledger-entry')).toContainText('Opening');
+  await expect(page.locator('#account-details-history-next')).toBeDisabled();
+  await expect(page.locator('#account-details-history-previous')).toBeDisabled();
+  expect(statuses).toEqual([409, 200]);
+
+  const retained = await (await request.get(path)).json();
+
+  await login(request, reader);
+
+  expect(await (await request.get(path)).json()).toEqual(retained);
+  expect(
+    (
+      await csrfWrite(request, 'POST', path, {
+        ...expired,
+        idempotencyKey: randomUUID(),
+      })
+    ).status(),
+  ).toBe(403);
 });

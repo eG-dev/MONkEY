@@ -47,6 +47,8 @@ public static class OpeningBalanceEndpoints
 
         LedgerError.IdempotencyConflict => Failure("idempotency_conflict", StatusCodes.Status409Conflict),
 
+        LedgerError.TransactionHistoryExpired => Failure("transaction_history_expired", StatusCodes.Status409Conflict),
+
         _ => throw new ArgumentOutOfRangeException(nameof(error), error, "Unsupported opening error.")
     };
 
