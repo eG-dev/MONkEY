@@ -5,7 +5,180 @@ Review Toolkit (ORT) for the dependency/license overview. The previous bespoke
 inventory and notice-review baseline are superseded. This is preparation, not a
 completed ORT installation or a release compliance review.
 
-## Implementation Checklist
+## Timing
+
+The user confirmed on 2026-10-19: source-only public GitHub development comes
+first; Docker images and releases come later. ORT setup, comprehensive dependency
+and asset review, and complete About integration are deferred to final release preparation
+after the repository can become public. Source publication still requires rights
+and applicable license/copyright/NOTICE material for included code and assets,
+plus a review of repository history for private data or credentials. This timing
+does not mark those checks complete or authorize a visibility/publishing action.
+
+## Staged Delivery
+
+1. **Manual first version:** prepare reviewed entries for Angular, .NET, ASP.NET
+  Core, Entity Framework Core, SQLite, Taiga UI, Lucide and Roboto. Resolve the actual package/asset
+  identities and shipped versions; retain required original license, copyright
+  and NOTICE texts with provenance. Handcrafted collection is acceptable and
+  does not require ORT. Use the canonical root notice document and existing
+  exact-copy delivery; do not create a second maintained notice bundle. An
+  initial About presentation can use these reviewed entries independently of
+  tooling, following the existing UI review process. Mark the set as partial;
+  the selected product names do not establish complete distribution coverage.
+2. **Tool-assisted expansion:** at the end of the work order, establish ORT using
+  the checklist below, compare its findings with the reviewed initial entries,
+  supplement missing transitive/native/runtime/OS/asset coverage and extend the
+  notices/About presentation. Preserve reviewed original material and record
+  unresolved findings rather than treating a successful scan as approval.
+
+For SQLite, include `Microsoft.EntityFrameworkCore.Sqlite`,
+`Microsoft.Data.Sqlite.Core` and the actual `SQLitePCLRaw` binding/bundle/native
+packages resolved by the lockfile. The compiled SQLite engine (for example,
+`libe_sqlite3.so` on Linux) is native code invoked by the managed .NET bindings.
+SQLite's engine is public domain; that does not make the independently licensed
+.NET provider, bindings or package material public domain. Check their original
+terms separately, without treating the package version as the engine version.
+
+The user selected these stages, added ASP.NET Core/SQLite and explicitly accepted
+known gaps in the initial coverage on 2026-10-19. This records the delivery scope,
+not completed notice collection or approval of any particular upstream text.
+Required notices/rights for material already distributed cannot be deferred by
+calling its overview partial. Preserve upstream accompanying notices, resolve
+applicable obligations before distribution or withhold the affected artifact.
+Source-only publication and image/release checks remain distinct as above.
+
+## Manual Mapping Concept R1
+
+**Draft for review, 2026-10-19.** Define and exercise the manual input-to-About
+mapping before implementing ORT or another discovery adapter. This proposal does
+not create a catalog, collect original documents or change the UI. ADR-0020 still
+selects ORT; the proposed data contract is deliberately independent of that tool.
+
+### Input Contract
+
+Use one proposed `revamp/notices/catalog.json` containing three collections:
+
+| Collection | Purpose | Proposed Fields |
+| --- | --- | --- |
+| `components` | Exact reviewed package, runtime, engine or asset identities; not a complete dependency graph | Stable `id`, `kind`, `name`, exact `version`, optional package URL (PURL), `versionEvidence`, `upstreamUrl`, `licenseExpression` where verified, `licensingStatus`, `reviewStatus`, `documentIds` |
+| `entries` | Curated grouping and ordering for About | Stable `id`, `displayName` or translation key, `componentIds`; array order is presentation order |
+| `documents` | Original local texts and their provenance | Stable `id`, `kind`, repository-relative `path`, original `upstreamUrl` and revision/version evidence, `sha256` |
+
+Components reference document IDs; entries reference component IDs. Resolve paths
+only from the document records, never from a display name, guessed package name
+or runtime URL. A component can have several documents; components can share a
+document only when the original bytes and applicability match. A shared license
+does not replace component-specific NOTICE or copyright material.
+
+Keep an engine version separate from its NuGet bundle version. Represent an
+unresolved value explicitly in draft input, not with a guessed version or SPDX
+identifier. Public-domain status has its own `licensingStatus` and upstream
+evidence; it is not a fabricated permissive license. Preserve original-language
+legal texts unchanged; translate only UI labels, not upstream documents.
+
+Example relationship, with IDs illustrative rather than a completed inventory:
+
+```text
+About entry: sqlite
+  component: microsoft-data-sqlite-core@10.0.12
+    documents: provider-license, provider-copyright
+  component: sqlitepclraw-core@2.1.12
+    documents: binding-license, binding-notice-if-applicable
+  component: sqlitepclraw-native-bundle@2.1.12
+    documents: bundle-material-as-reviewed
+  component: sqlite-engine@<verified-engine-version>
+    documents: sqlite-public-domain-statement
+```
+
+These labels do not assert that the example documents exist or are all required.
+Use the resolved package chain and actual upstream artifacts when collecting the
+first set. The same mechanism supports Angular, runtime/framework groups, fonts
+and icons without forcing one display row per package. About must retain each
+member's own version/license association rather than assigning a single guessed
+version or license to a mixed group.
+
+### Artifact Locations And Ownership
+
+| Location | Role |
+| --- | --- |
+| Proposed `revamp/notices/catalog.json` | Maintained reviewed identities, explicit mappings and provenance; manual first, later supplemented by proposed adapter changes |
+| Proposed `revamp/notices/originals/<component-id>/<version>/...` | Tracked, unmodified upstream license/NOTICE/copyright/evidence documents; shared documents reference one physical file where appropriate |
+| Root `THIRD-PARTY-NOTICES.txt` | Canonical assembled distribution output, deterministically generated and committed for source recipients; not independently hand-edited |
+| Existing ignored `revamp/web/src/generated/about/` | Generated About entry data with resolved local document references/texts, plus downloadable documents; no second maintained catalog |
+| Existing ignored `revamp/.build/about/` | Prepared container inputs, extended to capture this same catalog/document set before packaging |
+
+The assembler would generate both the root document and About assets from the
+same reviewed inputs. Order output deterministically and associate every text
+with its applicable component/version. Keep existing exact-copy checks so the
+root document shipped by the tested image matches the committed distribution
+output. Generated asset URLs are derived by the assembler under the existing
+`/licenses/` location, not entered separately in the catalog or Angular component.
+The container build must receive the original inputs as well as verify the
+assembled output; it must not rely on files outside its prepared build context.
+
+This changes the current ownership rule: today the root notice file is maintained
+and copied, while this concept makes originals/mappings authoritative and the
+root file a generated distribution output. Amend ADR-0020 after concept approval
+before implementing that change. Do not maintain both a hand-edited root bundle
+and independently edited original texts.
+
+### Manual Workflow And Later Automation
+
+Use the exact shipped package or matching upstream release/revision as the primary
+source. Reasonably rely on its supplied license, copyright and NOTICE information
+unless there are obvious gaps or contradictions. Preserve original texts and
+provenance; do not routinely audit upstream authorship or reconstruct its
+compliance process. Our review checks applicability to the actual version and
+bundled material, not whether we can perform a more exhaustive investigation than
+the upstream project. A project's own license does not automatically cover all
+its dependencies. Record missing or conflicting material as an unresolved finding
+rather than inventing notices or claiming complete coverage. The same principle
+applies to manual collection and later automated adapters.
+
+1. Select an actual shipped component from a lockfile, runtime/image input or
+   local asset. Record its exact identity/version and supporting evidence.
+2. Obtain its original legal documents from the matching package or verified
+   upstream revision. Store unchanged bytes, provenance and hashes locally.
+3. Review licensing/status and attach document IDs to the component. Map the
+   component to an existing About entry or add an explicitly curated entry.
+4. Run the assembler and checks, inspect the root notice output and About
+   association, then commit inputs and the assembled root document together.
+5. Later, let ORT or another adapter propose component/version/document changes
+   into this same contract for review. Do not make the UI consume tool-specific
+   reports, silently replace reviewed texts or infer About grouping automatically.
+   Newly discovered unmapped components remain visible as review findings, not
+   silently dropped or presented as reviewed.
+
+First exercise the entire path with one managed package and one asset, then add
+the rest of the agreed initial set. No automatic registry lookup, notice download
+at runtime, backend endpoint, database or bespoke dependency-discovery engine.
+The small assembler validates explicit reviewed inputs; it does not rediscover
+the dependency graph or recreate the removed inventory/reconciliation pipeline.
+
+### Acceptance Checks And Review
+
+- Reject duplicate IDs, dangling references, missing/out-of-root documents,
+  mismatched hashes, stale assembled output and generated URL collisions.
+- Check recorded package versions against their stated lockfile evidence for
+  supported npm/NuGet inputs. Keep runtime/asset evidence explicit and reviewed;
+  do not pretend all versions can be inferred from package locks.
+- Mark partial overall coverage independently of individual component review.
+  Reject unreviewed/incomplete mapped entries in release validation; development
+  input may retain explicit unresolved states. Unmapped discovery results must
+  not be interpreted as absent obligations.
+- Verify one-to-many grouping, component-specific license/NOTICE associations,
+  deterministic output, exact original text bytes and stale-version rejection.
+- Use the existing About layout and local assets. Update the applicable design
+  references for real versions, licensing and document states before Angular
+  implementation, following the existing UI approval gates. Verify search,
+  keyboard/mobile reading and network-independent access with the real image.
+
+**Review requested:** agree the three-collection mapping, tracked originals and
+generated-root ownership before adding input files, assemblers or UI integration.
+File names/fields above are proposed, not implemented or an approved schema.
+
+## ORT Implementation Checklist
 
 - Evaluate and pin an ORT distribution and its prerequisites. Record a tested,
   reproducible invocation here before adding CI automation. Do not use an
@@ -23,8 +196,9 @@ completed ORT installation or a release compliance review.
   these automatically. Record supplemental coverage and remaining gaps.
 - Keep review decisions and manually collected original license, copyright and
   NOTICE files separate from generated reports. Associate them with exact
-  package identities/versions and upstream provenance. Establish the local
-  mapping format after inspecting real ORT output; do not build another parser
+  package identities/versions and upstream provenance. First exercise the manual
+  mapping contract above; later assess ORT output as an adapter to that contract,
+  not as the format the UI must consume. Do not build another dependency parser
   or competing inventory. Automated download/scanning is optional.
 - Evaluate ORT reporting/notice output before choosing how to assemble the
   canonical distribution document. Review required text, copyright, NOTICE,
@@ -43,7 +217,8 @@ ORT and remain unchanged.
 
 Replace the temporary document only with reviewed, release-matched material,
 bundle it before image verification, and publish only the tested artifact.
-Incomplete notices and unresolved source obligations remain publication blockers.
+Incomplete distribution notices and unresolved source obligations remain public
+image/release blockers; the source-only publication checks above remain separate.
 About's illustrative component rows are not an ORT report or a completed review.
 
 ## Preserved Provenance
@@ -54,5 +229,7 @@ About's illustrative component rows are not an ORT report or a completed review.
   needs documenting. Do not ask for the same authorship confirmation again.
 
 No ORT version, successful scan, complete coverage or license approval is claimed
-yet. Detailed collection/review and About integration remain deferred until
-release preparation; this change selects and prepares the replacement approach.
+yet. The initial manual notice set may be delivered before tooling; comprehensive
+collection/review and complete About integration remain deferred until release
+preparation after source-only public development can begin. This does not waive
+rights/notices for the published repository contents.

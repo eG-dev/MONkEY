@@ -33,9 +33,41 @@ and its [local delivery evidence](#retention-delivery-evidence-2026-10-19).
 Final self-hosted operator/privacy wording and operations/deployment acceptance
 remain separate work; postponing third-party work does not waive their gates.
 
-Revisit third-party scope, rights, notices, source obligations and About notice
-integration during final release preparation, before publication. Existing
-placeholders and successful packaging tests are not approval or publication permission.
+On 2026-10-19 the user explicitly confirmed source-only GitHub publication first,
+with Docker images and releases later. Put ORT setup, comprehensive third-party
+dependency/asset review and complete About notice integration at the end of the work order,
+after the repository can become public and before image/release distribution.
+This supersedes the earlier blanket pre-publication timing, not the obligations:
+source publication still requires rights and applicable notices for included
+code/assets plus review of repository history for private data or credentials.
+No public visibility change, image publication or completed rights review is
+authorized or claimed by recording this sequence. Existing notice placeholders
+are development material, not approved distribution notices.
+
+The user further selected staged notice delivery on 2026-10-19: first provide a
+handcrafted, reviewed set covering Angular, .NET, ASP.NET Core, Entity Framework
+Core, SQLite, Taiga UI, Lucide and Roboto, with actual identities/versions and
+required original texts. Include SQLite's provider/binding/native bundle chain,
+distinguishing the public-domain engine from separately licensed wrappers.
+Its initial About presentation need not wait for ORT; follow existing UI review
+gates when implementing it. Then expand coverage and fill gaps using ORT and
+supplemental review at the end of the work order. Keep the first set explicitly
+partial, not an assertion that the selected names cover everything shipped. The
+user explicitly accepts known initial coverage gaps; that is not a completed
+review or an assertion that redistribution obligations are satisfied. This
+does not authorize postponing required notices for material already distributed;
+preserve accompanying upstream material and resolve distribution obligations or
+withhold the affected artifact. See the
+[staged delivery checklist](../../revamp/notices/README.md#staged-delivery).
+
+The next notice task is concept review, not immediate collection or ORT setup:
+the user requested a manual-first package/component-to-About mapping with explicit
+artifact locations and associations. See
+[manual mapping concept R1](../../revamp/notices/README.md#manual-mapping-concept-r1).
+It proposes separate component, About-entry and original-document records, then
+one deterministic assembly path reusable by later automation. The input format,
+tracked-originals/generated-root ownership change and UI integration are drafts;
+review them before implementation or amending ADR-0020's current ownership rule.
 
 ## Decisions before implementation
 

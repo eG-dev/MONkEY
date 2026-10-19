@@ -1,7 +1,7 @@
 # ADR-0006 GitHub Delivery
 
 _Creation date_: 2026-10-04
-_Updated_: 2026-10-10
+_Updated_: 2026-10-19
 
 ## Context
 
@@ -16,6 +16,7 @@ only when an older version needs fixes independently of ongoing development.
 ## Decision
 
 - Build and verify the project through GitHub Actions, without developer-machine or Azure credentials.
+- Treat public source development separately from public image/release distribution. The repository may become public before ORT setup, comprehensive dependency/asset review and About integration, subject to rights, required notices and a private-data/credential review for the material and history being published. Public repository visibility does not authorize image publication or waive the release gates under [ADR-0020](ADR-0020-shipped-component-inventory.md).
 - Publish versioned GitHub Releases, with Docker as the primary runtime distribution and accompanying deployment/upgrade information.
 - Use GitHub Container Registry (GHCR) as the primary public Docker image registry. Explicitly configure public package visibility and verify anonymous pulls before advertising a release; public repository visibility alone does not establish package visibility.
 - Gate publishing on the relevant E2E, integration, container, and security checks. Publish the tested artifact, record its source revision and image digest, and associate packages with their source repository.
@@ -68,3 +69,7 @@ only when an older version needs fixes independently of ongoing development.
 - Draft preparation is a trusted release-metadata operation with narrowly scoped
 	`contents: write` permission, not a verification job or a reason to grant
 	verification jobs publishing privileges.
+
+## Change History
+
+- 2026-10-19: Approved source-only public development before completion of third-party release preparation; public Docker images and versioned releases remain separately gated.

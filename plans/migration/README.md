@@ -11,7 +11,7 @@ Status: Step 0 guardrails are implemented; milestone 1 has a locally verified bu
 - Members can read all accounts; no account assignments are required.
 - Angular SSR with Taiga UI and locally packaged Lucide icon fonts/assets.
 - German and English are available from the first release; localization must support additional community-contributed languages.
-- Intended publication as a GitHub open-source project under `AGPL-3.0-only`; see [ADR-0018](../../docs/ADR/ADR-0018-project-license.md). Document translation contributions and verify licensing rights, third-party notices, and corresponding-source distribution before publication.
+- Intended publication as a GitHub open-source project under `AGPL-3.0-only`; see [ADR-0018](../../docs/ADR/ADR-0018-project-license.md). Source-only public development may precede ORT and comprehensive third-party release preparation, but still requires rights/notices for included material and a private-data/history review. Public Docker images and releases require their complete notices, corresponding-source delivery and separate release gates.
 - Builds and verification run through GitHub Actions; versioned distributions are published as GitHub Releases, with a Docker image as the primary runtime artifact.
 - ASP.NET Core backend; retaining .NET for business logic is acceptable.
 - Prefer one application container, with persistent storage outside its writable layer.
@@ -56,11 +56,21 @@ Work-order update (2026-10-18): the user selected ORT and approved preparing for
 it while removing the superseded notice approach. The bespoke audit dump and
 review worksheet are replaced by an [ORT preparation guide](../../revamp/notices/README.md),
 preserving the artwork-authorship confirmation and reusable notice delivery.
-Detailed scanning/review and About integration remain release-preparation work.
-Continue the non-notice
-[Step 3H work](03h-lifecycle.md#current-work-order), starting with the required
-transaction-retention design review. This is a sequencing decision, not removal
-of licensing/source obligations or release gates.
+On 2026-10-19 the user confirmed source-only GitHub publication first, with Docker
+images and releases later. ORT setup, comprehensive dependency/asset scanning and
+review, and complete About integration move to the end, after the repository can become
+public and before artifact distribution. Source publication still requires rights
+and applicable notices for included material plus private-data/credential review.
+Continue the non-notice [Step 3H work](03h-lifecycle.md#current-work-order);
+retention is locally implemented and verified. This sequencing does not waive
+licensing/source obligations or independently approve publication.
+
+Notice delivery is staged: first a manually reviewed Angular, .NET, ASP.NET Core,
+EF Core, SQLite (including provider/bindings/native bundle), Taiga UI, Lucide and
+Roboto set, with optional initial About presentation before
+ORT; later tool-assisted expansion under the
+[staged checklist](../../revamp/notices/README.md#staged-delivery). Partial
+overview coverage does not postpone applicable redistribution obligations.
 
 | Order | Plan | Outcome |
 | --- | --- | --- |

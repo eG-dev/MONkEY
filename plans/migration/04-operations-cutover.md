@@ -11,6 +11,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 
 ## Deployment contract
 
+- Separate source-only GitHub visibility from artifact publication under [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md) and [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md). The source repository may become public before ORT/comprehensive third-party asset review and About integration, after checking rights/notices for included material and repository history for private data/credentials. Keep public Docker images and releases deferred until their independent release and distribution gates pass; no visibility change or publishing action is implied by this plan.
 - Publish a versioned image and a minimal example deployment with port, volume, and configuration documented.
 - Complete the [GitHub build and release workflow](builds-releases.md), publishing the verified container and matching deployment assets with a versioned GitHub Release.
 - Document the [ENV contract](configuration.md), including `TZ` and `MONKEY_DATA_PATH`, separately from host volume paths and published ports.
@@ -27,7 +28,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - Include example translation changes, placeholder/pluralization rules, local preview commands, and the same validation command used by CI.
 - Require German and English completeness and validate syntax/key/placeholder consistency on translation pull requests. Define an explicit completeness policy for additional languages.
 - Document review expectations for translated privacy/terms content; do not treat community wording as automatically legally equivalent.
-- Use the selected `AGPL-3.0-only` license under [ADR-0018](../../docs/ADR/ADR-0018-project-license.md). Review third-party asset/translation licensing, project/contributor licensing rights, and repository history for private data or credentials before public publication.
+- Use the selected `AGPL-3.0-only` license under [ADR-0018](../../docs/ADR/ADR-0018-project-license.md). Before source-only public visibility, review project/contributor rights, licensing/notices for included third-party code/assets/translations, and repository history for private data or credentials. Defer comprehensive ORT and shipped-component/asset review to final release preparation, before public image/release distribution.
 - Follow the [self-hosted legal-content direction](03h-lifecycle.md#self-hosted-legal-content-and-license): fresh German/English operator notices, responsibility for hosting/updates/backups, and legally qualified warranty/liability disclaimers consistent with AGPL. Include the license and required notices in source and release distributions, and make the corresponding source for the distributed revision available. Artifact packaging, source-offer presentation, and rights/notice review remain release gates, not completed by selecting the license.
 - External translation platforms are optional future tooling, not required for contributors or for running the application.
 

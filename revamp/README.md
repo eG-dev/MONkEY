@@ -137,6 +137,23 @@ dependency/license overview instead of a bespoke inventory. See the
 reproducible invocation, reporting and coverage checks. ORT is not installed or
 required by CI yet. Original notices may still be collected manually.
 
+Source-only public GitHub development may begin before ORT setup, comprehensive
+dependency/asset review and complete About integration. Those tasks are deferred to final
+release preparation, before public Docker images or releases. Source publication
+still requires rights and applicable notices for included code/assets and review
+of repository history for private data or credentials. This sequence does not
+authorize a visibility change or mark any publication gate complete.
+
+Notice delivery starts with a handcrafted, reviewed Angular, .NET, ASP.NET Core,
+Entity Framework Core, SQLite, Taiga UI, Lucide and Roboto set using actual shipped versions
+and required original texts. Its initial About presentation can precede ORT;
+later tooling and supplemental review expand coverage. This first set is partial,
+not proof that all shipped components are covered or permission to defer their
+required notices. Follow the [staged delivery checklist](notices/README.md#staged-delivery).
+
+SQLite coverage includes its .NET provider and `SQLitePCLRaw` bindings/native
+bundle. The SQLite engine is public domain; wrapper/package terms are separate.
+
 The [root notice document](../THIRD-PARTY-NOTICES.txt), beside the project license,
 is the canonical distribution output, not a second dependency database. The old
 unreviewed audit dump has been removed; the current file is explicitly a
