@@ -49,6 +49,15 @@ prepares consolidated note content; the user arranges notes before final export
 and review. This replaces automatic annotation-layout optimization, not the
 wireframe/prototype approval gates.
 
+Annotation review markers refined with user approval on 2026-10-21: highlight
+changed notes visually instead of adding revision labels to annotation prose.
+Use a temporary light-blue note, optionally with blue text or connector, and keep
+revision/approval history in the design index. After explicit approval, the
+assistant restores normal yellow notes and black text/connectors if needed,
+removes obsolete annotation revision/draft prefixes and re-exports/inspects the
+PNG without waiting for a separate cleanup request. Preserve user layout and
+annotation meaning. This housekeeping does not create another approval gate.
+
 ### Click prototypes
 
 - Build one offline click prototype per view in `docs/design/prototypes/<view>/index.html`, based on the approved wireframe.

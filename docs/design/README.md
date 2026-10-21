@@ -310,19 +310,51 @@ wireframe first, then a detailed click prototype.
 - As references arrive, add actual source/preview links below with role, viewport/state, draft/approved status, reviewed revision, approval date, and open questions. Only link files that exist.
 - Keep visual-token and interaction guidance here too, linked from that index. Wireframes alone do not approve typography, colors, or all behavior.
 
+The user explicitly approved **all 11 then-current wireframes on 2026-10-21**
+("I did minor adjustments on some of the wireframes and approve all of them"),
+including the latest user-edited App shell, About Overview and Project license
+sources, link-target widths and annotation arrangement. This approval remains
+history for subsequently changed references; the four unchanged wireframes
+retain this approval. Earlier dates below also remain approval history.
+Annotation colours were already normal. Obsolete "R5 draft" prefixes were
+removed from two About notes without changing their meaning or geometry, and
+the four affected/user-adjusted PNGs were re-exported and visually inspected.
+This housekeeping does not reopen approval. Prototype approvals are unchanged:
+the Login centring prototype correction still awaits its own approval, and
+wireframe approval does not approve legal wording or unresolved business policy.
+
+Later on 2026-10-21, the user requested English-only text in all wireframes.
+The App shell, Login, Administration Profile and all four About wireframes had
+wording-only draft revisions: German alternatives were removed, and
+language controls use the English label "German" instead of "Deutsch" without
+changing their meaning. Nine changed annotations used temporary light-blue
+review markers. Geometry, arrow routing, behavior, prototypes and application
+translations are unchanged. All seven PNGs were re-exported and visually
+inspected; all 11 sources parse with valid connector references, and a decoded
+text scan found no remaining German terms.
+
+The user then explicitly approved all seven English-only wireframe revisions
+on 2026-10-21 ("all approved"), including the latest user-edited notices source.
+All 11 current wireframes are now approved. The nine annotation highlights were
+restored to normal yellow without changing their text, geometry or arrow
+routing, and all six cleanup-affected PNGs were re-exported and visually
+inspected. The Profile preview remains synchronized from its previous export.
+All 11 sources parse with valid references and no review colours on notes.
+Prototype approvals and legal-content review remain separate and unchanged.
+
 | Reference | Files | Status | Click prototype |
 | --- | --- | --- | --- |
-| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | Administration-last-in-top-group correction explicitly approved 2026-10-17 ("Approve both current references"); earlier approvals and user-edited icon placeholders/annotation arrangement retained as history | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history |
+| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and Administration-last correction approval 2026-10-17 retained as history; user-edited icon placeholders/annotation arrangement preserved | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history |
 | Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
 | Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
-| Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
+| Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and approval 2026-10-10 retained as history | [Administration](prototypes/administration/index.html) |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
-| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | Approved wireframe unchanged; icon-free footer approval 2026-10-17 retained | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
-| About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | R5 explicitly approved 2026-10-19; project license removed from Overview; prior approvals retained as history | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
-| About: Project license | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png) | R5 explicitly approved 2026-10-19, including current source/annotations; full AGPL text without expansion | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
-| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | R5 explicitly approved 2026-10-19; synchronized four-tab strip; prior approvals retained as history | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
-| About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | R5 explicitly approved 2026-10-19; synchronized four-tab strip; legal wording not approved | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19; legal placeholders only |
+| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
+| About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Project license | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | English-only wording and latest user source edits explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; synchronized four-tab strip unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; legal wording not approved | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19; legal placeholders only |
 
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).
