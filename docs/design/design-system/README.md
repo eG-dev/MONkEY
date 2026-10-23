@@ -6,6 +6,15 @@ typography, and the application shell are specific to POCKET MONkEY. The current
 foundations and representative [Angular screens](../../../revamp/web/) are accepted.
 Design approval does not certify outstanding accessibility or technical checks.
 
+**Approved revision, 2026-10-23:** neutral tonal panels/cards and restrained
+elevation replace decorative outlines in the design references and shared click
+prototypes. Functional control boundaries, selected-state indicators and focus
+rings remain. The user explicitly approved the current references for Angular
+implementation, which now maps these values into application SCSS without
+importing the specimen stylesheet. Approved wireframes are unchanged.
+Review the [surface specimen](specimens/colors-surfaces.html) and
+[overview prototype](../prototypes/accounts-overview/index.html).
+
 POCKET MONkEY manages household pocket-money accounts on a shared instance.
 Managers maintain accounts and record transactions; Members view all accounts.
 Prioritize clear balances, unambiguous amounts, and simple everyday tasks over
@@ -21,6 +30,18 @@ decoration.
 - [Foundation specimens](specimens/index.html): browser-viewable colors, typography, spacing, and shell examples.
 - [Click prototypes](../prototypes/README.md): the application shell and every view, offline.
 - [Reference stylesheet](styles.css): imports the design tokens and base styles.
+
+The specimen gallery uses a single column and content-sized embeds rather than
+fixed-height cards or nested scrolling. Each specimen reports its natural height
+through the shared local script; the gallery validates the sending frame, origin
+and height. This also works with opaque `file:` origins in ordinary offline
+browsers without cross-frame document access. The page itself owns scrolling.
+
+Verified on 2026-10-23 in ordinary offline Chromium: all 18 specimens fit without
+internal horizontal/vertical scrollbars at 1440px, 360px and 320px, including
+resizing back to desktop. The status-colour gallery screenshot was inspected.
+Fixed specimen-stage heights were removed and narrow sample rows now wrap;
+fixed dimensions that illustrate control sizes or tokens remain intentional.
 
 ## Authority and Layout
 
@@ -63,7 +84,7 @@ separate, verified change.
 | --- | --- |
 | Brand | Maroon `#650000` primary actions, links, and selection; peach `#E5BFA7` as the dark-theme accent and focus color on the toolbar |
 | Toolbar | Dark grey `#2E2E2E` with white icons and text |
-| Surfaces | White app background, neutral grey `#F5F5F5` panels, flat surfaces |
+| Surfaces | White app background, neutral grey `#F5F5F5` borderless panels/cards; charcoal tonal equivalents in dark mode |
 | Selection | Maroon indicator on a light peach `#F7EBE3` fill |
 | Feedback | Success, warning, error, and info with contrast-safe `--status-*-fg` text |
 | Amounts | Positive green, negative red, zero standard text, always with a sign |
@@ -72,7 +93,7 @@ separate, verified change.
 | Spacing | 2, 4, 8, 12, 16, 20, 24, 32, 40, 48px |
 | Radii | 2px checkboxes, 4px controls, 6px panels, 8px dialogs; pill only for badges |
 | Controls | 36px default, 32px compact, 44px touch targets on small screens |
-| Elevation | Borders first; shadows only for menus, dialogs, toasts, and the temporary drawer |
+| Elevation | Tones and spacing first; shadows for menus, dialogs, toasts and the temporary drawer, with subtle account-card hover elevation only |
 | Motion | Functional 100-240ms transitions; respect reduced-motion preferences |
 
 No gradients, textures, or decorative imagery beyond the logo.

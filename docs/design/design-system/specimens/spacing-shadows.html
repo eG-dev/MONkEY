@@ -3,26 +3,28 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Elevation</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
     <style>
         .stage {
             display: flex;
+            flex-wrap: wrap;
             gap: 24px;
             margin: -20px;
             padding: 20px;
-            background: var(--surface-panel);
+            background: var(--surface-app);
         }
 
         .stage > div {
             display: flex;
-            flex: 1;
+            flex: 1 1 140px;
             align-items: end;
             height: 80px;
             padding: 8px;
-            background: var(--surface-raised);
-            border: 1px solid var(--border-default);
+            background: var(--surface-panel);
             border-radius: var(--radius-md);
         }
     </style>
@@ -30,10 +32,10 @@
 
 <body>
     <div class="stage">
-        <div class="v">border only</div>
-        <div class="v" style="box-shadow:var(--shadow-1)">shadow-1</div>
-        <div class="v" style="box-shadow:var(--shadow-2)">shadow-2 · menus</div>
-        <div class="v" style="box-shadow:var(--shadow-3)">shadow-3 · dialogs, drawer</div>
+        <div class="v">flat tonal panel</div>
+        <div class="v" style="background:var(--surface-card-hover);box-shadow:var(--shadow-1)">shadow-1 · card hover</div>
+        <div class="v" style="background:var(--surface-raised);box-shadow:var(--shadow-2)">shadow-2 · menus</div>
+        <div class="v" style="background:var(--surface-raised);box-shadow:var(--shadow-3)">shadow-3 · dialogs, drawer</div>
     </div>
 </body>
 

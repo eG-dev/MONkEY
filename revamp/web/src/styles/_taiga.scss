@@ -29,6 +29,20 @@
   --tui-height-m: var(--control-md);
 }
 
+[tuiAppearance][data-appearance='secondary']:not(:disabled) {
+  background: var(--action-secondary);
+  color: var(--text-primary);
+  border-color: transparent;
+
+  &:hover {
+    background: var(--action-secondary-hover);
+  }
+
+  &:active {
+    background: var(--action-secondary-active);
+  }
+}
+
 [tuiAppearance][data-appearance='pm-deposit'],
 [tuiAppearance][data-appearance='pm-withdrawal'] {
   --t-bg: var(--action-deposit);

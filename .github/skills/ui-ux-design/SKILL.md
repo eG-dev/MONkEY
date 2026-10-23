@@ -55,6 +55,13 @@ the rules; this skill describes the steps.
 
 ## 3. Click prototype
 
+- Maintain `docs/design/prototypes/index.html` as the full-application composition,
+  reusing the existing views and shared shell rather than copying their markup.
+  The root entry is the final application review surface, not a specimen gallery.
+  Keep standalone views usable, the directly opened shell neutral, and avoid
+  duplicate chrome. Preserve role, language, theme and fictional data through
+  actual navigation; implementation notes belong in the prototype README.
+
 - Page skeleton: `docs/design/prototypes/<view>/index.html` with `<div id="view">`, then `../shared/data.js`, `../shared/prototype.js`, and an inline script calling `PM.init`.
 
 ```js
@@ -92,12 +99,20 @@ PM.init({
 
 ## 5. Verify
 
-Open the prototype in the integrated browser and check:
+Check the focused standalone prototype first, then perform the final check
+through `docs/design/prototypes/index.html` and actual application navigation.
+Exercise the changed flow, its owning-view dialogs and shell context in the
+integrated content area, not only in an isolated view. Check:
 
 - Manager and Member, English and German, light and dark mode.
 - Desktop width and a 360px phone width without horizontal overflow.
 - The changed flows, including validation, failure ("Next save fails"), and the review states.
 - No script errors in the console.
+
+Record standalone and integrated evidence separately, including the outer
+viewport and settings. Standalone success alone is insufficient; report any
+blocked integration instead of claiming full verification. Keep the standalone
+shell neutral and confirm other application destinations remain usable.
 
 The integrated browser tab may be hidden: prefer `page.evaluate` with `requestSubmit()`/`click()` or `force: true` clicks, and disable the cache (`Network.setCacheDisabled`) so edited `file://` scripts reload.
 

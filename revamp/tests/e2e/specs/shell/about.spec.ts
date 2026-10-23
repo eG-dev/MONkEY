@@ -76,6 +76,17 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   await expect(page.locator("#about-tab-overview")).toHaveAccessibleName(
     "Overview",
   );
+  await expect(page.locator("#about-tab-license")).toHaveAccessibleName(
+    "Project license",
+  );
+  expect(await dialog.getByRole("tab").evaluateAll((elements) => elements.map((element) => element.id))).toEqual([
+    "about-tab-overview",
+    "about-tab-license",
+    "about-tab-notices",
+    "about-tab-legal",
+  ]);
+  await expect(page.locator("#about-panel-overview #about-license-text")).toHaveCount(0);
+  await expect(page.locator("#about-panel-license")).toBeHidden();
   await expect(page.locator("#about-tab-notices")).toHaveAccessibleName(
     "Third-party notices",
   );
@@ -138,6 +149,13 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   await page.keyboard.press("ArrowRight");
 
   await expect(page.locator("#about-tab-overview")).toBeFocused();
+
+  await page.keyboard.press("ArrowRight");
+
+  await expect(page.locator("#about-tab-license")).toBeFocused();
+  await expect(page.locator("#about-panel-license")).toBeVisible();
+  await expect(page.locator("#about-license-text")).toBeVisible();
+  await expect(page.locator("#about-project-license-toggle")).toHaveCount(0);
 
   await page.keyboard.press("ArrowRight");
 
@@ -214,6 +232,19 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     await page.screenshot({ path: test.info().outputPath(`about-notices-${entry.id}.png`), fullPage: true });
   }
 
+  await page.locator("#about-search").fill("");
+
+  for (const entry of notices.entries) {
+    await expect(page.getByTestId(`about-component-${entry.id}`)).toHaveAttribute("open", "");
+  }
+
+  await page.locator("#about-tab-license").click();
+  await page.locator("#about-tab-notices").click();
+
+  for (const entry of notices.entries) {
+    await expect(page.getByTestId(`about-component-${entry.id}`)).toHaveAttribute("open", "");
+  }
+
   await page.locator("#about-search").fill("OFL-1.1");
 
   await expect(page.getByTestId("about-component-roboto")).toBeVisible();
@@ -226,16 +257,15 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
 
   await page.locator("#about-tab-notices").focus();
   await page.keyboard.press("Home");
+  await page.keyboard.press("ArrowRight");
 
-  const collapsedOverview = await page.locator("#about-panel-overview").boundingBox();
+  await expect(page.locator("#about-tab-license")).toBeFocused();
+  await expect(page.locator("#about-panel-license")).toBeVisible();
+  await expect(page.locator("#about-license-text")).toBeVisible();
 
-  await page.locator("#about-project-license-toggle").click();
+  const licensePanel = await page.locator("#about-panel-license").boundingBox();
 
-  const expandedOverview = await page.locator("#about-panel-overview").boundingBox();
-
-  expect(collapsedOverview).not.toBeNull();
-  expect(expandedOverview?.x).toBe(collapsedOverview?.x);
-  expect(expandedOverview?.width).toBe(collapsedOverview?.width);
+  expect(licensePanel).not.toBeNull();
 
   const license = readFileSync(
     resolve(__dirname, "../../../../../LICENSE"),
@@ -253,7 +283,10 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   expect(licenseFile.status()).toBe(200);
   expect(await licenseFile.text()).toBe(license);
 
+  await page.screenshot({ path: test.info().outputPath("about-license.png"), fullPage: true });
+
   const header = await page.locator("#about-dialog-title").boundingBox();
+  const tabs = await dialog.getByRole("tablist").boundingBox();
 
   await page.locator("#about-license-text").focus();
   await page.keyboard.press("Control+End");
@@ -261,6 +294,9 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   expect((await page.locator("#about-dialog-title").boundingBox())?.y).toBe(
     header?.y,
   );
+  expect((await dialog.getByRole("tablist").boundingBox())?.y).toBe(tabs?.y);
+  expect((await page.locator("#about-panel-license").boundingBox())?.x).toBe(licensePanel?.x);
+  expect((await page.locator("#about-panel-license").boundingBox())?.width).toBe(licensePanel?.width);
   expect(
     await dialog.evaluate(
       (element) => element.scrollWidth <= element.clientWidth,
@@ -284,6 +320,12 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     "aria-selected",
     "true",
   );
+  await page.locator("#about-tab-notices").click();
+  await expect(page.locator("#about-search")).toHaveValue("");
+
+  for (const entry of notices.entries) {
+    await expect(page.getByTestId(`about-component-${entry.id}`)).not.toHaveAttribute("open", "");
+  }
 
   await page.locator("#about-dialog-close").click();
 

@@ -30,13 +30,15 @@
   --surface-app: #ffffff;
   --surface-panel: #f5f5f5;
   --surface-raised: #ffffff;
+  --surface-card: var(--surface-panel);
+  --surface-card-hover: var(--surface-hover);
   --surface-sunken: var(--grey-25);
   --surface-header: #2e2e2e;
   --surface-header-hover: rgba(255, 255, 255, 0.12);
   --text-on-header: #ffffff;
   --border-header: var(--grey-900);
   --focus-on-header: var(--pm-color-secondary);
-  --surface-nav: #ffffff;
+  --surface-nav: var(--grey-25);
   --surface-hover: var(--grey-100);
   --surface-selected: var(--pm-color-tertiary);
   --surface-input: #ffffff;
@@ -52,6 +54,9 @@
   --action-primary-hover: #841a1a;
   --action-primary-active: #4a0000;
   --action-primary-text: #ffffff;
+  --action-secondary: var(--grey-100);
+  --action-secondary-hover: var(--grey-200);
+  --action-secondary-active: var(--grey-300);
   --action-danger: #c62828;
   --action-danger-hover: #a61f1f;
   --action-disabled: var(--grey-100);
@@ -92,6 +97,8 @@
   --surface-app: #121212;
   --surface-panel: #1e1e1e;
   --surface-raised: #262626;
+  --surface-card: var(--surface-panel);
+  --surface-card-hover: var(--surface-hover);
   --surface-sunken: #181818;
   --surface-header: #1f1f1f;
   --border-header: #3c3c3c;
@@ -110,6 +117,9 @@
   --action-primary-hover: #edcfbc;
   --action-primary-active: #d4a88c;
   --action-primary-text: #242424;
+  --action-secondary: #333333;
+  --action-secondary-hover: var(--grey-700);
+  --action-secondary-active: var(--grey-600);
   --action-disabled: #262626;
   --action-deposit: #5fd38d;
   --action-deposit-hover: #7fdda3;
@@ -160,6 +170,7 @@
   --header-height: 3.5rem;
   --nav-width: 16.5rem;
   --content-max-width: 90rem;
+  --shadow-1: 0 1px 2px rgba(20, 20, 20, 0.08);
   --shadow-2: 0 2px 6px rgba(20, 20, 20, 0.1), 0 1px 2px rgba(20, 20, 20, 0.06);
   --shadow-3: 0 12px 32px rgba(20, 20, 20, 0.18), 0 2px 6px rgba(20, 20, 20, 0.08);
 }

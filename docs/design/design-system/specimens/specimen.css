@@ -6,11 +6,12 @@ body {
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .sw {
-  flex: 1;
+  flex: 1 1 112px;
   min-width: 0;
 }
 
@@ -23,11 +24,13 @@ body {
 .n {
   font: var(--type-label);
   margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 
 .v {
   font: var(--type-caption);
   color: var(--text-muted);
+  overflow-wrap: anywhere;
 }
 
 .button {
@@ -50,10 +53,73 @@ body {
 .button-secondary {
   background: var(--action-secondary);
   color: var(--text-primary);
-  border: 1px solid var(--border-strong);
+}
+
+.button-secondary:hover {
+  background: var(--action-secondary-hover);
+}
+
+.button-secondary:active {
+  background: var(--action-secondary-active);
 }
 
 .button-danger {
   background: var(--action-danger);
   color: var(--action-danger-text);
+}
+
+.surface-examples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--space-7);
+  margin-top: var(--space-7);
+}
+
+.surface-stage {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--surface-app);
+  color: var(--text-primary);
+}
+
+.surface-stage h2 {
+  margin: 0;
+  font: var(--type-h3);
+}
+
+.surface-sample-card,
+.surface-sample-panel {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+}
+
+.surface-sample-card {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.surface-sample-card:hover {
+  background: var(--surface-card-hover);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-1);
+}
+
+.surface-sample-panel {
+  background: var(--surface-panel);
+}
+
+.surface-sample-caption {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.surface-sample-balance {
+  font: var(--type-h2);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  color: var(--amount-positive);
 }

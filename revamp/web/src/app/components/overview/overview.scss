@@ -16,15 +16,15 @@
   gap: var(--space-4);
   height: 100%;
   padding: var(--space-5);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-md);
-  background: var(--surface-raised);
+  background: var(--surface-card);
   color: var(--text-primary);
   text-decoration: none;
 
   &:hover {
-    border-color: var(--border-strong);
-    background: var(--surface-hover);
+    background: var(--surface-card-hover);
+    box-shadow: var(--shadow-1);
     color: var(--text-primary);
   }
 }

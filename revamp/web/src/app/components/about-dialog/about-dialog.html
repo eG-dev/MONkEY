@@ -18,7 +18,7 @@
               (click)="select(tab, true)"
               (keydown)="navigateTabs($event, tab)"
             >
-              {{ t('about.' + tab) }}
+              {{ t(tab === 'license' ? 'about.projectLicense' : 'about.' + tab) }}
             </button>
           }
         </div>
@@ -47,16 +47,12 @@
                 <p class="hint">{{ t(build.repositoryUrl ? 'about.sourceUnmatched' : 'about.sourcePending') }}</p>
               }
             </section>
+          </div>
+          <div id="about-panel-license" role="tabpanel" aria-labelledby="about-tab-license" tabindex="0" [hidden]="selected() !== 'license'">
             <section aria-labelledby="about-license-title">
-              <h3 id="about-license-title">{{ t('about.projectLicense') }}</h3>
-              <details id="about-project-license" class="notice-row">
-                <summary id="about-project-license-toggle">
-                  <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ t('about.licenseName') }}</span
-                  ><span class="notice-meta">AGPL-3.0-only</span>
-                </summary>
-                <a id="about-license-file" href="/licenses/AGPL-3.0-only.txt" target="_blank" rel="noopener">{{ t('about.openLicense') }}</a>
-                <pre id="about-license-text" tabindex="0" [attr.aria-label]="t('about.licenseText')">{{ projectLicense }}</pre>
-              </details>
+              <h3 id="about-license-title">{{ t('about.projectLicense') }} &middot; AGPL-3.0-only</h3>
+              <a id="about-license-file" href="/licenses/AGPL-3.0-only.txt" target="_blank" rel="noopener">{{ t('about.openLicense') }}</a>
+              <pre id="about-license-text" tabindex="0" [attr.aria-label]="t('about.licenseText')">{{ projectLicense }}</pre>
             </section>
           </div>
           <div id="about-panel-notices" role="tabpanel" aria-labelledby="about-tab-notices" tabindex="0" [hidden]="selected() !== 'notices'">
@@ -74,7 +70,13 @@
               </div>
               <p class="hint" id="about-search-status" role="status" aria-live="polite">{{ t('about.count', { count: filteredComponents().length }) }}</p>
               @for (component of filteredComponents(); track component.id) {
-                <details class="notice-row" [attr.data-testid]="'about-component-' + component.id">
+                <details
+                  #noticeRow
+                  class="notice-row"
+                  [attr.data-testid]="'about-component-' + component.id"
+                  [open]="expanded().has(component.id)"
+                  (toggle)="toggleComponent(component.id, noticeRow)"
+                >
                   <summary data-testid="about-component-toggle">
                     <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ component.name }}</span
                     >

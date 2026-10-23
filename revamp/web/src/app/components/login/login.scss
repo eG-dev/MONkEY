@@ -40,7 +40,7 @@
   inset-inline-end: var(--space-5);
   display: flex;
   overflow: hidden;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-sm);
   background: var(--surface-raised);
 
@@ -70,9 +70,10 @@
   display: grid;
   gap: var(--space-5);
   padding: 2rem;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
+  box-shadow: var(--shadow-1);
 
   h1 {
     font: var(--type-h1);
@@ -113,5 +114,6 @@
   .card {
     padding: 0;
     border: 0;
+    box-shadow: none;
   }
 }

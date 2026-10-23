@@ -1,6 +1,8 @@
 # Color Scheme
 
-Status: Approved by the user on 2026-10-10. Brand colors are sampled from the supplied
+Status: Brand palette approved on 2026-10-10; tonal-surface and secondary-action
+revision explicitly approved on 2026-10-23 and implemented in Angular.
+Brand colors are sampled from the supplied
 [logo](../assets/images/monkey.png); everything else is derived. Values are
 defined in [colors.css](styles/colors.css). Calculated contrast ratios are token
 pairs, not rendered-state test results.
@@ -65,6 +67,27 @@ selected toggle, the amount sign, and the submit button, always together with a
 in light mode and 8.3:1 and 6.8:1 in dark mode.
 
 ## Calculated Contrast
+
+### Tonal Surfaces
+
+Cards use `--surface-card` (`#F5F5F5` light / `#1E1E1E` dark), with
+`--surface-card-hover` (`#EBEBEB` / `#2C2C2C`). Panels retain `--surface-panel`;
+menus/dialogs retain `--surface-raised`. Light navigation uses `#FAFAFA` to
+separate it from the white page without a divider. These are decorative surface
+differences, not substitutes for control boundaries or keyboard focus.
+
+| Pair | Light | Dark |
+| --- | --- | --- |
+| Primary / secondary text on card | 14.24 / 6.95:1 | 12.63 / 7.95:1 |
+| Primary / secondary text on hovered card | 13.02 / 6.35:1 | 10.58 / 6.66:1 |
+| Secondary-button label, default / hover / active | 13.02 / 10.68 / 8.26:1 | 9.57 / 8.23 / 5.74:1 |
+
+Secondary-button fills are `#EBEBEB` / `#D6D6D6` / `#BDBDBD` in light mode and
+`#333333` / `#3D3D3D` / `#545454` in dark mode. Their labels remain primary text.
+The [surface specimen](specimens/colors-surfaces.html) and shared prototypes
+demonstrate the approved treatment, now mapped into Angular application SCSS.
+
+### Established Pairs
 
 | Pair | Ratio |
 | --- | --- |

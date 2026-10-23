@@ -6,12 +6,12 @@
     <title>Dark palette</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
     <style>
         .dark {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            height: 260px;
             margin: -20px;
             padding: 20px;
             background: var(--surface-app);
@@ -19,9 +19,9 @@
         }
 
         .top {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
             gap: 16px;
-            height: 130px;
         }
 
         .panel {

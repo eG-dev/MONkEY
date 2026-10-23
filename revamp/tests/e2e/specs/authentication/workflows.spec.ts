@@ -1,4 +1,5 @@
 import { test, expect, bootstrapManager, credentials, signIn, submitLogin } from '../../fixtures';
+import { createAccount } from '../../helpers/ledger';
 
 test.use({ ignoreHTTPSErrors: true });
 
@@ -13,6 +14,22 @@ test('manager browser login, theme preference, and logout survive SSR', async ({
   await expect(page.locator('#overview-title')).toHaveText('Overview');
   await expect(page.locator('#shell-user-toggle')).toHaveAccessibleName(`${manager.username}, Manager`);
 
+  await createAccount(page.request, 'Tonal account');
+  await page.reload();
+
+  const card = page.getByTestId('account-card');
+
+  await expect(card).toHaveAccessibleName('Open Tonal account');
+  await expect(card).toHaveCSS('border-top-width', '0px');
+  await expect(card).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+  await card.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+
+  await expect(card).toBeFocused();
+  expect(await card.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+  expect(await card.evaluate((element) => parseFloat(getComputedStyle(element).outlineWidth))).toBeGreaterThan(0);
+
   await page.locator('#shell-user-toggle').click();
 
   await expect(page.locator('#shell-user-menu')).toHaveRole('menu');
@@ -25,6 +42,21 @@ test('manager browser login, theme preference, and logout survive SSR', async ({
   await expect(page.locator('#profile-dark-mode')).toHaveRole('switch');
   await expect(page.locator('#profile-dark-mode')).toHaveAccessibleName('Dark mode');
   await expect(page.locator('#profile-dark-mode')).toHaveAttribute('aria-checked', 'false');
+
+  const panel = page.getByRole('region', { name: 'Preferences', exact: true });
+  const passwordButton = page.locator('#profile-change-password');
+
+  await expect(panel).toHaveCSS('border-top-width', '0px');
+  await expect(panel).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+  await expect(passwordButton).toHaveCSS('background-color', 'rgb(235, 235, 235)');
+  await passwordButton.click();
+
+  await expect(page.locator('#profile-password-dialog')).toHaveCSS('border-top-width', '0px');
+  expect(
+    await page.locator('#profile-current-password').evaluate((element) => parseFloat(getComputedStyle(element).borderTopWidth)),
+  ).toBeGreaterThan(0);
+
+  await page.locator('#profile-password-dialog-close').click();
 
   const themeSaved = page.waitForResponse(
     (response) => new URL(response.url()).pathname === '/api/auth/theme' && response.request().method() === 'PUT',
@@ -41,6 +73,8 @@ test('manager browser login, theme preference, and logout survive SSR', async ({
   await expect(page.locator('html')).toHaveAttribute('tuiTheme', 'dark');
   await expect(page.locator('#profile-dark-mode')).toHaveAccessibleName('Dark mode');
   await expect(page.locator('#profile-dark-mode')).toHaveAttribute('aria-checked', 'true');
+  await expect(panel).toHaveCSS('background-color', 'rgb(30, 30, 30)');
+  await expect(passwordButton).toHaveCSS('background-color', 'rgb(51, 51, 51)');
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 

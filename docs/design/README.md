@@ -8,6 +8,61 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Approved Surface Revision (2026-10-23)
+
+The user explicitly approved the current design-system and prototype changes:
+"I approve the changes. Now do in Angular". This includes the integrated entry,
+tonal surfaces, specimen gallery and earlier Login centring correction.
+Wireframes remain unchanged and approved. This does not approve unresolved legal
+wording or future business policies.
+
+The [integrated application prototype](prototypes/index.html) is also a
+**approved 2026-10-23 revision**, composing the maintained standalone views and shared shell
+for full-application navigation and flow review. Use it for final prototype
+verification after the focused standalone checks; see the
+[composition notes](prototypes/README.md#integrated-application-entry).
+It does not change the wireframes.
+
+Separate integrated verification passed 16 native-flow combinations in ordinary
+offline Chromium: both roles, languages and themes at outer viewports 1440x1000
+and 360x1000. Real navigation, validation/cancellation, Administration, all About
+tabs and sign-out/sign-in preserved preferences without duplicate chrome,
+horizontal overflow or script errors. Details are recorded in the prototype notes.
+
+The design system and all seven click prototypes have the **approved tonal-surface
+revision**, now implemented in Angular.
+Account cards, panels, secondary buttons, dialogs, inline feedback and shared
+shell regions use neutral fills, spacing and restrained shadows instead of
+decorative outlines. Inputs, invalid-field boundaries, focus rings and selected
+navigation/tab indicators remain visible. The existing layouts and all approved
+wireframes are unchanged; prior prototype approvals below remain history.
+The earlier Login centring correction is included in the current approval.
+
+Review the [overview](prototypes/accounts-overview/index.html),
+[surface specimen](design-system/specimens/colors-surfaces.html) and
+[component guidance](design-system/components.md). The current revision covers
+Shell, Overview, Accounts, Account details, Administration, Login and About,
+including their shared dialogs and menus. Angular maps the approved values into
+its application SCSS without importing the specimen stylesheet.
+
+Angular and production-image builds passed. Nineteen selected production-image
+E2E checks passed across desktop/mobile authentication, theme persistence, About,
+transactions and SSR/hydration. New assertions verify borderless light cards,
+light/dark panels and secondary buttons, keyboard-visible card focus, borderless
+dialogs and retained input boundaries. Desktop/mobile transaction-dialog
+screenshots were inspected. Reproducible commands are in the
+[Angular delivery record](../../revamp/README.md#tonal-surfaces-2026-10-23).
+
+Browser verification passed 80 signed-in role/language/theme/width combinations
+across five views, 16 public Login/About combinations, eight account-dialog
+validation/failed-save combinations and 48 overview loading/empty/error
+combinations, at 1440px and 360px. Checks covered all four About tabs, empty notice
+results, retained form values, retry, input boundaries, visible card focus and
+no horizontal page overflow. Account-card screenshots were inspected in both
+themes on desktop and German phones. The surface specimen also passed at 320px;
+new text/surface contrast pairs are documented in the colour guide. Dialog and
+form activation used DOM events, not a full native keyboard-input test.
+
 The navigation/account-name link styling in the click prototypes was updated on
 2026-10-10 and is approved. Navigation
 text links are larger and not underlined; account-name links remain underlined
@@ -191,8 +246,8 @@ a commit with it". It adds Project license
 as the second tab, removes the license accordion from Overview and renders the
 entire original text immediately with its local file link. Balanced scrollbar
 gutters keep the content centred. This explicit R5 approval, rather than the
-earlier R4/reuse approvals, satisfies the changed prototype's gate. Angular still
-retains R4; the dedicated license-tab implementation follows separately.
+earlier R4/reuse approvals, satisfies the changed prototype's gate. Angular now
+implements this approved four-tab revision, delivered on 2026-10-23.
 
 Prototype verification passed 12 public review combinations and 24 signed-in
 Manager/Member combinations in English/German, light/dark at 1440px, 360px and
@@ -210,8 +265,23 @@ root text without changing legal wording. The displayed 34,522-character text
 matches the root SHA-256 exactly:
 `7a269a0312054cacb0ec0c09671703c90c456747fcd3a45b523a0b0a4c32e29e`.
 JavaScript syntax and repository guardrails passed. Both R5 design gates are
-satisfied; Angular implementation can follow the requested approval commit. The earlier
-login-centering prototype correction remains pending its own review.
+satisfied. Angular implementation was requested again on 2026-10-23: "Perfect,
+approved. Now we need to also implement the About related changes". The earlier
+login-centering correction was separately approved with the surface revision.
+
+Angular delivery verification (2026-10-23): the application and production-image
+builds passed, followed by eight production-image About E2E checks on desktop and
+mobile. Coverage includes public access, Manager/Member access, forced-password
+change, four-tab keyboard order, the immediately visible canonical license and
+local download, stable content width, fixed header/tabs during internal scrolling,
+notice expansion across search/tab changes, reopen reset and opener focus return.
+Desktop and 320px phone license screenshots were inspected. Eight separate
+development-app browser checks passed in isolated contexts: English/German,
+light/dark and 1440px/360px, with localized license tabs, the full text, no
+horizontal overflow and no nested license scrolling. These checks waited for
+hydrated controls and did not change the existing signed-in session.
+Actual notice documents/build metadata and the explicit partial-coverage/legal placeholders
+remain unchanged. See the [delivery record](../../revamp/README.md#four-tab-about-delivery-2026-10-23).
 
 | Reference | Scope |
 | --- | --- |
@@ -222,7 +292,7 @@ login-centering prototype correction remains pending its own review.
 | Settings | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration |
 | User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection |
 | Login | Sign-in, forced-password change, and session-expiry states |
-| About | R5 wireframes and shared prototype explicitly approved 2026-10-19: Overview, Project license, Third-party notices and Legal information; Angular still R4 |
+| About | R5 wireframes and shared prototype explicitly approved 2026-10-19: Overview, Project license, Third-party notices and Legal information; implemented in Angular 2026-10-23 |
 
 Use desktop/mobile and Manager/Member variants where relevant. Forms, dialogs,
 image upload, confirmations, and validation/retry states can be named pages in
@@ -341,6 +411,10 @@ routing, and all six cleanup-affected PNGs were re-exported and visually
 inspected. The Profile preview remains synchronized from its previous export.
 All 11 sources parse with valid references and no review colours on notes.
 Prototype approvals and legal-content review remain separate and unchanged.
+
+Every click prototype in the following table has the **approved 2026-10-23 surface
+revision**. Earlier dates in that column record approval history; the Status
+column retains the unchanged wireframe approvals.
 
 | Reference | Files | Status | Click prototype |
 | --- | --- | --- | --- |

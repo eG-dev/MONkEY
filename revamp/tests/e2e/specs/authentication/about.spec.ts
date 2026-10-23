@@ -76,6 +76,13 @@ for (const role of ["Manager", "Member"] as const) {
     );
     expect(page.url()).toBe(originalUrl);
 
+    await page.locator("#about-tab-license").click();
+
+    await expect(page.locator("#about-tab-license")).toHaveAccessibleName("Project license");
+    await expect(page.locator("#about-panel-license")).toBeVisible();
+    await expect(page.locator("#about-license-text")).toBeVisible();
+    await expect(page.locator("#about-panel-overview")).toBeHidden();
+
     await page.keyboard.press("Escape");
 
     await expect(page.locator("#about-dialog")).not.toBeVisible();

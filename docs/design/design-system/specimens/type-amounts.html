@@ -6,12 +6,12 @@
     <title>Amounts</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
     <style>
         .stage {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
             margin: -20px;
-            min-height: 100vh;
         }
 
         .stage > div {

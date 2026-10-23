@@ -6,17 +6,39 @@ exists in Angular. Use the [design guide](README.md) and [reference styles](styl
 for shared values and the [accessibility baseline](accessibility.md) for
 interaction requirements.
 
+**Approved 2026-10-23:** the tonal-surface revision below replaces decorative
+outlines with neutral fills, spacing and restrained elevation. The user approved
+the current prototypes for Angular implementation; the surface treatment is now
+mapped into application SCSS. Earlier approvals remain history.
+
 ## Standard Controls
 
 | Pattern | POCKET MONkEY choice |
 | --- | --- |
 | Actions | Primary for the main action, secondary for alternatives, ghost for low emphasis, danger for destructive consequences. While submitting, prevent duplicate submission without implying success. |
 | Switch or checkbox | A switch applies a setting immediately; a checkbox is committed with a form. |
-| Panels | Titled groups on `--surface-panel` with a 1px border, optional header actions and footer. |
-| Feedback | Show errors near their source and success only after confirmation. Inline messages use the tone's `--status-*-bg`, a 1px `--status-*-solid` border, primary text, and a `--status-*-fg` icon. A toast is supplementary. |
+| Panels | Borderless titled groups on `--surface-panel`, separated by spacing; optional header actions and footer. Do not nest decorative panel frames. |
+| Account cards | Borderless `--surface-card` fill, `--surface-card-hover` on hover and at most `--shadow-1` hover elevation. Keep amount signs, colour and keyboard focus visible. |
+| Feedback | Show errors near their source and success only after confirmation. Inline messages use `--status-*-bg`, primary text and a `--status-*-fg` icon without a surrounding outline. A toast is supplementary. |
 | Count badges | `--count-bg`/`--count-fg` pill, or `--count-danger-bg` with white text when action is needed. |
 | Theme-aware neutrals | Navigation text uses `--text-nav`, icons `--icon-default`, checkbox and radio outlines `--control-border`. Do not use grey literals. |
 | Inputs | `--surface-input`, `--text-primary` values, `--text-placeholder` placeholders; never a white literal. |
+
+## Surface Hierarchy
+
+- Separate the page, navigation and grouped content with neutral surface tones
+  and whitespace, not an outline around every region. Keep sections unframed;
+  a tonal panel is for a meaningful group, not a wrapper around more panels.
+- Use raised surfaces and existing shadows for menus, dialogs and toasts.
+  Regular panels stay flat; account cards gain only subtle hover elevation.
+- Use alternating soft table-row tones and spacing instead of row rules.
+  Secondary buttons use a neutral fill rather than an outlined style.
+- Keep borders where they convey interaction or state: input boundaries,
+  checkbox/radio outlines, selected navigation/tab indicators and error inputs.
+  Always retain visible keyboard focus. Do not remove boundaries in forced
+  colours or other accessibility adaptations merely to match the flat style.
+- Retain the established layout, brand colours, amount semantics and radii.
+  The [surface specimen](specimens/colors-surfaces.html) shows both themes.
 
 ## View Headers
 

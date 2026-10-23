@@ -31,6 +31,30 @@ Allowance configuration and execution follow
 [ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Tonal Surfaces (2026-10-23)
+
+The user approved the current design-system/prototype revision for Angular
+implementation: "I approve the changes. Now do in Angular". Application SCSS now
+uses neutral tonal account cards/panels, filled secondary actions, borderless
+feedback/dialogs and alternating table rows instead of decorative outlines.
+Keyboard focus, selected navigation/tabs, input boundaries and validation remain.
+Light/dark tokens stay local to Angular; specimen CSS is not imported. No backend
+rules, localization text or wireframe layouts changed.
+
+Angular and production-image builds passed. The following real production-image
+selection passed **19 checks** across desktop/mobile, including the new rendered
+surface/focus assertions, theme persistence, native dialogs and SSR/hydration:
+
+```text
+npm --prefix revamp/web run build
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- specs/authentication/workflows.spec.ts --workers 1
+npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/authentication/about.spec.ts specs/ledger/transaction-workflows.spec.ts specs/shell/rendering.spec.ts --workers 1
+```
+
+Desktop/mobile transaction-dialog screenshots were inspected. This focused
+verification is not an application-wide accessibility audit or release approval.
+
 ## Monthly Allowances
 
 Managers configure exact positive monthly amounts or disable allowance while
@@ -64,8 +88,9 @@ with labelled About anchored above the version. Opening the dialog preserves
 the underlying form/navigation. It uses the current language/theme, keyboard
 tabs, native modal background inertness, and Close/Escape with opener focus return.
 
-Overview contains the web package version and the full unmodified
-`AGPL-3.0-only` project license. The [About build-input generator](web/scripts/prepare-about.mjs)
+Overview contains the web package version and source metadata. The dedicated
+Project license tab shows the full unmodified `AGPL-3.0-only` text immediately,
+without expansion. The [About build-input generator](web/scripts/prepare-about.mjs)
 derives inline text and the locally served `/licenses/AGPL-3.0-only.txt` from the
 root [LICENSE](../LICENSE), preserving its exact contents. Both are ignored build
 outputs, not manually maintained copies. The About E2E workflow verifies their
@@ -87,6 +112,33 @@ Run the focused set from the repository root after building the image:
 
 ```text
 npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
+```
+
+### Four-Tab About Delivery (2026-10-23)
+
+The approved R5 layout is implemented: Overview, Project license, Third-party
+notices and Legal information. The license is no longer nested in Overview or
+behind an accordion. Existing bilingual labels, canonical generated text, local
+downloads and real build/notice metadata are retained. Notice expansion survives
+filtering and tab changes; closing/reopening resets the selected tab, search and
+expansion. Header/tabs stay fixed while content scrolls internally, including on
+phones. This changes neither notice coverage nor legal review status.
+
+Application and production-image builds, E2E typechecking and **eight focused
+production-image About checks** passed. The checks cover public/Manager/Member
+access, forced-password forms, keyboard tab order, exact license/download text,
+stable content width, fixed header/tabs, search/expansion state and focus return.
+Desktop and 320px phone license screenshots were inspected. Eight separate
+development-app layout checks passed in isolated browser contexts for both
+languages/themes at 1440px/360px: localized license labels, the full text, no
+horizontal overflow and no nested license scroll box. The existing signed-in
+session and saved preferences were untouched.
+
+```text
+npm --prefix revamp/web run build
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/authentication/about.spec.ts --workers 1
 ```
 
 ### Build Metadata and License Generation

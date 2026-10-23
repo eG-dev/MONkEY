@@ -9,7 +9,7 @@ import buildInfo from '../../../generated/about/build-info.json';
 import projectLicense from '../../../generated/about/project-license.json';
 import thirdParty from '../../../generated/about/third-party.json';
 
-type AboutTab = 'overview' | 'notices' | 'legal';
+type AboutTab = 'overview' | 'license' | 'notices' | 'legal';
 
 @Component({
   selector: 'app-about-dialog',
@@ -33,9 +33,10 @@ export class AboutDialog {
         ? 'about.dirtyRevision'
         : 'about.developmentRevision';
   protected readonly projectLicense = projectLicense.text;
-  protected readonly tabs: readonly AboutTab[] = ['overview', 'notices', 'legal'];
+  protected readonly tabs: readonly AboutTab[] = ['overview', 'license', 'notices', 'legal'];
   protected readonly selected = signal<AboutTab>('overview');
   protected readonly search = signal('');
+  protected readonly expanded = signal<ReadonlySet<string>>(new Set());
   protected readonly noticesCoverage = thirdParty.coverage;
   private readonly components = thirdParty.entries.map((entry) => ({
     id: entry.id,
@@ -86,9 +87,28 @@ export class AboutDialog {
     this.select(this.tabs[next], true);
   }
 
+  protected toggleComponent(id: string, details: HTMLDetailsElement): void {
+    if (!details.isConnected || this.expanded().has(id) === details.open) {
+      return;
+    }
+
+    this.expanded.update((current) => {
+      const next = new Set(current);
+
+      if (details.open) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+
+      return next;
+    });
+  }
+
   protected close(): void {
     this.about.close();
     this.selected.set('overview');
     this.search.set('');
+    this.expanded.set(new Set());
   }
 }

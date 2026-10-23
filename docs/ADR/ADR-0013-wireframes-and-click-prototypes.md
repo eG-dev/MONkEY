@@ -1,6 +1,7 @@
 # ADR-0013 Wireframes and Click Prototypes
 
 _Creation date_: 2026-10-10
+_Updated_: 2026-10-23
 
 ## Context
 
@@ -25,7 +26,8 @@ flowchart LR
     W[Wireframe<br>structure and key behavior] --> A{Approved?}
     A -- changes --> W
     A -- yes --> P[Click prototype<br>details and behavior]
-    P --> R{Explicitly approved?}
+    P --> V[Verify standalone<br>then integrated application]
+    V --> R{Explicitly approved?}
     R -- structural change --> W
     R -- detail change --> P
     R -- yes --> I[Angular implementation<br>verified end to end]
@@ -66,9 +68,33 @@ annotation meaning. This housekeeping does not create another approval gate.
 - Show the details and behavior the wireframe only outlines: validation, loading/empty/error states, submitting and retry, dialogs, confirmations, Manager/Member differences, German and English text, light/dark themes, and phone layouts.
 - Prototypes illustrate behavior; they are not production code, enforce no security, and use only fictional data.
 
+### Integrated prototype entry
+
+- Maintain `docs/design/prototypes/index.html` as the full-application review
+    entry, composing the maintained views and shared shell without copying markup.
+    Keep every view usable standalone and the directly opened shell neutral.
+- Use real application navigation and owning-view dialogs, not a gallery or
+    invented application links to specimens. Avoid duplicate shell chrome; keep
+    preferences, role and fictional data coherent across navigation. All assets
+    and composition must work offline without a server.
+- Verify a changed view standalone first, then through the integrated entry and
+    actual application navigation, including its dialogs and relevant states.
+    Check desktop and phone layouts, both roles, English/German and light/dark
+    themes. Record standalone and integrated evidence separately; report blocked
+    integration instead of claiming standalone success completes verification.
+- Keep composition wiring in the [prototype notes](../design/prototypes/README.md).
+    It does not establish production routing, messaging or API contracts.
+
 ### Changes and approval
 
 - Require explicit user approval of the current wireframe revision before advancing to its click prototype, and explicit approval of the current prototype revision before Angular implementation. Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed, and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts. If corrections are requested, verify the revised drafts and wait for review without repeatedly prompting for approval.
 - Change structure in the wireframe first and then the prototype; change details or behavior in the prototype only.
 - Record approval per reference in the design index. Approved references guide the implementation but do not override ADRs, backend authorization, or exact money rules, and do not create business rules on their own.
 - Implement approved views in the Angular application using the design-system tokens and verify them as described in [ADR-0005](ADR-0005-e2e-first-verification.md).
+
+## Change History
+
+- 2026-10-23: Added a global application composition and standalone-then-integrated
+    verification, following the requested prototype review pattern. This exposes
+    navigation, dialog and shell-context problems that isolated views cannot show;
+    standalone references and explicit design approval gates remain unchanged.

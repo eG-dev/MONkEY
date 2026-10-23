@@ -13,11 +13,11 @@
     .facts dt { color: var(--text-secondary); }
     .facts dd { margin: 0; }
     .temporary { display: flex; gap: var(--space-3); align-items: center; }
-    .temporary code { flex: 1; padding: 8px 12px; border: 1px solid var(--control-border); border-radius: var(--radius-sm); background: var(--surface-input); font: var(--type-h3); font-family: var(--font-mono); letter-spacing: .04em; }
+    .temporary code { flex: 1; padding: 8px 12px; border: 0; border-radius: var(--radius-sm); background: var(--surface-input); font: var(--type-h3); font-family: var(--font-mono); letter-spacing: .04em; }
     .status-disabled, .status-mustChange { color: var(--text-secondary); }
     @media (max-width: 599px) {
       .table thead { display: none; }
-      .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
+      .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; }
       .table td { border: 0; padding: 2px 4px; }
       .table td.user-name { font-weight: var(--weight-medium); }
       .table td.username, .table td.role, .table td.status-cell { grid-column: 1; font: var(--type-caption); color: var(--text-secondary); }
