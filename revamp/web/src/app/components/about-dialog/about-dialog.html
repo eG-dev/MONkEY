@@ -114,19 +114,25 @@
           <div id="about-panel-legal" role="tabpanel" aria-labelledby="about-tab-legal" tabindex="0" [hidden]="selected() !== 'legal'">
             <div class="message message-info" id="about-legal-review">
               <span class="icon icon-info" aria-hidden="true"></span>
-              <p class="message-body">{{ t('about.legalDraft') }}</p>
+              <p class="message-body">{{ t('about.legalContext') }}</p>
             </div>
-            <section aria-labelledby="about-operator-title">
+            <section id="about-operator-section" aria-labelledby="about-operator-title">
               <h3 id="about-operator-title">{{ t('about.operator') }}</h3>
-              <p class="muted">{{ t('about.operatorPlaceholder') }}</p>
+              @for (paragraph of t('about.operatorText').split('\n\n'); track $index) {
+                <p>{{ paragraph }}</p>
+              }
             </section>
-            <section aria-labelledby="about-warranty-title">
+            <section id="about-warranty-section" aria-labelledby="about-warranty-title">
               <h3 id="about-warranty-title">{{ t('about.warranty') }}</h3>
-              <p class="muted">{{ t('about.warrantyPlaceholder') }}</p>
+              @for (paragraph of t('about.warrantyText').split('\n\n'); track $index) {
+                <p>{{ paragraph }}</p>
+              }
             </section>
-            <section aria-labelledby="about-privacy-title">
+            <section id="about-privacy-section" aria-labelledby="about-privacy-title">
               <h3 id="about-privacy-title">{{ t('about.privacy') }}</h3>
-              <p class="muted">{{ t('about.privacyPlaceholder') }}</p>
+              @for (paragraph of t('about.privacyText').split('\n\n'); track $index) {
+                <p>{{ paragraph }}</p>
+              }
             </section>
           </div>
         </div>

@@ -48,6 +48,10 @@
     padding-top: var(--space-7);
   }
 
+  #about-panel-legal p + p {
+    margin-top: var(--space-5);
+  }
+
   h3 {
     margin: 0 0 var(--space-5);
     font: var(--type-h2);

@@ -162,6 +162,7 @@ textarea.input { min-height: 72px; resize: vertical; }
 .about-section + .about-section, #about-panel-legal .about-section { margin-top: var(--space-7); padding-top: var(--space-7); }
 .about-section h3 { margin-bottom: var(--space-5); font: var(--type-h2); }
 .about-section p { line-height: var(--lh-normal); }
+#about-panel-legal .about-section p + p { margin-top: var(--space-5); }
 .about-brand { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); }
 .about-brand img { width: var(--control-lg); height: var(--control-lg); object-fit: contain; }
 .about-brand h3 { margin: 0; }

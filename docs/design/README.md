@@ -8,6 +8,43 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Approved Legal Content (2026-10-23)
+
+The user accepted the [bilingual R1 wording](../terms/self_hosted_information_draft.md)
+with "sounds good, lets keep it", then requested its prototype presentation.
+After review verification, the user requested Angular implementation with
+"implement" on 2026-10-23, accepting the current presentation for that port.
+The shared About dialog now displays that wording in the existing three Legal
+information sections, with separate readable paragraphs and the accepted
+deployment-specific privacy caveat instead of legal placeholders. This
+presentation is now implemented in Angular. Approved wireframes and the
+tonal-surface revision remain unchanged. This acceptance does not establish
+deployment-specific legal readiness or complete third-party notice coverage.
+
+The user explicitly accepted the completed wording, prototype presentation and
+Angular implementation on 2026-10-23: "very well, all approved, whats next?".
+This closes the current legal-content design/delivery review, not the independent
+deployment-specific or artifact-publication gates.
+
+Review the [standalone About prototype](prototypes/about/index.html) or open About
+through the [integrated application](prototypes/index.html), then select Legal
+information. Ordinary offline Chromium passed 12 standalone combinations
+(English/German, light/dark, 1440px/360px/320px) followed by 16 integrated
+Manager/Member combinations (both languages/themes, 1440px/360px) through real
+Administration navigation and About entry points. Checks compared every body
+paragraph with R1 and covered native keyboard tab selection, paragraph spacing,
+overflow, internal scrolling, pinned header/tabs, Escape and opener focus return,
+with no script errors. Desktop and German dark-phone screenshots were inspected.
+See the [prototype record](prototypes/README.md#legal-content-presentation-2026-10-23).
+
+Angular delivery: the production-image build, catalog validation and E2E
+typechecking passed. Eight production-image About checks passed on desktop/mobile,
+including every accepted English body paragraph, spacing and fixed-header
+internal scrolling, alongside the existing access/license/notice regressions.
+Eight separate development-app checks compared both languages with R1 across
+light/dark and 1440px/360px. Production desktop/320px phone and German dark-phone
+screenshots were inspected. See the [delivery record](../../revamp/README.md#legal-information-delivery-2026-10-23).
+
 ## Approved Surface Revision (2026-10-23)
 
 The user explicitly approved the current design-system and prototype changes:

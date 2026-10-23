@@ -142,10 +142,49 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   await expect(page.locator("#about-privacy-title")).toHaveText(
     "Privacy information",
   );
+
+  const legalDocument = readFileSync(resolve(__dirname, "../../../../../docs/terms/self_hosted_information_draft.md"), "utf8");
+  const acceptedEnglish = legalDocument.match(/## English\r?\n([\s\S]*?)\r?\n## Deutsch/);
+
+  if (!acceptedEnglish) {
+    throw new Error("Missing accepted English legal information");
+  }
+
+  const acceptedSections = acceptedEnglish[1].split(/^### /m).slice(1);
+
+  for (const [sectionIndex, sectionId] of ["operator", "warranty", "privacy"].entries()) {
+    const expectedParagraphs = acceptedSections[sectionIndex]
+      .trim()
+      .split(/\r?\n\r?\n/)
+      .slice(1)
+      .map((paragraph) => paragraph.replaceAll(String.fromCharCode(96), "").replace(/\s+/g, " ").trim());
+    const paragraphs = page.locator(`#about-${sectionId}-section p`);
+
+    await expect(paragraphs).toHaveText(expectedParagraphs);
+    expect(await paragraphs.evaluateAll((elements) => elements.slice(1).every((element, index) =>
+      element.getBoundingClientRect().top > elements[index].getBoundingClientRect().bottom,
+    ))).toBe(true);
+  }
+
+  await expect(page.locator("#about-legal-review")).toHaveText(
+    "This general software description is not a complete privacy notice for every deployment.",
+  );
   await page.screenshot({
     path: test.info().outputPath("about-legal.png"),
     fullPage: true,
   });
+
+  const legalHeader = await page.locator("#about-dialog-title").boundingBox();
+  const legalTabs = await dialog.getByRole("tablist").boundingBox();
+
+  await page.locator("#about-privacy-section p").last().scrollIntoViewIfNeeded();
+
+  expect(await page.locator(".about-content").evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  expect((await page.locator("#about-dialog-title").boundingBox())?.y).toBe(legalHeader?.y);
+  expect((await dialog.getByRole("tablist").boundingBox())?.y).toBe(legalTabs?.y);
+  expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath("about-legal-bottom.png"), fullPage: true });
+
   await page.keyboard.press("ArrowRight");
 
   await expect(page.locator("#about-tab-overview")).toBeFocused();

@@ -98,9 +98,10 @@ fidelity, the license hash, and version/build agreement with container labels.
 
 This is still review content, not release-ready legal delivery. The third-party
 tab shows the real two-entry manual collection with explicit partial coverage;
-the legal sections retain the approved, visibly marked placeholders.
+the legal sections present the accepted general bilingual wording and an explicit
+deployment-specific privacy caveat.
 Complete shipped/transitive/runtime notices, rights/compatibility review, and
-final self-hosted legal wording remain outstanding. Repository/release-source URLs
+deployment-specific legal review remain outstanding. Repository/release-source URLs
 are unavailable until agreed. About now shows the captured source revision and
 whether this is a development build with uncommitted changes; source archives
 without Git explicitly report unavailable provenance. Dirty builds do not receive
@@ -140,6 +141,37 @@ npm --prefix revamp/web run build:image
 npm --prefix revamp/tests/e2e run check
 npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/authentication/about.spec.ts --workers 1
 ```
+
+### Legal Information Delivery (2026-10-23)
+
+After the wording and prototype review, the user requested "implement" for the
+current Legal information presentation. Angular now displays the accepted
+[German/English R1 text](../docs/terms/self_hosted_information_draft.md) as separate,
+escaped paragraphs in the existing Operator responsibilities, Warranty and
+liability, and Privacy information sections, retaining the deployment-specific
+privacy caveat. No backend/consent state, cloud legal documents, canonical license
+or notice originals changed. Partial notice coverage and deployment-specific
+publication/legal review remain open.
+
+The production-image build, catalog validation and E2E typecheck passed, followed
+by **eight production-image About checks** on desktop/mobile. The public workflow
+compares every English paragraph against R1 and verifies paragraph spacing,
+internal scrolling and fixed header/tabs, alongside the existing role/form,
+focus-return, exact-license and mapped-notice checks.
+
+```text
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/authentication/about.spec.ts --workers 1
+```
+
+Separate development-app browser checks passed eight English/German, light/dark,
+1440px/360px combinations with exact accepted paragraphs, native keyboard,
+spacing, overflow, scrolling and focus return. Contexts were isolated from the
+existing signed-in session. Production desktop/320px phone screenshots and
+German dark-phone screenshots were inspected; local layout artifacts are beneath
+ignored `revamp/.local/legal-angular-review/`.
 
 ### Build Metadata and License Generation
 

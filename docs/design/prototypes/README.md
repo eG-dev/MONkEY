@@ -89,6 +89,37 @@ Dialog/form activation used DOM events rather than full native keyboard input.
   from the root [LICENSE](../../../LICENSE). Its decoded text must remain identical
   to that canonical file; regenerate the asset whenever the license changes.
 
+## Legal Content Presentation (2026-10-23)
+
+The shared About dialog's Legal information tab now presents the
+[accepted German/English R1 wording](../../terms/self_hosted_information_draft.md)
+instead of the three legal placeholders. Paragraph boundaries and text are
+retained; Markdown code delimiters are not displayed. A short privacy caveat
+repeats an accepted sentence, not an invented operator identity or hosting policy.
+The presentation was initially a draft. After verification, the user requested
+"implement" on 2026-10-23, accepting the current presentation for Angular.
+The port is now implemented and verified; see the
+[delivery record](../../../revamp/README.md#legal-information-delivery-2026-10-23).
+Earlier R5 and tonal styling approvals remain history for those revisions;
+approved wireframes are unchanged. No acknowledgement or consent gate is added.
+
+Standalone verification passed 12 ordinary offline Chromium combinations:
+English/German, light/dark and 1440px/360px/320px. Every body paragraph matched
+the accepted document after whitespace/Markdown-delimiter normalization.
+Existing sentence-case headings retain their labels. Native keyboard checks,
+paragraph spacing, no horizontal overflow, internal scroll, fixed header/tabs,
+Escape and opener focus return passed without script errors.
+
+Separately, 16 integrated combinations passed after those standalone checks:
+Manager/Member, both languages/themes and outer 1440px/360px. Checks followed
+real Administration navigation inside the root composition, opened About from
+the shell, and repeated the text/interaction/layout checks. The root URL remained
+stable and one shell remained. English light-desktop and German dark-phone
+screenshots were inspected; generated artifacts are under ignored
+`revamp/.local/legal-prototype-review/`. All data/preferences were isolated from
+the user's browser. This is prototype verification, not legal certification or
+evidence of Angular delivery; that separate verification is recorded above.
+
 ## About Approval
 
 The four-tab R5 wireframes and shared prototype were explicitly approved on
@@ -98,7 +129,9 @@ tab and shows the complete original text immediately, without an accordion.
 Notices preserve expanded rows across filtering/tab changes and reset on close.
 Eight focused desktop/mobile production-image checks passed; see the
 [delivery record](../../../revamp/README.md#four-tab-about-delivery-2026-10-23).
-Legal placeholders and the staged notice collection remain review material.
+That initial Angular delivery retained legal placeholders and a staged notice
+collection. The later legal-content presentation above replaces those legal
+placeholders; third-party coverage remains partial.
 
 The user explicitly approved the current shared dialog and updated shell/login
 prototypes on 2026-10-17 for Angular implementation. The component inventory and legal wording remain labelled review placeholders;

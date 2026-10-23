@@ -76,11 +76,11 @@ closes the reuse gate: render the mapped data in the existing presentation, then
 extend the agreed initial set. Future design changes retain their separate gates;
 ORT remains later work.
 
-The user's subsequent 2026-10-19 request moves the full project license to a
-dedicated tab without expansion and corrects login-prototype centring. The login
-prototype correction is locally verified and draft pending review; Angular login
-is unchanged. About now has four R5 draft wireframes, including Project license
-as the second tab. See the [current design drafts](../../docs/design/README.md#current-drafts-2026-10-19).
+The user's subsequent 2026-10-19 request moved the full project license to a
+dedicated tab without expansion and corrected login-prototype centring. The login
+prototype correction was initially a locally verified draft; it was explicitly
+approved with the surface revision on 2026-10-23. About R5 adds Project license
+as the second of four tabs. See the [design review record](../../docs/design/README.md#current-drafts-2026-10-19).
 On 2026-10-19 the user explicitly confirmed "Wireframe approved" for the current
 R5 references, including the current project-license source/annotations. The
 wireframe gate is satisfied. The shared R5 About click prototype is now updated
@@ -93,8 +93,13 @@ The offline license copy was regenerated to match root text exactly after
 detecting CRLF/LF drift. The user explicitly approved the current R5 prototype on
 2026-10-19 with "prototype approved, create a commit with it" and selected all
 pending About/notice work for that commit. Both R5 design gates are satisfied.
-The dedicated Angular license-tab implementation follows separately after this
-approval commit; the previous R4 implementation remains in place meanwhile.
+The dedicated Angular license tab was implemented on 2026-10-23 and committed
+in `7b6f917`, alongside the approved tonal styling. Eight production-image About
+checks passed across desktop/mobile public, Manager, Member and forced-password
+flows. Eight separate English/German, light/dark layout checks passed at
+1440px/360px; desktop and 320px phone license screenshots were inspected.
+See the [current Angular delivery record](../../revamp/README.md#four-tab-about-delivery-2026-10-23).
+These checks do not approve final legal wording or complete notice coverage.
 
 ## Decisions before implementation
 
@@ -117,7 +122,35 @@ later that day ("yes, AGPLv3 it is"), with version 3 only recorded in
 [ADR-0018](../../docs/ADR/ADR-0018-project-license.md) and the root [LICENSE](../../LICENSE).
 Commercial use remains permitted subject to AGPL source-sharing obligations;
 the earlier commercial-permission restriction is not part of the chosen license.
-Final operator/privacy wording and any in-app acceptance flow remain unapproved.
+The general bilingual wording is approved as recorded below; deployment-specific
+publication review remains open. No in-app acceptance flow is approved.
+
+The [self-hosted information R1](../../docs/terms/self_hosted_information_draft.md)
+records German and English operator, warranty/liability and privacy wording,
+approved by the user on 2026-10-23: "sounds good, lets keep it".
+It distinguishes the operator from household users and
+project maintainers, preserves AGPL rights, and explains shared-account visibility
+and the limits of transaction-detail retention. Its deployment-specific review
+questions remain open; wording approval does not establish legal enforceability
+or deployment-specific readiness. The shared About prototype now presents the
+accepted wording. After verification, the user requested "implement" on
+2026-10-23, accepting the current presentation for Angular implementation.
+Standalone verification passed 12 offline browser combinations, followed by 16
+integrated combinations with both roles and real navigation. See the
+[presentation review record](../../docs/design/prototypes/README.md#legal-content-presentation-2026-10-23).
+Angular now presents the accepted bilingual paragraphs and privacy caveat.
+Production-image build/catalog/type checks, eight focused production-image About
+checks and eight separate bilingual/theme layout checks passed; see the
+[delivery record](../../revamp/README.md#legal-information-delivery-2026-10-23).
+The existing cloud documents are unchanged. No consent state or acceptance gate
+is introduced; deployment-specific legal review remains open.
+
+Final user acceptance on 2026-10-23: "very well, all approved, whats next?".
+The current legal wording, prototype presentation and Angular delivery are
+accepted. The next staged notice slice is extending the reviewed initial set
+beyond EF Core and Roboto under the existing catalog/original-document contract;
+ORT and comprehensive release coverage remain later work. This acceptance does
+not authorize publication or claim deployment-specific legal readiness.
 
 - Write fresh German and English self-hosted terms/operator notices. Leave the [existing cloud usage terms](../../docs/terms/usage_terms_v1_0.md) and [cloud privacy declaration](../../docs/terms/data_privacy_declaration_v1_0.md) unchanged for the independently runnable Azure application. Do not carry over a central service operator, cloud support contact, availability promise, or account/data-deletion promise.
 - Distinguish the instance operator from ordinary household members: the person running the instance is responsible for its hosting, access control, HTTPS/network exposure, persistent storage, backups and restore, configuration, and installing application/dependency/security updates. Using an old version is not a project-provided managed service.
