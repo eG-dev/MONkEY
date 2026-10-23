@@ -18,15 +18,15 @@
       "id": "microsoft-entityframeworkcore",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore",
-      "version": "10.0.12",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@10.0.12",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@10.0.13",
       "versionEvidence": {
         "kind": "nuget",
         "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.EntityFrameworkCore"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.12",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -70,9 +70,9 @@
     {
       "id": "ef-core-license",
       "kind": "license",
-      "path": "revamp/notices/originals/microsoft-entityframeworkcore/10.0.12/LICENSE.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/efcore/v10.0.12/LICENSE.txt",
-      "revision": "v10.0.12",
+      "path": "revamp/notices/originals/microsoft-entityframeworkcore/10.0.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/efcore/v10.0.13/LICENSE.txt",
+      "revision": "v10.0.13",
       "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
     },
     {

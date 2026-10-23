@@ -105,7 +105,7 @@ version or license to a mixed group.
 | Location | Role |
 | --- | --- |
 | `revamp/notices/catalog.json` | Maintained reviewed identities, explicit mappings and provenance; manual first, later supplemented by proposed adapter changes |
-| `revamp/notices/originals/<component-id>/<version>/...` | Tracked, unmodified upstream license/NOTICE/copyright/evidence documents; shared documents reference one physical file where appropriate |
+| `revamp/notices/originals/<component-id>/<version-or-approved-series>/...` | Tracked, unmodified upstream license/NOTICE/copyright/evidence documents; shared documents reference one physical file where appropriate |
 | Root `THIRD-PARTY-NOTICES.txt` | Canonical assembled distribution output, deterministically generated and committed for source recipients; not independently hand-edited |
 | Existing ignored `revamp/web/src/generated/about/` | Generated About entry data with resolved local document references/texts, plus downloadable documents; no second maintained catalog |
 | Existing ignored `revamp/.build/about/` | Prepared container inputs, extended to capture this same catalog/document set before packaging |
@@ -122,6 +122,19 @@ assembled output; it must not rely on files outside its prepared build context.
 ADR-0020 now makes originals/mappings authoritative and the root file a generated
 distribution output. Do not maintain both a hand-edited root bundle and
 independently edited original texts.
+
+**Approved patch-series reuse, 2026-10-23:** .NET and EF Core are trusted to retain
+their license across the `10.0.x` patch series. Store their reviewed originals
+under `10.0.x` within each component's own folder, rather than creating a copy
+for every patch. The EF Core original is now stored at
+`originals/microsoft-entityframeworkcore/10.0.x/LICENSE.txt`.
+Routine patch updates do not require another license download or duplicate.
+Keep each component's exact shipped version and lockfile evidence, and retain
+the document's actual captured upstream URL, revision and hash; `10.0.x` is a
+storage convention, not a wildcard component version or a fabricated upstream
+revision. Revisit reuse if upstream announces a license change or obvious
+contradictory material appears. This does not extend trust to separate
+third-party dependencies or replace component-specific NOTICE/copyright texts.
 
 ### Manual Workflow And Later Automation
 

@@ -160,7 +160,7 @@ bundle. The SQLite engine is public domain; wrapper/package terms are separate.
 The [root notice document](../THIRD-PARTY-NOTICES.txt), beside the project license,
 is the canonical generated distribution output, not an independently maintained
 dependency database. Approved Manual Mapping R1 is implemented as a two-entry
-partial proof: EF Core `10.0.12` (MIT) and the four local Roboto `3.015` fonts
+partial proof: EF Core `10.0.13` (MIT) and the four local Roboto `3.015` fonts
 (OFL-1.1). Maintain the [catalog](notices/catalog.json) and original upstream texts,
 then run `assemble:notices`; commit those inputs and the assembled root together.
 This does not complete the agreed initial set or approve publication.
@@ -236,11 +236,12 @@ the configured currency or business timezone.
 
 | Component | Verified version |
 | --- | --- |
-| .NET SDK / runtime / EF Core | 10.0.401 / 10.0.12 / 10.0.12 |
-| Node / Angular SSR | 24.22.0 / 22.2.2 |
+| .NET SDK / runtime / EF Core | 10.0.402 / 10.0.13 / 10.0.13 |
+| Node / Angular SSR | 24.22.0 / 22.2.3 |
+| npm / TypeScript | 12.2.0 / 6.0.3 |
 | Taiga / universal Web APIs | 5.28.0 / 5.4.0 |
 | Transloco / MessageFormat integration | 8.4.0 / 8.4.0 |
-| Lucide static font | 1.55.0 |
+| Lucide static font | 1.60.0 |
 | Playwright | 1.63.0 |
 | Container platform | Linux x86-64 only |
 
@@ -248,6 +249,22 @@ Patch versions are locked in the manifests/lockfiles. The ICU compiler uses
 CommonJS and adds approximately 77 KB to the initial browser bundle; the explicit
 initial budget is 650 KB warning / 800 KB error. No runtime CDN is used.
 No ARM, Firefox, or WebKit compatibility claim is made yet.
+
+Dependency refresh verified on 2026-10-23: npm 12.2.0 clean installation,
+Angular SSR and replacement .NET builds, production image, 24 About/build-input
+checks and 16 focused production-image checks passed. npm 12's default blocking
+of dependency install scripts did not prevent the Angular build; container
+installs continue to use `--ignore-scripts`. TypeScript 7 is deferred because
+Angular 22.2.3 requires TypeScript `>=6.0 <6.1`; npm 11.21.1 is superseded by the
+verified npm 12 update. The EF Core 10.0.13 original license has the same SHA-256
+as 10.0.12, verified against the release-matched upstream URL.
+
+The legacy solution also built with central OpenTelemetry Hosting 1.20.1 and
+.NET package patches. Its inherited corporate NuGet source was unavailable,
+so verification used `-p:RestoreSources=https://api.nuget.org/v3/index.json`
+without changing source configuration. Existing moderate/high
+`System.Security.Cryptography.Pkcs` vulnerability warnings remain; this update
+does not claim an audit-clean legacy dependency graph.
 
 Application styles use SCSS, while the vendor Taiga theme retains its Less import.
 Global partials in `web/src/styles/` hold the design tokens (light/dark), local
@@ -335,7 +352,7 @@ endpoint mapper assigns HTTP statuses.
 
 ## Build and Verify
 
-From the repository root, enter `revamp/`. Node 24, .NET SDK 10.0.401, and Docker
+From the repository root, enter `revamp/`. Node 24, .NET SDK 10.0.402, and Docker
 with a Linux engine are required. These commands work in PowerShell and CI shell:
 
 Stop a running local backend preview before rebuilding its Release output on
@@ -434,7 +451,7 @@ tooling remain outside the image.
 
 ## Local Development
 
-With Node 24 and .NET SDK 10.0.401 installed, run these commands from the repository
+With Node 24 and .NET SDK 10.0.402 installed, run these commands from the repository
 root. Install web dependencies once after checkout or when the lockfile changes:
 
 ```text
