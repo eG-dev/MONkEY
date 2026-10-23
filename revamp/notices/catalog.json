@@ -3,6 +3,11 @@
   "coverage": "partial",
   "entries": [
     {
+      "id": "angular",
+      "displayName": "Angular",
+      "componentIds": ["angular-common", "angular-compiler", "angular-core", "angular-forms", "angular-platform-browser", "angular-platform-server", "angular-router", "angular-ssr"]
+    },
+    {
       "id": "ef-core",
       "displayName": "Entity Framework Core",
       "componentIds": ["microsoft-entityframeworkcore"]
@@ -14,6 +19,142 @@
     }
   ],
   "components": [
+    {
+      "id": "angular-common",
+      "kind": "npm",
+      "name": "@angular/common",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/common@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/common"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/common",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-compiler",
+      "kind": "npm",
+      "name": "@angular/compiler",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/compiler@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/compiler"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/compiler",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-core",
+      "kind": "npm",
+      "name": "@angular/core",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/core@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/core"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/core",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-forms",
+      "kind": "npm",
+      "name": "@angular/forms",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/forms@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/forms"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/forms",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-platform-browser",
+      "kind": "npm",
+      "name": "@angular/platform-browser",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/platform-browser@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/platform-browser"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/platform-browser",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-platform-server",
+      "kind": "npm",
+      "name": "@angular/platform-server",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/platform-server@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/platform-server"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/platform-server",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-router",
+      "kind": "npm",
+      "name": "@angular/router",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/router@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/router"
+      },
+      "upstreamUrl": "https://github.com/angular/angular/tree/22.2.3/packages/router",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
+    {
+      "id": "angular-ssr",
+      "kind": "npm",
+      "name": "@angular/ssr",
+      "version": "22.2.3",
+      "purl": "pkg:npm/%40angular/ssr@22.2.3",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@angular/ssr"
+      },
+      "upstreamUrl": "https://github.com/angular/angular-cli/tree/22.2.3",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["angular-license"]
+    },
     {
       "id": "microsoft-entityframeworkcore",
       "kind": "nuget",
@@ -67,6 +208,14 @@
     }
   ],
   "documents": [
+    {
+      "id": "angular-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/angular/22.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/@angular/core/-/core-22.2.3.tgz",
+      "revision": "@angular/core@22.2.3: package/LICENSE; identical LICENSE supplied by all eight mapped Angular packages",
+      "sha256": "15e77c4692114f87c2020353626c868472c23954a4ed37ecc4c1522d14be1eb7"
+    },
     {
       "id": "ef-core-license",
       "kind": "license",

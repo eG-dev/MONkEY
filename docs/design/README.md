@@ -8,6 +8,40 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Shared Notice Documents R1 (2026-10-23)
+
+**Approved, 2026-10-23:** the user accepted this prototype revision with
+"approved, implement". The expanded Angular example in the
+[standalone About prototype](prototypes/about/index.html) lists eight packages
+under "Applies to" and shows one shared notice block, rather than repeating it
+for every package. Member-name search preserves the group and its applicability
+list. German uses "Gilt für". Existing illustrative legal-text placeholders are
+retained; no second maintained original or completed inventory is implied.
+
+This is an expanded-row detail correction; wireframe structure is unchanged.
+Earlier approvals remain history; this explicit approval covers the revised
+shared About presentation. Angular now renders each mapped document once per
+entry with an explicit applicability list and each package's source link.
+Distinct documents remain separate; members without documents remain visible.
+
+Verified offline: eight standalone and sixteen integrated browser combinations;
+see the [prototype evidence](prototypes/README.md#shared-notice-documents-r1-2026-10-23).
+Approval does not establish complete notice coverage or publication readiness.
+
+Angular delivery: application/production-image builds, translation validation
+and E2E typecheck passed. All nine focused About/offline production-image checks
+passed, including unique document counts, exact applicability/source mappings,
+inline original text, download hashes and member-name search. Eight isolated
+real-app checks covered English/German, light/dark and 1440px/360px; desktop and
+German dark-phone screenshots were inspected without overflow or script errors.
+The build retains a warning-only initial bundle budget overrun (756.75 kB versus
+750 kB); no budget limits were changed. See the
+[notice delivery record](../../revamp/notices/README.md#angular-runtime-packages-2026-10-23).
+
+Final user acceptance on 2026-10-23: "all approved now, commit". This accepts
+the delivered Angular notice collection and shared-document presentation;
+partial coverage and independent publication gates remain unchanged.
+
 ## Approved Legal Content (2026-10-23)
 
 The user accepted the [bilingual R1 wording](../terms/self_hosted_information_draft.md)

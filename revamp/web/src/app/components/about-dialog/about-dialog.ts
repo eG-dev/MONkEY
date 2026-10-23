@@ -41,10 +41,23 @@ export class AboutDialog {
   private readonly components = thirdParty.entries.map((entry) => ({
     id: entry.id,
     name: entry.displayName,
-    members: entry.components.map((component) => ({
-      ...component,
-      documents: thirdParty.documents.filter((document) => component.documentIds.includes(document.id)),
-    })),
+    metadata: entry.components.filter(
+      (component, index, components) =>
+        components.findIndex(
+          (candidate) =>
+            candidate.version === component.version &&
+            candidate.licenseExpression === component.licenseExpression &&
+            candidate.licensingStatus === component.licensingStatus,
+        ) === index,
+    ),
+    members: entry.components,
+    unmappedMembers: entry.components.filter((component) => component.documentIds.length === 0),
+    documents: thirdParty.documents
+      .filter((document) => entry.components.some((component) => component.documentIds.includes(document.id)))
+      .map((document) => ({
+        ...document,
+        members: entry.components.filter((component) => component.documentIds.includes(document.id)),
+      })),
   }));
   protected readonly filteredComponents = computed(() => {
     const locale = this.language.locale();

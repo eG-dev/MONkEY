@@ -5,6 +5,29 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Shared Notice Documents R1 (2026-10-23)
+
+**Approved, 2026-10-23:** "approved, implement". The shared About dialog illustrates eight Angular packages with
+one applicable notice block and an explicit English/German applicability list.
+Package-name search keeps that complete group visible. Other rows retain their
+existing presentation. The legal text remains an illustrative placeholder, not
+a duplicate maintained upstream original. Wireframes are unchanged; explicit
+approval permits the Angular port, now delivered and verified. Earlier approvals below
+describe the preceding presentation.
+
+Standalone verification passed eight offline combinations: English/German,
+light/dark and 1440x1000/360x1000. Integrated verification separately passed
+sixteen combinations with both Manager and Member through Overview-to-
+Administration navigation and the real About entry. Checks covered keyboard
+expansion, eight applicable package names, one document block, member-name
+search with retained expansion, unchanged single-package rows, Escape/focus
+return, preserved preferences and no overflow or script errors. Expansion state
+is captured before filtering rather than relying on a queued native toggle event.
+Desktop English/light and integrated German/dark-phone screenshots were inspected;
+ignored evidence is under `revamp/.local/shared-notice-review/`. These checks
+verify the prototype; separate Angular delivery evidence is recorded in the
+[design index](../README.md#shared-notice-documents-r1-2026-10-23).
+
 ## Integrated Application Entry
 
 Open [index.html](./index.html) to review and test the complete application.

@@ -22,6 +22,7 @@
     "inventoryDraft": "Prüfplatzhalter: Diese Beispielzeilen sind kein geprüftes Verzeichnis der Veröffentlichung. Versionen, Lizenzen und erforderliche Hinweise müssen noch geprüft werden.",
     "inventoryPartial": "Unvollständige Komponentensammlung. Diese Einträge decken nicht alle ausgelieferten Komponenten ab und bedeuten keine Freigabe zur Veröffentlichung.",
     "componentSource": "Komponentenquellcode",
+    "appliesTo": "Gilt für",
     "openDocument": "Originaldokument öffnen: {document}",
     "documentText": "Originaldokument: {document}",
     "publicDomain": "Gemeinfrei",

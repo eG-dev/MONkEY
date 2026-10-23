@@ -147,10 +147,14 @@ is introduced; deployment-specific legal review remains open.
 
 Final user acceptance on 2026-10-23: "very well, all approved, whats next?".
 The current legal wording, prototype presentation and Angular delivery are
-accepted. The next staged notice slice is extending the reviewed initial set
-beyond EF Core and Roboto under the existing catalog/original-document contract;
-ORT and comprehensive release coverage remain later work. This acceptance does
-not authorize publication or claim deployment-specific legal readiness.
+accepted; committed as `9ab7739`. The next staged notice slice now adds Angular's
+eight locked `22.2.3` runtime packages under the existing catalog/original-document
+contract, sharing their byte-identical MIT original. All 24 build-input checks
+and nine production-image About/offline checks passed; see the
+[Angular notice record](../../revamp/notices/README.md#angular-runtime-packages-2026-10-23).
+The remaining initial components, Angular's separate dependencies, ORT and
+comprehensive release coverage remain later work. This acceptance does not
+authorize publication or claim deployment-specific legal readiness.
 
 - Write fresh German and English self-hosted terms/operator notices. Leave the [existing cloud usage terms](../../docs/terms/usage_terms_v1_0.md) and [cloud privacy declaration](../../docs/terms/data_privacy_declaration_v1_0.md) unchanged for the independently runnable Azure application. Do not carry over a central service operator, cloud support contact, availability promise, or account/data-deletion promise.
 - Distinguish the instance operator from ordinary household members: the person running the instance is responsible for its hosting, access control, HTTPS/network exposure, persistent storage, backups and restore, configuration, and installing application/dependency/security updates. Using an old version is not a project-provided managed service.

@@ -80,15 +80,36 @@
                   <summary data-testid="about-component-toggle">
                     <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ component.name }}</span
                     >
-                    @for (member of component.members; track member.id) {
-                      <span class="notice-meta">
+                    @for (member of component.metadata; track member.id) {
+                      <span class="notice-meta" data-testid="about-component-metadata">
                         {{ member.version ?? t('about.versionPending') }} &middot;
                         {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}
                       </span>
                     }
                   </summary>
                   <div class="notice-content">
-                    @for (member of component.members; track member.id) {
+                    @for (document of component.documents; track document.id) {
+                      <div [attr.data-testid]="'about-document-' + document.id">
+                        <p>{{ t('about.appliesTo') }}</p>
+                        <ul data-testid="about-document-members">
+                          @for (member of document.members; track member.id) {
+                            <li [attr.data-testid]="'about-member-' + member.id">
+                              {{ member.name }}
+                              @if (component.metadata.length > 1) {
+                                <span class="hint">{{ member.version ?? t('about.versionPending') }} &middot; {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</span>
+                              }
+                              <a [href]="member.upstreamUrl" target="_blank" rel="noopener">{{ t('about.componentSource') }}</a>
+                              @if (member.reviewStatus !== 'reviewed') {
+                                <p class="hint">{{ t('about.reviewPending') }}</p>
+                              }
+                            </li>
+                          }
+                        </ul>
+                        <a data-testid="about-document-file" [href]="document.url" target="_blank" rel="noopener">{{ t('about.openDocument', { document: document.id }) }}</a>
+                        <pre data-testid="about-document-text" tabindex="0" [attr.aria-label]="t('about.documentText', { document: document.id })">{{ document.text }}</pre>
+                      </div>
+                    }
+                    @for (member of component.unmappedMembers; track member.id) {
                       <div [attr.data-testid]="'about-member-' + member.id">
                         <h4>{{ member.name }} {{ member.version ?? t('about.versionPending') }}</h4>
                         <p>{{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</p>
@@ -96,10 +117,6 @@
                           <p class="hint">{{ t('about.reviewPending') }}</p>
                         }
                         <p><a [href]="member.upstreamUrl" target="_blank" rel="noopener">{{ t('about.componentSource') }}</a></p>
-                        @for (document of member.documents; track document.id) {
-                          <a data-testid="about-document-file" [href]="document.url" target="_blank" rel="noopener">{{ t('about.openDocument', { document: document.id }) }}</a>
-                          <pre data-testid="about-document-text" tabindex="0" [attr.aria-label]="t('about.documentText', { document: document.id })">{{ document.text }}</pre>
-                        }
                       </div>
                     }
                   </div>

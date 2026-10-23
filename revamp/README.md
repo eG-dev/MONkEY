@@ -97,7 +97,7 @@ outputs, not manually maintained copies. The About E2E workflow verifies their
 fidelity, the license hash, and version/build agreement with container labels.
 
 This is still review content, not release-ready legal delivery. The third-party
-tab shows the real two-entry manual collection with explicit partial coverage;
+tab shows the real three-entry manual collection with explicit partial coverage;
 the legal sections present the accepted general bilingual wording and an explicit
 deployment-specific privacy caveat.
 Complete shipped/transitive/runtime notices, rights/compatibility review, and
@@ -243,9 +243,12 @@ bundle. The SQLite engine is public domain; wrapper/package terms are separate.
 
 The [root notice document](../THIRD-PARTY-NOTICES.txt), beside the project license,
 is the canonical generated distribution output, not an independently maintained
-dependency database. Approved Manual Mapping R1 is implemented as a two-entry
-partial proof: EF Core `10.0.13` (MIT) and the four local Roboto `3.015` fonts
-(OFL-1.1). Maintain the [catalog](notices/catalog.json) and original upstream texts,
+dependency database. Approved Manual Mapping R1 now has three partial entries:
+Angular's eight direct runtime packages at `22.2.3` (MIT), EF Core `10.0.13` (MIT)
+and the four local Roboto `3.015` fonts (OFL-1.1). The
+[Angular delivery record](notices/README.md#angular-runtime-packages-2026-10-23)
+documents their explicit grouping, shared original and bounded coverage.
+Maintain the [catalog](notices/catalog.json) and original upstream texts,
 then run `assemble:notices`; commit those inputs and the assembled root together.
 This does not complete the agreed initial set or approve publication.
 

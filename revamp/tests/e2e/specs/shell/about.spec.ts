@@ -209,7 +209,7 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     entries: {
       id: string;
       displayName: string;
-      components: { id: string; name: string; version: string; licenseExpression: string; documentIds: string[] }[];
+      components: { id: string; name: string; version: string; licenseExpression: string; upstreamUrl: string; documentIds: string[] }[];
     }[];
     documents: { id: string; url: string; text: string; sha256: string }[];
   } = await noticesResponse.json();
@@ -225,6 +225,11 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     await expect(page.locator("#about-search-status")).toHaveText("Matching components: 1");
     await expect(row).toBeVisible();
 
+    const metadata = [...new Set(entry.components.map((component) => `${component.version} \u00b7 ${component.licenseExpression}`))];
+
+    await expect(row.getByTestId('about-component-metadata')).toHaveText(metadata);
+    await page.screenshot({ path: test.info().outputPath(`about-notice-summary-${entry.id}.png`), fullPage: true });
+
     const collapsedNotices = await page.locator("#about-panel-notices").boundingBox();
 
     await row.getByTestId("about-component-toggle").focus();
@@ -236,37 +241,56 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     expect(expandedNotices?.x).toBe(collapsedNotices?.x);
     expect(expandedNotices?.width).toBe(collapsedNotices?.width);
 
-    for (const component of entry.components) {
-      const member = row.getByTestId(`about-member-${component.id}`);
+    const documentIds = [...new Set(entry.components.flatMap((component) => component.documentIds))];
 
-      await expect(member).toContainText(component.name);
-      await expect(member).toContainText(component.version);
-      await expect(member).toContainText(component.licenseExpression);
+    await expect(row.getByTestId('about-document-text')).toHaveCount(documentIds.length);
 
-      for (const documentId of component.documentIds) {
-        const document = notices.documents.find((candidate) => candidate.id === documentId);
+    for (const documentId of documentIds) {
+      const document = notices.documents.find((candidate) => candidate.id === documentId);
 
-        if (!document) {
-          throw new Error(`Missing mapped original: ${documentId}`);
-        }
-
-        const link = member.getByTestId("about-document-file").filter({ hasText: document.id });
-        const originalText = member.getByTestId("about-document-text")
-          .and(page.getByLabel(`Original document: ${document.id}`, { exact: true }));
-
-        await expect(link).toHaveAttribute("href", document.url);
-        expect(await originalText.textContent()).toBe(document.text);
-
-        const download = await page.request.get(document.url);
-
-        expect(download.status()).toBe(200);
-        expect(createHash("sha256").update(await download.body()).digest("hex")).toBe(document.sha256);
-        expect(await originalText.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
-        await originalText.focus();
-        await page.keyboard.press("Control+End");
+      if (!document) {
+        throw new Error(`Missing mapped original: ${documentId}`);
       }
+
+      const group = row.getByTestId(`about-document-${document.id}`);
+      const members = entry.components.filter((component) => component.documentIds.includes(document.id));
+
+      await expect(group.getByText('Applies to', { exact: true })).toBeVisible();
+      await expect(group.getByTestId('about-document-members').getByRole('listitem')).toHaveCount(members.length);
+
+      for (const component of members) {
+        const member = group.getByTestId(`about-member-${component.id}`);
+
+        await expect(member).toContainText(component.name);
+        await expect(member.getByRole('link', { name: 'Component source', exact: true })).toHaveAttribute('href', component.upstreamUrl);
+
+        const memberMetadata = metadata.length > 1 ? member : row.getByTestId('about-component-metadata');
+
+        await expect(memberMetadata).toContainText(component.version);
+        await expect(memberMetadata).toContainText(component.licenseExpression);
+      }
+
+      const link = group.getByTestId('about-document-file');
+      const originalText = group.getByTestId('about-document-text')
+        .and(page.getByLabel(`Original document: ${document.id}`, { exact: true }));
+
+      await expect(link).toHaveAttribute('href', document.url);
+      expect(await originalText.textContent()).toBe(document.text);
+
+      const download = await page.request.get(document.url);
+
+      expect(download.status()).toBe(200);
+      expect(createHash('sha256').update(await download.body()).digest('hex')).toBe(document.sha256);
+      expect(await originalText.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+      await originalText.focus();
+      await page.keyboard.press('Control+End');
     }
 
+    await page.locator('#about-search').fill(entry.components[0].name);
+
+    await expect(page.locator('#about-search-status')).toHaveText('Matching components: 1');
+    await expect(row).toHaveAttribute('open', '');
+    await expect(row.getByTestId('about-document-text')).toHaveCount(documentIds.length);
     expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
     await page.screenshot({ path: test.info().outputPath(`about-notices-${entry.id}.png`), fullPage: true });
   }

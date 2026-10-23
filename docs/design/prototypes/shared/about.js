@@ -13,6 +13,7 @@
       search: 'Search components', count: 'Matching components: {count}', noResults: 'No matching components.',
       versionPending: '[shipped version]', licensePending: '[license]', runtime: '.NET runtime',
       noticeText: '[Complete applicable license, copyright attributions and required NOTICE text will appear here after review.]',
+      appliesTo: 'Applies to',
       componentSource: 'Component source (pending review)',
       legalContext: 'This general software description is not a complete privacy notice for every deployment.',
       operator: 'Operator responsibilities', warranty: 'Warranty and liability', privacy: 'Privacy information',
@@ -100,6 +101,7 @@
       search: 'Komponenten suchen', count: 'Passende Komponenten: {count}', noResults: 'Keine passenden Komponenten.',
       versionPending: '[ausgelieferte Version]', licensePending: '[Lizenz]', runtime: '.NET-Laufzeit',
       noticeText: '[Nach der Prüfung stehen hier die vollständige anwendbare Lizenz, Urheberrechtshinweise und erforderliche NOTICE-Texte.]',
+      appliesTo: 'Gilt für',
       componentSource: 'Komponentenquellcode (Prüfung ausstehend)',
       legalContext: 'Diese allgemeine Softwarebeschreibung ist keine vollständige Datenschutzerklärung für jede Installation.',
       operator: 'Verantwortlichkeiten des Betreibers', warranty: 'Gewährleistung und Haftung', privacy: 'Datenschutzhinweise',
@@ -193,7 +195,18 @@
     bewerten.`
     }
   };
-  const components = ['Angular', 'runtime', 'Roboto', 'Lucide'];
+  const components = [
+    {
+      name: 'Angular',
+      members: [
+        '@angular/common', '@angular/compiler', '@angular/core', '@angular/forms',
+        '@angular/platform-browser', '@angular/platform-server', '@angular/router', '@angular/ssr'
+      ]
+    },
+    { name: 'runtime', members: [] },
+    { name: 'Roboto', members: [] },
+    { name: 'Lucide', members: [] }
+  ];
   const tabNames = ['overview', 'license', 'notices', 'legal'];
   let activeDialog;
 
@@ -279,21 +292,18 @@
 
     function renderComponents() {
       const query = dialog.querySelector('#about-search').value.trim().toLocaleLowerCase(PM.prefs.language);
-      const filtered = components.filter(name => (name === 'runtime' ? text('runtime') : name).toLocaleLowerCase(PM.prefs.language).includes(query));
+      const filtered = components.filter(({ name, members }) =>
+        [name === 'runtime' ? text('runtime') : name, ...members].join(' ').toLocaleLowerCase(PM.prefs.language).includes(query));
       dialog.querySelector('#about-search-status').textContent = text('count', { count: filtered.length });
       const list = dialog.querySelector('#about-components');
-      list.innerHTML = filtered.length ? filtered.map(name => `<details class="about-notice" data-component="${name}" ${expanded.has(name) ? 'open' : ''}><summary>${PM.icon('right')}<span class="about-notice-name">${name === 'runtime' ? html('runtime') : PM.esc(name)}</span><span class="about-notice-meta">${html('versionPending')} &middot; ${html('licensePending')}</span></summary><div class="about-notice-content"><p>${html('noticeText')}</p><p class="muted">${html('componentSource')}</p></div></details>`).join('') : `<div class="empty"><p>${html('noResults')}</p></div>`;
-      list.querySelectorAll('details').forEach(details => details.addEventListener('toggle', () => {
-        if (!details.isConnected) {
-          return;
-        }
-
+      list.querySelectorAll('details').forEach(details => {
         if (details.open) {
           expanded.add(details.dataset.component);
         } else {
           expanded.delete(details.dataset.component);
         }
-      }));
+      });
+      list.innerHTML = filtered.length ? filtered.map(({ name, members }) => `<details class="about-notice" data-component="${name}" ${expanded.has(name) ? 'open' : ''}><summary>${PM.icon('right')}<span class="about-notice-name">${name === 'runtime' ? html('runtime') : PM.esc(name)}</span><span class="about-notice-meta">${html('versionPending')} &middot; ${html('licensePending')}</span></summary><div class="about-notice-content">${members.length ? `<p>${html('appliesTo')}</p><ul data-about-members>${members.map(member => `<li>${PM.esc(member)}</li>`).join('')}</ul>` : ''}<div data-about-document><p data-about-document-text>${html('noticeText')}</p><p class="muted">${html('componentSource')}</p></div></div></details>`).join('') : `<div class="empty"><p>${html('noResults')}</p></div>`;
     }
 
     tabButtons.forEach((button, index) => {

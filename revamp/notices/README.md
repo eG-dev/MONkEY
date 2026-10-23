@@ -136,6 +136,14 @@ revision. Revisit reuse if upstream announces a license change or obvious
 contradictory material appears. This does not extend trust to separate
 third-party dependencies or replace component-specific NOTICE/copyright texts.
 
+**Approved Angular series reuse, 2026-10-23:** store Angular's reviewed original
+under `originals/angular/22.x/` and reuse it across the Angular 22 release series
+on the same terms. Keep exact shipped component versions and the captured
+document's actual upstream URL, revision and hash; `22.x` is only a storage
+convention. Revisit reuse if upstream announces changed terms or contradictory
+material appears. Separate dependencies and component-specific notices remain
+outside this reuse approval.
+
 ### Manual Workflow And Later Automation
 
 Use the exact shipped package or matching upstream release/revision as the primary
@@ -192,9 +200,55 @@ and generated-root ownership are approved for the manual proof. Implementation
 and verification evidence follow separately; approval does not establish notice
 completeness or approve changed UI artifacts.
 
+### Angular Runtime Packages (2026-10-23)
+
+The catalog now contains three partial entries: Angular, Entity Framework Core
+and Roboto. The Angular entry explicitly maps the eight direct runtime packages
+`@angular/common`, `@angular/compiler`, `@angular/core`, `@angular/forms`,
+`@angular/platform-browser`, `@angular/platform-server`, `@angular/router` and
+`@angular/ssr`. Each installed version and matching npm lockfile record is
+`22.2.3`; each package declares MIT and supplies the same root `LICENSE` bytes,
+including the Google LLC copyright notice. No separate root NOTICE or copyright
+file was found in these eight packages.
+
+The captured [original](originals/angular/22.x/LICENSE.txt) comes from the
+installed `@angular/core@22.2.3` package. Its provenance records the locked npm
+tarball URL and `package/LICENSE`; its SHA-256 is
+`15e77c4692114f87c2020353626c868472c23954a4ed37ecc4c1522d14be1eb7`.
+All eight inspected originals have that hash, so the explicit component mappings
+share one stored document. The first seven packages identify `angular/angular`
+as their upstream repository; SSR identifies `angular/angular-cli`, retained in
+its own source link. The initial catalog-only addition changed no package
+versions, dependencies or UI layout.
+
+Verified: notice assembly and About freshness, all 24 isolated build-input
+checks, the production-image build and all nine focused About/offline image
+checks. These exercised grouped member/version/license associations, exact
+inline texts and downloaded original hashes, search, keyboard reading and
+desktop/320px layouts. Desktop/mobile Angular screenshots were inspected.
+
+The user subsequently approved Shared Notice Documents R1 on 2026-10-23:
+"approved, implement". Angular now shows each document once per entry, followed
+through explicit applicability mappings rather than duplicated inside each
+package. Shared versions/licenses remain a single summary label, while distinct
+documents and mixed version/license associations are retained. Each applicable
+package keeps its source link; members without mapped documents stay visible.
+No original bytes, catalog mappings or distribution bundle were changed by this
+presentation correction. Application/image builds, catalog validation, E2E
+typecheck and all nine About/offline image checks passed again. Eight isolated
+English/German, light/dark, desktop/phone real-app checks passed; screenshots are
+ignored under `revamp/.local/shared-notice-angular-review/`.
+
+This bounded slice does not cover Angular's separate dependencies, including
+`rxjs`, `tslib`, `@standard-schema/spec`, `zod`, `xhr2` and `beasties`, or establish
+which transitive material ships in the final outputs. Build-only Angular tools
+are not added merely because their names match. The remaining agreed initial
+components and later ORT/transitive/native/runtime/OS review stay open; coverage
+remains `partial`, not distribution or legal-completeness approval.
+
 ### Implemented Manual Proof (2026-10-19)
 
-The catalog deliberately covers only two entries, not the full initial set:
+The initial proof deliberately covered only two entries, not the full initial set:
 
 | Entry | Exact input and legal material |
 | --- | --- |

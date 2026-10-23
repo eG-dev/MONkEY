@@ -22,6 +22,7 @@
     "inventoryDraft": "Review placeholder: these example rows are not a verified release inventory. Versions, licenses and required notices remain to be reviewed.",
     "inventoryPartial": "Partial component collection. These entries do not cover all shipped components or establish release approval.",
     "componentSource": "Component source",
+    "appliesTo": "Applies to",
     "openDocument": "Open original document: {document}",
     "documentText": "Original document: {document}",
     "publicDomain": "Public domain",
