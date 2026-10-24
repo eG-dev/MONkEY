@@ -115,7 +115,7 @@ Dialog/form activation used DOM events rather than full native keyboard input.
 ## Legal Content Presentation (2026-10-23)
 
 The shared About dialog's Legal information tab now presents the
-[accepted German/English R1 wording](../../terms/self_hosted_information_draft.md)
+[accepted German/English R1 wording](../../terms/self_hosted_legal_information.md)
 instead of the three legal placeholders. Paragraph boundaries and text are
 retained; Markdown code delimiters are not displayed. A short privacy caveat
 repeats an accepted sentence, not an invented operator identity or hosting policy.

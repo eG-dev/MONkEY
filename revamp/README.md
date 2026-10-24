@@ -146,7 +146,7 @@ npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/authentica
 
 After the wording and prototype review, the user requested "implement" for the
 current Legal information presentation. Angular now displays the accepted
-[German/English R1 text](../docs/terms/self_hosted_information_draft.md) as separate,
+[German/English R1 text](../docs/terms/self_hosted_legal_information.md) as separate,
 escaped paragraphs in the existing Operator responsibilities, Warranty and
 liability, and Privacy information sections, retaining the deployment-specific
 privacy caveat. No backend/consent state, cloud legal documents, canonical license

@@ -125,7 +125,7 @@ the earlier commercial-permission restriction is not part of the chosen license.
 The general bilingual wording is approved as recorded below; deployment-specific
 publication review remains open. No in-app acceptance flow is approved.
 
-The [self-hosted information R1](../../docs/terms/self_hosted_information_draft.md)
+The [self-hosted information R1](../../docs/terms/self_hosted_legal_information.md)
 records German and English operator, warranty/liability and privacy wording,
 approved by the user on 2026-10-23: "sounds good, lets keep it".
 It distinguishes the operator from household users and

@@ -42,9 +42,35 @@ Final user acceptance on 2026-10-23: "all approved now, commit". This accepts
 the delivered Angular notice collection and shared-document presentation;
 partial coverage and independent publication gates remain unchanged.
 
+## Legal License-Name Copy R2 (2026-10-24)
+
+**Approved, 2026-10-24:** the user approved the current R2 prototype with
+"approved" after the copy change and focused verification. The user requested the full license name
+instead of the SPDX identifier in explanatory prose. The
+[bilingual R2 wording](../terms/self_hosted_legal_information.md) and shared About
+prototype now use "GNU Affero General Public License, version 3" (German:
+"GNU Affero General Public License, Version 3") in the warranty section.
+The license remains version 3 only. Precise license labels, metadata, technical
+paths and the ADR retain `AGPL-3.0-only`; wireframe structure is unchanged.
+Earlier R1 approvals below remain history; this explicit approval closes the R2
+prototype gate. Angular's English and German warranty paragraphs now match R2.
+
+Focused verification: JavaScript syntax and bilingual document/prototype copy
+agreement passed. Eight standalone browser checks covered English/German,
+light/dark at 1440px/360px with no legal-panel horizontal overflow. An integrated
+smoke check navigated from Overview to Administration and opened About from the
+shell as Manager, German, dark, 360px; revised text and overflow checks passed.
+The full integrated role/language/theme matrix was not run.
+
+After approval, all six Angular legal sections matched the R2 document paragraph
+for paragraph in English and German. `npm --prefix revamp/web run check:catalogs`
+and `npm --prefix revamp/web run build` passed. The build retains the existing
+warning-only initial bundle budget overrun (756.82 kB versus 750 kB); no budget
+limits changed. Production-image browser tests were not rerun for this copy update.
+
 ## Approved Legal Content (2026-10-23)
 
-The user accepted the [bilingual R1 wording](../terms/self_hosted_information_draft.md)
+The user accepted the [bilingual R1 wording](../terms/self_hosted_legal_information.md)
 with "sounds good, lets keep it", then requested its prototype presentation.
 After review verification, the user requested Angular implementation with
 "implement" on 2026-10-23, accepting the current presentation for that port.

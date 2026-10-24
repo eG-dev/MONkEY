@@ -143,7 +143,7 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     "Privacy information",
   );
 
-  const legalDocument = readFileSync(resolve(__dirname, "../../../../../docs/terms/self_hosted_information_draft.md"), "utf8");
+  const legalDocument = readFileSync(resolve(__dirname, "../../../../../docs/terms/self_hosted_legal_information.md"), "utf8");
   const acceptedEnglish = legalDocument.match(/## English\r?\n([\s\S]*?)\r?\n## Deutsch/);
 
   if (!acceptedEnglish) {

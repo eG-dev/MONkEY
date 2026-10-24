@@ -47,7 +47,7 @@
     separate agreement. They do not reduce the project's engineering and verification
     requirements or relieve an operator of responsibilities imposed by law.
 
-    The project software is licensed under AGPL-3.0-only; third-party components
+    The project software is licensed under the GNU Affero General Public License, version 3; third-party components
     retain their own terms. This information does not change those licenses, remove
     recipients' rights, or add a commercial-use restriction. The full unmodified
     project license is available in the Project license tab; accompanying third-party
@@ -140,7 +140,7 @@
     unberührt. Die Hinweise mindern weder die technischen Qualitäts- und
     Prüfanforderungen des Projekts noch die gesetzlichen Pflichten des Betreibers.
 
-    Die Projektsoftware steht unter AGPL-3.0-only; für Drittanbieterkomponenten
+    Die Projektsoftware steht unter der GNU Affero General Public License, Version 3; für Drittanbieterkomponenten
     gelten deren eigene Bedingungen. Diese Informationen ändern die Lizenzen nicht,
     entziehen Empfängern keine Rechte und fügen kein Verbot kommerzieller Nutzung
     hinzu. Der vollständige unveränderte Projektlizenztext steht im Reiter

@@ -1,11 +1,17 @@
 # Self-Hosted Legal Information
 
-Revision: R1, 2026-10-23. Status: **general bilingual wording approved by the user**.
+Revision: R2, 2026-10-24. Status: **bilingual wording and prototype presentation
+approved by the user**.
 
-Approval recorded on 2026-10-23: "sounds good, lets keep it". This accepts the
-wording below, not legal enforceability, deployment-specific publication
-readiness or an unreviewed prototype/Angular revision. The existing filename is
-retained to preserve references.
+R1 approval recorded on 2026-10-23: "sounds good, lets keep it". This accepts the
+general wording, not legal enforceability, deployment-specific publication
+readiness or an unreviewed prototype/Angular revision.
+
+R2 replaces the SPDX identifier in explanatory prose with the full license name,
+as requested on 2026-10-24. The license remains version 3 only, not version 3 or
+later; metadata, license notices and technical identifiers retain `AGPL-3.0-only`.
+The user approved the current R2 prototype on 2026-10-24 with "approved";
+Angular now uses the same revised wording.
 
 ## Review Notes
 
@@ -20,10 +26,10 @@ The wording follows [ADR-0018](../ADR/ADR-0018-project-license.md) and the
 It does not modify the standard [project license](../../LICENSE), third-party
 terms, or the existing Azure application's terms/privacy declaration. It adds no
 acceptance checkbox, consent record, registration gate or new backend contract.
-The [shared About prototype](../design/prototypes/about/index.html) now presents
-this wording in the existing three sections. After presentation verification,
+The [shared About prototype](../design/prototypes/about/index.html) presents
+R2 in the existing three sections, approved on 2026-10-24. After R1 presentation verification,
 the user requested "implement" on 2026-10-23. Angular now presents the same
-accepted wording and deployment-specific caveat; this does not close the
+accepted R2 wording and deployment-specific caveat; this does not close the
 publication-review questions below.
 
 Before publication, review:
@@ -31,7 +37,7 @@ Before publication, review:
 - The intended deployment and applicable jurisdiction, including whether
   household, organisational or other privacy obligations apply.
 - The warranty/liability wording against mandatory law and the standard license;
-  the draft does not establish a blanket exclusion of liability.
+  this information does not establish a blanket exclusion of liability.
 - The installation's actual operator identity/contact, purposes, legal basis
   where required, recipients/service providers, hosting location, transfers,
   retention and applicable data-subject rights. Supply deployment-specific
@@ -48,7 +54,7 @@ Technical basis: the [application guide](../../revamp/README.md),
 `MONKEY_TRANSACTION_RETENTION_MONTHS` defaults to `24`; eligible transaction
 details are pruned using UTC calendar-month boundaries. This is not general
 personal-data erasure. The operational procedures remain subject to their own
-acceptance gates; this draft does not claim they have been rehearsed.
+acceptance gates; this document does not claim they have been rehearsed.
 
 ## English
 
@@ -87,7 +93,7 @@ is prohibited by applicable law, or override mandatory rights or an applicable
 separate agreement. They do not reduce the project's engineering and verification
 requirements or relieve an operator of responsibilities imposed by law.
 
-The project software is licensed under `AGPL-3.0-only`; third-party components
+The project software is licensed under the GNU Affero General Public License, version 3; third-party components
 retain their own terms. This information does not change those licenses, remove
 recipients' rights, or add a commercial-use restriction. The full unmodified
 project license is available in the Project license tab; accompanying third-party
@@ -176,7 +182,7 @@ unzulässig ist. Zwingende Rechte und anwendbare gesonderte Vereinbarungen bleib
 unberührt. Die Hinweise mindern weder die technischen Qualitäts- und
 Prüfanforderungen des Projekts noch die gesetzlichen Pflichten des Betreibers.
 
-Die Projektsoftware steht unter `AGPL-3.0-only`; für Drittanbieterkomponenten
+Die Projektsoftware steht unter der GNU Affero General Public License, Version 3; für Drittanbieterkomponenten
 gelten deren eigene Bedingungen. Diese Informationen ändern die Lizenzen nicht,
 entziehen Empfängern keine Rechte und fügen kein Verbot kommerzieller Nutzung
 hinzu. Der vollständige unveränderte Projektlizenztext steht im Reiter
