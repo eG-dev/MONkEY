@@ -8,9 +8,51 @@
       "componentIds": ["angular-common", "angular-compiler", "angular-core", "angular-forms", "angular-platform-browser", "angular-platform-server", "angular-router", "angular-ssr"]
     },
     {
+      "id": "dotnet",
+      "displayName": ".NET",
+      "componentIds": ["dotnet-runtime"]
+    },
+    {
+      "id": "aspnet-core",
+      "displayName": "ASP.NET Core",
+      "componentIds": ["aspnet-core-runtime"]
+    },
+    {
       "id": "ef-core",
       "displayName": "Entity Framework Core",
       "componentIds": ["microsoft-entityframeworkcore"]
+    },
+    {
+      "id": "sqlite",
+      "displayName": "SQLite",
+      "componentIds": ["microsoft-entityframeworkcore-sqlite", "microsoft-entityframeworkcore-sqlite-core", "microsoft-data-sqlite-core", "sqlitepclraw-core", "sqlitepclraw-bundle-e-sqlite3", "sqlitepclraw-provider-e-sqlite3", "sqlitepclraw-lib-e-sqlite3", "sqlite-engine"],
+      "groups": [
+        {
+          "id": "providers",
+          "titleKey": "sqliteProviders",
+          "componentIds": ["microsoft-entityframeworkcore-sqlite", "microsoft-entityframeworkcore-sqlite-core", "microsoft-data-sqlite-core"]
+        },
+        {
+          "id": "bindings",
+          "titleKey": "sqliteBindings",
+          "componentIds": ["sqlitepclraw-core", "sqlitepclraw-bundle-e-sqlite3", "sqlitepclraw-provider-e-sqlite3", "sqlitepclraw-lib-e-sqlite3"]
+        },
+        {
+          "id": "engine",
+          "titleKey": "sqliteEngine",
+          "componentIds": ["sqlite-engine"]
+        }
+      ]
+    },
+    {
+      "id": "taiga-ui",
+      "displayName": "Taiga UI",
+      "componentIds": ["taiga-ui-cdk", "taiga-ui-core", "taiga-ui-i18n", "taiga-ui-styles"]
+    },
+    {
+      "id": "lucide",
+      "displayName": "Lucide",
+      "componentIds": ["lucide-static"]
     },
     {
       "id": "roboto",
@@ -156,6 +198,48 @@
       "documentIds": ["angular-license"]
     },
     {
+      "id": "dotnet-runtime",
+      "kind": "runtime",
+      "name": "Microsoft.NETCore.App",
+      "version": "10.0.13",
+      "versionEvidence": {
+        "kind": "files",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.NETCore.App 10.0.13. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material.",
+        "files": [
+          {
+            "path": "revamp/deploy/Dockerfile",
+            "sha256": "b8452a4f0cbfe6c2dfd368b73ae7bf54e38591f1f1abeac30d07c91561aae38e"
+          }
+        ]
+      },
+      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.13",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["dotnet-license", "dotnet-third-party-notices"]
+    },
+    {
+      "id": "aspnet-core-runtime",
+      "kind": "runtime",
+      "name": "Microsoft.AspNetCore.App",
+      "version": "10.0.13",
+      "versionEvidence": {
+        "kind": "files",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.AspNetCore.App 10.0.13. MIT identifies the framework project's license; the matching release's original THIRD-PARTY-NOTICES.txt retains separately licensed material without claiming every listed item ships in this Linux application.",
+        "files": [
+          {
+            "path": "revamp/deploy/Dockerfile",
+            "sha256": "b8452a4f0cbfe6c2dfd368b73ae7bf54e38591f1f1abeac30d07c91561aae38e"
+          }
+        ]
+      },
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.13",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["dotnet-license", "aspnet-core-third-party-notices"]
+    },
+    {
       "id": "microsoft-entityframeworkcore",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore",
@@ -172,6 +256,238 @@
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
       "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "microsoft-entityframeworkcore-sqlite",
+      "kind": "nuget",
+      "name": "Microsoft.EntityFrameworkCore.Sqlite",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.EntityFrameworkCore.Sqlite"
+      },
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "microsoft-entityframeworkcore-sqlite-core",
+      "kind": "nuget",
+      "name": "Microsoft.EntityFrameworkCore.Sqlite.Core",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite.Core@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.EntityFrameworkCore.Sqlite.Core"
+      },
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "microsoft-data-sqlite-core",
+      "kind": "nuget",
+      "name": "Microsoft.Data.Sqlite.Core",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.Data.Sqlite.Core@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.Data.Sqlite.Core"
+      },
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13/src/Microsoft.Data.Sqlite.Core",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "sqlitepclraw-core",
+      "kind": "nuget",
+      "name": "SQLitePCLRaw.core",
+      "version": "2.1.13",
+      "purl": "pkg:nuget/SQLitePCLRaw.core@2.1.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SQLitePCLRaw.core"
+      },
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.core/2.1.13",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+    },
+    {
+      "id": "sqlitepclraw-bundle-e-sqlite3",
+      "kind": "nuget",
+      "name": "SQLitePCLRaw.bundle_e_sqlite3",
+      "version": "2.1.13",
+      "purl": "pkg:nuget/SQLitePCLRaw.bundle_e_sqlite3@2.1.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SQLitePCLRaw.bundle_e_sqlite3"
+      },
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.bundle_e_sqlite3/2.1.13",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+    },
+    {
+      "id": "sqlitepclraw-provider-e-sqlite3",
+      "kind": "nuget",
+      "name": "SQLitePCLRaw.provider.e_sqlite3",
+      "version": "2.1.13",
+      "purl": "pkg:nuget/SQLitePCLRaw.provider.e_sqlite3@2.1.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SQLitePCLRaw.provider.e_sqlite3"
+      },
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3/2.1.13",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+    },
+    {
+      "id": "sqlitepclraw-lib-e-sqlite3",
+      "kind": "nuget",
+      "name": "SQLitePCLRaw.lib.e_sqlite3",
+      "version": "2.1.13",
+      "purl": "pkg:nuget/SQLitePCLRaw.lib.e_sqlite3@2.1.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SQLitePCLRaw.lib.e_sqlite3"
+      },
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3/2.1.13",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+    },
+    {
+      "id": "sqlite-engine",
+      "kind": "native",
+      "name": "SQLite engine (e_sqlite3)",
+      "version": "3.53.3",
+      "versionEvidence": {
+        "kind": "files",
+        "description": "SQLitePCLRaw.lib.e_sqlite3 2.1.13 supplies the engine; its package version is not the engine version. sqlite3_libversion() reports 3.53.3 in both the packaged win-x64 DLL and the actual Linux image's /app/backend/runtimes/linux-x64/native/libe_sqlite3.so. Both report sqlite3_sourceid() = 2026-06-26 20:14:12 d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62. The Linux image's native SHA-256 b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07 matches the cached NuGet payload. Recheck the native version/source identity when this lockfile changes. Other redistributed native architectures are included in package coverage, not claimed as tested platforms.",
+        "files": [
+          {
+            "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+            "sha256": "fe60510d80a18b4fb20ebbdd54925262774d82bd17fc8c5d6b440b440e329e27"
+          }
+        ]
+      },
+      "upstreamUrl": "https://sqlite.org/src/info/d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62",
+      "licenseExpression": null,
+      "licensingStatus": "public-domain",
+      "reviewStatus": "reviewed",
+      "documentIds": ["sqlite-public-domain"]
+    },
+    {
+      "id": "taiga-ui-cdk",
+      "kind": "npm",
+      "name": "@taiga-ui/cdk",
+      "version": "5.29.0",
+      "purl": "pkg:npm/%40taiga-ui/cdk@5.29.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@taiga-ui/cdk"
+      },
+      "upstreamUrl": "https://github.com/taiga-family/taiga-ui/tree/v5.29.0",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["taiga-ui-license"]
+    },
+    {
+      "id": "taiga-ui-core",
+      "kind": "npm",
+      "name": "@taiga-ui/core",
+      "version": "5.29.0",
+      "purl": "pkg:npm/%40taiga-ui/core@5.29.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@taiga-ui/core"
+      },
+      "upstreamUrl": "https://github.com/taiga-family/taiga-ui/tree/v5.29.0",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["taiga-ui-license"]
+    },
+    {
+      "id": "taiga-ui-i18n",
+      "kind": "npm",
+      "name": "@taiga-ui/i18n",
+      "version": "5.29.0",
+      "purl": "pkg:npm/%40taiga-ui/i18n@5.29.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@taiga-ui/i18n"
+      },
+      "upstreamUrl": "https://github.com/taiga-family/taiga-ui/tree/v5.29.0",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["taiga-ui-license"]
+    },
+    {
+      "id": "taiga-ui-styles",
+      "kind": "npm",
+      "name": "@taiga-ui/styles",
+      "version": "5.29.0",
+      "purl": "pkg:npm/%40taiga-ui/styles@5.29.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@taiga-ui/styles"
+      },
+      "upstreamUrl": "https://github.com/taiga-family/taiga-ui/tree/v5.29.0",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["taiga-ui-license"]
+    },
+    {
+      "id": "lucide-static",
+      "kind": "npm",
+      "name": "lucide-static",
+      "version": "1.61.0",
+      "purl": "pkg:npm/lucide-static@1.61.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "lucide-static"
+      },
+      "upstreamUrl": "https://lucide.dev",
+      "licenseExpression": "ISC AND MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["lucide-license"]
     },
     {
       "id": "roboto-fonts",
@@ -217,17 +533,89 @@
       "sha256": "15e77c4692114f87c2020353626c868472c23954a4ed37ecc4c1522d14be1eb7"
     },
     {
+      "id": "dotnet-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/dotnet/10.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/runtime/v10.0.13/LICENSE.TXT",
+      "revision": "v10.0.13; captured from /usr/share/dotnet/LICENSE.txt in the pinned ASP.NET runtime image; identical bytes in dotnet/runtime v10.0.13 LICENSE.TXT and dotnet/aspnetcore v10.0.13 LICENSE.txt",
+      "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+    },
+    {
+      "id": "dotnet-third-party-notices",
+      "kind": "notice",
+      "path": "revamp/notices/originals/dotnet/10.x/ThirdPartyNotices.txt",
+      "upstreamUrl": "https://mcr.microsoft.com/v2/dotnet/aspnet/manifests/sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac",
+      "revision": "mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac: /usr/share/dotnet/ThirdPartyNotices.txt, copied unchanged from the built Linux image",
+      "sha256": "2dc8f8c5a39401e928b5784ab564eb8b3ceb99ead3df8f260e0cab7e0bbecc7a"
+    },
+    {
+      "id": "aspnet-core-third-party-notices",
+      "kind": "notice",
+      "path": "revamp/notices/originals/aspnetcore/10.x/THIRD-PARTY-NOTICES.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/aspnetcore/v10.0.13/THIRD-PARTY-NOTICES.txt",
+      "revision": "dotnet/aspnetcore v10.0.13: THIRD-PARTY-NOTICES.txt, retained in full without inferring a Linux shipped-component inventory",
+      "sha256": "52af3d603b6d069e635f8afd08ec44ec01559255b5f3afd161ae9e6fe7e7aa54"
+    },
+    {
       "id": "ef-core-license",
       "kind": "license",
-      "path": "revamp/notices/originals/microsoft-entityframeworkcore/10.0.x/LICENSE.txt",
+      "path": "revamp/notices/originals/microsoft-entityframeworkcore/10.x/LICENSE.txt",
       "upstreamUrl": "https://raw.githubusercontent.com/dotnet/efcore/v10.0.13/LICENSE.txt",
       "revision": "v10.0.13",
       "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
     },
     {
+      "id": "sqlitepclraw-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/sqlitepclraw/2.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/ca835d21508bff43121c65081035840ac5006c4c/LICENSE.TXT",
+      "revision": "v2.1.12, commit ca835d21508bff43121c65081035840ac5006c4c: LICENSE.TXT; same-major original reused for 2.1.13, whose four mapped NuGet packages declare Apache-2.0; no v2.1.13 Git tag was found at collection",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "id": "sqlitepclraw-notice",
+      "kind": "notice",
+      "path": "revamp/notices/originals/sqlitepclraw/2.x/NOTICE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/ca835d21508bff43121c65081035840ac5006c4c/NOTICE.TXT",
+      "revision": "v2.1.12, commit ca835d21508bff43121c65081035840ac5006c4c: NOTICE.TXT; retained unchanged under same-major reuse, including broader upstream material without asserting SQLCipher/OpenSSL are shipped",
+      "sha256": "485b276b3d2bfaa26df348e1e5c84df3648981e09b88531a6a53006f0705c24b"
+    },
+    {
+      "id": "sqlitepclraw-copyright",
+      "kind": "copyright",
+      "path": "revamp/notices/originals/sqlitepclraw/2.x/COPYRIGHT.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/sqlitepclraw.core/2.1.13/sqlitepclraw.core.2.1.13.nupkg",
+      "revision": "SQLitePCLRaw.core 2.1.13: sqlitepclraw.core.nuspec metadata/copyright value, unchanged text with a terminating LF; identical value verified in bundle_e_sqlite3, provider.e_sqlite3 and lib.e_sqlite3 2.1.13 nuspecs",
+      "sha256": "2143a674c10f50e1efa6e7b8ed756b374085cf367167005e59c9df2e97de12c6"
+    },
+    {
+      "id": "sqlite-public-domain",
+      "kind": "public-domain-statement",
+      "path": "revamp/notices/originals/sqlite/3.x/PUBLIC-DOMAIN.txt",
+      "upstreamUrl": "https://sqlite.org/src/raw/LICENSE.md?ci=d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62",
+      "revision": "SQLite fossil source identity d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62, reported by the shipped engine: original LICENSE.md; file extension changed only",
+      "sha256": "ee6af51062b30d532991face5164136ae6f84e265ecf8abe89dc69dac45ca1e7"
+    },
+    {
+      "id": "taiga-ui-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/taiga-ui/5.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/@taiga-ui/core/-/core-5.29.0.tgz",
+      "revision": "@taiga-ui/core@5.29.0: package/LICENSE; identical LICENSE supplied by all four mapped Taiga UI packages",
+      "sha256": "2f1cfd7c0c5c6cfe39c03fc8c8f0028ea11c82bf8a24ab55892dc213784d050b"
+    },
+    {
+      "id": "lucide-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/lucide-static/1.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/lucide-static/-/lucide-static-1.61.0.tgz",
+      "revision": "lucide-static@1.61.0: package/LICENSE; ISC for Lucide and MIT for the listed Feather-derived icons",
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
       "id": "roboto-ofl",
       "kind": "license",
-      "path": "revamp/notices/originals/roboto/3.015/OFL.txt",
+      "path": "revamp/notices/originals/roboto/3.x/OFL.txt",
       "upstreamUrl": "https://raw.githubusercontent.com/google/fonts/2e69e0bf1bd2662d6775bb54a398bded758e87cf/ofl/roboto/OFL.txt",
       "revision": "2e69e0bf1bd2662d6775bb54a398bded758e87cf",
       "sha256": "061402327a96aadb0bfb694a960ed289ecd38d383e396243831ab81feb109c41"

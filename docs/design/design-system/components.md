@@ -40,6 +40,37 @@ mapped into application SCSS. Earlier approvals remain history.
 - Retain the established layout, brand colours, amount semantics and radii.
   The [surface specimen](specimens/colors-surfaces.html) shows both themes.
 
+## Notice Document Hierarchy R6
+
+**Wireframe and matching click-prototype pattern R6 approved, 2026-10-24.**
+Within an expanded third-party component, separate package/license applicability
+groups with a heading, shared version/license metadata and one package/source
+list. Keep differing member metadata beside the member rather than implying
+that every package shares one version or license.
+
+Use `--surface-panel` with a restrained `--border-default` group boundary.
+This is a scoped semantic boundary: it identifies which packages the enclosed
+legal documents apply to, not a return to decorative nested panel frames.
+Separate document rows with `--border-subtle`; use the existing sunken surface
+and a start border for an expanded original-text body. No new tokens or color
+pairs are introduced.
+
+Give each document a readable translated title, an independent button with
+`aria-expanded`/`aria-controls`, and a separately named Open original link.
+Initially close all documents; do not repeat the package list for each document.
+Expanded production bodies contain the complete unchanged legal text, not
+translated or paraphrased terms. Prototype placeholders are explicitly labelled
+and link to existing originals.
+
+At phone widths, stack group metadata and original-file actions and wrap long
+package names/titles/links. Keep one dialog content scroller, not nested legal-text
+scroll boxes. Preserve expansion during search and tab changes, resetting only
+on dialog close. The [prototype evidence](../prototypes/README.md#notice-document-hierarchy-r6-2026-10-24)
+records standalone and integrated checks. The user's "prototype approved,
+implement" completes the separate prototype approval gate.
+Angular now maps this pattern into its About SCSS and renders complete original
+legal bodies; see the [production verification](../../../revamp/README.md#grouped-notice-documents-r6-2026-10-24).
+
 ## View Headers
 
 - Keep the view title and identity on the left. Place view-level actions, such as

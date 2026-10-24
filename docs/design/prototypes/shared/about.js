@@ -9,12 +9,17 @@
       sourcePending: 'Repository and release-source URLs are pending.', projectLicense: 'Project license',
       licenseName: 'GNU Affero General Public License, version 3 only', licenseText: 'Full GNU AGPL version 3 license text',
       openLicense: 'Open full license file',
-      inventoryDraft: 'Review placeholder: these example rows are not a verified release inventory. Versions, licenses and required notices remain to be reviewed.',
+      inventoryDraft: 'Design examples, not a complete release inventory. Document bodies are placeholders; Open original reads the existing local file.',
       search: 'Search components', count: 'Matching components: {count}', noResults: 'No matching components.',
       versionPending: '[shipped version]', licensePending: '[license]', runtime: '.NET runtime',
       noticeText: '[Complete applicable license, copyright attributions and required NOTICE text will appear here after review.]',
-      appliesTo: 'Applies to',
-      componentSource: 'Component source (pending review)',
+      packages: 'Packages', component: 'Component', componentSource: 'Component source',
+      providers: 'Microsoft SQLite providers', bindings: 'SQLitePCLRaw', engine: 'SQLite engine',
+      publicDomain: 'Public domain', groupCount: '{count} package / license groups', mixedMetadata: 'See individual package versions below',
+      openOriginal: 'Open original', originalText: 'Document text: {title}',
+      mitLicense: 'MIT license', apacheLicense: 'Apache License 2.0', thirdPartyNotices: 'Third-party notices',
+      copyright: 'Copyright', publicDomainStatement: 'Public-domain statement', fontLicense: 'SIL Open Font License 1.1',
+      lucideLicense: 'Lucide and Feather licenses',
       legalContext: 'This general software description is not a complete privacy notice for every deployment.',
       operator: 'Operator responsibilities', warranty: 'Warranty and liability', privacy: 'Privacy information',
       operatorText: `POCKET MONkEY is self-hosted software, not a hosting or managed service provided
@@ -97,12 +102,17 @@
       sourcePending: 'Repository- und versionsbezogene Quellcode-URLs stehen noch nicht fest.', projectLicense: 'Projektlizenz',
       licenseName: 'GNU Affero General Public License, nur Version 3', licenseText: 'Vollständiger Lizenztext der GNU AGPL Version 3',
       openLicense: 'Vollständige Lizenzdatei öffnen',
-      inventoryDraft: 'Prüfplatzhalter: Diese Beispielzeilen sind kein geprüftes Verzeichnis der Veröffentlichung. Versionen, Lizenzen und erforderliche Hinweise müssen noch geprüft werden.',
+      inventoryDraft: 'Gestaltungsbeispiele, kein vollständiges Veröffentlichungsverzeichnis. Dokumenttexte sind Platzhalter; Original öffnen zeigt die vorhandene lokale Datei.',
       search: 'Komponenten suchen', count: 'Passende Komponenten: {count}', noResults: 'Keine passenden Komponenten.',
       versionPending: '[ausgelieferte Version]', licensePending: '[Lizenz]', runtime: '.NET-Laufzeit',
       noticeText: '[Nach der Prüfung stehen hier die vollständige anwendbare Lizenz, Urheberrechtshinweise und erforderliche NOTICE-Texte.]',
-      appliesTo: 'Gilt für',
-      componentSource: 'Komponentenquellcode (Prüfung ausstehend)',
+      packages: 'Pakete', component: 'Komponente', componentSource: 'Komponentenquellcode',
+      providers: 'Microsoft-SQLite-Provider', bindings: 'SQLitePCLRaw', engine: 'SQLite-Datenbankmodul',
+      publicDomain: 'Gemeinfrei', groupCount: '{count} Paket- / Lizenzgruppen', mixedMetadata: 'Einzelne Paketversionen stehen unten',
+      openOriginal: 'Original öffnen', originalText: 'Dokumenttext: {title}',
+      mitLicense: 'MIT-Lizenz', apacheLicense: 'Apache-Lizenz 2.0', thirdPartyNotices: 'Drittanbieterhinweise',
+      copyright: 'Urheberrechtshinweis', publicDomainStatement: 'Gemeinfreiheitserklärung', fontLicense: 'SIL Open Font License 1.1',
+      lucideLicense: 'Lucide- und Feather-Lizenzen',
       legalContext: 'Diese allgemeine Softwarebeschreibung ist keine vollständige Datenschutzerklärung für jede Installation.',
       operator: 'Verantwortlichkeiten des Betreibers', warranty: 'Gewährleistung und Haftung', privacy: 'Datenschutzhinweise',
       operatorText: `POCKET MONkEY ist selbst betriebene Software, kein vom Projekt bereitgestellter
@@ -197,15 +207,77 @@
   };
   const components = [
     {
+      id: 'angular',
       name: 'Angular',
-      members: [
-        '@angular/common', '@angular/compiler', '@angular/core', '@angular/forms',
-        '@angular/platform-browser', '@angular/platform-server', '@angular/router', '@angular/ssr'
+      groups: [
+        {
+          id: 'angular', name: 'Angular',
+          members: [
+            '@angular/common', '@angular/compiler', '@angular/core', '@angular/forms',
+            '@angular/platform-browser', '@angular/platform-server', '@angular/router', '@angular/ssr'
+          ].map(name => ({
+            name, version: name === '@angular/ssr' ? '22.2.4' : '22.2.3', license: 'MIT',
+            source: name === '@angular/ssr'
+              ? 'https://github.com/angular/angular-cli/tree/22.2.4'
+              : 'https://github.com/angular/angular/tree/22.2.3'
+          })),
+          documents: [{ id: 'angular-license', title: 'mitLicense', path: 'angular/22.x/LICENSE.txt' }]
+        }
       ]
     },
-    { name: 'runtime', members: [] },
-    { name: 'Roboto', members: [] },
-    { name: 'Lucide', members: [] }
+    {
+      id: 'runtime', name: 'runtime',
+      groups: [{
+        id: 'runtime', name: 'runtime',
+        members: [{ name: 'Microsoft.NETCore.App', version: '10.0.13', license: 'MIT', source: 'https://github.com/dotnet/runtime/tree/v10.0.13' }],
+        documents: [
+          { id: 'dotnet-license', title: 'mitLicense', path: 'dotnet/10.x/LICENSE.txt' },
+          { id: 'dotnet-notices', title: 'thirdPartyNotices', path: 'dotnet/10.x/ThirdPartyNotices.txt' }
+        ]
+      }]
+    },
+    {
+      id: 'sqlite', name: 'SQLite',
+      groups: [
+        {
+          id: 'providers', title: 'providers',
+          members: ['Microsoft.EntityFrameworkCore.Sqlite', 'Microsoft.EntityFrameworkCore.Sqlite.Core', 'Microsoft.Data.Sqlite.Core']
+            .map(name => ({ name, version: '10.0.13', license: 'MIT', source: 'https://github.com/dotnet/efcore/tree/v10.0.13' })),
+          documents: [{ id: 'ef-core-license', title: 'mitLicense', path: 'microsoft-entityframeworkcore/10.x/LICENSE.txt' }]
+        },
+        {
+          id: 'bindings', title: 'bindings',
+          members: ['SQLitePCLRaw.core', 'SQLitePCLRaw.bundle_e_sqlite3', 'SQLitePCLRaw.provider.e_sqlite3', 'SQLitePCLRaw.lib.e_sqlite3']
+            .map(name => ({ name, version: '2.1.13', license: 'Apache-2.0', source: `https://www.nuget.org/packages/${name}/2.1.13` })),
+          documents: [
+            { id: 'sqlitepclraw-license', title: 'apacheLicense', path: 'sqlitepclraw/2.x/LICENSE.txt' },
+            { id: 'sqlitepclraw-notice', title: 'thirdPartyNotices', path: 'sqlitepclraw/2.x/NOTICE.txt' },
+            { id: 'sqlitepclraw-copyright', title: 'copyright', path: 'sqlitepclraw/2.x/COPYRIGHT.txt' }
+          ]
+        },
+        {
+          id: 'engine', title: 'engine',
+          members: [{ name: 'e_sqlite3', version: '3.53.3', publicDomain: true, source: 'https://sqlite.org/copyright.html' }],
+          documents: [{ id: 'sqlite-public-domain', title: 'publicDomainStatement', path: 'sqlite/3.x/PUBLIC-DOMAIN.txt' }]
+        }
+      ]
+    },
+    {
+      id: 'roboto', name: 'Roboto',
+      groups: [{
+        id: 'roboto', name: 'Roboto',
+        members: [{ name: 'Roboto (Light, Regular, Medium, Bold)', version: '3.015', license: 'OFL-1.1', source: 'https://fonts.google.com/specimen/Roboto/license' }],
+        documents: [{ id: 'roboto-ofl', title: 'fontLicense', path: 'roboto/3.x/OFL.txt' }]
+      }]
+    },
+    {
+      id: 'lucide', name: 'Lucide',
+      groups: [{
+        id: 'lucide', name: 'Lucide',
+        members: [{ name: 'lucide-static', version: '1.61.0', license: 'ISC AND MIT', source: 'https://lucide.dev' }],
+        documents: [{ id: 'lucide-license', title: 'lucideLicense', path: 'lucide-static/1.x/LICENSE.txt' }]
+      }]
+    }
   ];
   const tabNames = ['overview', 'license', 'notices', 'legal'];
   let activeDialog;
@@ -220,6 +292,36 @@
 
   function reviewMessage(key) {
     return `<div class="message message-info">${PM.icon('info')}<p class="message-body">${html(key)}</p></div>`;
+  }
+
+  function memberMetadata(member) {
+    return `${member.version} \u00b7 ${member.publicDomain ? text('publicDomain') : member.license}`;
+  }
+
+  function groupMetadata(group) {
+    return [...new Set(group.members.map(memberMetadata))];
+  }
+
+  function renderGroup(component, group, expandedDocuments) {
+    const groupId = `about-group-${component.id}-${group.id}`;
+    const metadata = groupMetadata(group);
+    const name = group.title ? html(group.title) : group.name === 'runtime' ? html('runtime') : PM.esc(group.name);
+
+    return `<section class="about-package-group" aria-labelledby="${groupId}-title" data-about-group="${group.id}">
+      <header class="about-group-heading"><h4 id="${groupId}-title">${name}</h4><span class="about-notice-meta">${metadata.length === 1 ? PM.esc(metadata[0]) : html('mixedMetadata')}</span></header>
+      <p class="about-package-label">${html(group.id === 'engine' ? 'component' : 'packages')}</p>
+      <ul class="about-package-list" data-about-members>${group.members.map(member => `<li><span class="about-package-name">${PM.esc(member.name)}</span>${metadata.length > 1 ? `<span class="about-notice-meta">${PM.esc(memberMetadata(member))}</span>` : ''}<a href="${PM.esc(member.source)}" target="_blank" rel="noopener">${html('componentSource')}</a></li>`).join('')}</ul>
+      <div class="about-documents">${group.documents.map(document => {
+        const key = `${groupId}-${document.id}`;
+        const expanded = expandedDocuments.has(key);
+        const original = new URL(`../../../../revamp/notices/originals/${document.path}`, assetUrl).href;
+
+        return `<div class="about-document" data-about-document="${document.id}">
+          <div class="about-document-heading"><button class="about-document-toggle" id="${key}-toggle" type="button" data-document-toggle="${key}" aria-expanded="${expanded}" aria-controls="${key}-body">${PM.icon('right')}<span>${html(document.title)}</span></button><a href="${PM.esc(original)}" target="_blank" rel="noopener" aria-label="${PM.esc(`${text('openOriginal')}: ${text(document.title)}`)}">${html('openOriginal')}</a></div>
+          <div class="about-document-text" id="${key}-body" role="region" aria-labelledby="${key}-toggle" tabindex="0" data-about-document-text ${expanded ? '' : 'hidden'}><p>${html('noticeText')}</p></div>
+        </div>`;
+      }).join('')}</div>
+    </section>`;
   }
 
   function open() {
@@ -274,6 +376,7 @@
     });
     const tabButtons = [...dialog.querySelectorAll('[role="tab"]')];
     const expanded = new Set();
+    const expandedDocuments = new Set();
 
     function selectTab(name, focus = false) {
       tabButtons.forEach(button => {
@@ -292,19 +395,47 @@
 
     function renderComponents() {
       const query = dialog.querySelector('#about-search').value.trim().toLocaleLowerCase(PM.prefs.language);
-      const filtered = components.filter(({ name, members }) =>
-        [name === 'runtime' ? text('runtime') : name, ...members].join(' ').toLocaleLowerCase(PM.prefs.language).includes(query));
+      const filtered = components.filter(({ name, groups }) =>
+        [name === 'runtime' ? text('runtime') : name, ...groups.flatMap(group =>
+          [group.title ? text(group.title) : group.name, ...group.members.flatMap(member => [member.name, memberMetadata(member)])])]
+          .join(' ').toLocaleLowerCase(PM.prefs.language).includes(query));
       dialog.querySelector('#about-search-status').textContent = text('count', { count: filtered.length });
       const list = dialog.querySelector('#about-components');
-      list.querySelectorAll('details').forEach(details => {
+      list.querySelectorAll('details[data-component]').forEach(details => {
         if (details.open) {
           expanded.add(details.dataset.component);
         } else {
           expanded.delete(details.dataset.component);
         }
       });
-      list.innerHTML = filtered.length ? filtered.map(({ name, members }) => `<details class="about-notice" data-component="${name}" ${expanded.has(name) ? 'open' : ''}><summary>${PM.icon('right')}<span class="about-notice-name">${name === 'runtime' ? html('runtime') : PM.esc(name)}</span><span class="about-notice-meta">${html('versionPending')} &middot; ${html('licensePending')}</span></summary><div class="about-notice-content">${members.length ? `<p>${html('appliesTo')}</p><ul data-about-members>${members.map(member => `<li>${PM.esc(member)}</li>`).join('')}</ul>` : ''}<div data-about-document><p data-about-document-text>${html('noticeText')}</p><p class="muted">${html('componentSource')}</p></div></div></details>`).join('') : `<div class="empty"><p>${html('noResults')}</p></div>`;
+      list.innerHTML = filtered.length ? filtered.map(component => {
+        const metadata = component.groups.length > 1
+          ? text('groupCount', { count: component.groups.length })
+          : groupMetadata(component.groups[0]).join(' | ');
+
+        return `<details class="about-notice" data-component="${component.id}" ${expanded.has(component.id) ? 'open' : ''}><summary>${PM.icon('right')}<span class="about-notice-name">${component.name === 'runtime' ? html('runtime') : PM.esc(component.name)}</span><span class="about-notice-meta">${PM.esc(metadata)}</span></summary><div class="about-notice-content">${component.groups.map(group => renderGroup(component, group, expandedDocuments)).join('')}</div></details>`;
+      }).join('') : `<div class="empty"><p>${html('noResults')}</p></div>`;
     }
+
+    dialog.querySelector('#about-components').addEventListener('click', event => {
+      const button = event.target.closest('[data-document-toggle]');
+
+      if (!button) {
+        return;
+      }
+
+      const key = button.dataset.documentToggle;
+      const open = !expandedDocuments.has(key);
+
+      if (open) {
+        expandedDocuments.add(key);
+      } else {
+        expandedDocuments.delete(key);
+      }
+
+      button.setAttribute('aria-expanded', String(open));
+      dialog.querySelector(`#${key}-body`).hidden = !open;
+    });
 
     tabButtons.forEach((button, index) => {
       button.addEventListener('click', () => selectTab(button.dataset.tab, true));

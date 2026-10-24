@@ -25,6 +25,22 @@
     "inventoryDraft": "Review placeholder: these example rows are not a verified release inventory. Versions, licenses and required notices remain to be reviewed.",
     "inventoryPartial": "Partial component collection. These entries do not cover all shipped components or establish release approval.",
     "componentSource": "Component source",
+    "packages": "Packages / components",
+    "groupCount": "{count, plural, one {One package / license group} other {# package / license groups}}",
+    "mixedMetadata": "Mixed package metadata; see individual components",
+    "openOriginal": "Open original",
+    "licenseDocument": "{license} license",
+    "documentTitles": {
+      "license": "License",
+      "notice": "Third-party notices",
+      "copyright": "Copyright",
+      "public-domain-statement": "Public-domain statement"
+    },
+    "noticeGroups": {
+      "sqliteProviders": "Microsoft SQLite providers",
+      "sqliteBindings": "SQLitePCLRaw",
+      "sqliteEngine": "SQLite engine"
+    },
     "appliesTo": "Applies to",
     "openDocument": "Open original document: {document}",
     "documentText": "Original document: {document}",

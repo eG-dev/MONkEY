@@ -5,6 +5,60 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Notice Document Hierarchy R6 (2026-10-24)
+
+**Wireframe and shared About prototype R6 explicitly approved, 2026-10-24.**
+The revised notices pane uses bounded package/license groups, lists applicable
+packages and their sources once per group, and separates readable document
+titles from independent Open original links. Each document starts closed and
+can expand without collapsing another. Shared metadata appears in the group
+heading; differing member versions/licenses remain attached to those members.
+SQLite illustrates Microsoft providers, SQLitePCLRaw and the public-domain
+engine without implying one common license.
+
+These are illustrative design fixtures, not a second maintained distribution
+inventory. Inline legal-text bodies are explicitly marked placeholders.
+Original-file links reuse the tracked originals, which remain unchanged; the
+production implementation must render their complete original text. Search
+retains an entire matching component and its applicability groups. Document and
+component expansion survive filtering and tab changes, but reset when the
+dialog closes. Phones stack metadata and actions, wrap long names/links and
+retain the existing single content scroller and fixed header/tabs.
+
+Standalone verification passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. Checks covered three SQLite
+groups, the 3/4/1 package mapping, five initially closed documents, independent
+Enter/Space expansion, case-insensitive package search, empty results, expansion
+retention through filtering and tab changes, preferences, unique IDs, no
+horizontal overflow, Escape/focus return and reset after reopening.
+
+A separate integrated pass covered the same 16 outer-viewport combinations
+through actual Overview-to-Administration navigation and the shell About entry,
+then back to Overview. It additionally checked multiple SQLitePCLRaw documents
+open together, independent collapse, hidden/visible bodies, mixed Angular member
+versions, fixed header/tabs, no nested legal-text scrollers and unchanged
+fictional data. Integrated controls used DOM-dispatched clicks/input events;
+this is not additional native keyboard-input evidence. Neither matrix reported
+script errors. Ten distinct original-file URLs were opened locally and their
+nonempty text verified. The original-link action did not toggle its document.
+
+Integrated English/light desktop and German/dark phone screenshots were
+inspected. A focused German/dark check also passed at 320px and 360px without
+horizontal overflow; the outer phone viewport measured 360x1000. Bundled fonts
+finished loading before visual review. An additional ordinary headless Chromium
+pass confirmed real Administration navigation, native Enter expansion and no
+overflow at 1440x1000 and 360x1000; capture dimensions were verified before
+inspection to avoid integrated-browser screenshot sizing artifacts. Neither
+ordinary-browser scenario reported script errors.
+
+The [standalone review](about/index.html) and
+[integrated application](index.html) are the approved references. After the
+wireframe approval with "approved", the user explicitly approved the current
+prototype with "prototype approved, implement" on 2026-10-24. Both design gates
+are complete. Angular delivery and production-image evidence are recorded
+separately from the prototype checks in the
+[R6 application delivery record](../../../revamp/README.md#grouped-notice-documents-r6-2026-10-24).
+
 ## Currency Formatting R1 (2026-10-24)
 
 **Shared formatter and affected Overview/Accounts/account-details references

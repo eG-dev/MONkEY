@@ -64,7 +64,7 @@ The implemented [catalog](catalog.json) uses `schemaVersion: 1`, an explicit
 | Collection | Purpose | Fields |
 | --- | --- | --- |
 | `components` | Exact reviewed package, runtime, engine or asset identities; not a complete dependency graph | Stable `id`, `kind`, `name`, exact `version`, optional package URL (PURL), `versionEvidence`, `upstreamUrl`, `licenseExpression` where verified, `licensingStatus`, `reviewStatus`, `documentIds` |
-| `entries` | Curated grouping and ordering for About | Stable `id`, `displayName`, `componentIds`; array order is presentation order |
+| `entries` | Curated grouping and ordering for About | Stable `id`, `displayName`, `componentIds`, optional presentation `groups`; array order is presentation order |
 | `documents` | Original local texts and their provenance | Stable `id`, `kind`, repository-relative `path`, original `upstreamUrl` and revision/version evidence, `sha256` |
 
 Components reference document IDs; entries reference component IDs. Resolve paths
@@ -100,6 +100,38 @@ and icons without forcing one display row per package. About must retain each
 member's own version/license association rather than assigning a single guessed
 version or license to a mixed group.
 
+### Grouped About Documents R6 (2026-10-24)
+
+The user explicitly approved the current wireframe, then its matching prototype
+with "prototype approved, implement". Angular now renders bounded
+package/license groups and lists their applicable members once, not before
+every document. Documents have readable translated titles, independent initially
+closed expansion, full unchanged original text and separate local-original
+links. Mixed member metadata remains explicit. This does not change collection
+coverage or legal provenance.
+
+An entry may specify ordered `groups`, each with a stable `id`, `titleKey` and
+`componentIds`. A non-null title key names its German/English label beneath
+`about.noticeGroups` in the existing translation catalogs; null uses the
+entry's proper display name. Group members retain the entry's component order.
+Groups must form a complete nonoverlapping partition of the entry. Every member
+of a group must have the same complete document-ID set; a shared license alone
+does not justify grouping packages with different NOTICE/copyright requirements.
+Without explicit groups, the assembler creates one group and enforces that same
+applicability condition. Different document sets require explicit groups.
+
+SQLite configures provider, binding and engine groups. Other current entries
+use the validated default. The generated About data carries these same groups;
+Angular does not maintain a second package/group inventory. The canonical
+distribution bundle and original bytes are unchanged by this UI revision.
+
+The [production delivery record](../README.md#grouped-notice-documents-r6-2026-10-24)
+records 27 passing isolated input checks, 11 focused production-image checks,
+eight separate localization/theme/viewport combinations and inspected
+desktop/phone captures. The build rejects invalid IDs/title-key syntax,
+unknown/duplicate assignments, omitted members and mixed document applicability.
+Coverage remains partial; these checks are not a release or legal approval.
+
 ### Artifact Locations And Ownership
 
 | Location | Role |
@@ -123,26 +155,34 @@ ADR-0020 now makes originals/mappings authoritative and the root file a generate
 distribution output. Do not maintain both a hand-edited root bundle and
 independently edited original texts.
 
-**Approved patch-series reuse, 2026-10-23:** .NET and EF Core are trusted to retain
-their license across the `10.0.x` patch series. Store their reviewed originals
-under `10.0.x` within each component's own folder, rather than creating a copy
-for every patch. The EF Core original is now stored at
-`originals/microsoft-entityframeworkcore/10.0.x/LICENSE.txt`.
-Routine patch updates do not require another license download or duplicate.
-Keep each component's exact shipped version and lockfile evidence, and retain
-the document's actual captured upstream URL, revision and hash; `10.0.x` is a
-storage convention, not a wildcard component version or a fabricated upstream
-revision. Revisit reuse if upstream announces a license change or obvious
-contradictory material appears. This does not extend trust to separate
-third-party dependencies or replace component-specific NOTICE/copyright texts.
+**Approved major-series reuse, 2026-10-24:** use `MAJOR.x` folders for all
+currently cataloged components:
 
-**Approved Angular series reuse, 2026-10-23:** store Angular's reviewed original
-under `originals/angular/22.x/` and reuse it across the Angular 22 release series
-on the same terms. Keep exact shipped component versions and the captured
-document's actual upstream URL, revision and hash; `22.x` is only a storage
-convention. Revisit reuse if upstream announces changed terms or contradictory
-material appears. Separate dependencies and component-specific notices remain
-outside this reuse approval.
+| Component | Original folder |
+| --- | --- |
+| Angular | `originals/angular/22.x/` |
+| .NET | `originals/dotnet/10.x/` |
+| ASP.NET Core | `originals/aspnetcore/10.x/` (shares .NET's identical MIT document) |
+| Entity Framework Core | `originals/microsoft-entityframeworkcore/10.x/` |
+| SQLitePCLRaw | `originals/sqlitepclraw/2.x/` |
+| SQLite engine | `originals/sqlite/3.x/` |
+| Taiga UI | `originals/taiga-ui/5.x/` |
+| Lucide | `originals/lucide-static/1.x/` |
+| Roboto | `originals/roboto/3.x/` |
+
+This extends the 2026-10-23 .NET/EF Core patch-series and Angular major-series
+reuse approvals. The .NET and ASP.NET Core originals likewise use `10.x`.
+Assume licensing stays unchanged across minor and
+patch releases within each major series; routine updates do not require repeat
+downloads or duplicate original documents. Keep exact shipped component
+versions and version evidence in the catalog, and preserve each document's
+actual captured upstream URL, revision and SHA-256. The series folder is only a
+storage convention, not a wildcard component version or a fabricated source
+revision. Review a new major series before reusing its documents, and revisit
+reuse if upstream announces changed terms or obvious contradictory material
+appears. This does not automatically cover separate uncataloged dependencies or
+replace component-specific NOTICE/copyright material, including Lucide's
+supplied Feather attribution.
 
 ### Manual Workflow And Later Automation
 
@@ -200,6 +240,174 @@ and generated-root ownership are approved for the manual proof. Implementation
 and verification evidence follow separately; approval does not establish notice
 completeness or approve changed UI artifacts.
 
+### SQLite Provider, Bindings And Engine (2026-10-24)
+
+The catalog now has all eight agreed initial About entries, still with
+`partial` overall coverage. The SQLite entry explicitly maps the Storage
+lockfile's three Microsoft provider packages, four SQLitePCLRaw packages and
+the separately identified engine:
+
+| Components | Exact version | Licensing and local documents |
+| --- | --- | --- |
+| `Microsoft.EntityFrameworkCore.Sqlite`, `Microsoft.EntityFrameworkCore.Sqlite.Core`, `Microsoft.Data.Sqlite.Core` | `10.0.13` | MIT; share the existing EF Core original from the matching upstream release |
+| `SQLitePCLRaw.core`, `SQLitePCLRaw.bundle_e_sqlite3`, `SQLitePCLRaw.provider.e_sqlite3`, `SQLitePCLRaw.lib.e_sqlite3` | `2.1.13` | Apache-2.0; shared original license, NOTICE and package copyright text |
+| SQLite engine (`e_sqlite3`) | `3.53.3` | Public domain, with no invented SPDX identifier; source-matched original public-domain statement |
+
+The installed Microsoft NuGet metadata declares MIT and identifies EF Core's
+upstream source. Each SQLitePCLRaw package declares Apache-2.0 and the identical
+`Copyright 2014-2024 SourceGear, LLC` text. No license, NOTICE or copyright files
+were supplied separately in these installed packages. The exact copyright
+metadata value is preserved in [COPYRIGHT.txt](originals/sqlitepclraw/2.x/COPYRIGHT.txt),
+with a terminating LF and explicit field/package provenance, not represented as
+an upstream file of that name.
+
+The SQLitePCLRaw [LICENSE](originals/sqlitepclraw/2.x/LICENSE.txt) and
+[NOTICE](originals/sqlitepclraw/2.x/NOTICE.txt) were captured unchanged from
+`v2.1.12`, commit `ca835d21508bff43121c65081035840ac5006c4c`.
+Git treats the canonical root bundle as byte-preserved, like the originals:
+the upstream Apache text's CRLF bytes remain intact instead of being normalized
+on commit/checkout and invalidating deterministic assembly.
+No `v2.1.13` tag was found at collection; the catalog does not fabricate one.
+The originals are reused under the approved same-major assumption, consistent
+with all four `2.1.13` package declarations and the matching SourceGear copyright
+metadata in the captured release. The full upstream NOTICE includes broader
+material such as SQLCipher/OpenSSL; retaining it does not assert that those
+alternatives ship in this application.
+
+The actual Linux image's
+`/app/backend/runtimes/linux-x64/native/libe_sqlite3.so` reports:
+
+```text
+sqlite3_libversion(): 3.53.3
+sqlite3_sourceid(): 2026-06-26 20:14:12 d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62
+SHA-256: b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07
+```
+
+The image's native bytes match the cached `lib.e_sqlite3` payload. The packaged
+Windows x64 DLL reports the same version/source identity. Engine version evidence
+hashes the Storage lockfile and records this direct native inspection; a lockfile
+change requires rechecking the engine, not copying the NuGet version into its
+record. Other native architectures are present in the published output and
+covered by the native package mapping, but are not claimed as tested platforms.
+
+The unchanged [public-domain statement](originals/sqlite/3.x/PUBLIC-DOMAIN.txt)
+comes from `LICENSE.md` at the engine's exact Fossil source identity. It
+distinguishes the deliverable SQLite engine from separately licensed build
+scripts. Public-domain status applies to that engine, not to its Microsoft
+provider or SQLitePCLRaw bindings/packaging. About retains each group's separate
+version/license association using the existing presentation; no layout or
+translation changes are needed.
+
+This completes the selected manual component groups, not a complete
+dependency/asset/runtime/OS inventory, legal review or distribution approval.
+The planned ORT-assisted expansion and supplemental review remain open.
+
+Verification: notice assembly/freshness, all 24 isolated About build-input
+checks, E2E TypeScript checking and the production Linux image build passed.
+The initial browser bundle remains `697.61 kB`. The nine-case real-image run
+passed seven cases, including network-disabled original/bundle delivery and
+desktop/mobile authenticated/forced-password About flows. The two public cases
+exposed an obsolete test assumption that a package-name search matches only
+one entry: `Microsoft.EntityFrameworkCore` now also matches SQLite's provider.
+The assertion now checks the expected matches from the catalog; both public
+desktop/mobile cases passed on the focused rerun, including shared documents,
+all package/license associations, exact originals, public-domain labels and
+download hashes. Desktop and 320px phone SQLite screenshots were inspected.
+Git clean filtering was checked with `core.autocrlf=true` and preserves the
+assembled bundle's exact bytes. These are focused local results, not hosted or
+release acceptance.
+
+### .NET And ASP.NET Core (2026-10-24)
+
+This addition brought the catalog to seven partial entries. The two runtime entries map
+`Microsoft.NETCore.App` and `Microsoft.AspNetCore.App`, both `10.0.13`, as reported
+by `dotnet --list-runtimes` in the built Linux image. Version evidence records
+the final base's exact `10.0.13-noble` image digest and hashes the
+[Dockerfile](../deploy/Dockerfile), rather than treating the SDK version or a
+NuGet package as the runtime version. A Dockerfile change requires refreshing
+that evidence after checking the affected runtime inputs.
+
+- The unchanged [MIT original](originals/dotnet/10.x/LICENSE.txt) was copied
+  from `/usr/share/dotnet/LICENSE.txt` in the image. It is byte-identical to
+  the matching `dotnet/runtime` and `dotnet/aspnetcore` release license files,
+  so both components explicitly reference this one document. Original
+  copyright and permission text is preserved.
+- The runtime's full [ThirdPartyNotices.txt](originals/dotnet/10.x/ThirdPartyNotices.txt)
+  was copied from `/usr/share/dotnet/ThirdPartyNotices.txt`. Its provenance
+  records the pinned upstream image digest and internal source path.
+- ASP.NET Core's full [THIRD-PARTY-NOTICES.txt](originals/aspnetcore/10.x/THIRD-PARTY-NOTICES.txt)
+  comes from the matching upstream `v10.0.13` release. It is retained separately
+  because it differs from the runtime image's notice file.
+
+MIT describes the respective projects' own license, not a claim that every
+bundled dependency is MIT. The supplied notice documents retain other licenses
+and attributions unchanged. Their broad upstream content is not an assertion
+that every listed tool, platform or component ships in this Linux application.
+Existing runtime/OS notices remain in the image; this addition does not replace
+them or establish complete runtime/container coverage. The About layout and
+local download mechanism are unchanged.
+
+At this point the initial SQLite provider/binding/native chain remained open;
+later comprehensive ORT/transitive/native/OS review is still required.
+Coverage stays `partial`.
+
+Verification: notice assembly/freshness, all 24 isolated About build-input
+checks, E2E TypeScript checking and the production Linux image build passed.
+The initial browser bundle remains `697.61 kB`; notice data stays on demand.
+All nine focused real-image checks passed without retries: desktop/mobile
+public, Manager, Member and forced-password About flows, plus network-disabled
+runtime delivery. They verify both `.NET` search matches, individual component
+search, shared-license and separate-NOTICE applicability, exact inline text,
+downloaded original hashes and canonical bundle delivery. Desktop/320px phone
+summary and expanded-document screenshots were inspected. These are local
+focused results, not hosted verification or complete distribution approval.
+
+### Taiga UI And Lucide (2026-10-24)
+
+This addition brought the catalog to five partial entries: Angular, Entity Framework Core,
+Taiga UI, Lucide and Roboto. This addition uses the existing About layout and
+shared-document associations without UI or dependency changes.
+
+- **Taiga UI:** the four direct runtime packages `@taiga-ui/cdk`,
+  `@taiga-ui/core`, `@taiga-ui/i18n` and `@taiga-ui/styles` are each `5.29.0`
+  in the installed package metadata and npm lockfile. All declare Apache-2.0
+  and supply byte-identical root `LICENSE` documents, including the
+  `Copyright 2026 Pineopticone` appendix. They share one unchanged
+  [original](originals/taiga-ui/5.x/LICENSE.txt) captured from
+  `@taiga-ui/core@5.29.0`, with the locked tarball URL, package path and SHA-256
+  recorded in the catalog. No separate NOTICE or copyright document was found
+  in these packages outside their nested dependencies.
+- **Lucide:** `lucide-static@1.61.0` supplies the locally bundled icon font and
+  CSS through the existing Angular asset configuration, which also copies its
+  `LICENSE`. Its manifest declares ISC, but its supplied
+  [original](originals/lucide-static/1.x/LICENSE.txt) also includes the
+  Feather-derived icon list, Cole Bemis attribution and MIT terms. The catalog
+  therefore records `ISC AND MIT`, preserving the entire original document
+  rather than dropping the inherited material or treating it as an alternative
+  license choice. Its provenance is the locked npm tarball and `package/LICENSE`;
+  no separate NOTICE or copyright document was found.
+
+Coverage remains `partial`. This slice does not review the separate Taiga-family
+packages `@taiga-ui/design-tokens`, `@taiga-ui/event-plugins`,
+`@taiga-ui/font-watcher` or `@taiga-ui/polymorpheus`, or other transitive
+dependencies. Their package scopes alone do not establish shared licensing or
+document applicability. At this point .NET, ASP.NET Core and the SQLite
+provider/binding/native chain remained in the agreed initial backlog;
+comprehensive ORT, runtime, OS and
+transitive coverage remains later release work.
+
+Verification: canonical notice assembly/freshness and all 24 isolated About
+build-input checks passed. The production Linux image built successfully. All
+eight desktop/mobile public, Manager, Member and forced-password About checks
+passed, exercising the new entries' search, shared applicability mappings, exact
+inline originals and downloaded SHA-256 values. Desktop and 320px phone
+screenshots for both entries were inspected. The separate network-disabled
+runtime check passed, including exact canonical bundle delivery and every mapped
+original document. The initial Windows-backslash Playwright path selector
+matched no tests; rerunning with the filename regex `about[.]spec[.]ts$` ran the
+eight checks above. These are local focused results, not hosted verification or
+release/legal-completeness approval.
+
 ### Angular Runtime Packages (2026-10-23)
 
 Dependency refresh on 2026-10-24 updates SSR to `22.2.4`; the seven framework
@@ -208,7 +416,7 @@ as the reviewed original below. Its catalog version, PURL and upstream release
 link, and the generated root notice document have been updated. The following
 records the original 2026-10-23 collection.
 
-The catalog now contains three partial entries: Angular, Entity Framework Core
+At the time of this addition, the catalog contained three partial entries: Angular, Entity Framework Core
 and Roboto. The Angular entry explicitly maps the eight direct runtime packages
 `@angular/common`, `@angular/compiler`, `@angular/core`, `@angular/forms`,
 `@angular/platform-browser`, `@angular/platform-server`, `@angular/router` and

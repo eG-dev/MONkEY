@@ -83,6 +83,35 @@ for (const role of ["Manager", "Member"] as const) {
     await expect(page.locator("#about-license-text")).toBeVisible();
     await expect(page.locator("#about-panel-overview")).toBeHidden();
 
+    await page.locator("#about-tab-notices").click();
+    await page.locator("#about-search").fill("SQLitePCLRaw.lib.e_sqlite3");
+
+    const sqlite = page.getByTestId("about-component-sqlite");
+    const bindings = sqlite.getByTestId("about-group-bindings");
+    const license = bindings.getByTestId("about-document-sqlitepclraw-license");
+    const notice = bindings.getByTestId("about-document-sqlitepclraw-notice");
+
+    await sqlite.getByTestId("about-component-toggle").click();
+
+    await expect(sqlite.getByRole("heading", { level: 4 })).toHaveText([
+      "Microsoft SQLite providers", "SQLitePCLRaw", "SQLite engine",
+    ]);
+    await expect(sqlite.getByTestId("about-group-members").getByRole("listitem")).toHaveCount(8);
+    await expect(license.getByTestId("about-document-toggle")).toHaveAttribute("aria-expanded", "false");
+
+    await license.getByTestId("about-document-toggle").press("Space");
+    await notice.getByTestId("about-document-toggle").press("Enter");
+
+    await expect(license.getByTestId("about-document-text")).toBeVisible();
+    await expect(license.getByTestId("about-document-text")).toContainText("Apache License");
+    await expect(notice.getByTestId("about-document-text")).toBeVisible();
+    await expect(license.getByTestId("about-document-file")).toHaveText("Open original");
+    await page.locator("#about-tab-overview").click();
+    await page.locator("#about-tab-notices").click();
+
+    await expect(license.getByTestId("about-document-toggle")).toHaveAttribute("aria-expanded", "true");
+    expect(await page.locator("#about-dialog").evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+
     await page.keyboard.press("Escape");
 
     await expect(page.locator("#about-dialog")).not.toBeVisible();

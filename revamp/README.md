@@ -31,6 +31,71 @@ Allowance configuration and execution follow
 [ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Grouped Notice Documents R6 (2026-10-24)
+
+The user explicitly approved the current R6 click prototype with "prototype
+approved, implement", following the separate R6 wireframe approval. Angular now
+implements that hierarchy in the shared public/signed-in About dialog:
+
+- Bounded package/license groups list their applicable components and source
+  links once. SQLite separates Microsoft providers, SQLitePCLRaw and its
+  public-domain engine.
+- Shared version/license metadata appears in the group heading; differing
+  metadata stays attached to each member, including Angular's mixed versions.
+- Readable document titles are independent keyboard-operable expansion buttons,
+  initially closed. Open original is a separate, specifically named link to the
+  local original. Expanded bodies contain the complete unchanged original text,
+  not the prototype placeholders.
+- Filtering retains the complete matching parent and applicability groups.
+  Component/document expansion survives filtering and tab changes, and resets
+  on close. The fixed header/tabs and single content scroller remain.
+- German/English controls, semantic group boundaries, phone wrapping/stacking,
+  unique control IDs and visible focus use the existing design system.
+
+The catalog adds optional explicit presentation groups, validated as a complete,
+nonoverlapping partition with identical document applicability within each
+group. A single default group is allowed only when all entry members share
+their complete document set. No grouping is guessed from package-name prefixes
+or a shared license alone. See the [input contract](notices/README.md#input-contract).
+Original document bytes, provenance, exact component versions and the canonical
+root notice bundle are unchanged by this presentation revision.
+
+Validation:
+
+```text
+npm --prefix revamp/web run prepare:about
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/web run check:about
+node revamp/web/scripts/assemble-notices.mjs --check
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- "about(-loading)?[.]spec[.]ts$|runtime[.]spec[.]ts$" --grep "About|runtime works with networking disabled" --workers=1
+```
+
+All **27 isolated build-input checks** and **11 production-image checks** passed.
+The browser cases cover public, Manager, Member and forced-password-change
+entry points on desktop/mobile, plus on-demand loading/error recovery and the
+network-disabled runtime. Assertions cover once-per-group applicability,
+mixed member metadata, five SQLite documents, initial closure, independent
+Enter/Space expansion/collapse, full original text and download hashes, separate
+original-file navigation, preserved expansion, empty search, reset, focus return,
+kept form values and no horizontal overflow. Catalog/type/format/whitespace
+checks passed.
+
+A separate ordinary-Chromium localization/visual review covered eight public
+English/German, light/dark and 1440x1000/360x1000 combinations against the same
+production image. It checked translated names/status/links, unchanged SourceGear
+copyright text, complete matching groups, unique IDs, fixed header/tabs and no
+overflow, script errors or external requests. English/light desktop and
+German/dark phone captures were inspected. Temporary review containers and
+browser contexts were removed.
+
+The current initial bundle is **698.68kB** (estimated transfer **166.80kB**);
+About remains deferred in a **248.37kB** browser chunk (estimated transfer
+**33.57kB**). The initial bundle remains below the existing 750kB warning
+budget. Coverage is still explicitly partial: ORT, comprehensive distribution
+review and release acceptance remain open. The full release suite was not run.
+
 ## On-demand About Bundle (2026-10-24)
 
 About now uses Angular `@defer (when about.opened())`: its component, inline

@@ -10,6 +10,19 @@ import projectLicense from '../../../generated/about/project-license.json';
 import thirdParty from '../../../generated/about/third-party.json';
 
 type AboutTab = 'overview' | 'license' | 'notices' | 'legal';
+type NoticeMember = (typeof thirdParty.entries)[number]['components'][number];
+
+function distinctMetadata(members: readonly NoticeMember[]): NoticeMember[] {
+  return members.filter(
+    (member, index) =>
+      members.findIndex(
+        (candidate) =>
+          candidate.version === member.version &&
+          candidate.licenseExpression === member.licenseExpression &&
+          candidate.licensingStatus === member.licensingStatus,
+      ) === index,
+  );
+}
 
 @Component({
   selector: 'app-about-dialog',
@@ -37,27 +50,34 @@ export class AboutDialog {
   protected readonly selected = signal<AboutTab>('overview');
   protected readonly search = signal('');
   protected readonly expanded = signal<ReadonlySet<string>>(new Set());
+  protected readonly expandedDocuments = signal<ReadonlySet<string>>(new Set());
   protected readonly noticesCoverage = thirdParty.coverage;
   private readonly components = thirdParty.entries.map((entry) => ({
     id: entry.id,
     name: entry.displayName,
-    metadata: entry.components.filter(
-      (component, index, components) =>
-        components.findIndex(
-          (candidate) =>
-            candidate.version === component.version &&
-            candidate.licenseExpression === component.licenseExpression &&
-            candidate.licensingStatus === component.licensingStatus,
-        ) === index,
-    ),
+    metadata: distinctMetadata(entry.components),
     members: entry.components,
-    unmappedMembers: entry.components.filter((component) => component.documentIds.length === 0),
-    documents: thirdParty.documents
-      .filter((document) => entry.components.some((component) => component.documentIds.includes(document.id)))
-      .map((document) => ({
-        ...document,
-        members: entry.components.filter((component) => component.documentIds.includes(document.id)),
-      })),
+    groups: entry.groups.map((group) => {
+      const members = entry.components.filter((member) => group.componentIds.includes(member.id));
+      const licenses = [...new Set(members.map((member) => member.licenseExpression))];
+      const licenseExpression = licenses.length === 1 ? licenses[0] : null;
+
+      return {
+        id: `about-group-${entry.id}-${group.id}`,
+        testId: `about-group-${group.id}`,
+        titleKey: group.titleKey ? `about.noticeGroups.${group.titleKey}` : null,
+        metadata: distinctMetadata(members),
+        members,
+        licenseExpression,
+        documents: thirdParty.documents
+          .filter((document) => members.every((member) => member.documentIds.includes(document.id)))
+          .map((document) => ({
+            ...document,
+            controlId: `about-document-${entry.id}-${group.id}-${document.id}`,
+            titleKey: document.kind === 'license' && licenseExpression ? 'about.licenseDocument' : `about.documentTitles.${document.kind}`,
+          })),
+      };
+    }),
   }));
   protected readonly filteredComponents = computed(() => {
     const locale = this.language.locale();
@@ -123,5 +143,20 @@ export class AboutDialog {
     this.selected.set('overview');
     this.search.set('');
     this.expanded.set(new Set());
+    this.expandedDocuments.set(new Set());
+  }
+
+  protected toggleDocument(id: string): void {
+    this.expandedDocuments.update((current) => {
+      const next = new Set(current);
+
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+
+      return next;
+    });
   }
 }

@@ -63,6 +63,7 @@ export function assembleNotices({ inputRoot, release = false }) {
   const components = records(catalog.components, 'component');
   const entries = records(catalog.entries, 'entry');
   const documents = records(catalog.documents, 'document');
+  const entryGroups = new Map();
   const files = new Map();
   const documentData = [];
 
@@ -135,6 +136,30 @@ export function assembleNotices({ inputRoot, release = false }) {
   for (const entry of entries.values()) {
     text(entry.displayName, 'About display name');
     references(entry.componentIds, components, 'component');
+    const groups = entry.groups ?? [{ id: entry.id, titleKey: null, componentIds: entry.componentIds }];
+
+    records(groups, 'notice group');
+    const assigned = new Set();
+
+    for (const group of groups) {
+      assert(
+        group.titleKey === null || (typeof group.titleKey === 'string' && /^[a-z][a-zA-Z0-9]*$/.test(group.titleKey)),
+        'Invalid notice group title key.',
+      );
+      references(group.componentIds, components, 'notice group component');
+      const documentSets = new Set();
+
+      for (const id of group.componentIds) {
+        assert(entry.componentIds.includes(id) && !assigned.has(id), `Invalid notice group assignment: ${id}`);
+        assigned.add(id);
+        documentSets.add(JSON.stringify([...components.get(id).documentIds].sort()));
+      }
+
+      assert.equal(documentSets.size, 1, `Notice group members must share identical document applicability: ${entry.id}/${group.id}`);
+    }
+
+    assert.equal(assigned.size, entry.componentIds.length, `Incomplete notice groups: ${entry.id}`);
+    entryGroups.set(entry.id, groups);
   }
 
   for (const component of components.values()) {
@@ -165,6 +190,7 @@ export function assembleNotices({ inputRoot, release = false }) {
     entries: catalog.entries.map((entry) => ({
       id: entry.id,
       displayName: entry.displayName,
+      groups: entryGroups.get(entry.id),
       components: entry.componentIds.map((id) => {
         const component = components.get(id);
 

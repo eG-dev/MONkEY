@@ -76,6 +76,21 @@ closes the reuse gate: render the mapped data in the existing presentation, then
 extend the agreed initial set. Future design changes retain their separate gates;
 ORT remains later work.
 
+On 2026-10-24 the initial manual About set reached all eight agreed component
+groups: Angular, .NET, ASP.NET Core, Entity Framework Core, SQLite, Taiga UI,
+Lucide and Roboto. SQLite includes its provider/binding/native chain and the
+separately identified public-domain engine. See the
+[collection and local verification record](../../revamp/notices/README.md#sqlite-provider-bindings-and-engine-2026-10-24).
+Coverage remains explicitly partial; this does not close comprehensive ORT,
+transitive/runtime/OS review, source-publication rights or release acceptance.
+
+The user then explicitly approved the R6 notice hierarchy wireframe and its
+matching click prototype on 2026-10-24 ("prototype approved, implement").
+The [Angular delivery record](../../revamp/README.md#grouped-notice-documents-r6-2026-10-24)
+documents package/license applicability groups, independent document expansion,
+unchanged original texts and the passing focused production-image/localization
+checks. This presentation revision does not close the remaining release gates.
+
 The user's subsequent 2026-10-19 request moved the full project license to a
 dedicated tab without expansion and corrected login-prototype centring. The login
 prototype correction was initially a locally verified draft; it was explicitly

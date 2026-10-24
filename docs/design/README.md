@@ -8,6 +8,54 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Notice Document Hierarchy R6 (2026-10-24)
+
+**Third-party notices wireframe and matching prototype R6 approved,
+2026-10-24.** The user requested
+the proposed hierarchy improvement after reviewing SQLite's mixed licenses and
+repeated applicability lists. The
+[updated source](wireframes/about/about-notices-wireframe.drawio) and
+[review PNG](wireframes/about/about-notices-wireframe.png) show SQLite
+expanded into Microsoft provider, SQLitePCLRaw and public-domain engine groups.
+Each bounded group lists applicable packages once, retains each source link,
+and distinguishes its version/license metadata from its legal documents.
+
+Documents have readable titles, independent initially closed expansion and a
+separate local-original link. One illustrative MIT body is open in the drawing
+to show the legal-text boundary; actual expansion reveals the full unchanged
+original and pushes subsequent content down. Mixed member metadata and distinct
+document associations must remain explicit; no group-wide license is inferred
+for a differently licensed member. Phone notes require stacked metadata, wrapped
+names/links, keyboard operation and one content scroller. The four-tab dialog,
+existing entry points and partial-coverage status are unchanged.
+
+The user confirmed "i arranged them already"
+on 2026-10-24; their source edits and note/arrow positions were preserved. The
+PNG was re-exported and inspected: English-only text, external non-overlapping
+notes, clear group/document boundaries, distinct original-file links and the
+unchanged dashed viewport. The user subsequently explicitly approved that R6
+wireframe with "approved" on 2026-10-24. Review markers were restored to normal
+yellow notes and black text/connectors, the draft title was removed, and the PNG
+was re-exported and inspected without changing the user's arrangement.
+
+The [standalone About prototype](prototypes/about/index.html) now implements
+this hierarchy, also available through actual navigation in the
+[integrated prototype](prototypes/index.html). Its examples include all three
+SQLite groups, multiple documents and mixed Angular package versions. Inline
+document bodies remain explicitly labelled design placeholders; original-file
+links open the existing tracked originals without another legal-text copy.
+See the [verification evidence](prototypes/README.md#notice-document-hierarchy-r6-2026-10-24)
+and [scoped component pattern](design-system/components.md#notice-document-hierarchy-r6).
+The user subsequently explicitly approved the current prototype with
+"prototype approved, implement" on 2026-10-24. Both R6 design gates are complete;
+earlier approvals remain history. Angular implementation and its focused
+production-image verification are complete; see the
+[R6 delivery record](../../revamp/README.md#grouped-notice-documents-r6-2026-10-24).
+The application renders full original document bodies rather than prototype
+placeholders. Its 11 focused production-image checks, 27 isolated input checks
+and separate eight-combination localization/theme/viewport review passed.
+The earlier prototype evidence remains separate from application verification.
+
 ## Currency Formatting R1 (2026-10-24)
 
 **Shared money formatting and affected Overview, Accounts and account-details
@@ -561,7 +609,7 @@ remain unchanged. See the [delivery record](../../revamp/README.md#four-tab-abou
 | Settings | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration |
 | User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection |
 | Login | Sign-in, forced-password change, and session-expiry states |
-| About | R5 wireframes and shared prototype explicitly approved 2026-10-19: Overview, Project license, Third-party notices and Legal information; implemented in Angular 2026-10-23 |
+| About | Notices wireframe and matching shared prototype R6 explicitly approved 2026-10-24; Angular implemented and locally verified against the production image; other wireframes retain their earlier approvals |
 
 Use desktop/mobile and Manager/Member variants where relevant. Forms, dialogs,
 image upload, confirmations, and validation/retry states can be named pages in
@@ -696,7 +744,7 @@ column retains the unchanged wireframe approvals.
 | Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
 | About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
 | About: Project license | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
-| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | English-only wording and latest user source edits explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; synchronized four-tab strip unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
+| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | R6 package/document hierarchy explicitly approved 2026-10-24 with "approved"; user arrangement preserved, review markers cleared and preview inspected; prior wording/source approval 2026-10-21 and R5 approval 2026-10-19 retained as history | [About](prototypes/about/index.html), R6 explicitly approved 2026-10-24 with "prototype approved, implement", after standalone and integrated verification; earlier R5 and Shared Notice Documents R1 approvals remain history |
 | About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; legal wording not approved | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19; legal placeholders only |
 
 Prototype structure, review settings, and fictional sign-in data are described in

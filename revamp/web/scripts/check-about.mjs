@@ -399,6 +399,63 @@ try {
 
     assert.deepEqual(assembleNotices({ inputRoot: copiedRoot }).files, first.files);
   });
+  check('notice groups preserve exact applicability and mixed member metadata', () => {
+    const grouped = catalogCheck((catalog) => {
+      catalog.entries[0].groups = [{ id: 'packages', titleKey: null, componentIds: ['managed', 'font'] }];
+    });
+    const entry = grouped.about.entries[0];
+
+    assert.deepEqual(entry.groups, [{ id: 'packages', titleKey: null, componentIds: ['managed', 'font'] }]);
+    assert.deepEqual(
+      entry.components.map((component) => component.licenseExpression),
+      ['MIT', 'OFL-1.1'],
+    );
+    assert.equal(grouped.about.documents.length, 1);
+    assert(grouped.bundle.equals(catalogCheck().bundle));
+  });
+  check('invalid, overlapping and incomplete notice groups rejected', () => {
+    for (const groups of [
+      [],
+      [{ id: 'invalid group', titleKey: null, componentIds: ['managed', 'font'] }],
+      [{ id: 'packages', titleKey: 'invalid.key', componentIds: ['managed', 'font'] }],
+      [{ id: 'packages', titleKey: null, componentIds: ['missing'] }],
+      [{ id: 'packages', titleKey: null, componentIds: ['managed'] }],
+      [
+        { id: 'managed', titleKey: null, componentIds: ['managed', 'font'] },
+        { id: 'font', titleKey: null, componentIds: ['font'] },
+      ],
+      [
+        { id: 'packages', titleKey: null, componentIds: ['managed'] },
+        { id: 'packages', titleKey: null, componentIds: ['font'] },
+      ],
+    ]) {
+      assert.throws(
+        () =>
+          catalogCheck((catalog) => {
+            catalog.entries[0].groups = groups;
+          }),
+        /notice group/i,
+      );
+    }
+  });
+  check('different document sets require separate explicit groups', () => {
+    const separateDocuments = (catalog) => {
+      catalog.documents.push({ ...catalog.documents[0], id: 'font-license' });
+      catalog.components[1].documentIds = ['font-license'];
+    };
+
+    assert.throws(() => catalogCheck(separateDocuments), /identical document applicability/);
+    const grouped = catalogCheck((catalog) => {
+      separateDocuments(catalog);
+      catalog.entries[0].groups = [
+        { id: 'managed', titleKey: 'managed', componentIds: ['managed'] },
+        { id: 'font', titleKey: 'font', componentIds: ['font'] },
+      ];
+    });
+
+    assert.equal(grouped.about.entries[0].groups.length, 2);
+    assert.equal(grouped.about.documents.length, 2);
+  });
   check('manual duplicate identities and dangling references rejected', () => {
     for (const collection of ['entries', 'components', 'documents']) {
       assert.throws(() => catalogCheck((catalog) => catalog[collection].push(catalog[collection][0])), /Duplicate/);

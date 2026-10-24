@@ -25,6 +25,22 @@
     "inventoryDraft": "Prüfplatzhalter: Diese Beispielzeilen sind kein geprüftes Verzeichnis der Veröffentlichung. Versionen, Lizenzen und erforderliche Hinweise müssen noch geprüft werden.",
     "inventoryPartial": "Unvollständige Komponentensammlung. Diese Einträge decken nicht alle ausgelieferten Komponenten ab und bedeuten keine Freigabe zur Veröffentlichung.",
     "componentSource": "Komponentenquellcode",
+    "packages": "Pakete / Komponenten",
+    "groupCount": "{count, plural, one {Eine Paket- / Lizenzgruppe} other {# Paket- / Lizenzgruppen}}",
+    "mixedMetadata": "Unterschiedliche Paketmetadaten; siehe einzelne Komponenten",
+    "openOriginal": "Original öffnen",
+    "licenseDocument": "{license}-Lizenz",
+    "documentTitles": {
+      "license": "Lizenz",
+      "notice": "Drittanbieterhinweise",
+      "copyright": "Urheberrechtshinweise",
+      "public-domain-statement": "Gemeinfreiheitserklärung"
+    },
+    "noticeGroups": {
+      "sqliteProviders": "Microsoft-SQLite-Provider",
+      "sqliteBindings": "SQLitePCLRaw",
+      "sqliteEngine": "SQLite-Datenbankmodul"
+    },
     "appliesTo": "Gilt für",
     "openDocument": "Originaldokument öffnen: {document}",
     "documentText": "Originaldokument: {document}",
