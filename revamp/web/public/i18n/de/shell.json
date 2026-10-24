@@ -4,6 +4,9 @@
   "tryAgain": "Erneut versuchen",
   "about": {
     "title": "Info",
+    "loading": "Info wird geladen...",
+    "loadFailed": "Info konnte nicht geladen werden. Diesen Dialog schließen, um weiterzuarbeiten, oder die Seite neu laden, um es erneut zu versuchen. Beim Neuladen gehen ungespeicherte Formulareingaben verloren.",
+    "reload": "Seite neu laden",
     "overview": "Übersicht",
     "notices": "Drittanbieterhinweise",
     "legal": "Rechtliche Hinweise",

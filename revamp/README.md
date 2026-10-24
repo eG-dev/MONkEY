@@ -31,6 +31,46 @@ Allowance configuration and execution follow
 [ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 
+## On-demand About Bundle (2026-10-24)
+
+About now uses Angular `@defer (when about.opened())`: its component, inline
+project-license text and third-party notice data load only on first open, with
+no idle prefetch. Closing/reopening uses the already loaded component. The
+dialog remains shared between public sign-in, forced password change and the
+authenticated shell. Local notice/license assets and download URLs are unchanged.
+
+A delayed download shows a translated loading status. Failed chunk loading
+shows a closable error dialog with explicit reload recovery and a warning that
+reloading clears unsaved form input. Closing the error retains the current
+form and returns focus; no automatic navigation or reload discards input.
+
+The measured production initial bundle fell from **754.95kB to 697.61kB**
+(**57.34kB / 7.6% less raw JavaScript/CSS**). Estimated initial transfer fell
+from **180.65kB to 166.44kB**. About is a separate **61.25kB** browser chunk
+(estimated transfer **16.07kB**); the net initial saving differs because shared
+dependencies, defer handling and translated loading/error feedback remain eager.
+The existing **750kB** warning and **1MB** error budgets are unchanged, and the
+initial-bundle warning no longer appears.
+
+Validation:
+
+```text
+npm --prefix revamp/web run build -- --stats-json
+npm --prefix revamp/web run build:image
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/shell/about.spec.ts specs/shell/about-loading.spec.ts specs/authentication/about.spec.ts --workers 1
+```
+
+Ten desktop/mobile production-image About checks passed without retries,
+covering anonymous, Manager, Member and forced-password-change entry points,
+focus return, preserved input, keyboard tabs, original license/notices and
+local-only assets. The new loading regression checks assert that the About
+chunk is absent before first open, loads from the same origin on demand,
+is reused on reopen, reports delayed loading, surfaces failed download and
+recovers after explicit reload. Catalog/type/formatting/whitespace checks
+passed. The full release suite was not run.
+
 ## Currency Formatting R1 (2026-10-24)
 
 The user explicitly approved the current Currency Formatting R1 prototype with

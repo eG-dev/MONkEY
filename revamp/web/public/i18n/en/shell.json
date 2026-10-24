@@ -4,6 +4,9 @@
   "tryAgain": "Try again",
   "about": {
     "title": "About",
+    "loading": "Loading About...",
+    "loadFailed": "About could not be loaded. Close this dialog to keep working, or reload the page to try again. Reloading clears unsaved form input.",
+    "reload": "Reload page",
     "overview": "Overview",
     "notices": "Third-party notices",
     "legal": "Legal information",
