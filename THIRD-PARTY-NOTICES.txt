@@ -34,9 +34,9 @@ Documents: angular-license
 Licensing: MIT; review: reviewed
 Source: https://github.com/angular/angular/tree/22.2.3/packages/router
 Documents: angular-license
-@angular/ssr 22.2.3
+@angular/ssr 22.2.4
 Licensing: MIT; review: reviewed
-Source: https://github.com/angular/angular-cli/tree/22.2.3
+Source: https://github.com/angular/angular-cli/tree/22.2.4
 Documents: angular-license
 
 Entity Framework Core
@@ -54,7 +54,7 @@ Source: https://fonts.google.com/specimen/Roboto/license
 Documents: roboto-ofl
 
 === angular-license (license) ===
-Applies to: @angular/common 22.2.3; @angular/compiler 22.2.3; @angular/core 22.2.3; @angular/forms 22.2.3; @angular/platform-browser 22.2.3; @angular/platform-server 22.2.3; @angular/router 22.2.3; @angular/ssr 22.2.3
+Applies to: @angular/common 22.2.3; @angular/compiler 22.2.3; @angular/core 22.2.3; @angular/forms 22.2.3; @angular/platform-browser 22.2.3; @angular/platform-server 22.2.3; @angular/router 22.2.3; @angular/ssr 22.2.4
 Source: https://registry.npmjs.org/@angular/core/-/core-22.2.3.tgz
 Revision: @angular/core@22.2.3: package/LICENSE; identical LICENSE supplied by all eight mapped Angular packages
 SHA-256: 15e77c4692114f87c2020353626c868472c23954a4ed37ecc4c1522d14be1eb7

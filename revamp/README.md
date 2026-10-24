@@ -244,7 +244,7 @@ bundle. The SQLite engine is public domain; wrapper/package terms are separate.
 The [root notice document](../THIRD-PARTY-NOTICES.txt), beside the project license,
 is the canonical generated distribution output, not an independently maintained
 dependency database. Approved Manual Mapping R1 now has three partial entries:
-Angular's eight direct runtime packages at `22.2.3` (MIT), EF Core `10.0.13` (MIT)
+Angular's seven framework runtime packages at `22.2.3` and SSR at `22.2.4` (MIT), EF Core `10.0.13` (MIT)
 and the four local Roboto `3.015` fonts (OFL-1.1). The
 [Angular delivery record](notices/README.md#angular-runtime-packages-2026-10-23)
 documents their explicit grouping, shared original and bounded coverage.
@@ -324,11 +324,11 @@ the configured currency or business timezone.
 | Component | Verified version |
 | --- | --- |
 | .NET SDK / runtime / EF Core | 10.0.402 / 10.0.13 / 10.0.13 |
-| Node / Angular SSR | 24.22.0 / 22.2.3 |
+| Node / Angular framework / SSR and CLI | 24.22.0 / 22.2.3 / 22.2.4 |
 | npm / TypeScript | 12.2.0 / 6.0.3 |
-| Taiga / universal Web APIs | 5.28.0 / 5.4.0 |
+| Taiga / universal Web APIs | 5.29.0 / 5.4.0 |
 | Transloco / MessageFormat integration | 8.4.0 / 8.4.0 |
-| Lucide static font | 1.60.0 |
+| Lucide static font | 1.61.0 |
 | Playwright | 1.63.0 |
 | Container platform | Linux x86-64 only |
 
@@ -346,7 +346,42 @@ Angular 22.2.3 requires TypeScript `>=6.0 <6.1`; npm 11.21.1 is superseded by th
 verified npm 12 update. The EF Core 10.0.13 original license has the same SHA-256
 as 10.0.12, verified against the release-matched upstream URL.
 
-The legacy solution also built with central OpenTelemetry Hosting 1.20.1 and
+### Audit Remediation (2026-10-24)
+
+Updated Angular CLI/build/SSR to `22.2.4`, Taiga to `5.29.0`, Lucide to
+`1.61.0`, and compatible locked transitives. Framework packages remain at their
+latest `22.2.3`. Angular build `22.2.4` still pins vulnerable Vite `8.3.0`;
+the web manifest therefore overrides only its Vite dependency to `8.3.5`.
+Remove that override when Angular ships a patched Vite pin. Do not use
+`npm audit fix --force`, which currently suggests downgrading Angular build.
+The refresh also resolves `body-parser` to `2.4.0`, `fast-uri` to `3.1.9`,
+and test-only DOMPurify to `3.4.17`.
+
+Both CI `npm audit --audit-level=high` gates pass unchanged; the web graph has
+zero reported vulnerabilities. Test tooling retains two low findings in the
+Mermaid/KaTeX chain. npm suggests Mermaid `12.2.0`, a breaking major upgrade,
+which is deferred rather than forced or hidden. Node types remain on Node 24;
+TypeScript remains on Angular's supported 6.0 series.
+
+Verified clean `ci --ignore-scripts` installs for web and E2E tooling, 24 About
+build-input checks, translation catalogs, E2E typechecking, repository guardrails
+(including Mermaid parsing), Angular SSR and production-image builds, and
+**19 desktop/mobile production-image checks**:
+
+```text
+npm --prefix revamp/tests/e2e test -- specs/shell/rendering.spec.ts specs/shell/assets.spec.ts specs/authentication/workflows.spec.ts specs/authentication/about.spec.ts specs/shell/about.spec.ts --workers 1
+```
+
+The Vite development server also returned HTTP 200 with the English SSR sign-in
+and its WebSocket client. The build reports a 753.57 KB initial bundle against
+the 750 KB warning budget; the error budget was not changed.
+The SSR license matches the reviewed Angular original byte-for-byte; its exact
+catalog version and generated root notices were refreshed. Taiga/Lucide still
+remain outside the explicitly partial curated catalog; their package license
+material is retained and Lucide's license continues to be copied with its assets.
+This does not close release notice-review gates or claim a hosted CI rerun.
+
+During the 2026-10-23 refresh, the legacy solution also built with central OpenTelemetry Hosting 1.20.1 and
 .NET package patches. Its inherited corporate NuGet source was unavailable,
 so verification used `-p:RestoreSources=https://api.nuget.org/v3/index.json`
 without changing source configuration. Existing moderate/high

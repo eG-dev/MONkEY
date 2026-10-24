@@ -228,6 +228,12 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     const metadata = [...new Set(entry.components.map((component) => `${component.version} \u00b7 ${component.licenseExpression}`))];
 
     await expect(row.getByTestId('about-component-metadata')).toHaveText(metadata);
+    expect(await row.getByTestId('about-metadata-separator').allTextContents()).toEqual(
+      metadata.slice(1).map(() => '\u00a0\u00a0|\u00a0\u00a0'),
+    );
+    expect(await row.getByTestId('about-component-metadata-groups').textContent()).toBe(
+      metadata.join('\u00a0\u00a0|\u00a0\u00a0'),
+    );
     await page.screenshot({ path: test.info().outputPath(`about-notice-summary-${entry.id}.png`), fullPage: true });
 
     const collapsedNotices = await page.locator("#about-panel-notices").boundingBox();
@@ -263,11 +269,7 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
 
         await expect(member).toContainText(component.name);
         await expect(member.getByRole('link', { name: 'Component source', exact: true })).toHaveAttribute('href', component.upstreamUrl);
-
-        const memberMetadata = metadata.length > 1 ? member : row.getByTestId('about-component-metadata');
-
-        await expect(memberMetadata).toContainText(component.version);
-        await expect(memberMetadata).toContainText(component.licenseExpression);
+        await expect(member).toContainText(`${component.version} \u00b7 ${component.licenseExpression} Component source`);
       }
 
       const link = group.getByTestId('about-document-file');

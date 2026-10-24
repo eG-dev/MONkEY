@@ -202,6 +202,12 @@ completeness or approve changed UI artifacts.
 
 ### Angular Runtime Packages (2026-10-23)
 
+Dependency refresh on 2026-10-24 updates SSR to `22.2.4`; the seven framework
+packages stay at `22.2.3`. The new SSR package's `LICENSE` has the same SHA-256
+as the reviewed original below. Its catalog version, PURL and upstream release
+link, and the generated root notice document have been updated. The following
+records the original 2026-10-23 collection.
+
 The catalog now contains three partial entries: Angular, Entity Framework Core
 and Roboto. The Angular entry explicitly maps the eight direct runtime packages
 `@angular/common`, `@angular/compiler`, `@angular/core`, `@angular/forms`,

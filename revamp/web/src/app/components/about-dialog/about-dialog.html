@@ -80,12 +80,14 @@
                   <summary data-testid="about-component-toggle">
                     <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ component.name }}</span
                     >
-                    @for (member of component.metadata; track member.id) {
-                      <span class="notice-meta" data-testid="about-component-metadata">
-                        {{ member.version ?? t('about.versionPending') }} &middot;
-                        {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}
-                      </span>
-                    }
+                    <span class="notice-meta" data-testid="about-component-metadata-groups">
+                      @for (member of component.metadata; track member.id; let first = $first) {
+                        @if (!first) {
+                          <span aria-hidden="true" data-testid="about-metadata-separator">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                        }
+                        <span data-testid="about-component-metadata">{{ member.version ?? t('about.versionPending') }} &middot; {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</span>
+                      }
+                    </span>
                   </summary>
                   <div class="notice-content">
                     @for (document of component.documents; track document.id) {
@@ -95,10 +97,8 @@
                           @for (member of document.members; track member.id) {
                             <li [attr.data-testid]="'about-member-' + member.id">
                               {{ member.name }}
-                              @if (component.metadata.length > 1) {
-                                <span class="hint">{{ member.version ?? t('about.versionPending') }} &middot; {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</span>
-                              }
-                              <a [href]="member.upstreamUrl" target="_blank" rel="noopener">{{ t('about.componentSource') }}</a>
+                              <span class="hint">{{ member.version ?? t('about.versionPending') }} &middot; {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</span>
+                              {{ ' ' }}<a [href]="member.upstreamUrl" target="_blank" rel="noopener">{{ t('about.componentSource') }}</a>
                               @if (member.reviewStatus !== 'reviewed') {
                                 <p class="hint">{{ t('about.reviewPending') }}</p>
                               }

@@ -142,14 +142,14 @@
       "id": "angular-ssr",
       "kind": "npm",
       "name": "@angular/ssr",
-      "version": "22.2.3",
-      "purl": "pkg:npm/%40angular/ssr@22.2.3",
+      "version": "22.2.4",
+      "purl": "pkg:npm/%40angular/ssr@22.2.4",
       "versionEvidence": {
         "kind": "npm",
         "path": "revamp/web/package-lock.json",
         "package": "@angular/ssr"
       },
-      "upstreamUrl": "https://github.com/angular/angular-cli/tree/22.2.3",
+      "upstreamUrl": "https://github.com/angular/angular-cli/tree/22.2.4",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
