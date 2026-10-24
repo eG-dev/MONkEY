@@ -31,6 +31,89 @@ Allowance configuration and execution follow
 [ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Notice Collection Completion (2026-10-24)
+
+The user accepted the current **20 entries, 44 components and 25 originals** as
+complete for the agreed curated scope and requested removal of the partial label.
+The catalog now has `coverage: complete`; About uses its existing completed state
+without the partial warning. No layout, interaction or translation changes are
+needed. The canonical bundle describes a completed curated collection, not an
+exhaustive dependency inventory.
+
+`releaseReview: pending` separately records the deferred work. Finish the revamp
+first; perform ORT discovery and associated findings review before release
+**1.0.0**. Release validation still rejects a pending review, an incomplete
+collection or unresolved component findings. Collection acceptance does not
+silently approve public artifact distribution. See
+[ADR-0020](../docs/ADR/ADR-0020-shipped-component-inventory.md) and the
+[current notice status](notices/README.md#timing).
+
+Verified for this status change: all 27 isolated input checks and E2E TypeScript
+checking passed, including completed/pending development inputs and independent
+release-review rejection. The actual catalog also rejects release validation
+while its review is pending. The production image built successfully; all three
+focused public About desktop/mobile and offline runtime cases passed without
+retries. They assert no partial banner and exact complete/pending metadata.
+
+```text
+npm --prefix revamp/tests/e2e test -- "about[.]spec[.]ts$|runtime[.]spec[.]ts$" --grep "public About|runtime works with networking disabled" --workers=1
+```
+
+The initial browser bundle remains 698.68kB raw; About remains deferred at
+514.60kB. This verification is not a full release-suite run.
+
+## Backend And Native Notices (2026-10-24)
+
+The proportional notice workflow now covers the ten remaining packages found in
+the published backend: SkiaSharp and its Linux/Windows/macOS native packages,
+ASP.NET Identity EF and OpenAPI, OpenAPI.NET, EF Abstractions/Relational and
+DependencyModel. All **18** published NuGet identities/versions have catalog
+mappings. This does not enumerate the projects inside their upstream bundles
+as individual About entries.
+
+Only four new originals were required, with existing applicable .NET/ASP.NET/EF
+material reused. Skia's full native third-party bundle is preserved once for its
+three native packages; DependencyModel retains its distinct supplied bundle.
+The [collection record](notices/README.md#backend-and-native-packages-2026-10-24)
+documents provenance, signature-aware NuGet hash checks, exact original bytes
+and targeted release follow-up. The catalog now has **20 entries, 44 components
+and 25 documents**; the existing R6 UI and translations are unchanged.
+
+Commands:
+
+```text
+npm --prefix revamp/web run assemble:notices
+npm --prefix revamp/web run prepare:about
+npm --prefix revamp/web run check:about
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- "about(-loading)?[.]spec[.]ts$|runtime[.]spec[.]ts$" --grep "About|runtime works with networking disabled" --workers=1
+node revamp/web/scripts/assemble-notices.mjs --check
+node revamp/web/scripts/prepare-about.mjs --check
+```
+
+The production-image build, 27 isolated input checks, E2E typecheck and exact
+publish-set mapping check passed. All **11 focused image-backed About/offline
+checks passed without retries** in 3.8 minutes: public desktop/320px mobile,
+Manager/Member, forced-password-change form retention, deferred loading/error
+recovery and network-disabled runtime. The public cases verify every entry's
+full original text and local download hash, package/document applicability,
+keyboard expansion/state, search and no horizontal overflow. Representative
+desktop/mobile captures were inspected; the full release suite was not run.
+The initial bundle remains **698.68kB** raw;
+About remains deferred at **514.58kB** raw (estimated transfer **59.50kB**).
+The larger originals do not enter the initial page bundle.
+
+The user confirmed on 2026-10-24 that the agreed manual notice work is complete;
+ORT and its findings review come later. Do not treat runtime/OS or Skia
+applicability questions as a separate active manual-collection backlog. Retain
+them as evidence for that deferred review: Skia's broad bundle includes
+copyleft/alternative-license sections, but does not establish that every listed
+project ships or which terms apply. The subsequent collection-completion decision
+above removes the partial label without clearing release review. Independent
+publication gates are unchanged; manual delivery completion is not final release
+approval.
+
 ## Direct Web Runtime Notices (2026-10-24)
 
 All 22 direct packages in the web manifest's `dependencies` now have reviewed
@@ -611,12 +694,22 @@ dependency/license overview instead of a bespoke inventory. See the
 reproducible invocation, reporting and coverage checks. ORT is not installed or
 required by CI yet. Original notices may still be collected manually.
 
-Source-only public GitHub development may begin before ORT setup, comprehensive
-dependency/asset review and complete About integration. Those tasks are deferred to final
+Source-only public GitHub development may begin before ORT setup and the release
+dependency/asset review. Those tasks are deferred to final
 release preparation, before public Docker images or releases. Source publication
 still requires rights and applicable notices for included code/assets and review
 of repository history for private data or credentials. This sequence does not
 authorize a visibility change or mark any publication gate complete.
+
+The user approved a
+[proportional workflow](notices/README.md#proportional-review-approved-2026-10-24)
+on 2026-10-24: automated discovery, targeted exception review and preserved
+upstream notices. About stays a curated direct-package/framework/asset list,
+with significant backend/native additions, not a manually maintained transitive
+or OS inventory. Required accompanying material may also be delivered in
+upstream bundles, package license files or generated notices outside individual
+About entries. The curated collection is now accepted as complete; release review
+remains independently pending.
 
 Notice delivery starts with a handcrafted, reviewed Angular, .NET, ASP.NET Core,
 Entity Framework Core, SQLite, Taiga UI, Lucide and Roboto set using actual shipped versions
@@ -655,14 +748,17 @@ command; the existing offline runtime E2E check verifies the notice document's
 exact bundle bytes, generated mappings and individual original-document hashes
 from the network-disabled production image. The 24 isolated build-input checks
 cover grouping, byte fidelity, stale versions/assets, invalid references, snapshot
-drift and release-input boundaries. Partial coverage blocks release validation.
+drift and release-input boundaries. An incomplete collection or pending release
+review blocks release validation.
 
 Review ORT coverage and supplemental evidence whenever shipped dependencies,
 assets or runtime inputs change, and before release. Include transitive/native/
 embedded and OS material, not just direct manifests. Apt results can change
-without source edits. Store manual original texts with exact package/version and
-provenance associations in the existing mapping contract. Later ORT adapters
-propose reviewed changes to that contract rather than defining the UI format.
+without source edits. Store curated original texts with exact package/version and
+provenance associations in the existing mapping contract. Preserve applicable
+upstream bundles/files without manually mapping every covered transitive.
+Later ORT adapters propose selected reviewed additions or bundled notice output
+rather than defining the UI format.
 
 The preparation guide preserves the user's project-artwork authorship
 confirmation. Complete attribution, required original texts, compatibility, font

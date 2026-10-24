@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "coverage": "partial",
+  "coverage": "complete",
+  "releaseReview": "pending",
   "entries": [
     {
       "id": "angular",
@@ -15,12 +16,12 @@
     {
       "id": "aspnet-core",
       "displayName": "ASP.NET Core",
-      "componentIds": ["aspnet-core-runtime"]
+      "componentIds": ["aspnet-core-runtime", "microsoft-aspnetcore-identity-entityframeworkcore", "microsoft-aspnetcore-openapi"]
     },
     {
       "id": "ef-core",
       "displayName": "Entity Framework Core",
-      "componentIds": ["microsoft-entityframeworkcore"]
+      "componentIds": ["microsoft-entityframeworkcore", "microsoft-entityframeworkcore-abstractions", "microsoft-entityframeworkcore-relational"]
     },
     {
       "id": "sqlite",
@@ -98,6 +99,26 @@
       "id": "tslib",
       "displayName": "tslib",
       "componentIds": ["tslib"]
+    },
+    {
+      "id": "skiasharp",
+      "displayName": "SkiaSharp",
+      "componentIds": ["skiasharp"]
+    },
+    {
+      "id": "skiasharp-native-assets",
+      "displayName": "SkiaSharp.NativeAssets",
+      "componentIds": ["skiasharp-native-linux", "skiasharp-native-win32", "skiasharp-native-macos"]
+    },
+    {
+      "id": "openapi-net",
+      "displayName": "OpenAPI.NET",
+      "componentIds": ["microsoft-openapi"]
+    },
+    {
+      "id": "dotnet-dependency-model",
+      "displayName": ".NET DependencyModel",
+      "componentIds": ["microsoft-extensions-dependencymodel"]
     }
   ],
   "components": [
@@ -714,6 +735,186 @@
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
       "documentIds": ["tslib-license", "tslib-copyright"]
+    },
+    {
+      "id": "skiasharp",
+      "kind": "nuget",
+      "name": "SkiaSharp",
+      "version": "4.153.1",
+      "purl": "pkg:nuget/SkiaSharp@4.153.1",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SkiaSharp"
+      },
+      "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["skiasharp-license"]
+    },
+    {
+      "id": "skiasharp-native-linux",
+      "kind": "nuget",
+      "name": "SkiaSharp.NativeAssets.Linux.NoDependencies",
+      "version": "4.153.1",
+      "purl": "pkg:nuget/SkiaSharp.NativeAssets.Linux.NoDependencies@4.153.1",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SkiaSharp.NativeAssets.Linux.NoDependencies"
+      },
+      "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["skiasharp-license", "skiasharp-third-party-notices"]
+    },
+    {
+      "id": "skiasharp-native-win32",
+      "kind": "nuget",
+      "name": "SkiaSharp.NativeAssets.Win32",
+      "version": "4.153.1",
+      "purl": "pkg:nuget/SkiaSharp.NativeAssets.Win32@4.153.1",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SkiaSharp.NativeAssets.Win32"
+      },
+      "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["skiasharp-license", "skiasharp-third-party-notices"]
+    },
+    {
+      "id": "skiasharp-native-macos",
+      "kind": "nuget",
+      "name": "SkiaSharp.NativeAssets.macOS",
+      "version": "4.153.1",
+      "purl": "pkg:nuget/SkiaSharp.NativeAssets.macOS@4.153.1",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "SkiaSharp.NativeAssets.macOS"
+      },
+      "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["skiasharp-license", "skiasharp-third-party-notices"]
+    },
+    {
+      "id": "microsoft-aspnetcore-identity-entityframeworkcore",
+      "kind": "nuget",
+      "name": "Microsoft.AspNetCore.Identity.EntityFrameworkCore",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.AspNetCore.Identity.EntityFrameworkCore@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.AspNetCore.Identity.EntityFrameworkCore"
+      },
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.13/src/Identity/EntityFrameworkCore",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["dotnet-license", "aspnet-core-third-party-notices"]
+    },
+    {
+      "id": "microsoft-aspnetcore-openapi",
+      "kind": "nuget",
+      "name": "Microsoft.AspNetCore.OpenApi",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.AspNetCore.OpenApi@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.AspNetCore.OpenApi"
+      },
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.13/src/OpenApi",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["dotnet-license", "aspnet-core-third-party-notices"]
+    },
+    {
+      "id": "microsoft-openapi",
+      "kind": "nuget",
+      "name": "Microsoft.OpenApi",
+      "version": "2.12.2",
+      "purl": "pkg:nuget/Microsoft.OpenApi@2.12.2",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.OpenApi"
+      },
+      "upstreamUrl": "https://github.com/microsoft/OpenAPI.NET/tree/a24aac560adbf013ff5aa63a873e5a7babce38d2",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["openapi-net-license"]
+    },
+    {
+      "id": "microsoft-entityframeworkcore-abstractions",
+      "kind": "nuget",
+      "name": "Microsoft.EntityFrameworkCore.Abstractions",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Abstractions@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.EntityFrameworkCore.Abstractions"
+      },
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "microsoft-entityframeworkcore-relational",
+      "kind": "nuget",
+      "name": "Microsoft.EntityFrameworkCore.Relational",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Relational@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.EntityFrameworkCore.Relational"
+      },
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ef-core-license"]
+    },
+    {
+      "id": "microsoft-extensions-dependencymodel",
+      "kind": "nuget",
+      "name": "Microsoft.Extensions.DependencyModel",
+      "version": "10.0.13",
+      "purl": "pkg:nuget/Microsoft.Extensions.DependencyModel@10.0.13",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "revamp/backend/PocketMonkey.Host/packages.lock.json",
+        "framework": "net10.0",
+        "package": "Microsoft.Extensions.DependencyModel"
+      },
+      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.13/src/libraries/Microsoft.Extensions.DependencyModel",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["dotnet-license", "dotnet-dependency-model-third-party-notices"]
     }
   ],
   "documents": [
@@ -746,7 +947,7 @@
       "kind": "notice",
       "path": "revamp/notices/originals/aspnetcore/10.x/THIRD-PARTY-NOTICES.txt",
       "upstreamUrl": "https://raw.githubusercontent.com/dotnet/aspnetcore/v10.0.13/THIRD-PARTY-NOTICES.txt",
-      "revision": "dotnet/aspnetcore v10.0.13: THIRD-PARTY-NOTICES.txt, retained in full without inferring a Linux shipped-component inventory",
+      "revision": "dotnet/aspnetcore v10.0.13: THIRD-PARTY-NOTICES.txt, retained in full without inferring a Linux shipped-component inventory; also the full text supplied by Microsoft.AspNetCore.Identity.EntityFrameworkCore and Microsoft.AspNetCore.OpenApi 10.0.13, differing only by CRLF in those NuGet archives",
       "sha256": "52af3d603b6d069e635f8afd08ec44ec01559255b5f3afd161ae9e6fe7e7aa54"
     },
     {
@@ -884,6 +1085,38 @@
       "upstreamUrl": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
       "revision": "tslib@2.8.1: complete unchanged package/CopyrightNotice.txt, retained separately from LICENSE.txt; archive verified against npm lockfile SHA-512 integrity",
       "sha256": "da16ddb65f8ca390998fb99223d0112498b56b45784d00afd77ff8ce1ac4de8b"
+    },
+    {
+      "id": "skiasharp-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/skiasharp/4.x/LICENSE.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/skiasharp/4.153.1/skiasharp.4.153.1.nupkg",
+      "revision": "SkiaSharp 4.153.1: complete LICENSE.txt; identical bytes supplied by all four mapped managed/native packages; nuspec repository commit 4783f51448f9b070dda4f87b83e941c9599e466e; NuGet signature-aware content hashes verified against packages.lock.json",
+      "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
+    },
+    {
+      "id": "skiasharp-third-party-notices",
+      "kind": "notice",
+      "path": "revamp/notices/originals/skiasharp/4.x/THIRD-PARTY-NOTICES.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/skiasharp.nativeassets.linux.nodependencies/4.153.1/skiasharp.nativeassets.linux.nodependencies.4.153.1.nupkg",
+      "revision": "SkiaSharp.NativeAssets.Linux.NoDependencies 4.153.1: complete unchanged THIRD-PARTY-NOTICES.txt; byte-identical to Win32 and macOS 4.153.1 originals; retained as an upstream bundle, not a claim that all listed projects occur in each native binary",
+      "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
+    },
+    {
+      "id": "openapi-net-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/openapi-net/2.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/microsoft/OpenAPI.NET/a24aac560adbf013ff5aa63a873e5a7babce38d2/LICENSE",
+      "revision": "Microsoft.OpenApi 2.12.2: unchanged LICENSE from the exact nuspec repository commit a24aac560adbf013ff5aa63a873e5a7babce38d2; no legal file supplied inside the NuGet archive",
+      "sha256": "5d177f23ecfeb0ea8e050b6a5a16355e1ae9a0b286436ca8f83ed08b3795be6b"
+    },
+    {
+      "id": "dotnet-dependency-model-third-party-notices",
+      "kind": "notice",
+      "path": "revamp/notices/originals/microsoft-extensions-dependencymodel/10.x/THIRD-PARTY-NOTICES.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencymodel/10.0.13/microsoft.extensions.dependencymodel.10.0.13.nupkg",
+      "revision": "Microsoft.Extensions.DependencyModel 10.0.13: complete unchanged THIRD-PARTY-NOTICES.TXT; distinct from the already captured .NET runtime notice bundle; NuGet signature-aware content hash verified against packages.lock.json",
+      "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
     }
   ]
 }

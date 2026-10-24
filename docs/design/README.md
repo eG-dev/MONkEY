@@ -8,6 +8,18 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Notice Collection State (2026-10-24)
+
+The user accepted the current curated notice collection as complete and requested
+removal of its partial label. The application selects the existing data-driven
+completed state, which omits the partial-collection banner. No layout,
+interaction, translated text, wireframe or click-prototype revision is introduced;
+R6's presentation and recorded approvals remain unchanged. Earlier partial
+fixtures/evidence describe their state at the time, not the current collection.
+ORT and its findings review are deferred until the revamp is finished, before
+1.0.0; separate release-review metadata does not add a new public warning.
+See the [delivery record](../../revamp/README.md#notice-collection-completion-2026-10-24).
+
 ## Notice Document Hierarchy R6 (2026-10-24)
 
 **Third-party notices wireframe and matching prototype R6 approved,

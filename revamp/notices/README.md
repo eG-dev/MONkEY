@@ -8,12 +8,159 @@ completed ORT installation or a release compliance review.
 ## Timing
 
 The user confirmed on 2026-10-19: source-only public GitHub development comes
-first; Docker images and releases come later. ORT setup, comprehensive dependency
-and asset review, and complete About integration are deferred to final release preparation
+first; Docker images and releases come later. ORT setup and the release dependency
+and asset review are deferred until the revamp is finished, before release 1.0.0,
 after the repository can become public. Source publication still requires rights
 and applicable license/copyright/NOTICE material for included code and assets,
 plus a review of repository history for private data or credentials. This timing
 does not mark those checks complete or authorize a visibility/publishing action.
+
+**Current status, confirmed by the user on 2026-10-24:** the agreed manual notice
+collection, upstream-bundle preservation and About delivery are complete.
+ORT setup and its findings/release review are the deferred notice workstream,
+not a reason to continue expanding the manual collection. Runtime/OS and Skia
+applicability questions recorded below belong to that later review, not a
+separate active collection backlog. This completion does not change the current
+release-review requirement or independently approve public image/release delivery.
+
+The user subsequently accepted the current collection as sufficient and
+explicitly requested removal of the partial status. The catalog now records
+`coverage: complete` for the agreed curated scope and `releaseReview: pending`
+for the deferred 1.0.0 review. About's existing completed state omits the partial
+banner; the generated bundle labels this as a completed **curated collection**,
+not a comprehensive dependency inventory. Finish the revamp first, then complete
+ORT and its findings review before 1.0.0. This does not authorize publication.
+
+## Proportional Review (Approved 2026-10-24)
+
+The user approved **automated discovery, targeted review and preserved upstream
+notices**, rather than manually collecting every transitive dependency.
+[ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md) records the
+current decision.
+
+- Keep the existing direct web package list and reviewed framework/asset entries.
+  Add significant separately shipped backend/native components where useful;
+  do not expand the npm transitive tree into a manual About backlog.
+- Preserve applicable upstream license files and notice bundles in the delivered
+  artifact. Required material may accompany the distribution outside the curated
+  About list; it does not require a separate UI entry or manual catalog record
+  for every package. An upstream bundle must actually cover the relevant material:
+  a direct package's own license is not a blanket license for its dependencies.
+- Use ORT at release preparation to discover direct/transitive components and
+  flag gaps. Review missing/conflicting licensing or attribution, changed terms,
+  native/embedded material and source-delivery obligations. Keep the generated
+  dependency graph generated; do not recreate it by hand.
+- Supplement package discovery for runtime/OS/assets, retaining supplied notices
+  rather than copying every OS package into About. Reasonably rely on upstream
+  material unless gaps or contradictions are apparent; do not reconstruct each
+  upstream project's compliance work.
+- Resolve findings and required accompanying material before distribution.
+  Complete direct-package mapping alone is not release approval. Collection
+  completion removes the partial label; the independent `releaseReview` gate
+  remains pending until the deferred release review is recorded.
+
+The bounded backend/native collection below completes the agreed manual slice.
+ORT setup and its targeted release review remain deferred.
+
+## Backend And Native Packages (2026-10-24)
+
+The published production image's `PocketMonkey.Host.deps.json` and native
+payloads were checked, rather than treating all restore-time dependencies as
+shipped. Ten previously unmapped packages were added:
+
+| Package | Exact locked/published version | Declared package license | Original material |
+| --- | --- | --- | --- |
+| `SkiaSharp` | `4.153.1` | MIT | Supplied Xamarin/Microsoft license |
+| `SkiaSharp.NativeAssets.Linux.NoDependencies` | `4.153.1` | MIT | Same license and supplied third-party bundle |
+| `SkiaSharp.NativeAssets.Win32` | `4.153.1` | MIT | Same license and byte-identical third-party bundle |
+| `SkiaSharp.NativeAssets.macOS` | `4.153.1` | MIT | Same license and byte-identical third-party bundle |
+| `Microsoft.AspNetCore.Identity.EntityFrameworkCore` | `10.0.13` | MIT | Existing .NET/ASP.NET originals |
+| `Microsoft.AspNetCore.OpenApi` | `10.0.13` | MIT | Existing .NET/ASP.NET originals |
+| `Microsoft.OpenApi` | `2.12.2` | MIT | Microsoft license at the exact package repository commit |
+| `Microsoft.EntityFrameworkCore.Abstractions` | `10.0.13` | MIT | Existing EF Core original |
+| `Microsoft.EntityFrameworkCore.Relational` | `10.0.13` | MIT | Existing EF Core original |
+| `Microsoft.Extensions.DependencyModel` | `10.0.13` | MIT | Existing .NET license and its own supplied third-party bundle |
+
+All **18 NuGet package identities/versions in the published backend** now have
+exact catalog mappings. The complete curated collection has **20 About entries,
+44 components and 25 original documents**, including the already covered 22
+direct web runtime packages. This is a bounded check of the current publish
+output, not a new mandatory inventory engine or a claim to cover all embedded
+native/runtime/OS material.
+
+The Windows and macOS Skia assets are physically present alongside Linux assets,
+so their packages are included even though the container executes Linux code.
+This does not claim Windows/macOS deployment support. EF Design, Roslyn,
+Humanizer and other restore/build tooling absent from the published package set
+were not added merely because the backend lockfile mentions them.
+
+### Original Material And Reuse
+
+Collection verified all ten packages' signature-aware NuGet content hashes
+against the backend lockfile using the installed SDK's
+`NuGet.Packaging.PackageArchiveReader.GetContentHash`, and compared supplied legal
+files with their archive entries. This is one-off collection evidence, not a
+new application-build dependency. A raw SHA-512 of a signed `.nupkg` is not the
+same value as its NuGet lockfile content hash.
+
+Only four new original files were needed:
+
+- [SkiaSharp MIT license](originals/skiasharp/4.x/LICENSE.txt), byte-identical in
+  all four packages.
+- [SkiaSharp native third-party bundle](originals/skiasharp/4.x/THIRD-PARTY-NOTICES.txt),
+  byte-identical in all three native packages. Its complete 139,775 bytes are
+  preserved once, including the bundled projects' own terms and attributions.
+  The declared package MIT license does not replace those terms.
+- [OpenAPI.NET license](originals/openapi-net/2.x/LICENSE.txt), from commit
+  `a24aac560adbf013ff5aa63a873e5a7babce38d2` recorded by the `2.12.2` nuspec.
+  The NuGet archive supplies a license expression but no separate legal file;
+  the matching upstream original retains Microsoft's copyright wording.
+- [DependencyModel third-party bundle](originals/microsoft-extensions-dependencymodel/10.x/THIRD-PARTY-NOTICES.txt),
+  retained separately because it differs from the captured .NET runtime bundle.
+
+New files retain the supplied bytes, including CRLF and trailing whitespace;
+the OpenAPI source filename gains only `.txt`. The catalog retains SHA-256,
+real archive/source URLs, exact versions and captured revision evidence under
+the approved `MAJOR.x` storage policy.
+
+Both added ASP.NET packages supply the same full notice text already captured
+for ASP.NET Core, differing only in CRLF versus LF. Reuse that existing upstream
+original without normalizing it or creating a duplicate document. The existing
+.NET Foundation MIT original also applies. The two additional EF packages
+declare MIT, supply no separate legal file and reuse the matching EF original.
+
+ASP.NET and EF additions extend their existing applicability lists. Four new
+entries distinguish SkiaSharp's managed license, the native packages' shared
+license/notice set, OpenAPI.NET and DependencyModel. No third-party project named
+inside an upstream notice bundle becomes a new catalog/UI entry just because
+it appears there. Native SkiaSharp's complete bundle is retained without treating
+its contents as a platform-specific compiled-component inventory.
+
+### Verification And Deferred ORT Review
+
+The production-image build, 27 isolated About input checks and E2E TypeScript
+checking passed. Exact publish-set mapping, generated notice freshness and
+whitespace checks passed. Initial browser assets remain **698.68kB** raw;
+the expanded About browser chunk is **514.58kB**, still loaded only on demand.
+Image-backed About/offline checks and reproducible commands are recorded in the
+[application delivery guide](../README.md#backend-and-native-notices-2026-10-24).
+
+The following are evidence/questions for the later ORT-assisted release review,
+not additional manual-collection tasks:
+
+- The Skia upstream bundle contains MPL/GPL/LGPL and alternative-license
+  sections. Determine applicability to the shipped native build and satisfy
+  source/source-offer/relinking duties where applicable. Presence in this broad
+  bundle alone does not prove that every named project is compiled into the
+  delivered native binaries, nor that a copyleft license was selected.
+- Establish ORT discovery and review gaps/changed terms rather than manually
+  enumerating npm or native transitives. Preserve applicable upstream notice
+  bundles and runtime/container/OS license files; Node's upstream license bundle
+  is already explicitly copied by the existing Dockerfile.
+- Keep rights, compatibility, source delivery and publication acceptance
+  separate from successful collection and rendering. Release review stays pending;
+  this batch neither authorizes public image distribution nor closes release
+  gates.
 
 ## Remaining Direct Web Runtime Packages (2026-10-24)
 
@@ -80,8 +227,10 @@ Commands are recorded in the
 Coverage remains `partial`: this is complete direct-manifest mapping, not
 complete redistribution coverage or legal/release approval. MessageFormat,
 ng-web-apis/Taiga support packages and other npm transitives (including nested
-Express dependencies), remaining backend/native packages, Node and OS/runtime
-review still need their separate collection/review. A direct package's license
+Express dependencies) remain within automated discovery and targeted review,
+not a mandatory manual collection queue. Remaining backend/native packages,
+Node and OS/runtime material still need the applicable collection/preservation
+and review. A direct package's license
 does not automatically cover those dependencies. No dependencies or versions
 were changed, and no ORT completeness is claimed.
 
@@ -96,11 +245,13 @@ were changed, and no ORT completeness is claimed.
   initial About presentation can use these reviewed entries independently of
   tooling, following the existing UI review process. Mark the set as partial;
   the selected product names do not establish complete distribution coverage.
-2. **Tool-assisted expansion:** at the end of the work order, establish ORT using
+2. **Tool-assisted discovery and targeted review:** at the end of the work order, establish ORT using
   the checklist below, compare its findings with the reviewed initial entries,
-  supplement missing transitive/native/runtime/OS/asset coverage and extend the
-  notices/About presentation. Preserve reviewed original material and record
-  unresolved findings rather than treating a successful scan as approval.
+  and supplement native/runtime/OS/asset evidence. Resolve missing required
+  material using preserved upstream files/bundles or generated notices where
+  appropriate. Extend curated About entries only where useful, not for every
+  transitive. Preserve reviewed originals and record unresolved findings rather
+  than treating a successful scan as approval.
 
 For SQLite, include `Microsoft.EntityFrameworkCore.Sqlite`,
 `Microsoft.Data.Sqlite.Core` and the actual `SQLitePCLRaw` binding/bundle/native
@@ -129,7 +280,10 @@ data contract is independent of that tool. UI changes retain their design gates.
 ### Input Contract
 
 The implemented [catalog](catalog.json) uses `schemaVersion: 1`, an explicit
-`coverage` of `partial` or `complete`, and three collections:
+`coverage` of `partial` or `complete`, a required `releaseReview` of `pending` or
+`reviewed`, and three collections. Coverage describes the accepted curated scope,
+not the entire redistributed dependency graph. Release review is independent:
+completing the collection does not clear the release gate.
 
 | Collection | Purpose | Fields |
 | --- | --- | --- |
@@ -570,8 +724,9 @@ inputs and rejects drift in web evidence against the actual build context.
 Supported evidence is `npm` (lockfile `path`, `package`), `nuget` (lockfile `path`,
 `framework`, `package`), or `files` (review description and `path`/`sha256` records).
 File hashes bind manually reviewed runtime/asset evidence; the assembler does not
-infer font or runtime versions. Release-input validation rejects partial coverage
-and unresolved mapped components; marking coverage complete is not legal approval.
+infer font or runtime versions. Release-input validation rejects an incomplete
+curated collection, pending release review and unresolved mapped components.
+Marking coverage complete alone cannot authorize release.
 
 Verified locally: 24 isolated build-input checks, real preparation/freshness,
 production-image build, E2E typecheck and three image-backed checks (offline
@@ -607,6 +762,9 @@ Remaining initial components and later ORT expansion are separate follow-up work
   relationships, declared/detected licenses and unresolved findings. Keep raw
   results reproducible and generated, not manually maintained. Verify missing or
   unknown licenses remain visible, including on otherwise issue-free packages.
+- Triage exceptions and relevant changes rather than making every discovered
+  package a manual catalog task. Confirm that required accompanying material is
+  preserved; review gaps, contradictory terms and source-delivery duties.
 - Review build-only versus redistributed dependencies against actual outputs.
   Explicitly account for native/embedded code, Node/.NET runtimes, OS packages,
   fonts and copied assets. Do not claim that package-manager analysis finds all
@@ -614,8 +772,10 @@ Remaining initial components and later ORT expansion are separate follow-up work
 - Keep review decisions and manually collected original license, copyright and
   NOTICE files separate from generated reports. Associate them with exact
   package identities/versions and upstream provenance. First exercise the manual
-  mapping contract above; later assess ORT output as an adapter to that contract,
-  not as the format the UI must consume. Do not build another dependency parser
+  mapping contract above; later assess ORT output as an adapter for selected
+  additions or bundled notice output, not as the format the UI must consume.
+  Preserve already applicable upstream bundles/files without duplicating every
+  covered component into that contract. Do not build another dependency parser
   or competing inventory. Automated download/scanning is optional.
 - Evaluate ORT reporting/notice output as a possible input adapter to the existing
   assembly contract. Review required text, copyright, NOTICE,
@@ -636,7 +796,7 @@ Extend the partial proof through reviewed inputs, regenerate the document,
 bundle it before image verification, and publish only the tested artifact.
 Incomplete distribution notices and unresolved source obligations remain public
 image/release blockers; the source-only publication checks above remain separate.
-About's illustrative component rows are not an ORT report or a completed review.
+About's curated component rows are not an ORT report or a completed review.
 
 ## Preserved Provenance
 
@@ -646,7 +806,8 @@ About's illustrative component rows are not an ORT report or a completed review.
   needs documenting. Do not ask for the same authorship confirmation again.
 
 No ORT version, successful scan, complete coverage or license approval is claimed
-yet. The initial manual notice set may be delivered before tooling; comprehensive
-collection/review and complete About integration remain deferred until release
-preparation after source-only public development can begin. This does not waive
+yet. The curated manual notice set may be delivered before tooling; automated
+discovery and targeted distribution review remain deferred until release
+preparation after source-only public development can begin. An exhaustive About
+list is not required. This does not waive
 rights/notices for the published repository contents.

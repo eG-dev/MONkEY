@@ -54,6 +54,7 @@ try {
     JSON.stringify({
       schemaVersion: 1,
       coverage: 'complete',
+      releaseReview: 'reviewed',
       entries: [{ id: 'fixture', displayName: 'Fixture', componentIds: ['fixture'] }],
       components: [
         {
@@ -324,6 +325,7 @@ try {
   const manualCatalog = {
     schemaVersion: 1,
     coverage: 'partial',
+    releaseReview: 'pending',
     entries: [{ id: 'fixture', displayName: 'Fixture group', componentIds: ['managed', 'font'] }],
     components: [
       {
@@ -509,15 +511,64 @@ try {
     assert.throws(() => catalogCheck(undefined, { release: true }), /coverage is partial/);
     assert.throws(
       () =>
+        catalogCheck((catalog) => {
+          delete catalog.releaseReview;
+        }),
+      /Invalid notice release review/,
+    );
+    assert.throws(
+      () =>
+        catalogCheck((catalog) => {
+          catalog.releaseReview = 'complete';
+        }),
+      /Invalid notice release review/,
+    );
+    const completed = catalogCheck((catalog) => {
+      catalog.coverage = 'complete';
+    });
+
+    assert.equal(completed.about.coverage, 'complete');
+    assert.equal(completed.about.releaseReview, 'pending');
+    assert(
+      completed.bundle
+        .toString('utf8')
+        .startsWith(
+          'POCKET MONkEY - Third-Party Notices\n=================================\n\n' +
+            'Generated from revamp/notices/catalog.json; do not edit this assembled file.\n' +
+            'Curated collection: COMPLETE. Collection status is not legal approval.\n',
+        ),
+    );
+    assert.throws(
+      () =>
         catalogCheck(
           (catalog) => {
             catalog.coverage = 'complete';
+          },
+          { release: true },
+        ),
+      /review is pending/,
+    );
+    assert.throws(
+      () =>
+        catalogCheck(
+          (catalog) => {
+            catalog.coverage = 'complete';
+            catalog.releaseReview = 'reviewed';
             catalog.components[0].reviewStatus = 'unresolved';
           },
           { release: true },
         ),
       /unresolved components/,
     );
+    const reviewed = catalogCheck(
+      (catalog) => {
+        catalog.coverage = 'complete';
+        catalog.releaseReview = 'reviewed';
+      },
+      { release: true },
+    );
+
+    assert.equal(reviewed.about.releaseReview, 'reviewed');
   });
 
   console.log(`PASS: ${passed} isolated About build-input checks`);

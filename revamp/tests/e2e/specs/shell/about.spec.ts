@@ -206,6 +206,7 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
 
   const notices: {
     coverage: string;
+    releaseReview: string;
     entries: {
       id: string;
       displayName: string;
@@ -215,8 +216,9 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     documents: { id: string; kind: string; url: string; text: string; sha256: string }[];
   } = await noticesResponse.json();
 
-  expect(notices.coverage).toBe("partial");
-  await expect(page.locator("#about-inventory-review")).toContainText("Partial component collection.");
+  expect(notices.coverage).toBe("complete");
+  expect(notices.releaseReview).toBe("pending");
+  await expect(page.locator("#about-inventory-review")).toHaveCount(0);
 
   const directDependencies = manifest["dependencies"];
 
@@ -242,7 +244,7 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
 
   await page.locator("#about-search").fill(".nEt");
 
-  await expect(page.locator("#about-search-status")).toHaveText("Matching components: 2");
+  await expect(page.locator("#about-search-status")).toHaveText(`Matching components: ${matchingEntryCount(".nEt")}`);
   await expect(page.getByTestId("about-component-dotnet")).toBeVisible();
   await expect(page.getByTestId("about-component-aspnet-core")).toBeVisible();
   await expect(page.getByTestId("about-component-ef-core")).toHaveCount(0);

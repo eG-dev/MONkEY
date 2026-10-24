@@ -57,8 +57,8 @@ it while removing the superseded notice approach. The bespoke audit dump and
 review worksheet are replaced by an [ORT preparation guide](../../revamp/notices/README.md),
 preserving the artwork-authorship confirmation and reusable notice delivery.
 On 2026-10-19 the user confirmed source-only GitHub publication first, with Docker
-images and releases later. ORT setup, comprehensive dependency/asset scanning and
-review, and complete About integration move to the end, after the repository can become
+images and releases later. ORT setup and release dependency/asset discovery and
+review move to the end, after the repository can become
 public and before artifact distribution. Source publication still requires rights
 and applicable notices for included material plus private-data/credential review.
 Continue the non-notice [Step 3H work](03h-lifecycle.md#current-work-order);
@@ -71,6 +71,22 @@ Roboto set, with optional initial About presentation before
 ORT; later tool-assisted expansion under the
 [staged checklist](../../revamp/notices/README.md#staged-delivery). Partial
 overview coverage does not postpone applicable redistribution obligations.
+
+On 2026-10-24 the user approved the
+[proportional notice workflow](../../revamp/notices/README.md#proportional-review-approved-2026-10-24):
+automated discovery, targeted exception review and preserved upstream material.
+Keep About curated; do not turn npm transitives or OS packages into an exhaustive
+manual collection backlog. The
+[backend/native slice](../../revamp/README.md#backend-and-native-notices-2026-10-24)
+now maps all 18 packages in the published backend, preserving shared upstream
+bundles rather than enumerating their contents. The user confirmed the agreed
+manual notice work complete on 2026-10-24; ORT and its findings/release review
+come later. Recorded Skia applicability/source and runtime/OS questions belong
+to that deferred phase, not a separate manual backlog. The user subsequently
+accepted the curated collection as complete and requested removal of the partial
+label. Keep `coverage: complete` separate from `releaseReview: pending`; finish
+the revamp first, then complete ORT and its findings review before **1.0.0**.
+Independent publication gates remain unchanged.
 
 | Order | Plan | Outcome |
 | --- | --- | --- |

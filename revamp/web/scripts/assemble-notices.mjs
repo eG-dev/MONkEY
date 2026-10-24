@@ -60,6 +60,7 @@ export function assembleNotices({ inputRoot, release = false }) {
 
   assert.equal(catalog.schemaVersion, 1, 'Unsupported notice catalog schema.');
   assert(['partial', 'complete'].includes(catalog.coverage), 'Invalid notice coverage.');
+  assert(['pending', 'reviewed'].includes(catalog.releaseReview), 'Invalid notice release review.');
   const components = records(catalog.components, 'component');
   const entries = records(catalog.entries, 'entry');
   const documents = records(catalog.documents, 'document');
@@ -178,6 +179,7 @@ export function assembleNotices({ inputRoot, release = false }) {
 
   if (release) {
     assert.equal(catalog.coverage, 'complete', 'Release notice coverage is partial.');
+    assert.equal(catalog.releaseReview, 'reviewed', 'Release notice review is pending.');
     assert(
       catalog.components.every((component) => component.reviewStatus === 'reviewed'),
       'Release notices include unresolved components.',
@@ -187,6 +189,7 @@ export function assembleNotices({ inputRoot, release = false }) {
   const about = {
     schemaVersion: 1,
     coverage: catalog.coverage,
+    releaseReview: catalog.releaseReview,
     entries: catalog.entries.map((entry) => ({
       id: entry.id,
       displayName: entry.displayName,
@@ -212,7 +215,7 @@ export function assembleNotices({ inputRoot, release = false }) {
     Buffer.from(
       `POCKET MONkEY - Third-Party Notices\n=================================\n\n` +
         `Generated from revamp/notices/catalog.json; do not edit this assembled file.\n` +
-        `Coverage: ${catalog.coverage.toUpperCase()}. ` +
+        `Curated collection: ${catalog.coverage.toUpperCase()}. ` +
         (catalog.coverage === 'partial'
           ? 'Manual proof only; not a complete distribution review or release approval.\n'
           : 'Collection status is not legal approval.\n'),

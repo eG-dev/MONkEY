@@ -34,8 +34,8 @@ Final self-hosted operator/privacy wording and operations/deployment acceptance
 remain separate work; postponing third-party work does not waive their gates.
 
 On 2026-10-19 the user explicitly confirmed source-only GitHub publication first,
-with Docker images and releases later. Put ORT setup, comprehensive third-party
-dependency/asset review and complete About notice integration at the end of the work order,
+with Docker images and releases later. Put ORT setup and release third-party
+dependency/asset discovery and review at the end of the work order,
 after the repository can become public and before image/release distribution.
 This supersedes the earlier blanket pre-publication timing, not the obligations:
 source publication still requires rights and applicable notices for included
@@ -99,6 +99,35 @@ and 21 originals. The
 records archive/source verification, 27 isolated input checks and 11 passing
 production-image About/offline checks. Transitive, remaining backend/native and
 Node/container/OS coverage remains separate work; the overall set stays partial.
+
+On 2026-10-24 the user approved the
+[proportional workflow](../../revamp/notices/README.md#proportional-review-approved-2026-10-24):
+stop manual npm-transitive expansion, retain the curated About list and supplied
+upstream notices, and use ORT for discovery with targeted exception review.
+The following bounded slice covers separately shipped SkiaSharp/native material
+and the remaining published backend packages. Required transitive/runtime/OS material may accompany the artifact
+in upstream bundles/files or generated notices without a per-component UI entry.
+This updates the maintenance approach under ADR-0020, not distribution
+obligations or release approval.
+
+The [backend/native delivery record](../../revamp/README.md#backend-and-native-notices-2026-10-24)
+adds ten package mappings and four originals, bringing the catalog to 20 entries,
+44 components and 25 documents. All 18 NuGet packages in the current published
+backend are mapped; native Skia's supplied third-party material is preserved as
+one shared bundle rather than expanding its contents into individual entries.
+The user then confirmed on 2026-10-24: "ORT comes later, everything else is done."
+Mark the agreed manual notice collection/preservation and About delivery
+complete. ORT and its findings/release review are deferred; recorded Skia
+applicability/source and runtime/OS questions belong to that later workstream,
+not a separate active manual backlog.
+
+The user then explicitly accepted the collection as sufficient and requested
+removal of the partial label, prioritizing revamp completion before the remaining
+review. Record `coverage: complete` for the agreed curated set and a separate
+`releaseReview: pending`. About uses its existing completed state without the
+partial banner. Finish the revamp first; complete ORT and its findings review
+before **1.0.0**. The independent release/publication gates remain enforced by
+release review rather than leaving the accepted collection marked partial.
 
 The user's subsequent 2026-10-19 request moved the full project license to a
 dedicated tab without expansion and corrected login-prototype centring. The login
@@ -313,7 +342,7 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 | Application identity | Proposed single version source: [web package](../../revamp/web/package.json), with its lockfile root version kept equal. Release tag must be exactly `v<version>`, including any prerelease suffix. | The same application version in About, shell/login version labels, OCI labels, and release assets. Framework/package versions remain separate component versions. No manually maintained second application version. |
 | Build identity and source | Full Git commit and clean/dirty state captured before Docker packaging; the agreed public repository URL. Docker's `revamp/` context does not contain the repository root or Git metadata. | Build metadata bundled into the tested image; immutable revision-specific source links for clean builds, plus matching release source access. Local/PR builds are identified as development builds; dirty or unavailable provenance must not be presented as release-matched source. Release builds require clean, known provenance and matching tag/version/commit. |
 | Project license | Canonical root [LICENSE](../../LICENSE), `AGPL-3.0-only`. | Mechanically generated inline text and downloadable local file through the [build-input generator](../../revamp/web/scripts/prepare-about.mjs), replacing manually synchronized copies. Preserve the authoritative text exactly and verify equality. |
-| Third-party notices | Resolved production npm dependencies and bundled browser/server output; NuGet lockfiles and published backend assets; exact runtime/base-image inputs, final OS package inventory, and bundled fonts/icons/images. | Release-matched component identities, versions, license expressions, applicable attributions/NOTICE content, and full license texts. Track provenance and content hashes. Include transitive, embedded, native, runtime, and redistributed asset components; exclude build-only tools unless their material actually ships. |
+| Third-party notices | ORT discovery of resolved npm/NuGet dependencies, shipped browser/server/backend material, runtime/base-image inputs, and bundled assets; supplied upstream licenses/notice bundles. | Curated About entries and canonical generated bundle, plus preserved upstream files/bundles or generated notices for required material outside that list. Retain exact identities/provenance for curated mappings; review automated findings and shipped transitive/native/runtime/asset obligations without a manual record or UI entry for every package. Exclude build-only tools unless their material ships. |
 | Operator/privacy information | Separately maintained German/English source documents, with stable document IDs, explicit revisions/review dates, and reviewed wording. | Locally bundled documents and their revisions, independent of the application version. Preserve prior revisions in Git. A language is not current until its matching revision is reviewed; package updates never silently rewrite these texts. No per-user consent or acceptance storage is introduced. |
 
 #### Generation and update triggers
@@ -322,21 +351,24 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 	the project-license assets from the root source. Generate into build outputs;
 	do not require maintainers to edit duplicate license text or component versions
 	inside [AboutDialog](../../revamp/web/src/app/components/about-dialog/about-dialog.ts).
-2. Collect the notice inventory from the actual locked build and final runtime
-	inputs, not only direct dependency manifests. Dependency/lockfile, publish,
-	runtime/image, OS-package, or bundled-asset changes regenerate the inventory
-	and expose a reviewable added/changed/removed diff. A scanner or SBOM alone
-	does not establish complete notices, license compatibility, or licensing rights.
+2. Use ORT discovery and supplemental runtime/asset evidence from the actual
+	locked build and distribution inputs, not only direct manifests. Review
+	dependency, publish, runtime/image, OS-package and bundled-asset changes;
+	keep the graph generated rather than manually enumerating all transitives.
+	A scanner or SBOM alone does not establish required notices, license
+	compatibility or licensing rights.
 3. Keep reviewed exceptions, multi-license selections, and missing metadata
 	resolutions as explicit source-controlled inputs tied to component/version
 	identity and authoritative evidence. Do not guess licenses or copyright holders.
 	Evaluate tooling against the shipped npm/NuGet/runtime/asset scope before choosing it.
-4. Assemble the metadata, license texts, notices, and legal documents during the
-	production build, before the image is tested. Inventory the final runtime
-	contents without counting build-stage tools. Reconcile the bundled inventory
-	against the completed image; never rebuild or mutate it after verification.
-5. Render these static artifacts through the existing approved About layout and
-	bundled translations. No new backend endpoint, user data, consent gate, runtime
+4. Assemble the curated metadata, license texts, notices and legal documents
+	before image testing, preserving supplied upstream runtime/package material.
+	Use targeted release checks for discovery gaps; do not require a bespoke
+	full-image reconciliation stage in every build. Never rebuild or mutate the
+	tested artifact for publication.
+5. Render curated static artifacts through the existing approved About layout
+	and bundled translations; accompanying upstream bundles/files need not become
+	individual UI entries. No new backend endpoint, user data, consent gate, runtime
 	registry/GitHub lookup, or external dependency for reading documents is needed.
 
 #### Verification and publication gates
