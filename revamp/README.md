@@ -31,6 +31,248 @@ Allowance configuration and execution follow
 [ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Currency Formatting R1 (2026-10-24)
+
+The user explicitly approved the current Currency Formatting R1 prototype with
+"approved". Angular's shared `CurrencyAmountPipe` now omits the fractional part
+only when cents are zero. Nonzero cents keep exactly two digits, including
+trailing zeroes (`10.10` / `10,10`) and subunit values (`0.01` / `0,01`).
+The rule applies consistently to EUR and USD, balances, allowances, ledger
+history and confirmations, with existing locale grouping, suffix symbols and
+signed/color semantics.
+
+The formatter still uses canonical decimal strings and `BigInt` integer
+formatting; it never converts monetary values to binary floating-point.
+Stored values, canonical API strings, parsing, editable inputs and exact-money
+limits are unchanged. Only display expectations changed in the allowance
+workflow tests; editable values such as `15.00` remain intact.
+The approved enduring display rule is recorded in
+[ADR-0011](../docs/ADR/ADR-0011-currency-display-unit.md).
+
+Validation passed:
+
+```text
+npm --prefix revamp/web run build:image
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/ledger/amount-display.spec.ts specs/ledger/opening-workflows.spec.ts specs/ledger/transaction-workflows.spec.ts specs/ledger/currency-setting.spec.ts specs/accounts/allowance-workflows.spec.ts --grep "whole amounts|opening entry, exact|signed transactions, retry|USD setting|manager schedules allowance|allowance save failures" --workers 1
+```
+
+All eleven focused production-image checks passed without retries. Coverage
+includes desktop/mobile Overview SSR and hydration, Accounts rows, details,
+history, whole/fractional opening confirmations, canonical API values, zero,
+positive/negative whole amounts, tenths, single cents and large exact balances.
+Existing opening/transaction checks preserve signed 64-bit fractional extremes,
+Member read-only behavior, retries and pagination. Allowance checks preserve
+input retention, scheduled/retained amount display and stale-write recovery.
+The existing focused desktop USD configuration/rendering check now also covers
+zero, whole, tenths and subunit amounts without duplicating business workflows.
+
+A separate temporary German rendering/localization review passed at
+1440x1000 and 360x1000 in light/dark themes. It checked initial SSR and hydrated
+amounts, grouping, cent precision, large whole amounts, localized confirmation
+previews, unchanged comma-decimal input and no horizontal overflow. Desktop/light
+and phone/dark screenshots were inspected. The temporary review was removed
+rather than adding German workflow duplication to the E2E suite.
+
+Catalog, TypeScript, formatting and whitespace checks passed. The production
+build retains the existing warning-only initial-bundle overrun (754.95kB versus
+750kB); budget limits are unchanged. The full release suite was not run.
+
+## Allowance Consistency and Feedback Alignment (2026-10-24)
+
+The user clarified that prototype-only corrections must not leave the same
+inconsistency in the real application. Angular Overview now shows generic
+outstanding allowance status to both Managers and Members, matching details
+and the existing redacted API. Attempt/reason metadata remains Manager-only;
+no backend contract or fictional failure data was introduced.
+
+Shared Angular feedback styles now give field errors a separated icon/text
+layout. Icon line boxes match the first caption/body text line, including
+wrapped messages. This corrects confirmation-field and login-banner alignment
+without changing error messages, colors, validation or API behavior.
+
+Validation passed:
+
+```text
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/authentication/profile-password.spec.ts specs/authentication/workflows.spec.ts --workers 1
+npm --prefix revamp/tests/e2e test -- specs/accounts/allowance-execution.spec.ts --grep "active allowance" --workers 1
+```
+
+All ten distinct production-image checks passed without retries across those
+focused runs: eight authentication checks and two active-allowance failure/
+recovery checks, on desktop/mobile. Member generic failure now appears in
+Overview SSR and after hydration; API redaction and Manager-only details remain
+covered. The initial revised assertion omitted the existing automatic-retry
+sentence; the corrected expectation includes the complete translated label.
+
+Feedback checks load the local fonts and measure icon-center alignment against
+the first rendered text line (at most 1px offset), with at least 4px separation.
+They cover required/mismatched confirmation and real password-save/login errors,
+including wrapped text. Fresh confirmation, login and wrapped password-error
+screenshots were inspected. The scoped TypeScript checks and whitespace check
+passed. The image build retains the existing warning-only initial-bundle overrun
+(754.95kB versus 750kB); budget limits are unchanged.
+
+The optional-zero-cents presentation was separately drafted in this earlier
+slice. Its later approval and Angular implementation are recorded above.
+
+## Password Dialog R1 (2026-10-24)
+
+The user explicitly approved the Profile password-dialog prototype R1 and the
+prototype-only Allowance Status Consistency R2 corrections with "okay, approve
+also the previous changes". The Profile wireframe R1 was already approved.
+Angular now uses the locally bundled Lucide `square-asterisk` icon and a required
+Confirm new password field. Confirmation compares exactly without trimming;
+missing/mismatched values show a translated inline alert, associate it with the
+invalid field and focus that field without sending a password-change request.
+Only current/new passwords are sent through the existing endpoint.
+
+Failed saves retain all input, Cancel restores focus, and reopening clears the
+form and validation. Successful changes retain the existing session-ending
+behavior and permit sign-in with the new password. The first-sign-in form,
+Manager temporary-password dialog and backend contracts are unchanged.
+Allowance Status Consistency R2 remained prototype-only in this earlier slice.
+The later explicit request to fix equivalent application inconsistencies is
+implemented above without adding fictional failure data.
+
+Validation passed:
+
+```text
+npm --prefix revamp/web run build:image
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/authentication/profile-password.spec.ts specs/authentication/workflows.spec.ts --workers 1
+```
+
+All eight production-image checks passed without retries: four new
+Manager/Member desktop/mobile confirmation and real failed-save/retry flows,
+plus four existing login/preferences/logout and temporary-password workflows.
+The new checks cover light/dark presentation, accessible labels and errors,
+required confirmation, trailing-space mismatch, keyboard submission, no writes
+for invalid confirmation, focus return, reset on reopen, retained input, session
+revocation and sign-in with the changed password.
+
+A separate temporary German localization review passed at 1440x1000 and
+360x1000 in both themes, checking translated labels, inline required/mismatch
+messages, accessible descriptions, focus and horizontal overflow. Desktop/light
+and phone/dark screenshots were inspected; the review script was removed rather
+than adding German workflow duplication to the E2E suite. Its initial attempt
+raced the language selector's own document reload; waiting for that existing
+reload corrected the review without application changes or retries.
+
+TypeScript formatting and `git diff --check` passed. The image build compiles
+Angular and retains the existing warning-only initial-bundle budget overrun
+(754.80kB versus 750kB); budget limits were not changed.
+
+## Error Feedback R3 (2026-10-24)
+
+The user explicitly approved Overview prototype R3 and its distinct,
+contrast-safe Error foreground. Failed execution text now uses
+`--status-error-fg`, backed by `--error-text-fg` (`#C4352B` light / `#FF6B60`
+dark), instead of the earlier Danger alias. Successful/scheduled execution text,
+role visibility, destructive actions and monetary colors are unchanged.
+See the [approved contrast values](../docs/design/design-system/color-scheme.md#error-text-error-feedback-r3-2026-10-24).
+
+Validation passed:
+
+```text
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/tests/e2e test -- specs/accounts/allowance-execution.spec.ts --grep "active allowance" --workers 1
+```
+
+Both desktop/mobile real-worker failure/recovery checks passed without retries,
+including exact Error colors in both themes, Member visibility and unchanged
+history. The production-image build compiles Angular; it retains the existing
+warning-only initial-bundle budget overrun (754.49kB versus 750kB).
+No Angular password behavior or icon changed in this earlier slice; the later
+approved Password Dialog R1 implementation is recorded above.
+
+## Allowance Presentation (2026-10-24)
+
+The Accounts/Overview wireframes R1 and prototypes R2 were explicitly approved.
+Angular now shows Allowance between Balance and Status, with allowance below
+Balance on the right on phones. Overview cards show monthly allowance and a
+separate execution row: successful/scheduled information uses the theme-aware
+Text dimmed tokens, while Manager-visible failures use the danger foreground.
+Disabled allowances have no execution row. Member summary visibility remains
+as approved; account-details execution visibility and API redaction are unchanged.
+
+The frontend composes account summaries from the existing account-list and
+per-account allowance endpoints, fetching allowance states in parallel and
+transferring the request-scoped result through SSR. No backend contract or
+financial rule changed. The amount reflects the current business-month
+configuration, not a future scheduled revision; details still shows future
+changes. Credit dates use the backend's business timezone. Summary fetch failures
+surface the existing error/retry state rather than appearing as disabled allowances.
+
+Validation commands:
+
+```text
+npm --prefix revamp/web run build
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+dotnet build revamp/tests/integration/RuntimeChecks/RuntimeChecks.csproj --configuration Release -p:RestoreLockedMode=true
+npm --prefix revamp/tests/e2e test -- specs/accounts/workflows.spec.ts specs/accounts/allowance-workflows.spec.ts specs/accounts/allowance-execution.spec.ts specs/ledger/transaction-workflows.spec.ts --workers 1
+npm --prefix revamp/tests/e2e test -- specs/accounts/allowance-execution.spec.ts --workers 1
+```
+
+Nineteen distinct core production-image checks passed across these focused runs,
+without automatic retries. Initial execution assertions used a fixture disabled
+for the current month; the final execution run passed all seven checks with
+separate active/disabled allowance cases. Coverage includes desktop/mobile
+column ordering and placement, current versus scheduled configuration, explicit
+load-error recovery, SSR execution text, exact light/dark dimmed and danger
+colors, Member visibility, and real worker failure/recovery without duplicate
+history. The test-only fixture gained an active-allowance failure variant;
+production code gained no test backdoor.
+
+A separate, temporary German rendering review passed for both views in light
+and dark themes at 1440px and 360px, checking translated amounts/statuses,
+danger colors and no horizontal overflow. Its review-only spec was removed.
+Fresh English and German desktop/phone screenshots were inspected. This is
+focused verification, not a full regression or release approval.
+
+The existing warning-only initial-bundle budget overrun remains: 754.29kB versus
+750kB. Budget limits are unchanged.
+
+## Compact Account Names (2026-10-24)
+
+The wireframe and Accounts R2 prototype were separately approved. Angular now
+renders account-name links without underlines, caps the desktop Name column,
+places right-aligned Balance directly beside it and allocates spare width to
+Status. Column tokens match the design reference using the application's rem
+scale. Names and amounts wrap; hover feedback, keyboard focus, detail navigation,
+and phone identity/status grouping and tap targets are retained.
+
+The following focused validation passed:
+
+```text
+npm --prefix revamp/web run build
+npm --prefix revamp/web run check:catalogs
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- specs/accounts/workflows.spec.ts specs/ledger/transaction-workflows.spec.ts --workers 1
+```
+
+All six production-image desktop/mobile checks passed with zero retries.
+Account assertions cover non-underlined links, capped columns at
+600/899/900/1440/1920px, long-name wrapping and phone status/tap targets at
+320/360px, plus visible keyboard focus and Enter navigation. Existing transaction
+retry, signed-balance and history checks also passed. Desktop and 360px phone
+account screenshots were inspected. Catalog validation covers both languages;
+the production-image workflows ran in English. The prototype was separately
+verified across both languages and themes, as recorded in the
+[design index](../docs/design/README.md#compact-account-names-r2-2026-10-24).
+
+The build retains the warning-only initial-bundle budget overrun
+(753.81kB versus 750kB); limits are unchanged. This focused selection is not a full
+regression or release verification.
+
 ## Tonal Surfaces (2026-10-23)
 
 The user approved the current design-system/prototype revision for Angular

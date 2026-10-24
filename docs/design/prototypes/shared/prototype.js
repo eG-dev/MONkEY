@@ -33,6 +33,7 @@
     warning: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01"/>',
     copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
     key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4M21 2l-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>',
+    'square-asterisk': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v8m-3.5-2 7-4m-7 0 7 4"/>',
     calendar: '<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>'
   };
 
@@ -89,7 +90,8 @@
       return { text: t('notInitialized'), cls: 'muted' };
     }
 
-    const number = new Intl.NumberFormat(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(minor) / 100);
+    const fractionDigits = minor % 100 === 0 ? 0 : 2;
+    const number = new Intl.NumberFormat(locale(), { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(Math.abs(minor) / 100);
     const sign = !signed || minor === 0 ? '' : minor > 0 ? '+' : '\u2212';
     return { text: `${sign}${number}\u00a0${CURRENCY}`, cls: minor > 0 ? 'amount-positive' : minor < 0 ? 'amount-negative' : 'amount-zero' };
   }

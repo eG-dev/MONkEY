@@ -23,6 +23,8 @@ pairs, not rendered-state test results.
 | Surface raised dark | `--pm-color-surface-raised-dark` | `#262626` | Dark menus and dialogs |
 | Text | `--pm-color-text` | `#242424` | Primary text on light surfaces |
 | Text dark | `--pm-color-text-dark` | `#E0E0E0` | Primary text on dark surfaces |
+| Text dimmed | `--pm-color-text-dimmed` | `#666666` | Supporting execution text on light surfaces |
+| Text dimmed dark | `--pm-color-text-dimmed-dark` | `#A6A6A6` | Supporting execution text on dark surfaces |
 | Success | `--pm-color-success` | `#00C853` | Confirmed outcomes |
 | Warning | `--pm-color-warning` | `#FF9800` | Attention required |
 | Error | `--pm-color-error` | `#F44336` | Errors and validation |
@@ -34,6 +36,55 @@ with the warm brand colors. Components use the semantic aliases such as
 `--text-primary`, `--surface-panel`, and `--action-primary`, never raw hex values.
 
 ## Application
+
+### Text Dimmed (Allowance Presentation, 2026-10-24)
+
+**Wireframes R1 and prototypes R2 approved, 2026-10-24.** The overview execution-information
+row is below the monthly allowance. Successful and scheduled execution text uses
+the theme-aware semantic token `--text-dimmed`, backed by these core tokens:
+
+| Role | Token | Hex | Intended use |
+| --- | --- | --- | --- |
+| Text dimmed | `--pm-color-text-dimmed` | `#666666` | Supporting execution text on light surfaces |
+| Text dimmed dark | `--pm-color-text-dimmed-dark` | `#A6A6A6` | Supporting execution text on dark surfaces |
+
+Calculated contrast for the light token: 5.74:1 on white, 5.27:1 on
+card `#F5F5F5`, and 4.82:1 on hovered card `#EBEBEB`. The dark token:
+7.70:1 on app `#121212`, 6.85:1 on card `#1E1E1E`, and 5.74:1 on hovered card
+`#2C2C2C`. All exceed 4.5:1 for normal text. Amount colors retain their existing
+meaning. The approved R2 used `--status-danger-fg` (`#C62828` light /
+`#FF8A80` dark), not dimmed text, with an explicit failure label.
+This is a color-detail correction requested on 2026-10-24; role visibility is
+unchanged. The subsequent Error Feedback R3 draft below supersedes that failure
+color proposal. Definitions and semantic theme mappings are in
+[colors.css](styles/colors.css); both treatments appear in the
+[surface specimen](specimens/colors-surfaces.html). Angular follows prototype
+approval.
+
+### Error Text (Error Feedback R3, 2026-10-24)
+
+**Approved, 2026-10-24.** The user corrected failed executions to Error rather than Danger
+and selected a distinct, contrast-safe error-text variant. The Error core swatch
+remains `--pm-color-error: #F44336`; it is not suitable for small text on light
+cards (3.68:1 on white, 3.38:1 on `#F5F5F5`, 3.09:1 on hover `#EBEBEB`).
+
+| Role | Derived token | Semantic alias | Light | Dark |
+| --- | --- | --- | --- | --- |
+| Error text | `--error-text-fg` | `--status-error-fg` | `#C4352B` | `#FF6B60` |
+
+The light variant keeps the Error swatch's warm-red direction while darkening
+it for text. Contrast is 5.40:1 on white, 4.95:1 on the card and 4.53:1 on hover.
+The dark variant has 6.71:1 on `#121212`, 5.97:1 on `#1E1E1E` and 5.00:1 on
+hover `#2C2C2C`. All exceed 4.5:1 for normal text.
+
+The Overview failed-execution row and the surface specimen use this alias.
+Successful/scheduled rows remain dimmed. Destructive-action Danger colors,
+existing status aliases and sign-based monetary colors are unchanged; this is
+not a global recoloring of validation or feedback components. The user explicitly
+approved the current prototype and token values with "both approved"; Angular
+uses the same foreground values and semantic alias.
+
+### Usage
 
 - Use neutral surfaces for content and maroon for hierarchy, actions, and
   selection. Do not use peach as text on white (1.7:1).

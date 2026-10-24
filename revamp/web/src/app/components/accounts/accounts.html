@@ -37,10 +37,18 @@
     } @else if (accounts().length) {
       <div class="table-wrap">
         <table class="table stack-table" id="accounts-table">
+          <colgroup>
+            <col class="name-column" />
+            <col class="balance-column" />
+            <col class="allowance-column" />
+            <col />
+            <col class="actions-column" />
+          </colgroup>
           <thead>
             <tr>
               <th>{{ t('accounts.name') }}</th>
               <th class="numeric">{{ t('accounts.balance') }}</th>
+              <th class="numeric">{{ t('accounts.monthlyAllowance') }}</th>
               <th>{{ t('accounts.status') }}</th>
               <th>
                 <span class="visually-hidden">{{ t('accounts.actions') }}</span>
@@ -63,6 +71,13 @@
                 </td>
                 <td class="numeric" [class]="account.balance | amountTone">
                   {{ account.balance === null ? '–' : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
+                </td>
+                <td class="numeric allowance" data-testid="account-row-allowance">
+                  @if (account.allowance.current?.enabled && account.allowance.current?.amount; as amount) {
+                    <span class="amount-positive">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}</span>
+                  } @else {
+                    {{ t('accounts.noAllowance') }}
+                  }
                 </td>
                 <td class="status">{{ t(account.balance === null ? 'accounts.uninitialized' : 'accounts.active') }}</td>
                 <td class="row-actions">

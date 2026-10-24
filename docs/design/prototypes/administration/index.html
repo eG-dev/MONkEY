@@ -53,7 +53,7 @@
       return `<div class="profile">
         <section class="panel" aria-labelledby="account-title"><h2 class="panel-title" id="account-title">${PM.esc(PM.t('account'))}</h2>
           <dl class="facts"><dt>${PM.esc(PM.t('displayName'))}</dt><dd>${PM.esc(user.displayName)}</dd><dt>${PM.esc(PM.t('username'))}</dt><dd>${PM.esc(user.username)}</dd><dt>${PM.esc(PM.t('role'))}</dt><dd>${PM.esc(PM.t(user.role))}</dd></dl>
-          <button class="button button-secondary" type="button" id="change-password">${PM.icon('key')}${PM.esc(PM.t('changePassword'))}</button>
+          <button class="button button-secondary" type="button" id="change-password">${PM.icon('square-asterisk')}${PM.esc(PM.t('changePassword'))}</button>
         </section>
         <section class="panel" aria-labelledby="preferences-title"><h2 class="panel-title" id="preferences-title">${PM.esc(PM.t('preferences'))}</h2>
           <div class="form">
@@ -83,21 +83,24 @@
         body: `<form class="form" id="password-form" novalidate>
           <div class="field"><label for="current-password">${PM.esc(PM.t('currentPassword'))}</label><input class="input" type="password" id="current-password" autocomplete="current-password"></div>
           <div class="field"><label for="new-password">${PM.esc(PM.t('newPassword'))}</label><input class="input" type="password" id="new-password" autocomplete="new-password"><span class="hint">${PM.esc(PM.t('passwordHint'))}</span></div>
+          <div class="field"><label for="confirm-password">${PM.esc(PM.t('confirmPassword'))}</label><input class="input" type="password" id="confirm-password" autocomplete="new-password" required></div>
           <div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('sessionsEnd'))}</div></div>
         </form>`,
         footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="password-form" id="password-save">${PM.esc(PM.t('changePassword'))}</button>`
       });
       const current = editor.querySelector('#current-password');
       const next = editor.querySelector('#new-password');
+      const confirmation = editor.querySelector('#confirm-password');
       const save = editor.querySelector('#password-save');
       current.focus();
       editor.querySelector('form').addEventListener('submit', async event => {
         event.preventDefault();
         const currentOk = PM.fieldError(current, !current.value ? PM.t('required') : current.value === 'wrong' ? PM.t('currentWrong') : '');
         const nextOk = PM.fieldError(next, next.value.length < 12 ? PM.t('passwordShort') : '');
+        const confirmationOk = PM.fieldError(confirmation, !confirmation.value ? PM.t('required') : confirmation.value !== next.value ? PM.t('passwordMismatch') : '');
 
-        if (!currentOk || !nextOk) {
-          (currentOk ? next : current).focus();
+        if (!currentOk || !nextOk || !confirmationOk) {
+          (!currentOk ? current : !nextOk ? next : confirmation).focus();
           return;
         }
 
@@ -294,6 +297,7 @@
         en: {
           users: 'Users', account: 'Account', displayName: 'Display name', username: 'Username', role: 'Role', status: 'Status', actions: 'Actions', changePassword: 'Change password', preferences: 'Preferences',
           language: 'Language', preferencesSaved: 'Preferences saved.', currentPassword: 'Current password', newPassword: 'New password', passwordHint: 'At least 12 characters',
+          confirmPassword: 'Confirm new password', passwordMismatch: 'The passwords do not match.',
           sessionsEnd: 'After the change, all your sessions end and you sign in again with the new password.', currentWrong: 'The current password is incorrect.', passwordShort: 'Use at least 12 characters.',
           status_active: 'Active', status_disabled: 'Disabled', status_mustChange: 'Must change password', edit: 'Edit', editNamed: 'Edit {name}', resetPassword: 'Reset password', resetNamed: 'Reset password for {name}',
           createUser: 'Create user', usernameHint: 'Used to sign in; cannot be changed later', displayHint: 'Up to 100 characters', usernameInvalid: 'Use 3–32 lowercase letters, digits, dots, hyphens, or underscores.',
@@ -305,6 +309,7 @@
         de: {
           users: 'Benutzer', account: 'Konto', displayName: 'Anzeigename', username: 'Benutzername', role: 'Rolle', status: 'Status', actions: 'Aktionen', changePassword: 'Passwort ändern', preferences: 'Einstellungen',
           language: 'Sprache', preferencesSaved: 'Einstellungen gespeichert.', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', passwordHint: 'Mindestens 12 Zeichen',
+          confirmPassword: 'Neues Passwort bestätigen', passwordMismatch: 'Die Passwörter stimmen nicht überein.',
           sessionsEnd: 'Nach der Änderung enden alle deine Sitzungen und du meldest dich mit dem neuen Passwort erneut an.', currentWrong: 'Das aktuelle Passwort ist falsch.', passwordShort: 'Mindestens 12 Zeichen verwenden.',
           status_active: 'Aktiv', status_disabled: 'Deaktiviert', status_mustChange: 'Muss Passwort ändern', edit: 'Bearbeiten', editNamed: '{name} bearbeiten', resetPassword: 'Passwort zurücksetzen', resetNamed: 'Passwort für {name} zurücksetzen',
           createUser: 'Benutzer anlegen', usernameHint: 'Zum Anmelden; kann später nicht geändert werden', displayHint: 'Bis zu 100 Zeichen', usernameInvalid: '3–32 Kleinbuchstaben, Ziffern, Punkte, Binde- oder Unterstriche verwenden.',

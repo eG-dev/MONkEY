@@ -8,17 +8,32 @@
   <link rel="stylesheet" href="../shared/prototype.css">
   <style>
     .name-cell > a { display: flex; align-items: center; gap: var(--space-4); text-decoration: none; min-width: 0; }
-    .account-name { overflow-wrap: anywhere; text-decoration: underline; }
+    .account-name { overflow-wrap: anywhere; }
+    .account-identity { min-width: 0; }
+    .name-cell .avatar { flex-shrink: 0; }
     .mobile-status { display: none; }
+    @media (min-width: 600px) {
+      .table { table-layout: fixed; }
+      .name-column { width: var(--account-name-column-width); }
+      .balance-column { width: var(--account-balance-column-width); }
+      .allowance-column { width: var(--account-allowance-column-width); }
+      .actions-column { width: var(--account-action-column-width); }
+      .table td.numeric { overflow-wrap: anywhere; white-space: normal; }
+      .table td.status { overflow-wrap: anywhere; }
+    }
+    @media (min-width: 600px) and (max-width: 1199px) {
+      .name-column, .allowance-column { width: 26%; }
+      .balance-column { width: 20%; }
+    }
     @media (max-width: 599px) {
       .table thead { display: none; }
-      .table tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40%); padding: var(--space-3) 0; }
+      .table tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40%); grid-template-rows: auto 1fr; padding: var(--space-3) 0; }
       .table td { border: 0; padding: var(--space-1) var(--space-2); min-width: 0; }
+      .table td:first-child { grid-column: 1; grid-row: 1 / span 2; align-self: start; }
       .name-cell > a { min-height: 44px; align-items: start; }
-      .name-cell .avatar { flex-shrink: 0; }
-      .account-identity { min-width: 0; }
       .mobile-status { display: block; margin-top: var(--space-1); color: var(--text-secondary); font: var(--type-caption); }
       .table td.numeric { grid-column: 2; grid-row: 1; overflow-wrap: anywhere; white-space: normal; }
+      .table td.allowance { grid-row: 2; align-self: start; font: var(--type-caption); }
       .table td.status, .table td.actions-cell { display: none; }
     }
   </style>
@@ -38,15 +53,17 @@
 
       const rows = PM.accountsByName().map(account => {
         const balance = PM.balance(account);
+        const allowance = PM.allowanceStatus(account);
         return `<tr class="clickable" data-account="${account.id}">
           <td><span class="name-cell"><a href="../account-details/index.html?account=${account.id}" aria-label="${PM.esc(account.name)}">${PM.avatar(account, true)}<span class="account-identity"><span class="account-name">${PM.esc(account.name)}</span><span class="mobile-status">${PM.esc(balance === null ? PM.t('notInitialized') : PM.t('active'))}</span></span></a></span></td>
           <td class="numeric">${balance === null ? '–' : PM.amountHtml(balance)}</td>
+          <td class="numeric allowance">${allowance.configured ? PM.t('perMonth', { amount: PM.amountHtml(allowance.amount) }) : PM.esc(PM.t('noAllowance'))}</td>
           <td class="status">${PM.esc(balance === null ? PM.t('notInitialized') : PM.t('active'))}</td>
           <td class="actions-cell"><a class="icon-button" href="../account-details/index.html?account=${account.id}" aria-label="${PM.esc(PM.t('openNamed', { name: account.name }))}" title="${PM.esc(PM.t('openNamed', { name: account.name }))}">${PM.icon('right')}</a></td>
         </tr>`;
       }).join('');
       view.innerHTML = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('accounts'))}</h1><button class="button button-primary" type="button" id="create">${PM.icon('plus')}${PM.esc(PM.t('create'))}</button></div>
-        <div class="table-wrap"><table class="table"><thead><tr><th>${PM.esc(PM.t('name'))}</th><th class="numeric">${PM.esc(PM.t('balance'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        <div class="table-wrap"><table class="table"><colgroup><col class="name-column"><col class="balance-column"><col class="allowance-column"><col><col class="actions-column"></colgroup><thead><tr><th>${PM.esc(PM.t('name'))}</th><th class="numeric">${PM.esc(PM.t('balance'))}</th><th class="numeric">${PM.esc(PM.t('allowance'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
       document.getElementById('create').addEventListener('click', () => openEditor());
       view.querySelectorAll('tr[data-account]').forEach(row => row.addEventListener('click', event => {
         if (!event.target.closest('a, button')) {
@@ -102,8 +119,8 @@
       title: 'accounts',
       render,
       strings: {
-        en: { openNamed: 'Open account {name}', managersOnly: 'Only Managers can manage accounts.', toOverview: 'Go to the overview', create: 'Create account', name: 'Name', balance: 'Balance', status: 'Status', actions: 'Actions', active: 'Active', edit: 'Edit', editNamed: 'Edit {name}', nameHint: '1–40 characters, unique', nameInvalid: 'Enter a name with 1–40 characters.', nameTaken: 'An account with this name already exists.', created: 'Account {name} created.', saved: 'Account {name} saved.' },
-        de: { openNamed: 'Konto {name} öffnen', managersOnly: 'Nur Manager können Konten verwalten.', toOverview: 'Zur Übersicht', create: 'Konto anlegen', name: 'Name', balance: 'Kontostand', status: 'Status', actions: 'Aktionen', active: 'Aktiv', edit: 'Bearbeiten', editNamed: '{name} bearbeiten', nameHint: '1–40 Zeichen, eindeutig', nameInvalid: 'Einen Namen mit 1–40 Zeichen eingeben.', nameTaken: 'Ein Konto mit diesem Namen existiert bereits.', created: 'Konto {name} angelegt.', saved: 'Konto {name} gespeichert.' }
+        en: { openNamed: 'Open account {name}', managersOnly: 'Only Managers can manage accounts.', toOverview: 'Go to the overview', create: 'Create account', name: 'Name', balance: 'Balance', allowance: 'Allowance', perMonth: '{amount} monthly', noAllowance: 'No monthly allowance', status: 'Status', actions: 'Actions', active: 'Active', edit: 'Edit', editNamed: 'Edit {name}', nameHint: '1–40 characters, unique', nameInvalid: 'Enter a name with 1–40 characters.', nameTaken: 'An account with this name already exists.', created: 'Account {name} created.', saved: 'Account {name} saved.' },
+        de: { openNamed: 'Konto {name} öffnen', managersOnly: 'Nur Manager können Konten verwalten.', toOverview: 'Zur Übersicht', create: 'Konto anlegen', name: 'Name', balance: 'Kontostand', allowance: 'Taschengeld', perMonth: '{amount} monatlich', noAllowance: 'Kein monatliches Taschengeld', status: 'Status', actions: 'Aktionen', active: 'Aktiv', edit: 'Bearbeiten', editNamed: '{name} bearbeiten', nameHint: '1–40 Zeichen, eindeutig', nameInvalid: 'Einen Namen mit 1–40 Zeichen eingeben.', nameTaken: 'Ein Konto mit diesem Namen existiert bereits.', created: 'Konto {name} angelegt.', saved: 'Konto {name} gespeichert.' }
       }
     });
   </script>

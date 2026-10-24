@@ -58,6 +58,22 @@
   }
 }
 
+.card-allowance {
+  padding-block: var(--space-2);
+  font: var(--type-caption);
+  overflow-wrap: anywhere;
+}
+
+.allowance-execution {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--text-dimmed);
+}
+
+.allowance-execution-failed {
+  color: var(--status-error-fg);
+}
+
 @media (max-width: 599px) {
   .cards {
     grid-template-columns: minmax(0, 1fr);

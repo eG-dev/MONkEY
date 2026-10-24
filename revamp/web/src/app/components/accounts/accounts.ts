@@ -7,7 +7,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { AccountsService } from '../../services/accounts/accounts.service';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { LanguageService } from '../../services/language/language.service';
-import { SharedAccount } from '../../models/accounts/shared-account';
+import { AccountSummary } from '../../models/accounts/account-summary';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
@@ -25,7 +25,7 @@ export class Accounts {
   private readonly service = inject(AccountsService);
   private readonly router = inject(Router);
 
-  protected readonly accounts = signal<SharedAccount[]>([]);
+  protected readonly accounts = signal<AccountSummary[]>([]);
   protected readonly loading = signal(false);
   protected readonly busy = signal(false);
   protected readonly interactive = signal(false);
@@ -54,7 +54,7 @@ export class Accounts {
     this.error.set('');
 
     try {
-      this.accounts.set(this.sorted(await this.service.list()));
+      this.accounts.set(this.sorted(await this.service.listSummaries()));
     } catch (failure: unknown) {
       this.accounts.set([]);
       this.error.set(this.service.errorKey(failure));
@@ -102,7 +102,7 @@ export class Accounts {
     }
   }
 
-  private sorted(accounts: SharedAccount[]): SharedAccount[] {
+  private sorted(accounts: AccountSummary[]): AccountSummary[] {
     return [...accounts].sort((first, second) => first.name.localeCompare(second.name, this.language.locale()));
   }
 }

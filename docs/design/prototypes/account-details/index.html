@@ -33,6 +33,7 @@
     .allowance-credit { display: flex; align-items: center; gap: var(--space-2); margin: 0; }
     .allowance-credit > .icon { flex-shrink: 0; }
     .allowance-execution > .message { margin-top: var(--space-4); }
+    .allowance-failed, .allowance-failed > .icon { color: var(--status-error-fg); }
     .pager { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin-top: var(--space-5); }
     .type-label { white-space: nowrap; }
     .transaction-form .segments span { gap: 6px; }
@@ -175,9 +176,12 @@
         ? `<p class="allowance-credit" id="allowance-last-credit">${PM.icon('success')}<span>${PM.t('latestCredit', { date: PM.esc(PM.date(credited.at)) })}${periodNote}</span></p>`
         : `<p class="muted" id="allowance-no-credits">${PM.esc(PM.t('noCredits'))}</p>`;
 
-      if (reviewState === 'credit-pending' || reviewState === 'credit-failed' || reviewState === 'credit-failure-detail') {
+      const fixtureFailed = reviewState === 'normal' && status.configured && !status.credited && status.failed;
+
+      if (fixtureFailed || reviewState === 'credit-pending' || reviewState === 'credit-failed' || reviewState === 'credit-failure-detail') {
         const failed = reviewState !== 'credit-pending';
-        execution += `<div class="message ${failed ? 'message-error' : 'message-info'}" id="allowance-outstanding" role="status">${PM.icon(failed ? 'error' : 'info')}<div class="message-body"><span>${PM.esc(PM.t(failed ? 'creditFailed' : 'creditPending', { month: '2026-11' }))}</span>${PM.isManager() ? `<p id="allowance-attempt-details">${PM.esc(PM.t('creditAttempt', { date: PM.date('2026-11-01T00:03:00Z'), attempts: 2 }))}</p>${failed ? `<p id="allowance-failure-reason">${PM.esc(PM.t(reviewState === 'credit-failure-detail' ? 'creditFailureExample' : 'creditStorageFailed'))}</p>` : ''}` : ''}</div></div>`;
+        const month = fixtureFailed ? account.allowance.failedPeriod : '2026-11';
+        execution += `<div class="message ${failed ? 'message-error allowance-failed' : 'message-info'}" id="allowance-outstanding" role="status">${PM.icon(failed ? 'error' : 'info')}<div class="message-body"><span>${PM.esc(PM.t(failed ? 'creditFailed' : 'creditPending', { month }))}</span>${PM.isManager() ? `<p id="allowance-attempt-details">${PM.esc(PM.t('creditAttempt', { date: PM.date(`${month}-01T00:03:00Z`), attempts: 2 }))}</p>${failed ? `<p id="allowance-failure-reason">${PM.esc(PM.t(reviewState === 'credit-failure-detail' ? 'creditFailureExample' : 'creditStorageFailed'))}</p>` : ''}` : ''}</div></div>`;
       }
 
       return `<div class="label" id="allowance-label">${PM.esc(PM.t('monthlyAllowance'))}</div><div class="allowance"><div>${text}</div>${PM.isManager() ? `<button class="button button-secondary" type="button" id="set-allowance">${PM.icon('calendar')}${PM.esc(PM.t('setAllowance'))}</button>` : ''}</div><div class="allowance-execution" aria-labelledby="allowance-execution-title"><h3 id="allowance-execution-title">${PM.esc(PM.t('creditRuns'))}</h3>${execution}</div>`;

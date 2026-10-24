@@ -61,6 +61,10 @@ mapped into application SCSS. Earlier approvals remain history.
 
 - Show amounts with an explicit currency and tabular figures, formatted for the
   selected language. Language never changes the stored value or currency.
+- **Currency Formatting R1 approved, 2026-10-24:** omit the fractional part for zero cents;
+  retain exactly two digits for nonzero cents. See the
+  [formatting examples](typography.md#currency-formatting-r1).
+  The shared click-prototype and Angular formatters apply the same rule.
 - Right-align comparable amounts. Render positive amounts with `--amount-positive`
   (green), negative with `--amount-negative` (red), and zero with
   `--amount-zero` (standard text). Always show the sign as well; see
@@ -73,7 +77,7 @@ mapped into application SCSS. Earlier approvals remain history.
 ## Navigation
 
 - Back/forward text navigation uses the matching Lucide `arrow-left` and `arrow-right` icons, never a text arrow. Icons are decorative beside the link label and share consistent spacing.
-- Regular links remain underlined. Text navigation links, including back/overview and account-management navigation, use `--type-body-lg` without underlines. Account-name links to account details use the same larger type but retain their underlines. Sidebar, tab, and menu controls keep their established styling.
+- Regular links remain underlined. Text navigation links, including back/overview and account-management navigation, use `--type-body-lg` without underlines. Account-name links to account details use the same larger type; the Accounts view omits their underlines as described in Account Management Rows below. Sidebar, tab, and menu controls keep their established styling.
 - Selected navigation uses `--surface-selected`, a 4px `--indicator-selected`
   start border, and `--text-selected` in Medium weight.
 - Administration is pinned to the bottom of the side navigation.
@@ -82,16 +86,50 @@ mapped into application SCSS. Earlier approvals remain history.
 - Confirm consequential departures, such as leaving an unsaved transaction form;
   cancelling preserves the entered data.
 
+## Account Management Rows
+
+**Allowance wireframes R1 and prototypes R2 approved, 2026-10-24.**
+Earlier compact-name R2 approval remains history. In the Accounts view,
+Name is first with a capped width, followed directly by the right-aligned Balance
+and Allowance columns, then Status. Allowance shows the configured monthly
+amount or "No monthly allowance". Additional desktop width is allocated to
+Status; the trailing chevron has
+a bounded column. Desktop column tokens are `--account-name-column-width`
+(360px), `--account-balance-column-width` (220px),
+`--account-allowance-column-width` (240px), and
+`--account-action-column-width` (80px), identical in both themes. Name and Balance
+use 26% and 20% respectively between 600px and 1199px; Allowance uses 26%.
+Long names and amounts wrap.
+Account-name links in this view have no underline; row-hover feedback and visible
+keyboard focus identify interaction. Other link patterns are unchanged.
+
 ## Mobile Account Rows
 
-- Below 600px, use two columns: identity on the left and balance on the right.
-- Avatar and underlined name share one link with a minimum 44px tap height.
+- Below 600px, use two columns: identity on the left and balance on the right,
+  with allowance directly below the balance, also right-aligned.
+- Avatar and name share one link with a minimum 44px tap height. The Accounts
+  view uses names without underlines as described above.
 - Place muted caption-sized status beneath the name, aligned with the name rather
   than the avatar. Long names wrap within the identity column.
 - Hide the duplicate chevron and separate status cells on phones. Desktop keeps
   the status column and chevron action.
 - Bound the balance column so long amounts can wrap without overlapping names
   or creating horizontal page overflow; never truncate a monetary value.
+
+## Overview Allowance Execution
+
+**Allowance Status Consistency R2 approved, 2026-10-24; prototype-only correction;
+earlier approvals retained as history.**
+Monthly allowance amount/frequency is on the
+first row, with execution information on a separate second row on desktop and
+phone. Successful and scheduled execution text uses `--text-dimmed`; failures
+use `--status-error-fg` and an explicit failure label visible to both Members
+and Managers. Only attempt details and failure reasons in details are
+Manager-only. A disabled allowance shows "No monthly allowance"
+without an execution row. Monetary amounts retain sign-based colors. See
+[Text dimmed](color-scheme.md#text-dimmed-allowance-presentation-2026-10-24).
+The distinct Error foreground and contrast are documented in
+[Error text](color-scheme.md#error-text-error-feedback-r3-2026-10-24).
 
 ## Reference Lifecycle
 

@@ -26,6 +26,27 @@ font-family: "Roboto", Arial, sans-serif;
 No monospaced font is bundled. `--font-mono` uses the system monospace stack and
 is only meant for rare technical text; amounts use Roboto's tabular figures.
 
+## Currency Formatting R1
+
+This presentation revision was explicitly approved on 2026-10-24 for the shared
+click prototype and Angular implementation. Hide the fractional part only for zero
+cents; otherwise retain exactly two fractional digits. Examples below omit
+unchanged signs and currency labels for clarity.
+
+| Exact value | German display | English display |
+| --- | --- | --- |
+| `0.00` | `0` | `0` |
+| `10.00` | `10` | `10` |
+| `10.10` | `10,10` | `10.10` |
+| `10.01` | `10,01` | `10.01` |
+| `1250.00` | `1.250` | `1,250` |
+
+Apply the same rule to EUR and USD, positive and negative amounts, balances,
+allowances, history, confirmations and monetary feedback. Preserve locale
+grouping, the currency suffix and signed/color semantics. This changes display
+only: exact minor-unit arithmetic, canonical API values and editable input
+strings retain their existing precision and behavior.
+
 ## Reference Assets
 
 The [Roboto folder](../assets/fonts/Roboto/) contains all 18 static styles,

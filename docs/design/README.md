@@ -8,6 +8,178 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Currency Formatting R1 (2026-10-24)
+
+**Shared money formatting and affected Overview, Accounts and account-details
+prototypes R1 approved, 2026-10-24.** The user explicitly approved the current
+Currency Formatting R1 prototype with "approved". Hide the fractional part only when cents are zero:
+`10,00` becomes `10` in German; `10.00` becomes `10` in English. Nonzero cents
+retain exactly two digits (`10,10` / `10.10`, including `0,01` / `0.01`).
+This display rule applies equally to EUR and USD without choosing a currency
+from the language. Currency labels, signs, amount colors, grouping, exact
+minor-unit values and two-decimal parsing are unchanged. Editable input values
+and canonical API strings are not reformatted by this revision.
+
+The shared prototype formatter applies the rule to balances, allowances,
+ledger rows, confirmations and monetary feedback. Its fictional fixture remains
+EUR; this revision does not add a currency selector or change existing labels.
+Wireframes are unchanged. Angular delivery is recorded in the
+[implementation guide](../../revamp/README.md). See the
+[formatting examples](design-system/typography.md#currency-formatting-r1)
+and [verification evidence](prototypes/README.md#currency-formatting-r1-2026-10-24).
+The separate prototype approval gate is complete.
+
+## Runtime Consistency and Feedback Corrections (2026-10-24)
+
+The user clarified that the prototype-only scope must not leave equivalent
+inconsistency in the application. Angular Overview had the same extra Manager
+condition; it now shows outstanding generic allowance status to both roles,
+matching account details and ADR-0016. Attempt details and failure reasons remain
+Manager-only. No fictional failure was added to application data.
+
+Angular also restores the approved shared feedback layout: field errors have a
+separate icon column and spacing, and message icons align with the first text
+line, including wrapped errors. These are implementation corrections to the
+approved references, not new prototype designs. See the
+[delivery evidence](../../revamp/README.md#allowance-consistency-and-feedback-alignment-2026-10-24).
+
+## Allowance Status Consistency R2 (2026-10-24)
+
+**Overview and account-details prototypes R2 approved, 2026-10-24;
+prototype-only correction.** The user explicitly approved the current corrections
+and the preceding Password Dialog R1 prototype with "okay, approve also the previous changes".
+Generic failure status is now visible to both Members and Managers on Overview
+as well as in details. The extra Overview role check was inconsistent with
+details and [ADR-0016](../ADR/ADR-0016-monthly-allowance-execution.md), which
+reserves attempt details and failure reasons for Managers, not credit status.
+Those details remain Manager-only. This supersedes R1's unchanged Overview
+visibility and the older Manager-only summary behavior; earlier approvals remain
+history. Wireframes, Angular and backend behavior are unchanged in this slice.
+The later application correction is recorded above; the original prototype-only
+delivery scope remains history.
+See the [prototype evidence](prototypes/README.md#allowance-status-consistency-r2-2026-10-24).
+The separate Password Dialog R1 prototype was approved at the same time.
+
+## Account Details Consistency R1 (2026-10-24)
+
+**Account-details prototype R1 draft; prototype-only correction.** Normal-mode
+details now reads the same fictional allowance failure as Overview. Paul's
+October failure appears beside his last successful September credit, with the
+Error foreground and automatic-retry text. The failed period and illustrative
+attempt date agree. Managers retain attempt/reason details; Members retain the
+generic execution status without those details, matching existing details roles.
+Overview role visibility is unchanged.
+
+Explicit execution review states still override the normal fictional data.
+No balance, ledger, wireframe, Angular or backend code changed. Earlier
+account-details approvals remain history, not approval of this correction.
+See the [prototype evidence](prototypes/README.md#account-details-consistency-r1-2026-10-24).
+This historical draft was superseded by the approved Allowance Status Consistency R2 above.
+
+## Error Feedback R3 and Password Dialog R1 (2026-10-24)
+
+**Overview prototype R3, error-text tokens and Profile wireframe R1 approved,
+2026-10-24; Profile password-dialog prototype R1 approved separately, 2026-10-24.**
+The user explicitly approved both presented references with "both approved".
+The user corrected failed executions from Danger to Error and selected a distinct,
+contrast-safe Error text variant. Overview now uses `--status-error-fg`
+(`#C4352B` light / `#FF6B60` dark); destructive actions and other existing status
+colors are unchanged. Successful/scheduled executions remain dimmed, and role
+visibility is unchanged. See the [error-text proposal](design-system/color-scheme.md#error-text-error-feedback-r3-2026-10-24).
+The earlier R2 approval below remains history.
+
+The [Profile wireframe](wireframes/administration/administration-profile-wireframe.drawio)
+updates the existing password-dialog note in place: `square-asterisk` icon,
+required new-password confirmation, exact matching and inline mismatch feedback
+with retained input. Its position and arrow routing are preserved; the approved
+note has been restored to yellow. The Profile prototype now implements this
+dialog and local icon, with English/German labels and mismatch validation.
+The user subsequently explicitly approved this prototype with "okay, approve also the previous changes",
+completing its approval gate for Angular implementation.
+The requested dialog change is scoped to Profile; the first-sign-in password
+change page and Manager-generated temporary-password dialog are unchanged.
+
+The approved Error foreground is ported to Angular; the approved password changes
+are tracked in the [Angular delivery record](../../revamp/README.md).
+Prototype verification evidence is recorded
+in the [prototype notes](prototypes/README.md#error-feedback-r3-2026-10-24).
+
+## Allowance Presentation R1 (2026-10-24)
+
+**Accounts and Overview wireframes R1 and prototypes R2 approved, 2026-10-24.**
+The user explicitly approved both current wireframes with "approved".
+Requested refinements:
+
+- Accounts: Name, Balance, Allowance, Status and trailing chevron. On phones,
+  Allowance is right-aligned below Balance; name/status remain on the left.
+  The allowance displays its configured monthly amount or "No monthly allowance".
+- Overview: monthly allowance and execution information occupy separate rows.
+  Successful and scheduled execution text uses theme-aware Text dimmed; failed
+  executions use the danger foreground, as requested during prototype review.
+  Existing execution/role visibility is preserved. No execution row accompanies
+  "No monthly allowance".
+
+The revised [Accounts source](wireframes/accounts/accounts-wireframe.drawio)
+and [Overview source](wireframes/accounts-overview/accounts-overview-wireframe.drawio)
+preserve the user's annotation positions. Approved notes have been restored to
+yellow; both sources were re-exported and their PNGs inspected after cleanup.
+The user confirmed both annotation arrangements ready on 2026-10-24. Both PNGs
+were then re-exported and inspected for readable English text, external notes,
+straight component-directed arrows and no overlaps.
+The [color guide](design-system/color-scheme.md#text-dimmed-allowance-presentation-2026-10-24)
+records implemented design-token definitions, semantic theme aliases, specimens
+and calculated contrast. Both prototypes now show the allowance refinements.
+The subsequent danger-color correction is a prototype detail change, not a
+structural wireframe revision. The user subsequently explicitly approved the
+current Accounts and Overview R2 prototypes with "approved", closing the
+prototype gate for Angular implementation.
+Earlier approvals below remain history.
+
+Final R2 verification passed 32 standalone and 32 integrated view combinations,
+including exact danger/dimmed colors and unchanged Member visibility. Fresh
+desktop/phone Chromium screenshots and the surface specimen were inspected.
+See the [prototype evidence](prototypes/README.md#allowance-presentation-r2-2026-10-24)
+for the separate interaction/state/wrapping checks and their revision scope.
+The approved presentation is now implemented in Angular; see the
+[allowance delivery record](../../revamp/README.md#allowance-presentation-2026-10-24)
+for API composition, current-month semantics and production-image verification.
+
+## Compact Account Names R2 (2026-10-24)
+
+**Wireframe and prototype R2 approved, 2026-10-24.** The user approved the
+reviewed wireframe with "approved, change the prototype and directly implement
+in Angular". This approves the existing wireframe, not the subsequently changed
+prototype. After prototype verification, the user separately selected "Approve
+the current Accounts R2 prototype and implement it in Angular", closing that gate.
+The user selected a compact name-first layout
+rather than moving Balance first. The revised
+[Accounts wireframe](wireframes/accounts/accounts-wireframe.drawio) caps the name
+column, brings the right-aligned balance beside it, and leaves spare desktop
+width after the balance. Account names remain links without underlines, retaining
+hover feedback and visible keyboard focus. The existing phone identity/status
+grouping, wrapping and minimum link target remain unchanged.
+
+The approved annotation uses standard yellow styling. The user's adjusted placement
+is preserved; R2 replaces R1's change-oriented annotation prose with neutral
+descriptions of the layout and behavior. The
+[PNG preview](wireframes/accounts/accounts-wireframe.png) reflects that arrangement
+and wording. The Accounts prototype reflects R2; the Angular port uses matching
+column tokens and non-underlined name links. Earlier approvals remain history.
+
+Verification passed 16 standalone and 16 integrated role/language/theme/viewport
+combinations, plus targeted wrapping, failed-save and keyboard-navigation checks.
+Desktop and phone screenshots were inspected. See the
+[prototype evidence](prototypes/README.md#compact-account-names-r2-2026-10-24).
+
+Angular delivery: application and production-image builds, catalog validation
+and E2E typechecking passed. Six focused production-image account/transaction
+checks passed on desktop/mobile, including non-underlined names, the capped
+desktop column at 600/899/900/1440/1920px, phone wrapping at 320/360px, and visible
+keyboard focus/Enter navigation. Desktop and 360px phone screenshots were
+inspected. The existing warning-only 750kB initial-bundle budget remains exceeded
+(753.81kB); no limits were changed. See the
+[delivery record](../../revamp/README.md#compact-account-names-2026-10-24).
+
 ## Shared Notice Documents R1 (2026-10-23)
 
 **Approved, 2026-10-23:** the user accepted this prototype revision with
@@ -516,10 +688,10 @@ column retains the unchanged wireframe approvals.
 | Reference | Files | Status | Click prototype |
 | --- | --- | --- | --- |
 | App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and Administration-last correction approval 2026-10-17 retained as history; user-edited icon placeholders/annotation arrangement preserved | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history |
-| Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Approved 2026-10-10 | [Overview](prototypes/accounts-overview/index.html) |
-| Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Approved 2026-10-10, including mobile identity/status grouping and removal of the mobile chevron | [Accounts](prototypes/accounts/index.html) |
-| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html) |
-| Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and approval 2026-10-10 retained as history | [Administration](prototypes/administration/index.html) |
+| Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Allowance Presentation R1 approved 2026-10-24; earlier 2026-10-10 approval retained as history | [Overview](prototypes/accounts-overview/index.html), Currency Formatting R1 approved 2026-10-24; earlier Allowance Status Consistency R2, Error Feedback R3 and Allowance Presentation R2 approvals retained as history |
+| Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Allowance Presentation R1 approved 2026-10-24; earlier Compact Account Names R2 approval retained as history | [Accounts](prototypes/accounts/index.html), Currency Formatting R1 approved 2026-10-24; Allowance Presentation R2 approved 2026-10-24 retained as history |
+| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html), Currency Formatting R1 approved 2026-10-24; Allowance Status Consistency R2 approved 2026-10-24 retained as history |
+| Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Password Dialog R1 approved 2026-10-24; 2026-10-21 and earlier approvals retained as history | [Administration](prototypes/administration/index.html), Password Dialog R1 prototype approved 2026-10-24 |
 | Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
 | Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
 | About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |

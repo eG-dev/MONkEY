@@ -11,7 +11,7 @@
         <dd>{{ t('auth.' + user.role) }}</dd>
       </dl>
       <button tuiButton appearance="secondary" size="m" type="button" id="profile-change-password" [disabled]="!interactive()" (click)="openPasswordDialog()">
-        <span class="icon icon-key-round" aria-hidden="true"></span>{{ t('auth.changePassword') }}
+        <span class="icon icon-square-asterisk" aria-hidden="true"></span>{{ t('auth.changePassword') }}
       </button>
     </section>
 
@@ -85,6 +85,27 @@
           [(ngModel)]="newPassword"
         />
         <span class="hint" id="profile-password-hint">{{ t('auth.passwordHint') }}</span>
+      </div>
+      <div class="field">
+        <label for="profile-confirm-password">{{ t('auth.confirmPassword') }}</label>
+        <input
+          #passwordConfirmation
+          class="input"
+          id="profile-confirm-password"
+          name="confirmPassword"
+          type="password"
+          autocomplete="new-password"
+          required
+          maxlength="256"
+          [attr.aria-invalid]="confirmationError() ? 'true' : null"
+          [attr.aria-describedby]="confirmationError() ? 'profile-confirm-password-error' : null"
+          [(ngModel)]="confirmPassword"
+        />
+        @if (confirmationError()) {
+          <div class="field-error" id="profile-confirm-password-error" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>{{ t(confirmationError()) }}
+          </div>
+        }
       </div>
       <div class="message message-info">
         <span class="icon icon-info" aria-hidden="true"></span>

@@ -4,7 +4,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class CurrencyAmountPipe implements PipeTransform {
   transform(value: string, locale: string, currency: string, signed = false): string {
     const [whole, fraction] = value.split('.');
-    const formatter = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fractionDigits = fraction === '00' ? 0 : 2;
+    const formatter = new Intl.NumberFormat(locale, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
     const integer = BigInt(whole);
     const amount = formatter
       .formatToParts(integer === 0n && whole.startsWith('-') ? -0 : integer)

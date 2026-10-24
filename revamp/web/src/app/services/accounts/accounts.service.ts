@@ -3,6 +3,7 @@ import { Injectable, inject, makeStateKey, REQUEST, REQUEST_CONTEXT, TransferSta
 import { firstValueFrom, timeout } from 'rxjs';
 
 import { AccountPageState } from '../../models/accounts/account-page-state';
+import { AccountSummary } from '../../models/accounts/account-summary';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { SharedAccount } from '../../models/accounts/shared-account';
 import { OpeningEntry } from '../../models/accounts/opening-entry';
@@ -46,7 +47,7 @@ export class AccountsService {
 
     try {
       if (path === '/accounts') {
-        state.accounts = await this.list();
+        state.accounts = await this.listSummaries();
       } else {
         state.account = await this.find(path.slice('/accounts/'.length));
       }
@@ -72,6 +73,17 @@ export class AccountsService {
 
   list(): Promise<SharedAccount[]> {
     return this.read<SharedAccount[]>('/api/accounts');
+  }
+
+  async listSummaries(): Promise<AccountSummary[]> {
+    const accounts = await this.list();
+
+    return Promise.all(
+      accounts.map(async (account) => ({
+        ...account,
+        allowance: await this.allowance(account.id),
+      })),
+    );
   }
 
   find(id: string): Promise<SharedAccount> {

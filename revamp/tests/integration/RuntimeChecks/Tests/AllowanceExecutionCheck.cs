@@ -17,7 +17,7 @@ internal static class AllowanceExecutionCheck
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentException.ThrowIfNullOrWhiteSpace(accountId);
-        Require(mode is "seed-interrupted" or "seed-failure" or "remove-failure", "Unknown allowance fixture mode.");
+        Require(mode is "seed-interrupted" or "seed-failure" or "seed-active-failure" or "remove-failure", "Unknown allowance fixture mode.");
 
         var settings = new InstanceSettings
         {
@@ -62,15 +62,19 @@ internal static class AllowanceExecutionCheck
             });
             await database.SaveChangesAsync();
 
-            if (mode == "seed-failure")
+            if (mode is "seed-failure" or "seed-active-failure")
             {
-                database.AllowanceRevisions.Add(new AllowanceRevision
+                if (mode == "seed-failure")
                 {
-                    AccountId = accountId, PreviousRevisionId = revision.Id, ActorId = actor,
-                    Enabled = false, AmountMinorUnits = 125, EffectiveMonth = local.Year * 100 + local.Month,
-                    OccurredAtUtc = clock.Now.AddMonths(1)
-                });
-                await database.SaveChangesAsync();
+                    database.AllowanceRevisions.Add(new AllowanceRevision
+                    {
+                        AccountId = accountId, PreviousRevisionId = revision.Id, ActorId = actor,
+                        Enabled = false, AmountMinorUnits = 125, EffectiveMonth = local.Year * 100 + local.Month,
+                        OccurredAtUtc = clock.Now.AddMonths(1)
+                    });
+                    await database.SaveChangesAsync();
+                }
+
                 await database.Database.ExecuteSqlRawAsync("CREATE TRIGGER FailExecutionAudit BEFORE INSERT ON AuditEvents WHEN NEW.Action = 'allowance_posted' BEGIN SELECT RAISE(ABORT, 'fixture audit failure'); END;");
             }
         }

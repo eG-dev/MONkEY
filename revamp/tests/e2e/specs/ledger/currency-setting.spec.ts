@@ -41,4 +41,34 @@ test('USD setting reaches API and initial account rendering @desktop', async ({ 
   expect(balanceText).toMatch(/^\+12\.34\s\$$/);
   await expect(page.locator('#account-details-balance')).toHaveText('+12.34 $');
   await expect(page.getByTestId('ledger-entry').first()).toContainText('+12.34 $');
+
+  for (const [value, expected] of [
+    ['0.00', '0 $'],
+    ['10.00', '+10 $'],
+    ['10.10', '+10.10 $'],
+    ['0.01', '+0.01 $'],
+  ]) {
+    const sample = await createAccount(request, `USD ${value}`);
+    const opening = await csrfWrite(request, 'POST', `/api/accounts/${sample.id}/opening`, {
+      amount: value,
+      idempotencyKey: randomUUID(),
+    });
+
+    expect(opening.status()).toBe(200);
+    expect((await opening.json()).amount).toBe(value);
+
+    const rendered = await page.goto(`/accounts/${sample.id}`);
+    const initial = await page.evaluate(
+      (source) => {
+        const document = new DOMParser().parseFromString(source, 'text/html');
+
+        return document.getElementById('account-details-balance')?.textContent?.replace(/\s+/g, ' ').trim();
+      },
+      await rendered!.text(),
+    );
+
+    expect(initial).toBe(expected);
+    await expect(page.locator('#account-details-balance')).toHaveText(expected);
+    await expect(page.getByTestId('ledger-entry').first()).toContainText(expected);
+  }
 });

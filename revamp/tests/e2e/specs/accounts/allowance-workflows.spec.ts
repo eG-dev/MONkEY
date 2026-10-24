@@ -5,6 +5,30 @@ import { createAccount, createReader } from '../../helpers/ledger';
 
 test.use({ ignoreHTTPSErrors: true });
 
+test('allowance summary failures show an error instead of a disabled allowance and can be retried', async ({ page, request, instance }) => {
+  const manager = bootstrapManager(instance);
+
+  await login(request, manager);
+
+  const account = await createAccount(request, 'Allowance summary retry');
+  const path = `**/api/accounts/${account.id}/allowance`;
+
+  await signIn(page, manager, `/accounts/${account.id}`);
+  await expect(page.locator('#account-details-allowance-current')).toHaveText('No monthly allowance');
+  await page.route(path, (route) =>
+    route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ code: 'unavailable' }) }),
+  );
+  await page.locator('#account-details-back').click();
+
+  await expect(page.locator('#overview-error')).toHaveRole('alert');
+  await expect(page.getByTestId('account-card')).toHaveCount(0);
+  await page.unroute(path);
+  await page.locator('#overview-retry').click();
+
+  await expect(page.locator('#overview-error')).toHaveCount(0);
+  await expect(page.getByTestId('card-allowance')).toHaveText('No monthly allowance');
+});
+
 test('manager schedules allowance changes and members read them without ledger credits', async ({ page, request, browser, instance }) => {
   const manager = bootstrapManager(instance);
 
@@ -65,8 +89,16 @@ test('manager schedules allowance changes and members read them without ledger c
   const state = await (await request.get(`/api/accounts/${account.id}/allowance`)).json();
 
   await expect(page.locator('#account-details-allowance-scheduled')).toHaveText(`From ${state.nextEffectiveMonth}: +12.34 € per month`);
-  await expect(page.locator('#account-details-balance')).toHaveText('0.00 €');
+  await expect(page.locator('#account-details-balance')).toHaveText('0 €');
 
+  await page.goto('/accounts');
+
+  await expect(page.getByTestId('account-row-allowance')).toHaveText('No monthly allowance');
+  await page.goto('/');
+
+  await expect(page.getByTestId('card-allowance')).toHaveText('No monthly allowance');
+  await expect(page.getByTestId('card-allowance-execution')).toHaveCount(0);
+  await page.goto(`/accounts/${account.id}`);
   await page.reload();
 
   await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+12.34 €');
@@ -75,7 +107,7 @@ test('manager schedules allowance changes and members read them without ledger c
   await amount.fill('15.00');
   await save.click();
 
-  await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+15.00 €');
+  await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+15 €');
 
   await edit.click();
   await enabled.click();
@@ -100,7 +132,7 @@ test('manager schedules allowance changes and members read them without ledger c
     await signIn(memberPage, reader, `/accounts/${account.id}`);
 
     await expect(memberPage.locator('#account-details-allowance-scheduled')).toHaveText(`Disabled from ${state.nextEffectiveMonth}`);
-    await expect(memberPage.locator('#account-details-allowance-retained')).toHaveText('Retained amount: +15.00 €');
+    await expect(memberPage.locator('#account-details-allowance-retained')).toHaveText('Retained amount: +15 €');
     await expect(memberPage.locator('#account-details-allowance-edit')).toHaveCount(0);
 
     await memberPage.screenshot({ path: test.info().outputPath('allowance-member.png'), fullPage: true });
@@ -149,7 +181,7 @@ test('allowance save failures and stale edits retain input until the manager ret
   await page.unroute(`**${path}`);
   await save.click();
 
-  await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+10.00 €');
+  await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+10 €');
 
   const original = await (await request.get(path)).json();
 
@@ -168,7 +200,7 @@ test('allowance save failures and stale edits retain input until the manager ret
   await page.locator('#account-details-allowance-cancel').click();
   await page.locator('#account-details-refresh').click();
 
-  await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+20.00 €');
+  await expect(page.locator('#account-details-allowance-scheduled')).toContainText('+20 €');
   await expect(edit).toBeEnabled();
 
   await edit.click();

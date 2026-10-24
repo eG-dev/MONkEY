@@ -16,6 +16,8 @@
   --pm-color-toolbar-dark: #1f1f1f;
   --pm-color-text: #242424;
   --pm-color-text-dark: #e0e0e0;
+  --pm-color-text-dimmed: #666666;
+  --pm-color-text-dimmed-dark: #a6a6a6;
   --pm-color-warning: #ff9800;
   --pm-color-error: #f44336;
   --pm-color-danger: #c62828;
@@ -48,6 +50,7 @@
   --warning-fg: #8a4b00;
   --warning-bg: #fff1dc;
   --error-fg: #c62828;
+  --error-text-fg: #c4352b;
   --error-bg: #fdecea;
   --danger-hover: #a61f1f;
   --danger-bg: #fdecea;
@@ -56,6 +59,7 @@
 
   /* ---- Semantic aliases (components use these) ---- */
   --text-primary: var(--pm-color-text);
+  --text-dimmed: var(--pm-color-text-dimmed);
   --text-secondary: var(--grey-600);
   --text-muted: var(--grey-500);
   --text-disabled: var(--grey-400);
@@ -104,6 +108,7 @@
   --status-warning-bg: var(--warning-bg);
   --status-warning-solid: var(--pm-color-warning);
   --status-danger-fg: var(--error-fg);
+  --status-error-fg: var(--error-text-fg);
   --status-danger-bg: var(--error-bg);
   --status-danger-solid: var(--pm-color-error);
   --status-info-fg: var(--info-fg);
@@ -139,6 +144,7 @@
 [data-theme="dark"] {
   color-scheme: dark;
   --text-primary: var(--pm-color-text-dark);
+  --text-dimmed: var(--pm-color-text-dimmed-dark);
   --text-secondary: #b3b3b3;
   --text-muted: #9d9d9d;
   --text-disabled: #6b6b6b;
@@ -175,6 +181,7 @@
   --warning-fg: #ffb65c;
   --warning-bg: #33240c;
   --error-fg: #ff8a80;
+  --error-text-fg: #ff6b60;
   --error-bg: #3a1416;
   --danger-bg: #3a1416;
   --info-fg: #7cbdf5;
@@ -184,6 +191,7 @@
   --status-warning-fg: var(--warning-fg);
   --status-warning-bg: var(--warning-bg);
   --status-danger-fg: var(--error-fg);
+  --status-error-fg: var(--error-text-fg);
   --status-danger-bg: var(--error-bg);
   --status-info-fg: var(--info-fg);
   --status-info-bg: var(--info-bg);

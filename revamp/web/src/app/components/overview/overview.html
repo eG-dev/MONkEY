@@ -37,6 +37,26 @@
             <span class="card-balance" data-testid="card-balance" [class]="account.balance | amountTone">
               {{ account.balance === null ? t('accounts.uninitialized') : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
             </span>
+            <span class="card-allowance" data-testid="card-allowance">
+              @if (account.allowance.current?.enabled && account.allowance.current?.amount; as amount) {
+                <span class="amount-positive">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}</span>
+                @if (account.allowance.outstandingExecution; as execution) {
+                  <span class="allowance-execution" data-testid="card-allowance-execution" [class.allowance-execution-failed]="execution.status === 'failed'">
+                    {{ t(execution.status === 'failed' ? 'accounts.creditFailed' : 'accounts.creditPending', { month: execution.businessMonth }) }}
+                  </span>
+                } @else if (account.allowance.latestExecution?.creditedAtUtc; as creditedAt) {
+                  <span class="allowance-execution" data-testid="card-allowance-execution">
+                    {{ t('accounts.lastCredit', { date: creditDate(creditedAt, account.allowance.timezone) }) }}
+                  </span>
+                } @else {
+                  <span class="allowance-execution" data-testid="card-allowance-execution">
+                    {{ t('accounts.nextCredit', { month: account.allowance.nextEffectiveMonth }) }}
+                  </span>
+                }
+              } @else {
+                {{ t('accounts.noAllowance') }}
+              }
+            </span>
           </a>
         </li>
       }

@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, signal } from '@angular/core';
+import { afterNextRender, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -25,10 +25,13 @@ export class Profile {
   protected readonly busy = signal(false);
   protected readonly changing = signal(false);
   protected readonly error = signal('');
+  protected readonly confirmationError = signal('');
   protected readonly preferenceError = signal('');
+  private readonly confirmationInput = viewChild<ElementRef<HTMLInputElement>>('passwordConfirmation');
 
   protected currentPassword = '';
   protected newPassword = '';
+  protected confirmPassword = '';
 
   constructor() {
     afterNextRender(() => this.interactive.set(true));
@@ -49,25 +52,44 @@ export class Profile {
   protected openPasswordDialog(): void {
     this.currentPassword = '';
     this.newPassword = '';
+    this.confirmPassword = '';
     this.error.set('');
+    this.confirmationError.set('');
     this.changing.set(true);
   }
 
   protected async changePassword(): Promise<void> {
-    if (this.busy()) {
+    if (this.busy() || !this.interactive()) {
       return;
     }
+
+    this.error.set('');
+    this.confirmationError.set('');
 
     if (this.newPassword.length < 12) {
       this.error.set('auth.passwordTooShort');
       return;
     }
 
+    const confirmationError = !this.confirmPassword
+      ? 'auth.passwordConfirmationRequired'
+      : this.confirmPassword !== this.newPassword
+        ? 'auth.passwordMismatch'
+        : '';
+
+    if (confirmationError) {
+      this.confirmationError.set(confirmationError);
+      this.confirmationInput()?.nativeElement.focus();
+      return;
+    }
+
     this.busy.set(true);
-    this.error.set('');
 
     try {
       await this.auth.write('POST', '/api/auth/password', { currentPassword: this.currentPassword, newPassword: this.newPassword });
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.confirmPassword = '';
       this.changing.set(false);
       this.auth.notice.set('auth.passwordChanged');
       this.auth.user.set(null);

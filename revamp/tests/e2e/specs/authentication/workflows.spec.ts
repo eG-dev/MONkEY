@@ -1,5 +1,6 @@
 import { test, expect, bootstrapManager, credentials, signIn, submitLogin } from '../../fixtures';
 import { createAccount } from '../../helpers/ledger';
+import { expectFeedbackAligned } from '../../helpers/feedback';
 
 test.use({ ignoreHTTPSErrors: true });
 
@@ -176,6 +177,8 @@ test('manager browser creates a user and temporary password requires change', as
 
     await expect(memberPage.locator('#login-error')).toHaveRole('alert');
     await expect(memberPage.locator('#login-error')).toHaveText('Username or password is incorrect.');
+    await expectFeedbackAligned(memberPage.locator('#login-error'));
+    await memberPage.screenshot({ path: test.info().outputPath('login-feedback.png') });
 
     await signIn(memberPage, temporary);
 

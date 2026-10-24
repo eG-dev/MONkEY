@@ -6,7 +6,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { AccountsService } from '../../services/accounts/accounts.service';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { LanguageService } from '../../services/language/language.service';
-import { SharedAccount } from '../../models/accounts/shared-account';
+import { AccountSummary } from '../../models/accounts/account-summary';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
 import { AccountAvatar } from '../account-avatar/account-avatar';
@@ -22,7 +22,7 @@ export class Overview {
   protected readonly language = inject(LanguageService);
   private readonly service = inject(AccountsService);
 
-  protected readonly accounts = signal<SharedAccount[]>([]);
+  protected readonly accounts = signal<AccountSummary[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   protected readonly interactive = signal(false);
@@ -45,7 +45,7 @@ export class Overview {
     this.error.set('');
 
     try {
-      this.accounts.set(this.sorted(await this.service.list()));
+      this.accounts.set(this.sorted(await this.service.listSummaries()));
     } catch (failure: unknown) {
       this.accounts.set([]);
       this.error.set(this.service.errorKey(failure));
@@ -54,7 +54,14 @@ export class Overview {
     }
   }
 
-  private sorted(accounts: SharedAccount[]): SharedAccount[] {
+  protected creditDate(value: string, timezone: string): string {
+    return new Intl.DateTimeFormat(this.language.locale(), {
+      dateStyle: 'medium',
+      timeZone: timezone,
+    }).format(new Date(value));
+  }
+
+  private sorted(accounts: AccountSummary[]): AccountSummary[] {
     return [...accounts].sort((first, second) => first.name.localeCompare(second.name, this.language.locale()));
   }
 }

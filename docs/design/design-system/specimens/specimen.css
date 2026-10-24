@@ -117,6 +117,16 @@ body {
   color: var(--text-secondary);
 }
 
+.surface-sample-dimmed {
+  font: var(--type-caption);
+  color: var(--text-dimmed);
+}
+
+.surface-sample-error {
+  font: var(--type-caption);
+  color: var(--status-error-fg);
+}
+
 .surface-sample-balance {
   font: var(--type-h2);
   font-variant-numeric: tabular-nums;

@@ -149,8 +149,16 @@ textarea.input {
 }
 
 .field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
   font: var(--type-caption);
   color: var(--status-danger-fg);
+
+  > .icon {
+    font-size: 16px;
+    line-height: 1.05;
+  }
 }
 
 .actions {
@@ -168,6 +176,11 @@ textarea.input {
   border: 0;
   border-radius: var(--radius-sm);
   color: var(--text-primary);
+
+  > .icon {
+    font-size: 20px;
+    line-height: 1.05;
+  }
 
   .message-body {
     flex: 1;

@@ -5,6 +5,199 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Currency Formatting R1 (2026-10-24)
+
+**Shared formatter and affected Overview/Accounts/account-details references
+R1 approved, 2026-10-24.** The user explicitly approved the current revision with
+"approved". Whole-unit amounts omit the decimal separator and zero cents;
+nonzero cents retain two fractional digits. Locale grouping/separators, signs,
+colors, currency labels and exact minor-unit data are unchanged. This is a
+read-only display rule for both supported currencies; the fictional fixture
+remains EUR, without new currency-selection controls. Editable form strings
+and parsing are unchanged. The separate approval gate for Angular is complete.
+
+Standalone verification passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. A separate integrated pass
+covered the same 16 outer-viewport combinations through actual Overview-to-Paul-
+details-to-Overview navigation. Manager flows also visited Accounts and Ben's
+opening-balance confirmation, then cancelled without posting. Both passes
+verified zero/whole/fractional positive and negative amounts, one-cent amounts,
+retained trailing zero for nonzero cents, localized grouping, unsigned monetary
+feedback formatting, unchanged parsing, role retention, failure-status visibility,
+Manager-only attempt/reason metadata, unchanged fictional data and no horizontal
+overflow. No script errors were reported. Integrated German/dark screenshots
+at 1440px and 360px were inspected.
+
+## Allowance Status Consistency R2 (2026-10-24)
+
+**Overview and account-details prototypes R2 approved, 2026-10-24; prototype-only.**
+The user explicitly approved the current corrections and preceding password-dialog
+prototype with "okay, approve also the previous changes". The
+Overview's extra Manager check incorrectly hid generic failure status from
+Members even though details showed it. Generic execution status now appears for
+both roles in both views, consistent with ADR-0016. Attempts and failure reasons
+remain Manager-only in details. Error colors, credited-state precedence,
+disabled allowances, data and balances are unchanged. This supersedes R1's
+unchanged Overview visibility and the older Manager-only summary behavior;
+earlier approvals remain history.
+
+Standalone verification passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. A separate integrated pass
+covered the same 16 combinations through Overview-to-Paul-details-to-Overview
+navigation. Assertions covered visible generic failure for both roles in both
+views, translated labels, exact Error colors, role retention, Manager-only
+attempt/reason fields and no horizontal overflow. No script errors were reported.
+No Angular or backend changes were made.
+
+## Account Details Consistency R1 (2026-10-24)
+
+**Draft; prototype-only correction.** Normal account details previously showed
+execution failures only when an explicit review state was selected, ignoring
+Paul's fictional `failedPeriod` used by Overview. Details now also uses the
+shared `PM.allowanceStatus()` result in normal mode, preserving the same
+configured/credited precedence. His October failure appears with the existing
+September success and the Error foreground. The illustrative attempt date uses
+the failed month rather than the unrelated November review fixture.
+Existing Manager-only attempt/reason details and Member generic failure status
+remain. Overview role visibility is unchanged.
+
+Standalone verification passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000, navigating Overview to Paul,
+back to Overview and then to Emma. A separate integrated pass covered the same
+16 combinations using those actual application links. Checks covered matching
+failure period, exact Error foreground, retained last success, role-specific
+details, unchanged 320-cent balance, no false failure for Emma and no horizontal
+overflow. Ten additional role/review-state checks preserved no-credits, pending,
+failed, detailed-failure and catch-up overrides. No script errors were reported.
+Fresh English/light desktop and German/dark phone screenshots were inspected.
+
+No wireframe, Angular or backend changes are included. This historical draft was
+superseded by the approved Allowance Status Consistency R2 above.
+
+## Password Dialog R1 (2026-10-24)
+
+**Wireframe R1 and Profile prototype R1 approved, 2026-10-24.** The user explicitly
+approved the current Profile wireframe together with Error Feedback R3 using
+"both approved". The approved note was restored to yellow, re-exported and
+its PNG inspected, preserving the note position and arrow routing.
+
+The Profile action now uses the locally bundled Lucide `square-asterisk` shape.
+Its dialog contains current password, new password and required Confirm new
+password fields, with English/German labels. Confirmation matches exactly
+without trimming; missing/mismatched confirmation is reported inline and
+prevents the simulated request. Input remains after validation and failed saves.
+Existing current-password/length checks, session-ending notice, Cancel/focus
+return and successful sign-in-again navigation are preserved.
+The first-sign-in page and Manager-generated temporary-password dialog are
+outside this revision.
+
+Standalone verification passed 16 role/language/theme/viewport combinations:
+Manager/Member, English/German, light/dark and 1440x1000/360x1000.
+A separate integrated pass covered the same 16 combinations via actual
+Overview-to-Administration navigation and the owning Profile dialog.
+Both passes checked the local icon, accessible labels, required/mismatch errors,
+exact matching with trailing whitespace, keyboard submission, focus to invalid
+fields, no request on invalid input, existing password validation, retained
+input after a simulated failed save, disabled submitting state, successful retry
+and sign-in-again navigation, Cancel/focus return and no horizontal overflow.
+Neither pass reported script errors. Fresh English/light desktop and
+German/dark phone screenshots were inspected.
+
+The user subsequently approved the current prototype with "okay, approve also the previous changes",
+completing its separate approval gate for Angular implementation.
+
+## Error Feedback R3 (2026-10-24)
+
+**Overview prototype R3 approved, 2026-10-24.** Failed executions use `--status-error-fg`,
+with a distinct contrast-safe Error red (`#C4352B` light / `#FF6B60` dark).
+The user selected this direction after correcting the earlier Danger treatment.
+Successful/scheduled execution text remains dimmed, Member visibility and
+disabled-allowance behavior are unchanged, and destructive actions retain their
+existing colors. The color guide and surface specimen reflect this draft.
+The user explicitly approved this revision with "both approved"; R2 approval
+below remains history.
+
+Standalone verification passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. A separate integrated pass
+covered the same 16 combinations through real Administration-to-Overview
+navigation, retaining role/language/theme. Assertions checked exact Error and
+dimmed colors, translated failure labels, unchanged Member failure visibility
+and no horizontal overflow. Neither pass reported script errors. No dialog,
+validation or other interaction behavior changed in this color-only revision.
+Fresh ordinary Chromium desktop/phone captures and the light/dark surface
+specimen were inspected; computed specimen colors match the new tokens.
+
+The approved Error foreground has been implemented in Angular, with exact-color
+desktop/mobile production-image checks passing. The Profile revision has its
+separate prototype gate described above.
+
+## Allowance Presentation R2 (2026-10-24)
+
+**Accounts and Overview prototypes R2 and wireframes R1 explicitly approved
+2026-10-24.** Accounts now has a right-aligned Allowance column between Balance
+and Status, with its monthly amount or "No monthly allowance". On phones,
+Allowance is directly below Balance on the right. Name/status remain on the left;
+names remain non-underlined links and preserve their minimum target.
+
+Overview puts execution information on a separate row below allowance.
+Successful/scheduled text uses `--text-dimmed`; the user's R2 correction uses
+`--status-danger-fg` for failed executions instead. Failure text remains
+Manager-only, and disabled allowances have no execution row. The local design
+tokens, color guide and light/dark surface specimen reflect this distinction.
+The approved wireframe notes were restored to yellow and re-exported/inspected.
+The correction is a prototype color detail, not a structural wireframe change.
+The user explicitly approved the current prototypes with "approved" on
+2026-10-24, authorizing the Angular port.
+
+Final R2 standalone verification passed 32 view checks: Accounts/Overview,
+Manager/Member, English/German, light/dark, 1440x1000/360x1000. A separate
+integrated pass covered the same 32 view combinations using real
+Overview-to-Accounts navigation and reviewer role switching for Member guidance.
+Assertions covered five desktop columns, phone allowance below and right-aligned
+with Balance, no page/table overflow, exact theme-aware danger/dimmed colors,
+translated failure labels, and absent execution rows for disabled allowances.
+Neither pass reported script errors.
+
+Additional R1 interaction/layout checks covered 48 integrated Overview
+loading/empty/error states with retry, eight integrated Manager create-dialog
+validation/failed-save/input-retention combinations, and return navigation to
+Overview/Administration with preserved settings. Eighteen standalone wrapping
+checks covered both languages at 320/360/600/899/900/1199/1200/1440/1920px,
+long unbroken names and oversized amounts, plus keyboard focus/Enter navigation.
+These checks preceded the failure-color correction; the final R2 view matrix
+above was rerun after it.
+
+Fresh ordinary headless-Chromium screenshots were inspected for English/light
+desktop and German/dark phone Accounts, failed-execution cards in both settings,
+and the light/dark surface specimen. Both specimen colors were also checked
+against the exact token values. The shared hidden VS Code tab can show stale
+paint even when its DOM is current; visual evidence used fresh Chromium captures
+rather than treating cached integrated screenshots as current.
+
+## Compact Account Names R2 (2026-10-24)
+
+**Wireframe and prototype R2 separately approved 2026-10-24.** The Accounts view uses
+non-underlined name links, a capped name column followed by Balance, and spare
+desktop width in Status. Phone grouping and minimum link targets are retained.
+The reviewed wireframe's blue marker was cleared, re-exported and inspected.
+The user explicitly approved this current prototype for Angular implementation
+after the verification below.
+
+Standalone verification: 16 combinations covered Manager/Member, English/German,
+light/dark, and outer viewports 1440x1000/360x1000. Checks covered non-underlined
+names, the desktop name-width cap, no horizontal page overflow, Member guidance
+and Manager creation validation/cancellation.
+
+Integrated verification separately passed the same 16 combinations through
+Overview-to-Accounts navigation, creation validation/cancellation, Member
+guidance, return to Overview and onward to Administration, retaining language
+and theme without script errors. Additional integrated checks exercised long
+unbroken names and oversized amounts at 360, 600, 899, 900, 1440 and 1920px,
+failed-save input retention, visible keyboard focus and Enter navigation to
+account details. Desktop English/light and phone German/dark screenshots were
+inspected. Dialog validation/cancellation used DOM activation; focus and detail
+navigation used keyboard input. No new loading/error view states were introduced.
+
 ## Shared Notice Documents R1 (2026-10-23)
 
 **Approved, 2026-10-23:** "approved, implement". The shared About dialog illustrates eight Angular packages with

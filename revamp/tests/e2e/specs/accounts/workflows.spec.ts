@@ -79,11 +79,45 @@ test('manager account creation/editing and member read-only workflow', async ({ 
   await expect(page.getByTestId('account-row')).toHaveCount(1);
   await expect(page.getByTestId('account-row-link')).toHaveAccessibleName('N'.repeat(40));
   await expect(page.getByTestId('account-row-link')).toBeVisible();
+  await expect(page.getByTestId('account-row-allowance')).toHaveText('No monthly allowance');
 
   await page.reload();
 
   await expect(page.getByTestId('account-row-link')).toBeVisible();
+  await expect(page.getByTestId('account-row-link')).toHaveCSS('text-decoration-line', 'none');
+  await expect(page.getByTestId('account-row-link').locator('.account-name')).toHaveCSS('text-decoration-line', 'none');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
+  if (test.info().project.name === 'desktop') {
+    const originalViewport = page.viewportSize();
+    const row = page.getByTestId('account-row');
+
+    for (const width of [600, 899, 900, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+
+      await expect
+        .poll(async () => {
+          return row.evaluate((element) => {
+            const cells = element.querySelectorAll('td');
+            const name = cells[0].getBoundingClientRect();
+            const balance = cells[1].getBoundingClientRect();
+            const allowance = cells[2].getBoundingClientRect();
+            const status = cells[3].getBoundingClientRect();
+
+            return {
+              cappedName: name.width <= 360,
+              adjacentBalance: Math.abs(name.right - balance.left) < 1,
+              balanceBeforeAllowance: Math.abs(balance.right - allowance.left) < 1,
+              allowanceBeforeStatus: Math.abs(allowance.right - status.left) < 1,
+              noOverflow: document.documentElement.scrollWidth <= innerWidth,
+            };
+          });
+        })
+        .toEqual({ cappedName: true, adjacentBalance: true, balanceBeforeAllowance: true, allowanceBeforeStatus: true, noOverflow: true });
+    }
+
+    await page.setViewportSize(originalViewport!);
+  }
 
   if (test.info().project.name === 'mobile') {
     const originalViewport = page.viewportSize();
@@ -102,12 +136,15 @@ test('manager account creation/editing and member read-only workflow', async ({ 
         const name = element.querySelector('.account-name')!.getBoundingClientRect();
         const status = element.querySelector('.mobile-status')!.getBoundingClientRect();
         const balance = element.querySelector('.numeric')!.getBoundingClientRect();
+        const allowance = element.querySelector('.allowance')!.getBoundingClientRect();
 
         return {
           targetHeight: link.height,
           statusBelowName: status.top >= name.bottom,
           statusAlignedWithName: Math.abs(status.left - name.left) < 1,
           noOverlap: link.right <= balance.left,
+          allowanceBelowBalance: allowance.top >= balance.bottom,
+          allowanceAlignedWithBalance: Math.abs(allowance.right - balance.right) < 1,
           noOverflow: document.documentElement.scrollWidth <= innerWidth,
         };
       });
@@ -116,6 +153,8 @@ test('manager account creation/editing and member read-only workflow', async ({ 
       expect(layout.statusBelowName).toBe(true);
       expect(layout.statusAlignedWithName).toBe(true);
       expect(layout.noOverlap).toBe(true);
+      expect(layout.allowanceBelowBalance).toBe(true);
+      expect(layout.allowanceAlignedWithBalance).toBe(true);
       expect(layout.noOverflow).toBe(true);
 
       await page.screenshot({ path: test.info().outputPath(`accounts-${width}.png`), fullPage: true });
@@ -125,6 +164,22 @@ test('manager account creation/editing and member read-only workflow', async ({ 
   }
 
   await page.screenshot({ path: test.info().outputPath('accounts.png'), fullPage: true });
+
+  const accountLink = page.getByTestId('account-row-link');
+
+  await accountLink.focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+
+  await expect(accountLink).toBeFocused();
+  await expect(accountLink).toHaveCSS('outline-style', 'solid');
+
+  await accountLink.press('Enter');
+
+  await expect(page.locator('#account-details-title')).toHaveText('N'.repeat(40));
+
+  await page.goto('/accounts');
+  await expect(page.locator('#accounts-create')).toBeEnabled();
 
   await page.locator('#accounts-create').click();
   await createName.fill('n'.repeat(40));
