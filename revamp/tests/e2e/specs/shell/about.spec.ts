@@ -218,6 +218,21 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
   expect(notices.coverage).toBe("partial");
   await expect(page.locator("#about-inventory-review")).toContainText("Partial component collection.");
 
+  const directDependencies = manifest["dependencies"];
+
+  if (!directDependencies || typeof directDependencies !== "object" || Array.isArray(directDependencies)) {
+    throw new Error("Missing direct web runtime dependencies");
+  }
+
+  const catalogedComponents = notices.entries.flatMap((entry) => entry.components);
+
+  for (const name of Object.keys(directDependencies)) {
+    expect(
+      catalogedComponents.filter((component) => component.name === name),
+      `Direct runtime notice mapping: ${name}`,
+    ).toHaveLength(1);
+  }
+
   const matchingEntryCount = (query: string): number => notices.entries
     .filter((entry) => [
       entry.displayName,

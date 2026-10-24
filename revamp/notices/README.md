@@ -15,6 +15,76 @@ and applicable license/copyright/NOTICE material for included code and assets,
 plus a review of repository history for private data or credentials. This timing
 does not mark those checks complete or authorize a visibility/publishing action.
 
+## Remaining Direct Web Runtime Packages (2026-10-24)
+
+The user requested the remaining direct web runtime packages in one batch.
+All **22** packages in the web manifest's `dependencies` now have explicit
+catalog mappings and original legal material. This adds nine components in
+eight About entries, bringing the catalog to **16 entries, 34 components and
+21 original documents**. The approved R6 presentation is reused without changing
+layout, controls or translations.
+
+| Package | Exact locked version | Declared license | Preserved originals |
+| --- | --- | --- | --- |
+| `@jsverse/transloco` | `8.4.0` | MIT | `transloco/8.x/LICENSE.txt` |
+| `@jsverse/transloco-messageformat` | `8.4.0` | MIT | The identical Transloco original above |
+| `@ng-web-apis/universal` | `5.4.0` | Apache-2.0 | `ng-web-apis-universal/5.x/LICENSE.txt` |
+| `cookie-parser` | `1.4.7` | MIT | `cookie-parser/1.x/LICENSE.txt` |
+| `express` | `5.3.0` | MIT | `express/5.x/LICENSE.txt` |
+| `http-proxy` | `1.18.1` | MIT | `http-proxy/1.x/LICENSE.txt` |
+| `negotiator` | `1.1.0` | MIT | `negotiator/1.x/LICENSE.txt` |
+| `rxjs` | `7.8.2` | Apache-2.0 | `rxjs/7.x/LICENSE.txt` |
+| `tslib` | `2.8.1` | 0BSD | Both `tslib/2.x/LICENSE.txt` and `CopyrightNotice.txt` |
+
+Collection used the exact npm archives resolved in the existing lockfile. Each
+archive's SHA-512 integrity was verified against the lockfile, its complete
+license/NOTICE/copyright filename set was checked, and the original legal files
+were compared byte-for-byte with the installed build inputs. This was a one-off
+collection verification, not a new mandatory archive-reconciliation tool.
+The catalog records each original's archive URL, real version/file provenance
+and SHA-256. No guessed Git release tag or runtime download is used.
+
+Both Transloco packages supply the same MIT file, including their named author
+attribution; they share that one document with explicit component associations.
+The two Apache originals remain separate: ng-web-apis retains its Acpekt
+attribution and RxJS retains its Google/Netflix/Microsoft/contributor attribution.
+Express, cookie-parser, http-proxy and negotiator retain their own supplied MIT
+copyright notices rather than substituting generic MIT text. tslib's complete
+comment-form `CopyrightNotice.txt` is kept separately from its 0BSD license.
+Files without a source extension gain only `.txt`; line endings, whitespace and
+legal wording are unchanged. The approved `MAJOR.x` reuse policy still applies.
+
+The canonical root notice bundle and generated local About assets were
+regenerated from these mappings. The public About regression now asserts that
+every direct web runtime dependency has exactly one displayed component mapping;
+its existing per-entry checks exercise all new documents on desktop and 320px
+mobile, comparing complete inline text and downloaded SHA-256 with the catalog.
+
+Verified locally:
+
+- All nine package archives matched their locked SHA-512 integrity; all supplied
+  legal files matched the copied originals and installed inputs.
+- Direct coverage: 22/22 runtime dependencies, with no missing or duplicated
+  mappings. Version/document/hash validation and exact bundle checks passed.
+- `assemble:notices`, `prepare:about`, 27 isolated `check:about` checks, E2E
+  TypeScript checking and the production-image build passed.
+- All 11 focused image-backed About/offline checks passed without retries:
+  public desktop/mobile, Manager/Member, forced-password-change form retention,
+  deferred loading/error recovery, complete originals and network-disabled
+  runtime delivery.
+- Initial browser assets remain **698.68kB** raw; the expanded About data remains
+  deferred in its **283.92kB** browser chunk. No bundle warning was emitted.
+
+Commands are recorded in the
+[application delivery guide](../README.md#direct-web-runtime-notices-2026-10-24).
+Coverage remains `partial`: this is complete direct-manifest mapping, not
+complete redistribution coverage or legal/release approval. MessageFormat,
+ng-web-apis/Taiga support packages and other npm transitives (including nested
+Express dependencies), remaining backend/native packages, Node and OS/runtime
+review still need their separate collection/review. A direct package's license
+does not automatically cover those dependencies. No dependencies or versions
+were changed, and no ORT completeness is claimed.
+
 ## Staged Delivery
 
 1. **Manual first version:** prepare reviewed entries for Angular, .NET, ASP.NET

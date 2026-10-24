@@ -58,6 +58,46 @@
       "id": "roboto",
       "displayName": "Roboto",
       "componentIds": ["roboto-fonts"]
+    },
+    {
+      "id": "transloco",
+      "displayName": "Transloco",
+      "componentIds": ["transloco", "transloco-messageformat"]
+    },
+    {
+      "id": "ng-web-apis",
+      "displayName": "ng-web-apis (universal)",
+      "componentIds": ["ng-web-apis-universal"]
+    },
+    {
+      "id": "cookie-parser",
+      "displayName": "cookie-parser",
+      "componentIds": ["cookie-parser"]
+    },
+    {
+      "id": "express",
+      "displayName": "Express",
+      "componentIds": ["express"]
+    },
+    {
+      "id": "http-proxy",
+      "displayName": "http-proxy",
+      "componentIds": ["http-proxy"]
+    },
+    {
+      "id": "negotiator",
+      "displayName": "negotiator",
+      "componentIds": ["negotiator"]
+    },
+    {
+      "id": "rxjs",
+      "displayName": "RxJS",
+      "componentIds": ["rxjs"]
+    },
+    {
+      "id": "tslib",
+      "displayName": "tslib",
+      "componentIds": ["tslib"]
     }
   ],
   "components": [
@@ -521,6 +561,159 @@
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
       "documentIds": ["roboto-ofl"]
+    },
+    {
+      "id": "transloco",
+      "kind": "npm",
+      "name": "@jsverse/transloco",
+      "version": "8.4.0",
+      "purl": "pkg:npm/%40jsverse/transloco@8.4.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@jsverse/transloco"
+      },
+      "upstreamUrl": "https://github.com/jsverse/transloco",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["transloco-license"]
+    },
+    {
+      "id": "transloco-messageformat",
+      "kind": "npm",
+      "name": "@jsverse/transloco-messageformat",
+      "version": "8.4.0",
+      "purl": "pkg:npm/%40jsverse/transloco-messageformat@8.4.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@jsverse/transloco-messageformat"
+      },
+      "upstreamUrl": "https://github.com/jsverse/transloco",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["transloco-license"]
+    },
+    {
+      "id": "ng-web-apis-universal",
+      "kind": "npm",
+      "name": "@ng-web-apis/universal",
+      "version": "5.4.0",
+      "purl": "pkg:npm/%40ng-web-apis/universal@5.4.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "@ng-web-apis/universal"
+      },
+      "upstreamUrl": "https://github.com/taiga-family/ng-web-apis",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["ng-web-apis-universal-license"]
+    },
+    {
+      "id": "cookie-parser",
+      "kind": "npm",
+      "name": "cookie-parser",
+      "version": "1.4.7",
+      "purl": "pkg:npm/cookie-parser@1.4.7",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "cookie-parser"
+      },
+      "upstreamUrl": "https://github.com/expressjs/cookie-parser",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["cookie-parser-license"]
+    },
+    {
+      "id": "express",
+      "kind": "npm",
+      "name": "express",
+      "version": "5.3.0",
+      "purl": "pkg:npm/express@5.3.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "express"
+      },
+      "upstreamUrl": "https://github.com/expressjs/express",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["express-license"]
+    },
+    {
+      "id": "http-proxy",
+      "kind": "npm",
+      "name": "http-proxy",
+      "version": "1.18.1",
+      "purl": "pkg:npm/http-proxy@1.18.1",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "http-proxy"
+      },
+      "upstreamUrl": "https://github.com/http-party/node-http-proxy",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["http-proxy-license"]
+    },
+    {
+      "id": "negotiator",
+      "kind": "npm",
+      "name": "negotiator",
+      "version": "1.1.0",
+      "purl": "pkg:npm/negotiator@1.1.0",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "negotiator"
+      },
+      "upstreamUrl": "https://github.com/jshttp/negotiator",
+      "licenseExpression": "MIT",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["negotiator-license"]
+    },
+    {
+      "id": "rxjs",
+      "kind": "npm",
+      "name": "rxjs",
+      "version": "7.8.2",
+      "purl": "pkg:npm/rxjs@7.8.2",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "rxjs"
+      },
+      "upstreamUrl": "https://github.com/ReactiveX/rxjs",
+      "licenseExpression": "Apache-2.0",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["rxjs-license"]
+    },
+    {
+      "id": "tslib",
+      "kind": "npm",
+      "name": "tslib",
+      "version": "2.8.1",
+      "purl": "pkg:npm/tslib@2.8.1",
+      "versionEvidence": {
+        "kind": "npm",
+        "path": "revamp/web/package-lock.json",
+        "package": "tslib"
+      },
+      "upstreamUrl": "https://github.com/microsoft/tslib",
+      "licenseExpression": "0BSD",
+      "licensingStatus": "licensed",
+      "reviewStatus": "reviewed",
+      "documentIds": ["tslib-license", "tslib-copyright"]
     }
   ],
   "documents": [
@@ -619,6 +812,78 @@
       "upstreamUrl": "https://raw.githubusercontent.com/google/fonts/2e69e0bf1bd2662d6775bb54a398bded758e87cf/ofl/roboto/OFL.txt",
       "revision": "2e69e0bf1bd2662d6775bb54a398bded758e87cf",
       "sha256": "061402327a96aadb0bfb694a960ed289ecd38d383e396243831ab81feb109c41"
+    },
+    {
+      "id": "transloco-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/transloco/8.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/@jsverse/transloco/-/transloco-8.4.0.tgz",
+      "revision": "@jsverse/transloco@8.4.0: package/LICENSE; identical LICENSE verified in @jsverse/transloco-messageformat@8.4.0; both archives verified against their npm lockfile SHA-512 integrity",
+      "sha256": "d6ea74e3409921753923ebc1968ee7c0c15ff5cb95a21b0014cac374a78a582e"
+    },
+    {
+      "id": "ng-web-apis-universal-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/ng-web-apis-universal/5.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/@ng-web-apis/universal/-/universal-5.4.0.tgz",
+      "revision": "@ng-web-apis/universal@5.4.0: package/LICENSE, including Acpekt copyright; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "23f18e04a369155c00f20bb98015fbb4c40cd227b1a6d096467b8ddcdb707dfe"
+    },
+    {
+      "id": "cookie-parser-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/cookie-parser/1.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/cookie-parser/-/cookie-parser-1.4.7.tgz",
+      "revision": "cookie-parser@1.4.7: package/LICENSE; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "5ef9942b81ff899615cea44743ff3bb8d9048b4975ba6bbf3f8b719a901ba56a"
+    },
+    {
+      "id": "express-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/express/5.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/express/-/express-5.3.0.tgz",
+      "revision": "express@5.3.0: package/LICENSE; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "95a5762890e5c1c9808921cef095661fc482c5e1f0bba31446ac85595df6237c"
+    },
+    {
+      "id": "http-proxy-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/http-proxy/1.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/http-proxy/-/http-proxy-1.18.1.tgz",
+      "revision": "http-proxy@1.18.1: package/LICENSE; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "589850dfc0a1d39a97c592d618d5772f84aec2b11c6898e020acb985299f3bab"
+    },
+    {
+      "id": "negotiator-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/negotiator/1.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/negotiator/-/negotiator-1.1.0.tgz",
+      "revision": "negotiator@1.1.0: package/LICENSE; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "553d4d20029a24e315b428a1a54a9e109eaa340f2e958a4f50a92362c2c4070b"
+    },
+    {
+      "id": "rxjs-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/rxjs/7.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz",
+      "revision": "rxjs@7.8.2: package/LICENSE.txt, including Google, Netflix, Microsoft and contributor copyright; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "81c407ac717813b0e3795402960e04003c7bba8ba59b621624707028531c9ade"
+    },
+    {
+      "id": "tslib-license",
+      "kind": "license",
+      "path": "revamp/notices/originals/tslib/2.x/LICENSE.txt",
+      "upstreamUrl": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
+      "revision": "tslib@2.8.1: package/LICENSE.txt; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751"
+    },
+    {
+      "id": "tslib-copyright",
+      "kind": "copyright",
+      "path": "revamp/notices/originals/tslib/2.x/CopyrightNotice.txt",
+      "upstreamUrl": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
+      "revision": "tslib@2.8.1: complete unchanged package/CopyrightNotice.txt, retained separately from LICENSE.txt; archive verified against npm lockfile SHA-512 integrity",
+      "sha256": "da16ddb65f8ca390998fb99223d0112498b56b45784d00afd77ff8ce1ac4de8b"
     }
   ]
 }

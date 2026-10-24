@@ -91,6 +91,15 @@ documents package/license applicability groups, independent document expansion,
 unchanged original texts and the passing focused production-image/localization
 checks. This presentation revision does not close the remaining release gates.
 
+The next manual slice on 2026-10-24 added the nine remaining direct web runtime
+packages, reusing R6 without UI changes. All 22 manifest runtime dependencies
+now have explicit notice mappings; the catalog has 16 entries, 34 components
+and 21 originals. The
+[direct-web delivery record](../../revamp/README.md#direct-web-runtime-notices-2026-10-24)
+records archive/source verification, 27 isolated input checks and 11 passing
+production-image About/offline checks. Transitive, remaining backend/native and
+Node/container/OS coverage remains separate work; the overall set stays partial.
+
 The user's subsequent 2026-10-19 request moved the full project license to a
 dedicated tab without expansion and corrected login-prototype centring. The login
 prototype correction was initially a locally verified draft; it was explicitly

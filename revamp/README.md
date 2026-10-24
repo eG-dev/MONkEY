@@ -31,6 +31,46 @@ Allowance configuration and execution follow
 [ADR-0015](../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](../docs/ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Direct Web Runtime Notices (2026-10-24)
+
+All 22 direct packages in the web manifest's `dependencies` now have reviewed
+notice mappings. The nine additions are Transloco, Transloco MessageFormat,
+ng-web-apis universal, cookie-parser, Express, http-proxy, negotiator, RxJS and
+tslib. Exact installed/locked versions, supplied license and copyright files,
+archive integrity and preserved attribution are documented in the
+[collection record](notices/README.md#remaining-direct-web-runtime-packages-2026-10-24).
+The catalog now contains 16 About entries, 34 components and 21 original
+documents; the canonical distribution bundle and deferred About data were
+regenerated. The approved R6 layout and German/English controls are unchanged.
+
+Validation:
+
+```text
+npm --prefix revamp/web run assemble:notices
+npm --prefix revamp/web run prepare:about
+npm --prefix revamp/web run check:about
+node revamp/web/scripts/assemble-notices.mjs --check
+npm --prefix revamp/tests/e2e run check
+npm --prefix revamp/web run build:image
+npm --prefix revamp/tests/e2e test -- "about(-loading)?[.]spec[.]ts$|runtime[.]spec[.]ts$" --grep "About|runtime works with networking disabled" --workers=1
+```
+
+The 27 isolated input checks, E2E typecheck, production-image build and all
+11 focused About/offline image checks passed. The public regression explicitly
+checks one mapping for every direct runtime dependency and exercises each
+entry's full original text, exact local download hash, independent expansion,
+search/state retention and mobile wrapping. Both tslib originals and the two
+members sharing Transloco's single license are covered. Public, Manager,
+Member, forced-password-change, deferred loading/error recovery and offline
+runtime behavior remain verified.
+
+The initial bundle remains 698.68kB raw, below the existing 750kB warning budget;
+the About browser chunk is 283.92kB and still loads only on demand. Complete
+direct-manifest mapping is not complete distribution coverage: npm transitives,
+remaining backend/native packages and Node/container/OS review remain open.
+The `partial` label and release gates are unchanged. No package versions or
+dependencies were changed, and the full release suite was not run.
+
 ## Grouped Notice Documents R6 (2026-10-24)
 
 The user explicitly approved the current R6 click prototype with "prototype
