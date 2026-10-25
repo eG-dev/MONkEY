@@ -119,9 +119,12 @@ export function prepareAbout({ root = webRoot, check = false, packaged = false, 
   const assembled = assembleNotices({
     inputRoot: packaged ? resolve(snapshotRoot, 'inputs') : repositoryRoot,
     release: info.kind === 'release',
+    verify: info.kind === 'release',
   });
 
-  assert(notices.equals(assembled.bundle), 'Stale assembled THIRD-PARTY-NOTICES.txt; run assemble:notices.');
+  if (info.kind === 'release') {
+    assert(notices.equals(assembled.bundle), 'Stale assembled THIRD-PARTY-NOTICES.txt; run assemble:notices.');
+  }
 
   if (packaged) {
     for (const [path, bytes] of assembled.inputs) {

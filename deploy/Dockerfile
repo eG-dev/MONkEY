@@ -1,4 +1,4 @@
-FROM node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 AS web-build
+FROM node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205 AS web-build
 WORKDIR /build/web
 
 COPY web/package.json web/package-lock.json ./
@@ -20,7 +20,7 @@ RUN MONKEY_PACKAGED_BUILD=1 \
     MONKEY_BUILD_DIRTY="${BUILD_DIRTY}" \
     MONKEY_BUILD_REPOSITORY="${BUILD_REPOSITORY}" npm run build
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0.402-noble@sha256:0d99ebf1ccad15037b5c98c9fe8979d6b8dbac23812feae2277a0b277b5c5ffa AS backend-build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.402-noble@sha256:747cbade5bfd918a175ac32f8f1d931edec2c7d0d5397a3de72eaef1ac1f66d2 AS backend-build
 WORKDIR /build
 
 COPY global.json Directory.Build.props Directory.Packages.props NuGet.Config ./
@@ -31,7 +31,7 @@ RUN dotnet restore backend/PocketMonkey.Host/PocketMonkey.Host.csproj --locked-m
 COPY backend/ ./backend/
 RUN dotnet publish backend/PocketMonkey.Host/PocketMonkey.Host.csproj --configuration Release --no-restore --output /publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:8af87eba5e7cdafb1514d7388be287365da97c132509e84dfe252ffd552398ca
 
 ARG BUILD_VERSION
 ARG BUILD_REVISION

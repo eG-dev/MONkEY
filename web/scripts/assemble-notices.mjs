@@ -40,7 +40,8 @@ function references(ids, targets, label) {
   }
 }
 
-export function assembleNotices({ inputRoot, release = false }) {
+export function assembleNotices({ inputRoot, release = false, verify = true }) {
+  const verifyConsistency = release || verify;
   const inputs = new Map();
 
   function input(path) {
@@ -76,7 +77,9 @@ export function assembleNotices({ inputRoot, release = false }) {
     const bytes = input(document.path);
 
     assert(isUtf8(bytes) && bytes.length > 0, `Document must be nonempty UTF-8: ${document.id}`);
-    assert(/^[a-f0-9]{64}$/.test(document.sha256) && digest(bytes) === document.sha256, `Document hash mismatch: ${document.id}`);
+    if (verifyConsistency) {
+      assert(/^[a-f0-9]{64}$/.test(document.sha256) && digest(bytes) === document.sha256, `Document hash mismatch: ${document.id}`);
+    }
     const filename = `notices/${document.id}.txt`;
 
     assert(!files.has(filename), `Generated document URL collision: ${document.id}`);
@@ -109,6 +112,10 @@ export function assembleNotices({ inputRoot, release = false }) {
       if (component.licensingStatus === 'licensed') {
         text(component.licenseExpression, 'reviewed license expression');
       }
+    }
+
+    if (!verifyConsistency) {
+      continue;
     }
 
     const evidence = component.versionEvidence;

@@ -897,8 +897,8 @@ the configured currency or business timezone.
 | Component | Verified version |
 | --- | --- |
 | .NET SDK / runtime / EF Core | 10.0.402 / 10.0.13 / 10.0.13 |
-| Node / Angular framework / SSR and CLI | 24.22.0 / 22.2.3 / 22.2.4 |
-| npm / TypeScript | 12.2.0 / 6.0.3 |
+| Node / Angular framework / SSR and CLI | 24.22.1 / 22.2.3 / 22.2.4 |
+| npm / TypeScript | 12.2.1 / 6.0.3 |
 | Taiga / universal Web APIs | 5.29.0 / 5.4.0 |
 | Transloco / MessageFormat integration | 8.4.0 / 8.4.0 |
 | Lucide static font | 1.61.0 |
@@ -909,6 +909,12 @@ Patch versions are locked in the manifests/lockfiles. The ICU compiler uses
 CommonJS and adds approximately 77 KB to the initial browser bundle; the explicit
 initial budget is 650 KB warning / 800 KB error. No runtime CDN is used.
 No ARM, Firefox, or WebKit compatibility claim is made yet.
+
+Runtime refresh verified on 2026-10-25: Node 24.22.1, npm 12.2.1, and
+refreshed .NET SDK/ASP.NET image digests (versions remain 10.0.402/10.0.13).
+The production image build, six desktop smoke checks, and npm 12.2.1 locked
+installation with install scripts disabled passed; the npm audit found no
+vulnerabilities. TypeScript remains on the Angular-compatible 6.0 line.
 
 Dependency refresh verified on 2026-10-23: npm 12.2.0 clean installation,
 Angular SSR and replacement .NET builds, production image, 24 About/build-input

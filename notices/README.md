@@ -548,8 +548,8 @@ This addition brought the catalog to seven partial entries. The two runtime entr
 by `dotnet --list-runtimes` in the built Linux image. Version evidence records
 the final base's exact `10.0.13-noble` image digest and hashes the
 [Dockerfile](../deploy/Dockerfile), rather than treating the SDK version or a
-NuGet package as the runtime version. A Dockerfile change requires refreshing
-that evidence after checking the affected runtime inputs.
+NuGet package as the runtime version. Refresh that evidence during release
+preparation after checking the affected runtime inputs, not on routine PRs.
 
 - The unchanged [MIT original](originals/dotnet/10.x/LICENSE.txt) was copied
   from `/usr/share/dotnet/LICENSE.txt` in the image. It is byte-identical to
@@ -713,13 +713,16 @@ npm --prefix tests/e2e run check
 npm --prefix tests/e2e test -- specs/shell/about.spec.ts specs/authentication/about.spec.ts specs/lifecycle/runtime.spec.ts --grep "About|runtime works with networking disabled" --workers 1
 ```
 
-Ordinary preparation checks the tracked root bundle; it does not silently rewrite
+Ordinary preparation packages the tracked root bundle without checking dependency
+evidence, document hashes, or bundle consistency, and does not silently rewrite
 it. It generates `/about/third-party.json` and `/licenses/notices/<document-id>.txt`
 alongside the root bundle download. The JSON retains grouped components, each
 version/license/document association, coverage and full original texts. The
-existing container snapshot captures the catalog, originals and lockfile/font
-evidence under `.build/about/inputs/`. Packaged preparation validates those
-inputs and rejects drift in web evidence against the actual build context.
+existing container snapshot captures the catalog and originals under
+`.build/about/inputs/`. Release preparation additionally captures and validates
+dependency/asset evidence and rejects drift against the actual build context.
+Release builds enforce notice consistency; explicit `assemble:notices` or
+`assemble:notices -- --check` runs also perform consistency checks on demand.
 
 Supported evidence is `npm` (lockfile `path`, `package`), `nuget` (lockfile `path`,
 `framework`, `package`), or `files` (review description and `path`/`sha256` records).

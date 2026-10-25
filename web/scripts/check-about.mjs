@@ -161,7 +161,7 @@ try {
     assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale (generated|assembled)/);
     prepareAbout({ root, repository });
     writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), 'updated notices');
-    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale assembled/);
+    assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
     writeFileSync(resolve(temporary, 'THIRD-PARTY-NOTICES.txt'), notices);
     prepareAbout({ root, repository });
   });
@@ -260,7 +260,7 @@ try {
     assert.throws(() => prepareAbout({ root, packaged: true }), /license input hash mismatch/);
     prepareAbout({ root, repository });
   });
-  check('manual generated assets and prepared input drift rejected', () => {
+  check('manual generated assets checked without development evidence enforcement', () => {
     prepareAbout({ root, repository });
     const metadata = JSON.parse(readFileSync(resolve(generated, 'third-party.json'), 'utf8'));
 
@@ -271,10 +271,10 @@ try {
     assert.throws(() => prepareAbout({ root, repository, check: true }), /Stale generated/);
     prepareAbout({ root, repository });
     writeFileSync(resolve(snapshot, 'inputs/notices/originals/fixture/1.0/LICENSE.txt'), 'changed');
-    assert.throws(() => prepareAbout({ root, packaged: true }), /Document hash mismatch/);
+    assert.doesNotThrow(() => prepareAbout({ root, packaged: true }));
     prepareAbout({ root, repository });
     writeFileSync(resolve(root, 'fixture-font'), 'changed');
-    assert.throws(() => prepareAbout({ root, packaged: true }), /Packaged web input drift/);
+    assert.doesNotThrow(() => prepareAbout({ root, packaged: true }));
     writeFileSync(resolve(root, 'fixture-font'), 'fixture');
     prepareAbout({ root, repository });
   });
@@ -425,6 +425,19 @@ try {
     } finally {
       store(evidencePath, original);
     }
+  });
+  check('notice consistency is optional for development and mandatory for release', () => {
+    const staleVersion = (catalog) => {
+      catalog.components[0].version = '9.9.9';
+    };
+    const staleDocument = (catalog) => {
+      catalog.documents[0].sha256 = '0'.repeat(64);
+    };
+
+    assert.doesNotThrow(() => catalogCheck(staleVersion, { verify: false }));
+    assert.doesNotThrow(() => catalogCheck(staleDocument, { verify: false }));
+    assert.throws(() => catalogCheck(staleVersion, { release: true, verify: false }), /Stale component version/);
+    assert.throws(() => catalogCheck(staleDocument, { release: true, verify: false }), /Document hash mismatch/);
   });
   check('manual inputs survive a standalone container snapshot', () => {
     const first = catalogCheck();

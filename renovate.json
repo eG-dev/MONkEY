@@ -3,6 +3,11 @@
   "extends": [
     "config:recommended"
   ],
+  "dependencyDashboardApproval": true,
+  "dependencyDashboardHeader": "Update notifications only: dependency updates are applied and verified with Copilot. Leave approval checkboxes unchecked; selecting one explicitly requests a Renovate branch and PR.",
+  "vulnerabilityAlerts": {
+    "dependencyDashboardApproval": true
+  },
   "packageRules": [
     {
       "description": "Angular framework and CLI packages pin each other's exact versions as peers",
