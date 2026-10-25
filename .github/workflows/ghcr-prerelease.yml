@@ -1,0 +1,245 @@
+name: GHCR Prerelease
+
+on:
+  push:
+    tags: ["v*-*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ghcr-prerelease-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  identity:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+      revision: ${{ steps.identity.outputs.revision }}
+      image: ${{ steps.identity.outputs.image }}
+      previous_tag: ${{ steps.identity.outputs.previous_tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Validate protected prerelease identity
+        id: identity
+        run: |
+          test "$GITHUB_REF_TYPE" = tag
+          test "$GITHUB_REF_PROTECTED" = true
+          version=$(node --print "require('./web/package.json').version")
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z][0-9A-Za-z.-]*$ ]]
+          test "$GITHUB_REF_NAME" = "v$version"
+          test "$(git rev-parse "refs/tags/$GITHUB_REF_NAME^{commit}")" = "$GITHUB_SHA"
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          base=${version%%-*}
+          previous_tag=
+          seen_current=false
+          while IFS= read -r candidate; do
+            if [[ "$candidate" = "$GITHUB_REF_NAME" ]]; then
+              seen_current=true
+            elif [[ "$seen_current" = true ]]; then
+              previous_tag=$candidate
+              break
+            fi
+          done < <(git tag --merged "$GITHUB_SHA" --list "v${base}-*" --sort=-version:refname)
+          printf 'version=%s\nrevision=%s\nimage=ghcr.io/%s\nprevious_tag=%s\n' \
+            "$version" "$GITHUB_SHA" "${GITHUB_REPOSITORY,,}" "$previous_tag" >> "$GITHUB_OUTPUT"
+
+  verify:
+    needs: identity
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yml
+    with:
+      release_tag: ${{ github.ref_name }}
+      repository_url: https://github.com/${{ github.repository }}
+      export_image: true
+
+  draft:
+    needs: [identity, verify]
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.ref_name }}
+      VERSION: ${{ needs.identity.outputs.version }}
+      REVISION: ${{ needs.identity.outputs.revision }}
+      PREVIOUS_TAG: ${{ needs.identity.outputs.previous_tag }}
+    steps:
+      - name: Prepare or preserve reviewable draft notes
+        run: |
+          gh api --paginate --slurp "repos/$GH_REPO/releases" > releases.json
+          jq --arg tag "$RELEASE_TAG" '[.[][] | select(.tag_name == $tag)]' releases.json > matching.json
+          count=$(jq length matching.json)
+          if [[ "$count" = 1 ]]; then
+            jq -e '.[0].draft == true and .[0].prerelease == true' matching.json
+          elif [[ "$count" = 0 ]]; then
+            args=(--repo "$GH_REPO" --verify-tag --target "$REVISION" --draft --prerelease --generate-notes)
+            if [[ -n "$PREVIOUS_TAG" ]]; then
+              args+=(--notes-start-tag "$PREVIOUS_TAG")
+            fi
+            gh release create "$RELEASE_TAG" "${args[@]}" --title "POCKET MONkEY $VERSION"
+          else
+            echo 'Unexpected duplicate release identity.' >&2
+            exit 1
+          fi
+
+  publish:
+    needs: [identity, verify, draft]
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    environment:
+      name: release
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+    permissions:
+      actions: read
+      contents: write
+      packages: write
+    env:
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.ref_name }}
+      VERSION: ${{ needs.identity.outputs.version }}
+      REVISION: ${{ needs.identity.outputs.revision }}
+      IMAGE: ${{ needs.identity.outputs.image }}
+    steps:
+      - name: Require approval rules, public source and an unpublished draft
+        id: access
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GH_REPO/environments/release" \
+            --jq '.protection_rules | any(.type == "required_reviewers" and (.reviewers | length > 0))' | grep -qx true
+          curl --fail --silent --show-error "https://api.github.com/repos/$GH_REPO/git/commits/$REVISION" > /dev/null
+          gh release view "$RELEASE_TAG" --repo "$GH_REPO" --json isDraft,isPrerelease \
+            --jq '.isDraft and .isPrerelease' | grep -qx true
+      - name: Download this run's verified image without checking out source
+        id: download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "$GITHUB_RUN_ID" --repo "$GH_REPO" --name foundation-rehearsal --dir verified
+          cd verified
+          sha256sum --check SHA256SUMS
+      - name: Verify the loaded artifact and release identity
+        id: image
+        run: |
+          docker load --input verified/foundation-image.tar.gz
+          expected_id=$(jq -er '.[0].Id' verified/image.json)
+          test "$(docker image inspect pocket-monkey:foundation --format '{{.Id}}')" = "$expected_id"
+          docker image inspect pocket-monkey:foundation > loaded-image.json
+          jq -e 'length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
+            .[0].Config.Labels["org.opencontainers.image.version"] == env.VERSION and
+            .[0].Config.Labels["org.opencontainers.image.revision"] == env.REVISION and
+            .[0].Config.Labels["org.opencontainers.image.source"] == ("https://github.com/" + env.GH_REPO) and
+            .[0].Config.Labels["org.pocketmonkey.build.kind"] == "release" and
+            .[0].Config.Labels["org.pocketmonkey.build.dirty"] == "false"' loaded-image.json
+          jq -e '.kind == "release" and .dirty == false and .version == env.VERSION and
+            .revision == env.REVISION and .releaseTag == env.RELEASE_TAG and
+            .repositoryUrl == ("https://github.com/" + env.GH_REPO)' verified/build-info.json
+      - name: Publish an immutable version or resume the identical image
+        id: push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          package=${IMAGE#ghcr.io/}
+          expected_id=$(jq -er '.[0].Id' verified/image.json)
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          trap 'docker logout ghcr.io > /dev/null 2>&1' EXIT
+          registry_token=$(curl --fail --silent --show-error --user "$GITHUB_ACTOR:$GH_TOKEN" \
+            "https://ghcr.io/token?service=ghcr.io&scope=repository:$package:pull,push" | jq -er .token)
+          printf '::add-mask::%s\n' "$registry_token"
+          accept='application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json'
+          manifest() {
+            curl --silent --show-error --output manifest.json --dump-header manifest.headers --write-out '%{http_code}' \
+              --header "Authorization: Bearer $registry_token" --header "Accept: $accept" \
+              "https://ghcr.io/v2/$package/manifests/$VERSION"
+          }
+          status=$(manifest)
+          case "$status" in
+            200)
+              test "$(jq -er '.config.digest' manifest.json)" = "$expected_id"
+              ;;
+            404)
+              docker tag "$expected_id" "$IMAGE:$VERSION"
+              docker push "$IMAGE:$VERSION"
+              ;;
+            *)
+              echo "Registry lookup failed with HTTP $status; refusing to overwrite a version." >&2
+              exit 1
+              ;;
+          esac
+          test "$(manifest)" = 200
+          test "$(jq -er '.config.digest' manifest.json)" = "$expected_id"
+          digest=$(tr -d '\r' < manifest.headers | awk 'tolower($1) == "docker-content-digest:" { print $2 }' | tail -n 1)
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          printf 'digest=%s\n' "$digest" >> "$GITHUB_OUTPUT"
+      - name: Verify anonymous pull of the exact published digest
+        id: anonymous
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          anonymous=$(mktemp -d)
+          trap 'rm -rf "$anonymous"' EXIT
+          docker --config "$anonymous" pull "$IMAGE@$DIGEST"
+          test "$(docker image inspect "$IMAGE@$DIGEST" --format '{{.Id}}')" = "$(jq -er '.[0].Id' verified/image.json)"
+      - name: Attach digest-pinned deployment assets and publish the reviewed prerelease
+        id: assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          mkdir bundle
+          jq '.name = "${COMPOSE_PROJECT_NAME:?Set a stable Compose project name}" |
+            .services.app.image = (env.IMAGE + "@" + env.DIGEST)' verified/deployment.json > bundle/compose.yaml
+          cp verified/compose.exports.yaml bundle/
+          printf '# Reuse the existing project name when upgrading; this selects the data volume.\nCOMPOSE_PROJECT_NAME=pocket-monkey\n' > bundle/compose.env.example
+          cat verified/compose.env.example >> bundle/compose.env.example
+          cat > bundle/DEPLOYMENT.md <<'GUIDE'
+          # POCKET MONkEY Prerelease
+
+          This Linux amd64 prerelease is for acceptance testing, not production readiness.
+          Copy compose.env.example to a private compose.env and configure your HTTPS origin,
+          reverse proxy, timezone and settings. For an existing installation, retain its exact
+          Compose project name and data volume; do not accept a new name that creates empty storage.
+
+          Run: docker compose --env-file compose.env -f compose.yaml pull
+          Then: docker compose --env-file compose.env -f compose.yaml up -d --no-build
+
+          Bootstrap a new instance with:
+          docker compose --env-file compose.env -f compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
+
+          Before upgrades, stop the instance and back up the complete data volume and private
+          configuration. Rehearse restoration separately. Image rollback does not roll back
+          database migrations. Never use down --volumes on data you intend to retain.
+          Optional exports require compose.exports.yaml and a pre-created private host directory;
+          financial JSON exports do not replace full-volume backups.
+          GUIDE
+          printf '\nFull setup, HTTPS, backup and recovery guide: https://github.com/%s/blob/%s/docs/development.md\n' \
+            "$GH_REPO" "$REVISION" >> bundle/DEPLOYMENT.md
+          cp verified/image.json verified/build-info.json ./
+          jq -n --arg version "$VERSION" --arg revision "$REVISION" --arg image "$IMAGE@$DIGEST" \
+            --arg config "$(jq -er '.[0].Id' image.json)" \
+            '{version: $version, revision: $revision, image: $image, configDigest: $config, os: "linux", architecture: "amd64"}' > release-identity.json
+          tar --sort=name --mtime='@0' --owner=0 --group=0 --numeric-owner -cf - -C bundle . | gzip -n > deployment.tar.gz
+          sha256sum deployment.tar.gz image.json build-info.json release-identity.json > SHA256SUMS
+          gh release upload "$RELEASE_TAG" --repo "$GH_REPO" --clobber \
+            deployment.tar.gz SHA256SUMS image.json build-info.json release-identity.json
+          gh release view "$RELEASE_TAG" --repo "$GH_REPO" --json body --jq .body > notes.md
+          if ! grep -Fqx "Image: $IMAGE@$DIGEST" notes.md; then
+            printf '\n\n## Verified Image\n\nImage: %s@%s\n\nSource: %s\n\nPlatform: linux/amd64\n\nUse the deployment bundle and verify SHA256SUMS before installing.\n' \
+              "$IMAGE" "$DIGEST" "$REVISION" >> notes.md
+          fi
+          gh release edit "$RELEASE_TAG" --repo "$GH_REPO" --draft=false --prerelease --latest=false --notes-file notes.md
+          printf 'Published prerelease %s\n\nImage: %s@%s\n' "$RELEASE_TAG" "$IMAGE" "$DIGEST" >> "$GITHUB_STEP_SUMMARY"
