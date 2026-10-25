@@ -1,6 +1,8 @@
 # Milestone 4: operations and cutover
 
-Status: not started. Basic lifecycle checks start in [stack foundation](01-stack-foundation.md).
+Status: portable financial recovery R7 is implemented and locally verified;
+the remaining operations and production-cutover work is not started. Basic
+lifecycle checks start in [stack foundation](01-stack-foundation.md).
 Production cutover depends on the agreed slices in [UI and business logic](03-ui-business-logic.md),
 the [step 2B design foundation](02b-ux-ui-design.md), and application-wide design acceptance.
 
@@ -34,7 +36,7 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 
 ## Backup, restore, and upgrades
 
-- Agreed on 2026-10-25: keep full installation backup and restore as documented manual operator procedures using ordinary host/container tools. Do not add application-specific full-backup/restore commands, backend endpoints, scheduled full-backup jobs, or settings UI. The separately requested portable financial export/recovery feature is covered by the draft below; it does not replace this procedure.
+- Agreed on 2026-10-25: keep full installation backup and restore as documented manual operator procedures using ordinary host/container tools. Do not add application-specific full-backup/restore commands, backend endpoints, scheduled full-backup jobs, or settings UI. The separately requested portable financial export/recovery feature is covered below; it does not replace this procedure.
 - Stop the container before backing up the complete private data root and preserve deployment configuration separately. Restore into an empty volume with a compatible application version, preserve required ownership/permissions, then start and verify the instance. Rehearse with disposable data; do not touch an operator's installation without explicit approval.
 - Back up the database, image files, and persistent authentication keys with appropriate confidentiality protections.
 - Preserve deployment configuration, particularly `TZ`, with the recovery documentation so restored jobs use the original business-period rules.
@@ -46,16 +48,30 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - Define schema compatibility explicitly. Rolling back an image does not undo a database migration; restore or a supported compatibility path is required.
 - Explain recovery behavior for users, keys, sessions, and scheduled jobs after restoring an older backup.
 
-## Portable Financial Export and Recovery R3
+## Portable Financial Export and Recovery R7
 
-Draft backend/data proposal, 2026-10-25. **Awaiting explicit R3 design approval;
-not implemented.** The request to proceed authorizes preparing this proposal,
-not bypassing the [backend design gate](../../.github/instructions/backend.instructions.md#design-review-gate).
+Backend/data proposal R7, **approved on 2026-10-25** by the user: "okay, I approve
+the proposal". Approval covers the current R7 scope, including export policies,
+offline import, shared scenarios and test-only reset. Implementation and local
+verification evidence are recorded below; hosted CI for these changes and the
+broader release/cutover gates are not claimed complete.
 
-R3 incorporates the user's 2026-10-25 scheduling clarification: once daily at
-01:00 business time in configured `TZ`, superseding R2's fixed UTC schedule,
-without a configurable hourly interval. This accepts the schedule policy only,
-not the complete backend/data proposal.
+Approved implementation clarification, 2026-10-25: retain retention's
+`LastCompletedAtUtc` in snapshots but exclude this scan-only timestamp from the
+content hash. The user explicitly selected "Yes, exclude the scan-only timestamp".
+Daily no-op retention scans must not force exports; pruning revisions, retired
+keys and all financial changes still count.
+
+R7 incorporates the user's 2026-10-25 acceptance of a test-only scenario loader
+with explicit `--reset`, separate from the non-destructive recovery importer.
+Keep R6's shared scenario-export collection for E2E and manual testing and R5's
+snapshot retention (default 30,
+finite counts through 365, 0 unlimited), R4's change-only publication and R3's
+daily check at 01:00 business time in configured `TZ`, superseding R2's fixed
+UTC schedule, without a configurable hourly interval. These accept the stated
+policies, scenario reuse and test-only reset; those earlier policy approvals did
+not approve the complete backend/data proposal. The explicit R7 approval above
+subsequently approved that design.
 
 ### Purpose and Agreed Scope
 
@@ -77,17 +93,17 @@ not the complete backend/data proposal.
 - Reuse the same JSON contract and importer for isolated E2E state setup. Keep
 	real UI/API creation tests; this is not an Azure-data import facility.
 
-### Proposed Contract and Types
+### Contract and Types
 
-All paths/types below are **proposed**, except the linked existing code.
+The approved types below are implemented in `PocketMonkey.Host`.
 
-| Type / namespace / proposed location | Responsibility |
+| Type / namespace / location | Responsibility |
 | --- | --- |
-| `FinancialSnapshot` and one explicit record type per exported collection, `PocketMonkey.Host.Contracts.Recovery`, under `revamp/backend/PocketMonkey.Host/Contracts/Recovery/` | Versioned transport DTOs, separate files, no direct EF/Identity serialization. |
-| `FinancialSnapshotService`, `PocketMonkey.Host.Services`, under `revamp/backend/PocketMonkey.Host/Services/FinancialSnapshotService.cs` | Read a consistent snapshot; validate and atomically import financial state through the existing context. |
-| `FinancialExportStore`, `PocketMonkey.Host.Services`, under `revamp/backend/PocketMonkey.Host/Services/FinancialExportStore.cs` | Private temporary files, atomic publication, completed-export discovery and bounded retention. |
-| `FinancialExportWorker`, `PocketMonkey.Host.HostedServices`, under `revamp/backend/PocketMonkey.Host/HostedServices/FinancialExportWorker.cs` | Wake at startup/minutely, determine whether an export is due, retry failures without stopping financial workflows. |
-| `FinancialImportCommand`, `PocketMonkey.Host.Operations`, under `revamp/backend/PocketMonkey.Host/Operations/FinancialImportCommand.cs` | Offline `import-financial <absolute-json-path>` entry point, stable diagnostics/exit codes, no host or workers started. |
+| `FinancialSnapshot` and one explicit record type per exported collection, `PocketMonkey.Host.Contracts.Recovery`, under [Contracts/Recovery](../../revamp/backend/PocketMonkey.Host/Contracts/Recovery) | Versioned transport DTOs, separate files, no direct EF/Identity serialization. |
+| `FinancialSnapshotService`, `PocketMonkey.Host.Services`, [FinancialSnapshotService.cs](../../revamp/backend/PocketMonkey.Host/Services/FinancialSnapshotService.cs) | Read a consistent snapshot; validate and atomically import financial state through the existing context. |
+| `FinancialExportStore`, `PocketMonkey.Host.Services`, [FinancialExportStore.cs](../../revamp/backend/PocketMonkey.Host/Services/FinancialExportStore.cs) | Deterministic content hashing, private temporary files, atomic publication, completed-export discovery, scheduler-state file and bounded retention. |
+| `FinancialExportWorker`, `PocketMonkey.Host.HostedServices`, [FinancialExportWorker.cs](../../revamp/backend/PocketMonkey.Host/HostedServices/FinancialExportWorker.cs) | Wake at startup/minutely, determine whether an export is due, retry failures without stopping financial workflows. |
+| `FinancialImportCommand`, `PocketMonkey.Host.Operations`, [FinancialImportCommand.cs](../../revamp/backend/PocketMonkey.Host/Operations/FinancialImportCommand.cs) | Offline `import-financial <absolute-json-path>` entry point, stable diagnostics/exit codes, no host or workers started. |
 
 Existing integration points are
 [Program.cs](../../revamp/backend/PocketMonkey.Host/Program.cs),
@@ -95,7 +111,7 @@ Existing integration points are
 and [PocketMonkeyDbContext](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs).
 Keep financial import dispatch separate from the interactive username/password
 flow in [OperatorCommands](../../revamp/backend/PocketMonkey.Host/Operations/OperatorCommands.cs).
-No new persisted entity, relationship, index or migration is proposed.
+No new persisted entity, relationship, index or migration was added.
 
 The document contains `formatVersion: 1`, a unique snapshot ID, capture time in
 UTC, application version, source currency/timezone/transaction-retention settings,
@@ -112,26 +128,55 @@ precision; closed categories use validated stable strings. Currency/timezone are
 metadata, not permission to change deployment configuration silently. JSON is
 human-readable UTF-8; files contain private financial and attribution data.
 
-### Proposed Scheduling and Filesystem Policy
+### Scheduling and Filesystem Policy
 
 - Opt in by setting `MONKEY_EXPORT_PATH` to an absolute private directory outside
 	the main data root. Unset means disabled. Document a separate optional Compose
 	bind mount, writable only by the application owner; no world-readable files.
-- Export once daily at 01:00 in the configured business timezone `TZ`, not the
+- Check once daily at 01:00 in the configured business timezone `TZ`, not the
 	host-local timezone or fixed UTC. This is one hour after the normal midnight
 	allowance eligibility boundary, not a guarantee that retries/catch-up have
 	completed. No interval or separate schedule configuration initially.
-	Proposed `MONKEY_EXPORT_KEEP_COUNT`: `30` by default, whole counts `1..1000`;
-	this file-retention policy still awaits approval. Transaction retention and
-	export-file retention remain independent.
-- Determine due work from successfully completed files and the injected
-	`TimeProvider`, not an in-memory timer alone. The most recent elapsed 01:00
-	business-time boundary, converted to a UTC instant, defines the due slot;
-	a completed snapshot captured at or after it
-	satisfies that slot, including after restart. Proposed startup behavior: when
-	that slot has no completed export, capture one current snapshot, including on
-	first enabled start. After downtime do not fabricate exports for missed days.
-	On failure leave the last completed export untouched and retry on a later wake.
+	Configure `MONKEY_EXPORT_KEEP_COUNT`: default `30`, whole counts `1..365`,
+	or `0` for unlimited. Reject negative, non-integer or greater-than-365 values
+	at startup. Transaction retention and export-file retention remain independent.
+- Determine due work from completed files, a private atomically replaced
+	`.export-state.json` in the export directory and the injected `TimeProvider`,
+	not an in-memory timer alone. The most recent elapsed 01:00 business-time
+	boundary, converted to a UTC instant, defines the due slot. Record a successfully
+	checked slot and its `TZ` even if unchanged; do not reread/hash all data every
+	minute or restart for that slot. A completed snapshot captured at or after the
+	boundary also satisfies it if publication succeeded before a state-file crash.
+	Treat missing/invalid scheduler state as requiring a safe recheck, not proof
+	that recovery data exists. Proposed startup behavior: check the latest missed
+	slot and publish only if needed, including an initial snapshot when none exists.
+	After downtime do not fabricate exports for missed days. Failed capture,
+	comparison, publication or state writes remain retryable on a later wake.
+- Compare deterministic SHA-256 content hashes with the latest successful
+	snapshot, not changes within the current calendar day. Use fixed property
+	ordering, stable collection ordering by immutable keys, canonical exact amounts
+	and UTC timestamps. Hash the format version, exported source configuration and
+	all exported record content; exclude snapshot ID, capture time and application
+	build version and retention's scan-only `LastCompletedAtUtc`. A changed build
+	version or no-op retention scan alone must not produce a data export.
+	Recompute/validate the baseline from the completed snapshot, rather than trust
+	a cached hash without its file. An unreadable/invalid latest snapshot is an
+	observable failure, not an unchanged result; preserve it and earlier snapshots.
+- Publish when there is no prior completed snapshot or the content differs.
+	Account/balance/transaction/allowance changes, exported audit changes and
+	retention pruning count; excluded credentials/images alone do not. Export
+	checks/publication use structured logs, not new database audit events that
+	would themselves cause perpetual changes. A snapshot hash detects content
+	differences, not authenticity or legal/financial correctness.
+- On an unchanged result, write only scheduler state: do not create/touch a
+	snapshot or prune completed exports. Retention remains count-based over actual
+	successful snapshots, not days; 30 files may span far more than 30 days, and
+	365 files approximate a year only when changes produce a snapshot every day.
+	There is no calendar-year age limit; `0` disables count-based pruning entirely
+	and requires the operator to monitor disk usage. Never remove the last
+	successful export because it is old. If the baseline file has
+	been removed externally, invalidate its checked-slot state and create a new
+	initial snapshot rather than relying on stale cached state.
 - Proposed daylight-saving handling: if 01:00 is ambiguous, use its first
 	occurrence and do not export again for the repeated occurrence. If 01:00 does
 	not exist, use the first valid local instant after the gap. Calculate boundaries
@@ -145,13 +190,15 @@ human-readable UTF-8; files contain private financial and attribution data.
 	close it, then atomically rename without overwrite to a timestamp/snapshot-ID
 	`.json` name. Interrupted writes never become completed exports. Clean only
 	application-owned temporary files and prune only matching completed export
-	files, oldest first, after successful publication. Never delete arbitrary files.
+	files, oldest first, after successful publication when the configured count is
+	positive. Lowering the count takes effect after the next successful publication,
+	not on an unchanged check. Never delete arbitrary files.
 - Validate enabled configuration/storage at startup. Runtime export failures
 	produce nonfinancial structured diagnostics, never payloads, and do not block
 	posting or readiness. Do not claim host-disk disaster protection from a bind
 	mount or guarantee durability beyond the host filesystem.
 
-### Proposed Offline Import and Financial Validation
+### Offline Import and Financial Validation
 
 - Stop the application container; run a one-off command with its data volume and
 	a read-only snapshot mount. Require exclusive database access, with a bounded
@@ -198,6 +245,63 @@ human-readable UTF-8; files contain private financial and attribution data.
 
 ### E2E Reuse and Verification
 
+#### Shared Scenario Collection
+
+Maintain a small version-controlled data store of synthetic scenario exports in
+the **proposed** `revamp/tests/fixtures/financial-snapshots/` directory, shared by
+browser E2E, integration checks and manual testing rather than duplicated under
+each suite. This is a file collection, not another database or service. Each
+scenario JSON uses the production snapshot format and passes the same importer
+validation; never commit real household exports, credentials or personal data.
+
+Start with reusable scenarios for uninitialized accounts; signed/zero opening
+balances and manual transactions; paginated retained history with pruned details
+and retired keys; and allowance configuration with credited/pending executions.
+Keep expected account balances, identifiers and record counts explicit. Add
+further fixtures only for concrete workflows. Generate representative exports
+through real application operations where practical, then review and check them
+in; do not use fixture imports as a substitute for testing those operations.
+
+A colocated README catalogs stable scenario names, purpose, source-format
+version, expected state, required currency/`TZ`/transaction-retention settings,
+reference dates and any startup job effects. Document shared user bootstrap
+steps separately from financial JSON. Keep malformed import inputs in negative
+test coverage, clearly separate from usable manual scenarios.
+
+Both E2E setup and documented manual steps select the same named JSON and invoke
+the same offline importer against fresh disposable storage; do not relax the
+empty-business-state rule or add a production fixture endpoint. Mount fixtures
+read-only. Manual testing starts a separate instance after import, with no
+implicit reset of existing data and no production credentials or volumes.
+
+Provide a test-only scenario loader, shared by E2E setup and manual testing,
+outside the production image. Its explicit `--reset` option stops its managed
+test instance, recreates its disposable data storage, bootstraps test users and
+invokes the same offline financial importer before starting the instance again.
+Without `--reset`, nonempty financial state is rejected. The production recovery
+command has no wipe/reset/replace flag and never deletes existing business data.
+
+Reset requires positive ownership checks for loader-created test storage, not
+just a name prefix or an arbitrary supplied path. Restrict filesystem targets to
+the loader's dedicated test root, reject symlinks/reparse points and overlapping
+application/export/fixture paths, and verify ownership metadata for managed Docker
+volumes. Refuse unknown storage or unrelated running containers. Reset never
+deletes read-only scenario sources, operator exports or production storage.
+Document the selected target and destructive scope before reset: test users,
+database, images and authentication keys are discarded, then test users are
+recreated separately. Failure must not start a partially prepared test instance.
+
+Time-sensitive automated checks use the existing test-only clock injection
+approach. Manual runs use actual time: document that allowance catch-up and
+retention can change historical fixtures immediately after startup. Include
+time-stable scenarios with allowances disabled and suitable documented retention
+for general manual exploration; do not silently shift fixture timestamps or add
+a production clock override to force historical outcomes. Update fixtures and
+their documentation together when the recovery format changes, and validate
+every supported scenario in the focused real-persistence checks.
+
+#### Verification
+
 Extend the existing real-persistence
 [RuntimeChecks project](../../revamp/tests/integration/RuntimeChecks) with isolated
 snapshot checks and reuse the importer from test-only tooling. Minimal fixtures
@@ -209,10 +313,16 @@ Required checks: export/import/export semantic round trip including pruned
 history; exact signed limits and timestamp precision; historical actor
 attribution; default images; retained/pending allowance recovery without duplicate
 credits; posting and cleanup concurrent with capture; atomic rollback; nonempty
-target/repeated import rejection; malformed/oversized/version-mismatched files;
+target/repeated import rejection; explicit test-loader reset, user rebootstrap,
+rejection of unowned/out-of-root/linked storage and preservation of fixture/export
+sources; malformed/oversized/version-mismatched files;
 configuration mismatch; interrupted writes and unwritable mounts; 01:00 business
 boundary/restart/downtime detection; non-UTC `TZ`, timezone changes and
-skipped/repeated daylight-saving times; file-retention safety and no private
+skipped/repeated daylight-saving times; unchanged-day skips across restarts;
+stable hashes despite metadata/collection-order differences; changed and reverted
+data compared to the last success; pruning/configuration changes; corrupt/missing
+baseline and scheduler-state recovery; publication/state crash ordering;
+file-retention safety and no private
 payload logging. Run focused
 real-image Manager/Member read and Manager posting workflows after recovery.
 Use only disposable databases, export directories and volumes.
@@ -225,16 +335,48 @@ Follow [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md),
 [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md) and
 [ADR-0017](../../docs/ADR/ADR-0017-backend-project-boundaries.md).
 Offline empty-target reconstruction is a new recovery capability, not permission
-to edit live financial history. After approval, record a distinct portable
-financial-recovery ADR and link this plan; clarify its controlled reconstruction
-exception relative to ADR-0012 before implementing dependent code. Do not revise
-the manual full-backup decision or imply restored credentials/images.
+to edit live financial history. ADR-0021 records the approved capability and
+ADR-0012 now identifies this narrow reconstruction exception. The manual
+full-backup decision remains unchanged; credentials/images are not restored.
 
 Evaluated alternatives: CSV loses typed relationships and recovery metadata;
 per-account files risk mixed snapshots; ZIP adds no value without images; full
 SQLite copies remain the separate manual backup; a web import endpoint adds
-unnecessary attack surface. Approval must cover R3, including the proposed
-defaults, file bounds, identity exclusion and offline import entry point.
+unnecessary attack surface. R7 approval covers the proposed defaults, file bounds,
+identity exclusion and offline import entry point. The enduring decision is
+[ADR-0021](../../docs/ADR/ADR-0021-portable-financial-recovery.md).
+
+### Delivery and Verification
+
+Implemented on 2026-10-25 without schema changes or recovery HTTP/UI endpoints.
+See the [operator guide](../../revamp/README.md#portable-financial-recovery),
+[optional export mount](../../revamp/deploy/compose.exports.yaml) and
+[shared scenario catalog](../../revamp/tests/fixtures/financial-snapshots/README.md).
+
+Local verification against disposable data and the production Linux image:
+
+- Release solution build passed. The `financial-recovery` RuntimeChecks probe
+	passed against all four committed scenario files, both locally and inside the
+	non-root production image. It covers exact money, strict/oversized JSON,
+	semantic round trips, historical attribution/default images, nonempty and
+	busy targets, rollback, pending/retired allowance identities, concurrent
+	posting/retention/capture, DST gaps/repetition, stable hashes, changed/reverted
+	data, cancellation, owner-only files, unwritable/linked storage, scheduler-state
+	recovery and count-based retention.
+- The final production image build passed. All four recovery E2E tests passed:
+	Linux persistence probe; private export publication/restart; desktop and mobile
+	recovered Manager posting/Member denial, explicit reset/user rebootstrap,
+	unknown/out-of-root/linked/unowned storage refusal and unchanged fixture sources.
+	The persistence probe is included in normal E2E discovery for hosted CI.
+- Existing `ledger-persistence` and `allowance-execution` probes passed. E2E
+	TypeScript checking and Markdown/ADR guardrails passed. Compose configuration
+	with the export override passed `config --no-interpolate`; no operator mounts
+	or installation data were started or changed.
+
+Reproduce from `revamp/` using the commands in the operator/scenario guides and
+`dotnet run --project tests/integration/RuntimeChecks --configuration Release -- financial-recovery tests/fixtures/financial-snapshots`.
+Hosted CI for this uncommitted implementation, real operator backup/restore
+rehearsals, clean-host upgrades and release/publication gates remain separate.
 
 ## Observability and security
 

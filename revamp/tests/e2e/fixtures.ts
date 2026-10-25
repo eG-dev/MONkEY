@@ -140,7 +140,7 @@ export async function signIn(page: Page, account: ReturnType<typeof credentials>
   }
 }
 
-async function secureOrigin(instance: Instance) {
+export async function secureOrigin(instance: Instance) {
   const certificate = await generate([{ name: 'commonName', value: 'localhost' }], { keyType: 'ec' });
   // Resolving per request would block the worker's event loop on `docker inspect`; refresh only after a connection failure.
   let upstreamOrigin = containerOrigin(instance.container);

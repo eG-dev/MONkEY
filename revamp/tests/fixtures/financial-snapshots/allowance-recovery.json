@@ -1,0 +1,100 @@
+{
+  "formatVersion": 1,
+  "snapshotId": "90000000-0000-0000-0000-000000000004",
+  "capturedAtUtc": "2026-06-15T12:00:00.0000000Z",
+  "applicationVersion": "fixture",
+  "currency": "EUR",
+  "timezone": "UTC",
+  "transactionRetentionMonths": 24,
+  "accounts": [
+    {
+      "id": "10000000-0000-0000-0000-000000000001",
+      "name": "Allowance recovery",
+      "normalizedName": "ALLOWANCE RECOVERY",
+      "balance": "12.50"
+    }
+  ],
+  "ledgerEntries": [
+    {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "amount": "10.00",
+      "sequenceNumber": "1",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000001",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000001Z",
+      "source": "opening",
+      "comment": null,
+      "allowanceMonth": null
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000002",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "amount": "2.50",
+      "sequenceNumber": "2",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000002",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000002Z",
+      "source": "allowance",
+      "comment": null,
+      "allowanceMonth": 202606
+    }
+  ],
+  "auditEvents": [],
+  "allowanceRevisions": [
+    {
+      "sequenceNumber": "1",
+      "id": "40000000-0000-0000-0000-000000000001",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "previousRevisionId": "",
+      "actorId": "historical-manager",
+      "occurredAtUtc": "2026-05-15T12:00:00.0000000Z",
+      "effectiveMonth": 202606,
+      "enabled": true,
+      "amount": "2.50"
+    },
+    {
+      "sequenceNumber": "2",
+      "id": "40000000-0000-0000-0000-000000000002",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "previousRevisionId": "40000000-0000-0000-0000-000000000001",
+      "actorId": "historical-manager",
+      "occurredAtUtc": "2026-07-15T12:00:00.0000000Z",
+      "effectiveMonth": 202608,
+      "enabled": false,
+      "amount": "2.50"
+    }
+  ],
+  "allowanceExecutions": [
+    {
+      "id": "1",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "businessMonth": 202606,
+      "revisionId": "40000000-0000-0000-0000-000000000001",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000002",
+      "attempts": 1,
+      "lastAttemptAtUtc": "2026-06-15T12:00:00.0000000Z",
+      "creditedAtUtc": "2026-06-15T12:00:00.0000000Z",
+      "errorCode": null
+    },
+    {
+      "id": "2",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "businessMonth": 202607,
+      "revisionId": "40000000-0000-0000-0000-000000000001",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000003",
+      "attempts": 1,
+      "lastAttemptAtUtc": "2026-07-15T12:00:00.0000000Z",
+      "creditedAtUtc": null,
+      "errorCode": null
+    }
+  ],
+  "retiredLedgerKeys": [],
+  "ledgerMaintenanceState": {
+    "lastAllocatedSequenceNumber": "2",
+    "retentionRevision": "0",
+    "lastCompletedAtUtc": null
+  }
+}

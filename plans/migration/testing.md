@@ -10,6 +10,18 @@ verification, publishing rehearsal, and real-host deployment remain separate
 gates. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
 and the [foundation guide](../../revamp/README.md). Extend with each feature.
 
+## Latest Hosted Verification, 2026-10-25
+
+The user confirmed that the latest GitHub Actions run, including E2E tests,
+passed successfully. This records the hosted-rerun confirmation following the
+cross-platform notice-evidence hash fix. No run URL, commit SHA or exact test
+count was supplied; the result is user-reported, not independently inspected.
+
+This confirmation does not approve the draft portable financial export/recovery
+design or verify its unimplemented behavior. Operational rehearsal,
+deployment-specific review and artifact-publication gates remain separate.
+Earlier local-only records below retain their historical scope.
+
 ## Allowance execution acceptance
 
 On 2026-10-12, the final allowance acceptance set passed all **17 checks** locally

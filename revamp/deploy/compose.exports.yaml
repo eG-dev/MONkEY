@@ -1,0 +1,11 @@
+services:
+  app:
+    environment:
+      MONKEY_EXPORT_PATH: /exports
+      MONKEY_EXPORT_KEEP_COUNT: ${MONKEY_EXPORT_KEEP_COUNT:-30}
+    volumes:
+      - type: bind
+        source: ${MONKEY_EXPORT_HOST_PATH:?Set a private absolute host export directory owned by UID 10001}
+        target: /exports
+        bind:
+          create_host_path: false

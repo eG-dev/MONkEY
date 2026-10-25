@@ -269,7 +269,8 @@
         "files": [
           {
             "path": "revamp/deploy/Dockerfile",
-            "sha256": "b8452a4f0cbfe6c2dfd368b73ae7bf54e38591f1f1abeac30d07c91561aae38e"
+            "lineEndings": "lf",
+            "sha256": "c7147bcf19967b3dd85e6ee107a1e719cce45c1c0a69683d3d3d51ea441be28b"
           }
         ]
       },
@@ -290,7 +291,8 @@
         "files": [
           {
             "path": "revamp/deploy/Dockerfile",
-            "sha256": "b8452a4f0cbfe6c2dfd368b73ae7bf54e38591f1f1abeac30d07c91561aae38e"
+            "lineEndings": "lf",
+            "sha256": "c7147bcf19967b3dd85e6ee107a1e719cce45c1c0a69683d3d3d51ea441be28b"
           }
         ]
       },

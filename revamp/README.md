@@ -775,6 +775,95 @@ unchanged; future design changes retain their separate approval gates.
 Extend the partial proof with reviewed release-matched material before testing
 the release image. Copy/hash checks establish delivery, not legal completeness.
 
+## Portable Financial Recovery
+
+Portable financial JSON exports supplement, not replace, manual stopped-container
+backups of the complete data root and deployment configuration. See
+[ADR-0021](../docs/ADR/ADR-0021-portable-financial-recovery.md).
+
+### Scheduled Exports
+
+Unset `MONKEY_EXPORT_PATH` leaves exports disabled. To opt in, provide a private,
+absolute directory outside `MONKEY_DATA_PATH`, writable by the application's
+UID 10001. On Linux use owner-only directory permissions (`0700`); completed
+files use `0600`. The bind mount must be pre-created and owned appropriately;
+do not fix permissions by running the application as root.
+
+The optional [Compose override](deploy/compose.exports.yaml) mounts the host's
+`MONKEY_EXPORT_HOST_PATH` at `/exports`. With the normal required HTTPS origin
+and host variables set, run from `revamp/`:
+
+```text
+docker compose -f deploy/compose.yaml -f deploy/compose.exports.yaml up -d
+```
+
+`MONKEY_EXPORT_KEEP_COUNT` defaults to 30, accepts 1 through 365 and uses 0 for
+unlimited. A separate mount is not off-host disaster protection. Protect and
+monitor storage, especially with unlimited retention.
+
+The worker checks at 01:00 in business `TZ`. It writes one complete snapshot only
+when exported content differs from the last successful one; no-op scan timestamps
+and build/capture metadata do not cause exports. It creates an initial snapshot
+on first enabled startup and checks the latest missed slot after downtime.
+Repeated daylight-saving times use the first occurrence; skipped 01:00 uses the
+first valid instant afterward. A private `.export-state.json` records completed
+checks, including unchanged days. Files retain UTC timestamps.
+
+Publication uses a flushed temporary file and atomic rename. Failed writes leave
+earlier completed snapshots intact. Only matching application export files are
+pruned, after a successful new publication; unchanged days do not prune. Lowering
+the count takes effect at the next publication. An invalid latest snapshot is
+reported as a failure, never silently treated as unchanged. Failures are logged
+without data payloads and retried independently of financial posting/readiness.
+
+### Offline Import
+
+Snapshots contain accounts, exact balances, retained ledger entries and audit
+metadata, allowance revisions/executions, retired retry keys and maintenance
+counters. They exclude login identities/passwords, sessions, authentication keys
+and images; accounts recover with the default image. Historical actors remain
+historical attribution, not new login users. Amounts and 64-bit counters use
+exact strings; format version 1 rejects unknown fields and files over 256 MiB.
+
+Stop the application and use a fresh volume. Set the snapshot's currency,
+business timezone and transaction-retention configuration deliberately before
+import. Mount the JSON read-only. For a Compose-managed empty data volume, the
+command shape from `revamp/` is:
+
+```text
+docker compose -f deploy/compose.yaml stop app
+docker compose -f deploy/compose.yaml run --rm --no-deps --entrypoint dotnet --volume /absolute/private/snapshot-directory:/recovery:ro app /app/backend/PocketMonkey.Host.dll import-financial /recovery/snapshot.json
+```
+
+The production command has no wipe/merge/reset option. It rejects nonempty
+financial state, incompatible format/configuration and busy storage. Existing
+separately bootstrapped users and their user-administration audit records may
+remain. Schema migrations can initialize a fresh target, but financial inserts
+are one transaction: a failure cannot leave partial recovered financial state.
+Recreate users with the existing operator workflow, then start the application.
+Do not delete an existing volume merely to make import succeed.
+
+The command reports `financial_import_success`, or a nonzero result with stable
+errors such as `snapshot_invalid`, `snapshot_version_unsupported`,
+`snapshot_configuration_mismatch`, `recovery_target_not_empty` or
+`recovery_storage_busy`. A SHA-256 content comparison is not authentication or a
+guarantee that a hand-edited balance is truthful.
+
+An old snapshot lacks later writes and already-pruned details. Stored balances
+are restored directly, never recalculated from partial history or replayed as
+new postings. Normal startup may catch up outstanding allowances and prune
+eligible details under the configured policy; permanent execution identities
+prevent re-crediting already credited months. This is not a SQL state backup,
+automatic personal-data erasure or an Azure-data migration.
+
+### Shared Test Scenarios
+
+The [scenario catalog](tests/fixtures/financial-snapshots/README.md) supplies the
+same synthetic JSON to integration, E2E and manual tests. The test-only loader
+has an explicit `--reset` for verified loader-owned disposable storage, reboots
+test users separately and never ships in the production image. Real UI/API
+creation workflows remain tested rather than replacing all setup with imports.
+
 ## Private Account Images
 
 Managers upload, replace, and remove PNG/JPEG/WebP images from account details.
@@ -1355,6 +1444,147 @@ the application does not silently change existing permissions or ownership.
 The database, image directory, and keys must be backed up consistently together.
 Data Protection keys are not encrypted at rest: protect host storage/backups and
 do not publish them. No credentials are stored in ordinary application ENV values.
+
+## Docker Compose Configuration
+
+The [base Compose file](deploy/compose.yaml) runs the locally built
+`pocket-monkey:foundation` image; it is not a published production release.
+Build it using `npm --prefix revamp/web run build:image` after installing web
+dependencies. Use that wrapper rather than a bare Compose build: it prepares
+the build identity and legal assets required by the Dockerfile.
+
+All commands in this section run from the **repository root**, not `revamp/`.
+The [main README](../README.md#run-with-docker) shows first-time setup using the
+[environment template](deploy/compose.env.example) and an ignored local copy.
+
+### Environment Files and Updates
+
+Pass `--env-file .local/compose.env` explicitly rather than relying on implicit
+environment-file discovery. Its relative path is resolved from your current
+directory. Shell environment variables take precedence over file values; unset
+stale shell overrides if a file edit appears to have no effect.
+
+The template contains example values, not credentials. Keep passwords, keys and
+certificates out of it. Keep the actual local file private and outside source
+control. Only variables referenced in a Compose file are forwarded through its
+`environment` mapping. For example, setting `MONKEY_LOG_LEVEL` in the file alone
+does not override the image's default; that requires an explicit Compose
+`environment` entry. Likewise, changing a container data-path variable does not
+relocate a Docker volume automatically.
+
+Inspect or validate without starting anything:
+
+```text
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml config
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml config --quiet
+```
+
+The first command prints resolved values and mount paths; do not publish that
+output if your local configuration contains private information. After editing
+settings, apply them with the same environment file, Compose files and project:
+
+```text
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml up -d --no-build
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml ps
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml logs --tail 100 app
+```
+
+`up` recreates the service when its configuration changes. `restart` only
+restarts the existing container with its old environment. Rebuild the image
+through the wrapper after source changes, then run `up` again.
+
+### Service, Ports and Storage
+
+- `app` is the Compose service name used by `exec`, logs and operator commands.
+	The backend remains internal; only the Web-BFF is published.
+- `127.0.0.1:8080:8080` means host loopback port 8080 forwards to container port
+	8080. A host reverse proxy connects to that host port. To use host port 4181,
+	change the mapping to `127.0.0.1:4181:8080` in your deployment copy and update
+	the proxy upstream. Do not expose the backend port.
+- `monkey-data:/data` is persistent named-volume storage, not a directory beside
+	the source. It holds SQLite, images and authentication keys. Ordinary
+	recreation and `down` keep it; `down --volumes` deletes it.
+- Compose prefixes volume/container names with its project name. Keep the same
+	project name and first Compose file for subsequent commands. Changing
+	`--project-name` or `COMPOSE_PROJECT_NAME` selects different named storage;
+	it does not migrate your existing data.
+- `restart: on-failure` restarts a failed application container. It is not a
+	substitute for monitoring or backups. `stop_grace_period: 25s` allows a bounded
+	graceful shutdown before Docker forces termination.
+
+Use named storage by default. If adapting the data mount to a host directory,
+pre-create private local-disk storage owned by UID/GID 10001, with Linux mode
+0700; do not replace an existing volume without a deliberate backup/restore.
+Keep the data mount and the configured container data path aligned. Host paths
+and permissions are deployment-specific, not application environment variables.
+
+### Optional Financial Export Mount
+
+The export variables in the template do nothing with the base file alone.
+Prepare a separate absolute host export directory and set
+`MONKEY_EXPORT_HOST_PATH` to that directory. On Linux, its owner must be
+UID/GID 10001 and its permissions 0700. For example, an operator can provision
+`/srv/pocket-monkey/exports` with those ownership/permission settings; on Docker
+Desktop use a host path shared with the Linux engine. Never point it at the
+main data directory or use a symbolic link.
+
+The [export override](deploy/compose.exports.yaml) refuses to create a missing
+host directory automatically. It adds the bind mount at `/exports` and enables
+the worker through `MONKEY_EXPORT_PATH=/exports`. Set
+`MONKEY_EXPORT_KEEP_COUNT=30` for 30 completed snapshots, `1..365` for another
+finite count or `0` for unlimited retention.
+
+Validate and apply both files in this order:
+
+```text
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml -f revamp/deploy/compose.exports.yaml config --quiet
+docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml -f revamp/deploy/compose.exports.yaml up -d --no-build
+```
+
+Keep both `-f` arguments on later commands for this deployment. The override
+preserves the main data volume and adds a separate export mount; snapshots are
+sensitive financial data, not a full backup. See
+[portable financial recovery](#portable-financial-recovery) for scheduling,
+failure behavior and offline import.
+
+### Host HTTPS Reverse Proxy
+
+Compose does not supply DNS, certificates or a reverse proxy. For example, an
+Nginx proxy running on the **same host** could use this server block, after you
+provide a real certificate/key and DNS for your chosen hostname:
+
+```nginx
+server {
+		listen 443 ssl;
+		server_name monkey.home.example;
+
+		client_max_body_size 3m;
+
+		ssl_certificate /etc/nginx/tls/monkey.fullchain.pem;
+		ssl_certificate_key /etc/nginx/tls/monkey.key;
+
+		location / {
+				proxy_pass http://127.0.0.1:8080;
+				proxy_set_header Host $host;
+				proxy_set_header X-Forwarded-Proto $scheme;
+				proxy_set_header X-Forwarded-For $remote_addr;
+		}
+}
+```
+
+Set `MONKEY_PUBLIC_URL=https://monkey.home.example` to match and browse that HTTPS
+origin, not the HTTP upstream. The proxy replaces forwarded headers rather than
+accepting a client-supplied chain. Leave `MONKEY_TRUSTED_PROXIES` empty unless
+forwarded-header processing is required; then allow only the actual proxy source
+IP/CIDR seen by the Web-BFF. With Docker networking that may be a bridge gateway,
+not `127.0.0.1`; do not use a blanket trust-all range. Client-IP rate limiting
+behind a proxy also needs this trust configuration to distinguish clients.
+
+A containerized proxy cannot reach the host application's loopback listener by
+using its own `127.0.0.1`; it requires an explicitly designed shared network or
+host-routing arrangement. The snippet above is not that arrangement. Adapt and
+validate it for your host; no real-host TLS installation is claimed verified.
+Production cookies remain Secure; never weaken them to make HTTP login work.
 
 ## Verification Record
 

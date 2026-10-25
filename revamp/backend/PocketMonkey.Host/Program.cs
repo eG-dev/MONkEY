@@ -18,6 +18,19 @@ var isOperatorCommand = args.Length > 0 && args[0] is "bootstrap-manager" or "re
 var settings = InstanceSettings.Read(builder.Configuration, builder.Environment);
 settings.PrepareStorage();
 
+if (args.Length > 0 && args[0] == "import-financial")
+{
+	if (args is not ["import-financial", var snapshotPath])
+	{
+		Console.Error.WriteLine("Usage: import-financial <absolute-json-path>");
+		Environment.ExitCode = 1;
+		return;
+	}
+
+	Environment.ExitCode = await FinancialImportCommand.RunAsync(settings, snapshotPath, CancellationToken.None);
+	return;
+}
+
 builder.Logging.ClearProviders();
 
 if (isOperatorCommand)
@@ -42,6 +55,15 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<AllowanceAdministration>();
 builder.Services.AddScoped<AllowanceExecutor>();
 builder.Services.AddScoped<TransactionRetention>();
+builder.Services.AddScoped<FinancialSnapshotService>();
+
+if (!isOperatorCommand && settings.ExportPath is { } exportPath)
+{
+	var exportStore = new FinancialExportStore(exportPath, settings.ExportKeepCount);
+	exportStore.Prepare();
+	builder.Services.AddSingleton(exportStore);
+	builder.Services.AddHostedService<FinancialExportWorker>();
+}
 
 if (!isOperatorCommand)
 {

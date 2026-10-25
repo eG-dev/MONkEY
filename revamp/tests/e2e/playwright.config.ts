@@ -23,6 +23,7 @@ export default defineConfig({
         '**/authentication/about.spec.ts',
         '**/accounts/**/*.spec.ts',
         '**/ledger/**/*.spec.ts',
+        '**/recovery/**/*.spec.ts',
       ],
       grepInvert: /@api|@desktop/,
       use: { ...devices['Pixel 8'], defaultBrowserType: 'chromium' },

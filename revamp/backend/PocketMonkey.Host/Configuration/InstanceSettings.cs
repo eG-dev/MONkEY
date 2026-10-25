@@ -11,6 +11,8 @@ public sealed record InstanceSettings
     public required string DefaultLocale { get; init; }
     public string Currency { get; init; } = "EUR";
     public int TransactionRetentionMonths { get; init; } = 24;
+    public string? ExportPath { get; init; }
+    public int ExportKeepCount { get; init; } = 30;
     public LogLevel LogLevel { get; init; }
 
     public string ImagesPath => Path.Combine(DataPath, "images");
@@ -62,6 +64,35 @@ public sealed record InstanceSettings
         }
 
         var publicUrl = configuration["MONKEY_PUBLIC_URL"];
+        var exportPath = configuration["MONKEY_EXPORT_PATH"];
+        exportPath = string.IsNullOrWhiteSpace(exportPath) ? null : exportPath;
+
+        if (!int.TryParse(configuration["MONKEY_EXPORT_KEEP_COUNT"] ?? "30",
+            NumberStyles.None, CultureInfo.InvariantCulture, out var exportKeepCount) || exportKeepCount > 365)
+        {
+            throw new InvalidOperationException("MONKEY_EXPORT_KEEP_COUNT must be an integer from 0 to 365; 0 means unlimited.");
+        }
+
+        if (exportPath is not null)
+        {
+            if (!Path.IsPathFullyQualified(exportPath))
+            {
+                throw new InvalidOperationException("MONKEY_EXPORT_PATH must be an absolute path outside MONKEY_DATA_PATH.");
+            }
+
+            var dataRoot = Path.TrimEndingDirectorySeparator(Path.GetFullPath(dataPath));
+            exportPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(exportPath));
+            var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+
+            if (exportPath.Equals(dataRoot, comparison)
+                || exportPath.StartsWith(dataRoot + Path.DirectorySeparatorChar, comparison)
+                || dataRoot.StartsWith(exportPath + Path.DirectorySeparatorChar, comparison)
+                || exportPath == Path.GetPathRoot(exportPath))
+            {
+                throw new InvalidOperationException("MONKEY_EXPORT_PATH must not overlap MONKEY_DATA_PATH.");
+            }
+        }
+
         if (!int.TryParse(configuration["MONKEY_TRANSACTION_RETENTION_MONTHS"] ?? "24",
             NumberStyles.None, CultureInfo.InvariantCulture, out var retentionMonths) || retentionMonths > 120)
         {
@@ -95,6 +126,8 @@ public sealed record InstanceSettings
             DefaultLocale = locale,
             Currency = currency,
             TransactionRetentionMonths = retentionMonths,
+            ExportPath = exportPath,
+            ExportKeepCount = exportKeepCount,
             LogLevel = logLevel
         };
     }

@@ -30,3 +30,4 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0018](ADR-0018-project-license.md) | AGPLv3-only, commercial-use permissions, source-sharing obligations, and separate operator information |
 | [ADR-0019](ADR-0019-build-identity-and-about-assets.md) | One application version, validated build/source identity, and generated local project-license assets |
 | [ADR-0020](ADR-0020-shipped-component-inventory.md) | ORT discovery, targeted review, curated About entries, and preserved distribution notices |
+| [ADR-0021](ADR-0021-portable-financial-recovery.md) | Change-only financial snapshots, offline empty-target recovery, and shared test scenarios |

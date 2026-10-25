@@ -1,5 +1,26 @@
 using RuntimeChecks.Tests;
 
+if (args is ["financial-fixtures", var fixtureDirectory])
+{
+    await FinancialScenarioFixtures.WriteAsync(fixtureDirectory);
+
+    return;
+}
+
+if (args is ["financial-recovery"])
+{
+    await FinancialRecoveryCheck.RunAsync();
+
+    return;
+}
+
+if (args is ["financial-recovery", var recoveryFixtures])
+{
+    await FinancialRecoveryCheck.RunAsync(recoveryFixtures);
+
+    return;
+}
+
 if (args is ["retention-fixture", var retentionPath, var retentionAccount])
 {
     await LedgerPersistenceCheck.ConfigureRetentionFixtureAsync(retentionPath, retentionAccount);

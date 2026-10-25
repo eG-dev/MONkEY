@@ -6,6 +6,7 @@
   },
   "scripts": {
     "check": "tsc --noEmit",
+    "scenario": "node scenarios.mjs",
     "test": "playwright test",
     "test:shell": "playwright test specs/shell"
   },
