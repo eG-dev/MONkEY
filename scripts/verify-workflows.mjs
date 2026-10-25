@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -116,3 +117,74 @@ for (const [event, full, exported, tag, command] of [
   assert.equal(result.stdout.trim(), `--prefix tests/e2e ${command}`, `Incorrect verification tier for ${event}`);
 }
 console.log('PASS: actual smoke/full shell selection for 7 PR, main, manual and release/export contexts');
+
+const pushScript = release.jobs.publish.steps.find(step => step.id === 'push').run;
+const manifestFunctions = pushScript.slice(pushScript.indexOf('accept='), pushScript.indexOf('status=$(manifest)'));
+assert(manifestFunctions.includes('verify_manifest()'));
+const configDigest = `sha256:${'1'.repeat(64)}`;
+const indexDigest = `sha256:${'2'.repeat(64)}`;
+const runtimeDigest = `sha256:${'3'.repeat(64)}`;
+const otherDigest = `sha256:${'4'.repeat(64)}`;
+const runtime = { config: { digest: configDigest } };
+const platform = { digest: runtimeDigest, platform: { os: 'linux', architecture: 'amd64' } };
+const index = { manifests: [platform, { platform: { os: 'unknown', architecture: 'unknown' } }] };
+const manifestCases = [
+  ['index with attestation', index, indexDigest, indexDigest, runtime, '200', true],
+  ['different index with identical runtime', index, otherDigest, indexDigest, runtime, '200', false],
+  ['ambiguous runtime', { manifests: [platform, platform] }, indexDigest, indexDigest, runtime, '200', false],
+  ['missing runtime', { manifests: [] }, indexDigest, indexDigest, runtime, '200', false],
+  ['missing runtime response', index, indexDigest, indexDigest, runtime, '404', false],
+  ['invalid runtime config', index, indexDigest, indexDigest, { config: { digest: 'invalid' } }, '200', false],
+  ['classic config identity', runtime, runtimeDigest, configDigest, runtime, '200', true],
+  ['single manifest identity', runtime, runtimeDigest, runtimeDigest, runtime, '200', true],
+  ['different classic config', runtime, runtimeDigest, otherDigest, runtime, '200', false],
+];
+const fixtureRoot = fs.mkdtempSync(path.join(tmpdir(), 'pocket-monkey-manifests-'));
+try {
+  for (const [name, top, topDigest, expected, child, childStatus, succeeds] of manifestCases) {
+    fs.writeFileSync(path.join(fixtureRoot, 'top.json'), JSON.stringify(top));
+    fs.writeFileSync(path.join(fixtureRoot, 'child.json'), JSON.stringify(child));
+    const script = `
+      function jq() { "$JQ_EXECUTABLE" "$@"; }
+      function curl() {
+        local output headers url
+        while test "$#" -gt 0; do
+          case "$1" in
+            --output) output=$2; shift 2 ;;
+            --dump-header) headers=$2; shift 2 ;;
+            --write-out|--header) shift 2 ;;
+            *) url=$1; shift ;;
+          esac
+        done
+        if test "\${url##*/}" = "$VERSION"; then
+          cp top.json "$output"
+          printf 'Docker-Content-Digest: %s\\r\\n' "$TOP_DIGEST" > "$headers"
+          printf 200
+        else
+          cp child.json "$output"
+          printf 'Docker-Content-Digest: %s\\r\\n' "$RUNTIME_DIGEST" > "$headers"
+          printf '%s' "$CHILD_STATUS"
+        fi
+      }
+      ${manifestFunctions}
+      test "$(manifest)" = 200
+      verify_manifest
+      test "$config_digest" = "$EXPECTED_CONFIG"
+      test "$registry_digest" = "$TOP_DIGEST"
+      test "$(tr -d '\\r' < manifest.headers | awk '{ print $2 }')" = "$TOP_DIGEST"
+    `;
+    const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c', script], {
+      cwd: fixtureRoot,
+      encoding: 'utf8',
+      env: { ...process.env, JQ_EXECUTABLE: process.env.JQ_EXECUTABLE ?? 'jq', VERSION: 'test-version',
+        package: 'owner/package', registry_token: 'fixture', expected_id: expected,
+        TOP_DIGEST: topDigest, RUNTIME_DIGEST: runtimeDigest, CHILD_STATUS: childStatus, EXPECTED_CONFIG: configDigest },
+    });
+    assert.ifError(result.error);
+    if (succeeds) assert.equal(result.status, 0, `${name}: ${result.stderr}`);
+    else assert.notEqual(result.status, 0, `${name} unexpectedly passed`);
+  }
+} finally {
+  fs.rmSync(fixtureRoot, { recursive: true, force: true });
+}
+console.log(`PASS: actual registry verifier for ${manifestCases.length} index, classic, mismatch and malformed-manifest cases (jq required; JQ_EXECUTABLE overrides its path)`);

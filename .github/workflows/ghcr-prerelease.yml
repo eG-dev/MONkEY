@@ -160,16 +160,35 @@ jobs:
           registry_token=$(curl --fail --silent --show-error --user "$GITHUB_ACTOR:$GH_TOKEN" \
             "https://ghcr.io/token?service=ghcr.io&scope=repository:$package:pull,push" | jq -er .token)
           printf '::add-mask::%s\n' "$registry_token"
-          accept='application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json'
+          accept='application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json'
           manifest() {
-            curl --silent --show-error --output manifest.json --dump-header manifest.headers --write-out '%{http_code}' \
+            curl --silent --show-error --output "${2:-manifest}.json" --dump-header "${2:-manifest}.headers" --write-out '%{http_code}' \
               --header "Authorization: Bearer $registry_token" --header "Accept: $accept" \
-              "https://ghcr.io/v2/$package/manifests/$VERSION"
+              "https://ghcr.io/v2/$package/manifests/${1:-$VERSION}"
+          }
+          verify_manifest() {
+            registry_digest=$(tr -d '\r' < manifest.headers | awk 'tolower($1) == "docker-content-digest:" { print $2 }' | tail -n 1)
+            [[ "$registry_digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+            runtime_manifest=manifest.json
+            if jq -e 'has("manifests")' manifest.json > /dev/null; then
+              test "$registry_digest" = "$expected_id"
+              runtime_digest=$(jq -er '[.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64")] |
+                if length == 1 then .[0].digest else error("Expected exactly one linux/amd64 manifest") end' manifest.json)
+              [[ "$runtime_digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+              test "$(manifest "$runtime_digest" runtime-manifest)" = 200
+              runtime_manifest=runtime-manifest.json
+            else
+              if test "$registry_digest" != "$expected_id"; then
+                test "$(jq -er '.config.digest' manifest.json)" = "$expected_id"
+              fi
+            fi
+            config_digest=$(jq -er '.config.digest' "$runtime_manifest")
+            [[ "$config_digest" =~ ^sha256:[a-f0-9]{64}$ ]]
           }
           status=$(manifest)
           case "$status" in
             200)
-              test "$(jq -er '.config.digest' manifest.json)" = "$expected_id"
+              verify_manifest
               ;;
             404)
               docker tag "$expected_id" "$IMAGE:$VERSION"
@@ -181,10 +200,11 @@ jobs:
               ;;
           esac
           test "$(manifest)" = 200
-          test "$(jq -er '.config.digest' manifest.json)" = "$expected_id"
+          verify_manifest
           digest=$(tr -d '\r' < manifest.headers | awk 'tolower($1) == "docker-content-digest:" { print $2 }' | tail -n 1)
           [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
           printf 'digest=%s\n' "$digest" >> "$GITHUB_OUTPUT"
+          printf 'config_digest=%s\n' "$config_digest" >> "$GITHUB_OUTPUT"
       - name: Verify anonymous pull of the exact published digest
         id: anonymous
         env:
@@ -199,6 +219,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DIGEST: ${{ steps.push.outputs.digest }}
+          CONFIG_DIGEST: ${{ steps.push.outputs.config_digest }}
         run: |
           mkdir bundle
           jq '.name = "${COMPOSE_PROJECT_NAME:?Set a stable Compose project name}" |
@@ -230,7 +251,7 @@ jobs:
             "$GH_REPO" "$REVISION" >> bundle/DEPLOYMENT.md
           cp verified/image.json verified/build-info.json ./
           jq -n --arg version "$VERSION" --arg revision "$REVISION" --arg image "$IMAGE@$DIGEST" \
-            --arg config "$(jq -er '.[0].Id' image.json)" \
+            --arg config "$CONFIG_DIGEST" \
             '{version: $version, revision: $revision, image: $image, configDigest: $config, os: "linux", architecture: "amd64"}' > release-identity.json
           tar --sort=name --mtime='@0' --owner=0 --group=0 --numeric-owner -cf - -C bundle . | gzip -n > deployment.tar.gz
           sha256sum deployment.tar.gz image.json build-info.json release-identity.json > SHA256SUMS

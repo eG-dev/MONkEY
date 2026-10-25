@@ -1113,7 +1113,10 @@ HTTPS, backups and upgrades; production/real-host acceptance is still separate.
 The JSON build records are not an SBOM or cryptographic attestation.
 
 Local verification uses the [workflow safety checker](../scripts/verify-workflows.mjs),
-including rejected unsafe publishing changes and actual smoke/full shell selection.
+including rejected unsafe publishing changes, actual smoke/full shell selection,
+and registry-verifier cases for OCI indexes, classic image IDs and mismatched images.
+The checker requires Bash and `jq`; Git Bash works on Windows. If `jq` is not on
+`PATH`, set `JQ_EXECUTABLE` to its absolute executable path before running the checker.
 It checks safety boundaries, not exact step names or complete script text, and is
 not a substitute for workflow review. GitHub approval enforcement,
 registry credentials, actual public pulls and release creation still require a
