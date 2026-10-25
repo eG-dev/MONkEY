@@ -166,7 +166,7 @@ These checks do not approve final legal wording or complete notice coverage.
 ## Work
 
 - Review existing milestone 2 user/role administration, password flows, last-manager protection, and personal language preferences; implement only remaining agreed profile/management gaps.
-- Preserve language selection before login and saved preferences for both roles; do not rebuild the foundation selector or grant business writes through personal preferences.
+- Preserve language selection before login and saved preferences for both roles; do not rebuild the language selector or grant business writes through personal preferences.
 - Add agreed instance-settings workflows, not tenant creation/selection/invitation/deletion or email settings.
 - Deliver reviewed legal content/acceptance flows with German/English UI where required by the agreed self-hosted product scope.
 - Protect ledger/audit integrity and immutable actor IDs; expose only explicitly agreed destructive actions with suitable confirmations/re-authentication.
@@ -265,7 +265,7 @@ Commands run from the repository root:
 npm --prefix web run build
 npm --prefix web run check:catalogs
 npm --prefix tests/e2e run check
-docker build --file deploy/Dockerfile --tag pocket-monkey:foundation revamp
+docker build --file deploy/Dockerfile --tag pocket-monkey:local revamp
 npm --prefix tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
 ```
 
@@ -409,7 +409,7 @@ publication remain outside this delivered slice.
 - Npm build/server entry points prepare the metadata and exact inline/downloadable license assets. Login, shell, and About consume the same generated identity; German/English build labels distinguish release, clean development, dirty development, and unavailable revision states. The public metadata asset contains no household data or secrets.
 - The [Docker wrapper](../../web/scripts/build-image.mjs) prepares the restricted build context and passes matching OCI labels. The in-container generator validates snapshot/license/label agreement; the wrapper rechecks inputs after building. CI runs isolated build-input checks and uses the wrapper; no publishing permissions or release job was added.
 - Release identity validation rejects mismatched or non-HEAD tags, dirty/unknown provenance, inconsistent versions, and missing/unsafe repository URLs. No future repository URL is invented. A valid clean revision link alone does not satisfy all Corresponding Source or release-content obligations.
-- The existing real-image About tests now verify package/UI/OCI identity agreement and canonical license/hash fidelity. Offline runtime coverage includes metadata and license assets. Reproducible commands and watch-mode behavior are in the [foundation guide](../../docs/development.md#build-metadata-and-license-generation).
+- The existing real-image About tests now verify package/UI/OCI identity agreement and canonical license/hash fidelity. Offline runtime coverage includes metadata and license assets. Reproducible commands and watch-mode behavior are in the [development guide](../../docs/development.md#build-metadata-and-license-generation).
 - Build-only `devDependencies`, including the metadata parser, are excluded from delivered-component notices unless their material actually ships. Inventory generation and its review remain pending; illustrative third-party rows have not been replaced.
 
 Verification on 2026-10-17 passed **13 isolated real-Git build-input checks**

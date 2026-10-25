@@ -40,7 +40,7 @@ ARG BUILD_DIRTY
 ARG BUILD_REPOSITORY
 
 LABEL org.opencontainers.image.title="POCKET MONkEY" \
-    org.opencontainers.image.description="Foundation demonstration; not ready for production use" \
+    org.opencontainers.image.description="Self-hosted pocket-money tracking; not ready for production use" \
     org.opencontainers.image.version="${BUILD_VERSION}" \
     org.opencontainers.image.revision="${BUILD_REVISION}" \
     org.opencontainers.image.source="${BUILD_REPOSITORY}" \

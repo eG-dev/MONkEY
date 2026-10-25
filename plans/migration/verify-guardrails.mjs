@@ -16,7 +16,7 @@ const expected = {
   'web.instructions.md': ['web/src/app/app.ts', 'web/public/i18n/de/shell.json'],
   'backend.instructions.md': ['backend/PocketMonkey.Host/Program.cs', 'backend/PocketMonkey.Host/PocketMonkey.Host.csproj', 'backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj'],
   'csharp.instructions.md': ['backend/PocketMonkey.Host/Program.cs', 'backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs', 'tests/integration/RuntimeChecks/Program.cs'],
-  'typescript.instructions.md': ['web/src/foundation-server.ts', 'web/scripts/dev.mjs', 'tests/e2e/specs/shell.spec.ts'],
+  'typescript.instructions.md': ['web/src/server.ts', 'web/scripts/dev.mjs', 'tests/e2e/specs/shell.spec.ts'],
   'tests.instructions.md': ['tests/e2e/specs/shell.spec.ts', 'tests/integration/RuntimeChecks/Program.cs'],
   'deployment.instructions.md': ['deploy/Dockerfile', '.github/workflows/ci.yml', '.github/workflows/release.yaml'],
   'translations.instructions.md': ['web/public/i18n/de/shell.json', 'web/public/i18n/en/shell.json'],
@@ -78,20 +78,20 @@ for (const required of ['PocketMonkey.slnx', 'global.json', 'Directory.Build.pro
   'web/package-lock.json', 'backend/PocketMonkey.Host/Program.cs', 'tests/e2e/package-lock.json', 'deploy/Dockerfile']) {
   assert(fs.existsSync(path.join(root, required)), `Root application input is missing: ${required}`);
 }
-const foundation = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/ci.yml'), 'utf8'));
-assert.deepEqual(foundation.on.push.branches, ['main']);
-assert(!foundation.on.push.paths && !foundation.on.push['paths-ignore'], 'All main changes must trigger CI');
-assert(Object.hasOwn(foundation.on, 'pull_request'));
-assert(!foundation.on.pull_request?.paths && !foundation.on.pull_request?.['paths-ignore']);
-assert(!Object.hasOwn(foundation.on, 'pull_request_target'));
-assert.deepEqual(foundation.permissions, { contents: 'read' });
-for (const job of Object.values(foundation.jobs)) {
+const ci = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/ci.yml'), 'utf8'));
+assert.deepEqual(ci.on.push.branches, ['main']);
+assert(!ci.on.push.paths && !ci.on.push['paths-ignore'], 'All main changes must trigger CI');
+assert(Object.hasOwn(ci.on, 'pull_request'));
+assert(!ci.on.pull_request?.paths && !ci.on.pull_request?.['paths-ignore']);
+assert(!Object.hasOwn(ci.on, 'pull_request_target'));
+assert.deepEqual(ci.permissions, { contents: 'read' });
+for (const job of Object.values(ci.jobs)) {
   for (const step of job.steps) {
     if (step.uses) assert(/^actions\/[a-z-]+@[a-f0-9]{40}$/.test(step.uses), `Unpinned action: ${step.uses}`);
   }
 }
-assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verification must not require secrets');
-assert(Object.values(foundation.jobs).every(job => !job.defaults?.run?.['working-directory']), 'CI commands must run from the repository root');
+assert(!JSON.stringify(ci).includes('secrets.'), 'CI verification must not require secrets');
+assert(Object.values(ci.jobs).every(job => !job.defaults?.run?.['working-directory']), 'CI commands must run from the repository root');
 console.log('PASS: root application inputs present; legacy source absent; CI is root-scoped, read-only, unfiltered, secret-free, and SHA-pinned');
 
 function validatePrereleaseWorkflow(workflow) {
@@ -154,13 +154,26 @@ for (const change of [
   change(changed);
   assert.throws(() => validatePrereleaseWorkflow(changed), 'Unsafe release workflow fixture was accepted');
 }
-assert(Object.hasOwn(foundation.on, 'workflow_call'));
-assert.equal(foundation.on.workflow_call.inputs.export_image.default, false);
-const verificationSteps = foundation.jobs.foundation.steps;
+assert(Object.hasOwn(ci.on, 'workflow_call'));
+assert.equal(ci.on.workflow_call.inputs.export_image.default, false);
+const verificationSteps = ci.jobs.verify.steps;
+const localImage = 'pocket-monkey:local';
+assert.equal(ci.jobs.verify.env.MONKEY_TEST_IMAGE, localImage);
+assert.equal(YAML.parse(fs.readFileSync(path.join(root, 'deploy/compose.yaml'), 'utf8')).services.app.image, localImage);
+assert(fs.readFileSync(path.join(root, 'web/scripts/build-image.mjs'), 'utf8').includes(`default: '${localImage}'`));
+assert(fs.readFileSync(path.join(root, 'tests/e2e/fixtures.ts'), 'utf8').includes(`?? '${localImage}'`));
+assert(fs.readFileSync(path.join(root, 'tests/e2e/scenarios.mjs'), 'utf8').includes(`?? '${localImage}'`));
+const transfer = verificationSteps.find(step => step.name === 'Upload non-publishing rehearsal');
+assert.equal(transfer.with.name, 'verified-image');
+assert(prerelease.jobs.publish.steps.find(step => step.id === 'download').run.includes(`--name ${transfer.with.name} `));
+const imageLoad = prerelease.jobs.publish.steps.find(step => step.id === 'image').run;
+assert(imageLoad.includes('verified/verified-image.tar.gz'));
+assert(imageLoad.includes(`docker image inspect ${localImage} `));
+assert(fs.existsSync(path.join(root, 'web/src/server.ts')), 'The application SSR entry point must exist');
 const imageBuilds = verificationSteps.filter(step => step.run?.includes('npm --prefix web run build:image'));
 assert.equal(imageBuilds.length, 1, 'CI must build exactly one production image');
 assert(verificationSteps.findIndex(step => step.run?.includes('npm --prefix tests/e2e test')) <
-  verificationSteps.findIndex(step => step.run?.includes('docker save pocket-monkey:foundation')));
+  verificationSteps.findIndex(step => step.run?.includes('docker save pocket-monkey:local')));
 console.log('PASS: protected prerelease flow, same-run tested artifact, immutable version-only pushes, anonymous pull gate; 8 unsafe workflow mutations rejected');
 
 const backendDirectory = path.join(root, 'backend');

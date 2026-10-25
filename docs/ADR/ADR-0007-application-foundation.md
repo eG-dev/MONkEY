@@ -1,4 +1,4 @@
-# ADR-0007 Application Foundation
+# ADR-0007 Application Runtime
 
 _Creation date_: 2026-10-04
 
@@ -11,7 +11,7 @@ compatibility and process/storage failures must be verified against the real ima
 
 ## Decision
 
-- Use supported Angular 22, Node 24 LTS, Taiga UI 5, and .NET 10 versions. Pin the SDK, container base digests, and dependency lockfiles; record patch versions and reproducible commands in the [foundation guide](../development.md).
+- Use supported Angular 22, Node 24 LTS, Taiga UI 5, and .NET 10 versions. Pin the SDK, container base digests, and dependency lockfiles; record patch versions and reproducible commands in the [development guide](../development.md).
 - Use EF Core SQLite for backend-only structured storage, with foreign keys, bounded busy handling, short transactions, and migrations before readiness. Use local disk, not a network share. Monetary representation remains a separate business decision.
 - Keep the database, images, and Data Protection keys beneath one configurable private data root. Require owner-only Linux directory permissions and writable storage; fail rather than fall back to ephemeral state. Keys are filesystem-protected, not encrypted at rest by this arrangement.
 - Run production Node and .NET processes in one non-root image. Use Tini for signal/reaping duties and Supervisor for lifecycle management, with an event listener and wrapper that fail the container when an application process exits unexpectedly or cannot start. Publish only the web port and bind the backend to loopback.

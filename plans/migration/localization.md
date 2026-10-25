@@ -1,8 +1,8 @@
-# Localization foundation
+# Localization
 
-Status: foundation implemented and locally verified. Extend throughout
+Status: runtime implemented and locally verified. Extend throughout
 [UI and business logic](03-ui-business-logic.md); see [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
-and the [foundation guide](../../docs/development.md).
+and the [development guide](../../docs/development.md).
 
 ## Requirements
 

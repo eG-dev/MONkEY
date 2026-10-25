@@ -41,7 +41,7 @@ export async function loadScenario({
   scenario,
   name = 'manual',
   reset = false,
-  image = process.env['MONKEY_TEST_IMAGE'] ?? 'pocket-monkey:foundation',
+  image = process.env['MONKEY_TEST_IMAGE'] ?? 'pocket-monkey:local',
 }) {
   assert(scenarios.has(scenario), 'Unknown scenario.');
   assert(/^[a-z][a-z0-9-]{0,30}$/.test(name), 'Scenario instance names must be lowercase letters, digits or hyphens.');

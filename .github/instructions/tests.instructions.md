@@ -16,5 +16,5 @@ applyTo: "tests/e2e/**,tests/integration/**"
 - Use focused integration checks for actual persistence rollback, constraints, concurrency, migrations, job retries, and deterministic period boundaries. Do not substitute mocked repositories for those guarantees.
 - Provision fixtures and control clocks/failures through isolated test-host composition or protected operator tooling, never production-accessible test backdoors.
 - Attach traces/screenshots and relevant logs to failures without exposing credentials or private data. Diagnose flaky tests rather than hiding them with unconditional retries.
-- Playwright is the selected browser runner. Follow the [foundation guide](../../docs/development.md) for locked installs, the solution build/test-only runtime probe, image build, and checks against the actual production artifact.
+- Playwright is the selected browser runner. Follow the [development guide](../../docs/development.md) for locked installs, the solution build/test-only runtime probe, image build, and checks against the actual production artifact.
 - Fixtures use their own containers/volumes and dynamically published loopback ports. Rediscover ports after Docker restart; do not assume an automatically assigned port is stable.

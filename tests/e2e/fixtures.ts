@@ -6,7 +6,7 @@ import { request as httpRequest } from 'node:http';
 import { generate } from 'selfsigned';
 import { Instance } from './instance';
 
-export const image = process.env['MONKEY_TEST_IMAGE'] ?? 'pocket-monkey:foundation';
+export const image = process.env['MONKEY_TEST_IMAGE'] ?? 'pocket-monkey:local';
 
 export function docker(...args: string[]): string {
   return execFileSync('docker', args, { encoding: 'utf8', timeout: 30_000 }).trim();

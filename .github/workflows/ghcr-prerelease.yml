@@ -129,16 +129,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "$GITHUB_RUN_ID" --repo "$GH_REPO" --name foundation-rehearsal --dir verified
+          gh run download "$GITHUB_RUN_ID" --repo "$GH_REPO" --name verified-image --dir verified
           cd verified
           sha256sum --check SHA256SUMS
       - name: Verify the loaded artifact and release identity
         id: image
         run: |
-          docker load --input verified/foundation-image.tar.gz
+          docker load --input verified/verified-image.tar.gz
           expected_id=$(jq -er '.[0].Id' verified/image.json)
-          test "$(docker image inspect pocket-monkey:foundation --format '{{.Id}}')" = "$expected_id"
-          docker image inspect pocket-monkey:foundation > loaded-image.json
+          test "$(docker image inspect pocket-monkey:local --format '{{.Id}}')" = "$expected_id"
+          docker image inspect pocket-monkey:local > loaded-image.json
           jq -e 'length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
             .[0].Config.Labels["org.opencontainers.image.version"] == env.VERSION and
             .[0].Config.Labels["org.opencontainers.image.revision"] == env.REVISION and

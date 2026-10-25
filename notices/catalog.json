@@ -270,7 +270,7 @@
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "c7147bcf19967b3dd85e6ee107a1e719cce45c1c0a69683d3d3d51ea441be28b"
+            "sha256": "ad356f38523ea4d8a94b443cd9a4d7ff6d59dca22ee55f8cd73e6a9c372ca959"
           }
         ]
       },
@@ -292,7 +292,7 @@
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "c7147bcf19967b3dd85e6ee107a1e719cce45c1c0a69683d3d3d51ea441be28b"
+            "sha256": "ad356f38523ea4d8a94b443cd9a4d7ff6d59dca22ee55f8cd73e6a9c372ca959"
           }
         ]
       },

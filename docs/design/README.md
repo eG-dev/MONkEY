@@ -2,7 +2,7 @@
 
 Store editable draw.io sources and synchronized PNG previews here for
 [step 2B: product UX and UI design](../../plans/migration/02b-ux-ui-design.md).
-The user approved the then-current wireframes, click prototypes, visual foundations,
+The user approved the then-current wireframes, click prototypes, visual design,
 and implemented representative design on 2026-10-10, including all subsequent
 refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
@@ -454,7 +454,7 @@ prototype now has a shared About dialog and changed footer/navigation as a draft
 The repository link is an unavailable
 placeholder pending the future repository URL; it must not point to the current
 repository. The login footer sits at the bottom and flows below tall content on small screens.
-The temporary foundation/system smoke-check panel has been removed from the
+The temporary runtime/system smoke-check panel has been removed from the
 login implementation to match the approved references. Operational health checks
 remain separate from the public sign-in screen.
 
@@ -762,7 +762,7 @@ column retains the unchanged wireframe approvals.
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).
 
-Visual foundations are documented in the [design system](design-system/README.md),
+Visual design is documented in the [design system](design-system/README.md),
 with browser-viewable [specimens](design-system/specimens/index.html). Shared fonts
 and images are stored in [assets](assets).
 

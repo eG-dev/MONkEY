@@ -1,6 +1,6 @@
-# POCKET MONkEY Foundation, Authentication, Accounts, Images, Ledger, and Allowances
+# POCKET MONkEY Development Guide
 
-The build/run/storage foundation, local authentication, manager user
+The application runtime, local authentication, manager user
 administration, shared accounts and private account images, signed opening balances, deposits/withdrawals,
 paginated history, monthly allowance configuration, and durable allowance credits
 are implemented. This is not a production-ready application.
@@ -993,8 +993,8 @@ app/
 		users/            Manager user administration and temporary passwords
 		modal-dialog/     shared native dialog
 	pipes/amount-tone/, currency-amount/
-	services/accounts/, authentication/, foundation/, language/, theme/, users/
-	models/accounts/, authentication/, foundation/
+	services/accounts/, authentication/, language/, theme/, users/
+	models/accounts/, authentication/
 	i18n/               language registry and bundled-catalog loader
 	app.ts, app.html, app.config*.ts, app.routes*.ts
 styles/             global tokens, fonts, Taiga mapping, base and component classes
@@ -1310,7 +1310,7 @@ and JSON values remain `Manager`/`Member`. Invalid textual roles retain the
 `invalid_user` error contract, numeric roles are rejected, and an omitted role
 defaults to Member.
 
-The harmless foundation diagnostics remain anonymous during development and must
+The harmless runtime diagnostics remain anonymous during development and must
 be restricted or removed before production release.
 
 ### Shared Accounts
@@ -1492,7 +1492,7 @@ example for the future host/reverse proxy, not a claim that TLS has been install
 
 ```text
 docker volume create pocket-monkey-preview-data
-docker run --detach --name pocket-monkey-preview --publish 127.0.0.1:4181:8080 --env MONKEY_PUBLIC_URL=https://localhost --env TZ=Europe/Berlin --mount type=volume,source=pocket-monkey-preview-data,target=/data pocket-monkey:foundation
+docker run --detach --name pocket-monkey-preview --publish 127.0.0.1:4181:8080 --env MONKEY_PUBLIC_URL=https://localhost --env TZ=Europe/Berlin --mount type=volume,source=pocket-monkey-preview-data,target=/data pocket-monkey:local
 docker stop --timeout 25 pocket-monkey-preview
 docker start pocket-monkey-preview
 ```
@@ -1514,7 +1514,7 @@ do not publish them. No credentials are stored in ordinary application ENV value
 ## Docker Compose Configuration
 
 The [base Compose file](../deploy/compose.yaml) runs the locally built
-`pocket-monkey:foundation` image; it is not a published production release.
+`pocket-monkey:local` image; it is not a published production release.
 Build it using `npm --prefix web run build:image` after installing web
 dependencies. Use that wrapper rather than a bare Compose build: it prepares
 the build identity and legal assets required by the Dockerfile.
@@ -1731,7 +1731,7 @@ builds and the focused real-image lockout/recovery/login/restart case. That case
 also checks the resolved data-directory output and absence of EF query chatter;
 successful recovery still requires a password change after login.
 
-The [foundation workflow](../.github/workflows/ci.yml) defines locked,
+The [CI workflow](../.github/workflows/ci.yml) defines locked,
 read-only PR verification with pinned official actions. Its optional manual export
 produces a tested image archive/checksums without registry or GitHub Release
 publishing. Azure triggers exclude replacement-only changes; mixed commits with
@@ -1740,13 +1740,13 @@ legacy/shared runtime changes still trigger the appropriate existing deployments
 ## Remaining Gates
 
 - Execute GitHub-hosted CI and a fork PR; local YAML/action metadata checks are not a hosted run.
-- Run the export workflow and complete a publishing rehearsal/foundation prerelease to the selected public registry, [GHCR](ADR/ADR-0006-github-delivery.md), after agreeing on the owner/image namespace, version/tag, approval, and release policies. Verify anonymous pulls; no image/tag/release has been published.
+- Run the export workflow and complete a publishing rehearsal/development prerelease to the selected public registry, [GHCR](ADR/ADR-0006-github-delivery.md), after agreeing on the owner/image namespace, version/tag, approval, and release policies. Verify anonymous pulls; no image/tag/release has been published.
 - Confirm the real Docker host architecture, storage mount, and HTTPS/reverse-proxy configuration before production or authentication rollout.
 - Preview Mermaid rendering on GitHub. Syntax has been checked locally.
-- Restrict/remove harmless foundation diagnostics before production release; they are not a business authorization model.
+- Restrict/remove harmless runtime diagnostics before production release; they are not a business authorization model.
 
 Local authentication work does not close the remaining
-[milestone 1 gates](../plans/migration/01-stack-foundation.md#acceptance-gate).
+[milestone 1 gates](../plans/migration/01-runtime-stack.md#acceptance-gate).
 Complete those delivery/host checks and the
 [authentication gate](../plans/migration/02-authentication-authorization.md#acceptance-gate)
 before claiming deployment readiness; deliver business UI/rules in milestone 3.

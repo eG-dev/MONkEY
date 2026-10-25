@@ -1,7 +1,7 @@
 # Implementation guardrails
 
 Status: pre-scaffolding guardrails implemented and validated on 2026-10-04.
-Application enforcement and tooling refinement continue during [stack foundation](01-stack-foundation.md) and later features.
+Application enforcement and tooling refinement continue during [runtime stack](01-runtime-stack.md) and later features.
 
 Layout update (2026-10-25): the owner approved legacy source/workflow removal
 and root promotion. Current checks enforce that layout; earlier side-by-side
@@ -60,9 +60,9 @@ Use the [configuration](configuration.md), [localization](localization.md), and
 ## Confirmed replacement paths
 
 The application now lives at the repository root. Step 0 used
-representative future paths; foundation work created the
+representative future paths; runtime work created the
 `PocketMonkey.slnx`, backend API, Angular SSR workspace, E2E tooling, test-only
-runtime probe, and deployment files. See the [foundation guide](../../docs/development.md).
+runtime probe, and deployment files. See the [development guide](../../docs/development.md).
 
 | Area | Planned paths | Instructions |
 | --- | --- | --- |
@@ -86,20 +86,20 @@ stack. [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md) selects public
 GHCR distribution. Authentication/bootstrap/recovery, publishing policies,
 financial policies, and retention remain decisions for the responsible phases.
 
-## Foundation handoff
+## Runtime handoff
 
-The following records describe the original isolated foundation setup, before
+The following records describe the original isolated runtime setup, before
 the approved 2026-10-25 root promotion and legacy-source cleanup.
 
-- Root `Directory.Packages.props` would be inherited by nested .NET projects. Foundation work added replacement-local package/build/source configuration; legacy package versions are unchanged.
+- Root `Directory.Packages.props` would be inherited by nested .NET projects. Runtime work added replacement-local package/build/source configuration; legacy package versions are unchanged.
 - Root `.editorconfig` disables primary constructors for C# and does not set `root = true`. Respect that preference and inspect any ancestor rules when setting up formatting.
 - The initial root audit found no `global.json` or `Directory.Build.props/targets`. The replacement now pins its own SDK and build configuration without changing the root's legacy behavior.
-- The initial audit found both Azure workflows deployed on replacement/docs changes. Foundation work added narrow exclusions and verified that owning/shared runtime changes and manual triggers remain intact. Step 0 itself did not modify them.
-- The [foundation guide](../../docs/development.md) now records actual application build/test/container commands and local results. Step 0's original document checks are still not evidence of runtime behavior.
+- The initial audit found both Azure workflows deployed on replacement/docs changes. Runtime work added narrow exclusions and verified that owning/shared runtime changes and manual triggers remain intact. Step 0 itself did not modify them.
+- The [development guide](../../docs/development.md) now records actual application build/test/container commands and local results. Step 0's original document checks are still not evidence of runtime behavior.
 
 ## Verification record
 
-Run from the repository root with Node.js and npm available. Foundation work now
+Run from the repository root with Node.js and npm available. Runtime work now
 locks the parser packages in the separate test toolchain; the original Step 0
 validation used temporary tooling outside the repository.
 
@@ -115,7 +115,7 @@ consistency was also reviewed against the confirmed scope and ADR-0001; automate
 syntax checks do not prove that instructions are followed by an agent.
 
 Step 0 editor diagnostics reported no errors in the affected instructions, ADRs,
-or plans. No application/runtime checks existed during that phase; foundation
+or plans. No application/runtime checks existed during that phase; runtime
 builds and real-image checks are now recorded separately. GitHub-hosted execution
 and Mermaid rendering preview remain unverified.
 
@@ -128,8 +128,8 @@ and Mermaid rendering preview remain unverified.
 - [x] Instructions reference existing plans, have valid metadata, and contain no contradictory or duplicated requirements.
 - [x] Concrete validation commands are recorded as tooling becomes available; unavailable checks are identified rather than claimed as passed.
 - [ ] Critical invariants are backed by tests/CI as their features arrive; instructions alone are not enforcement.
-- [x] Tooling-specific rules are refined against the locally verified foundation stack; hosted/deployment gates remain explicit in milestone 1.
+- [x] Tooling-specific rules are refined against the locally verified runtime stack; hosted/deployment gates remain explicit in milestone 1.
 
-Feature-specific enforcement remains an ongoing delivery gate. The foundation
+Feature-specific enforcement remains an ongoing delivery gate. The runtime
 subset is covered locally and in the CI definition; this does not claim financial
 invariants or authentication exist, or that GitHub-hosted verification has run.

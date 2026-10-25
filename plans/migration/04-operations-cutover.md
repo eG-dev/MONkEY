@@ -2,9 +2,9 @@
 
 Status: portable financial recovery R7 is implemented and locally verified;
 the remaining operations and production-cutover work is not started. Basic
-lifecycle checks start in [stack foundation](01-stack-foundation.md).
+lifecycle checks start in [runtime stack](01-runtime-stack.md).
 Production cutover depends on the agreed slices in [UI and business logic](03-ui-business-logic.md),
-the [step 2B design foundation](02b-ux-ui-design.md), and application-wide design acceptance.
+the [step 2B design system](02b-ux-ui-design.md), and application-wide design acceptance.
 
 ## Goal
 
