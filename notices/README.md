@@ -1,35 +1,28 @@
-# Manual Notices and ORT Preparation
+# Third-Party Notices and Release Review
 
-[ADR-0020](../docs/ADR/ADR-0020-shipped-component-inventory.md) selects the OSS
-Review Toolkit (ORT) for the dependency/license overview. The previous bespoke
-inventory and notice-review baseline are superseded. This is preparation, not a
-completed ORT installation or a release compliance review.
+[ADR-0020](../docs/ADR/ADR-0020-shipped-component-inventory.md) selects GitHub's
+dependency graph and Dependabot alerts instead of ORT. These provide dependency
+visibility and vulnerability reporting, not license scanning or release approval.
+Keep the curated catalog, original documents, accompanying upstream material and
+targeted distribution review; do not introduce a bespoke inventory engine.
 
 ## Timing
 
-The user confirmed on 2026-10-19: source-only public GitHub development comes
-first; Docker images and releases come later. ORT setup and the release dependency
-and asset review are deferred until the revamp is finished, before release 1.0.0,
-after the repository can become public. Source publication still requires rights
-and applicable license/copyright/NOTICE material for included code and assets,
-plus a review of repository history for private data or credentials. This timing
-does not mark those checks complete or authorize a visibility/publishing action.
+On 2026-10-25, the owner confirmed completion of the distribution review for
+`0.1.0-beta.1` after selecting GitHub dependency reporting instead of ORT. The
+catalog records `coverage: complete` and `releaseReview: reviewed`. This records
+the owner's review, not an automated legal-completeness finding or an assertion
+that ORT ran. Other release verification and approval gates remain independent.
 
-**Current status, confirmed by the user on 2026-10-24:** the agreed manual notice
-collection, upstream-bundle preservation and About delivery are complete.
-ORT setup and its findings/release review are the deferred notice workstream,
-not a reason to continue expanding the manual collection. Runtime/OS and Skia
-applicability questions recorded below belong to that later review, not a
-separate active collection backlog. This completion does not change the current
-release-review requirement or independently approve public image/release delivery.
+Review changed shipped dependencies, assets, runtime/OS inputs and applicable
+source obligations before later releases. Refresh evidence and regenerate the
+canonical bundle with `npm --prefix web run assemble:notices`; do not hand-edit
+the combined notice text. Ordinary development/PR builds retain the agreed
+release-only consistency policy.
 
-The user subsequently accepted the current collection as sufficient and
-explicitly requested removal of the partial status. The catalog now records
-`coverage: complete` for the agreed curated scope and `releaseReview: pending`
-for the deferred 1.0.0 review. About's existing completed state omits the partial
-banner; the generated bundle labels this as a completed **curated collection**,
-not a comprehensive dependency inventory. Finish the revamp first, then complete
-ORT and its findings review before 1.0.0. This does not authorize publication.
+The collection notes below preserve the earlier evidence and review questions.
+References there to deferred ORT work or pending review are historical; the
+current decision and owner-confirmed status above supersede that work order.
 
 ## Proportional Review (Approved 2026-10-24)
 

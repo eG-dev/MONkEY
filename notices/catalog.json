@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "coverage": "complete",
-  "releaseReview": "pending",
+  "releaseReview": "reviewed",
   "entries": [
     {
       "id": "angular",
@@ -265,12 +265,12 @@
       "version": "10.0.13",
       "versionEvidence": {
         "kind": "files",
-        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.NETCore.App 10.0.13. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material.",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:8af87eba5e7cdafb1514d7388be287365da97c132509e84dfe252ffd552398ca as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.NETCore.App 10.0.13. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material.",
         "files": [
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "ad356f38523ea4d8a94b443cd9a4d7ff6d59dca22ee55f8cd73e6a9c372ca959"
+            "sha256": "8929f63f7f3123e974a63f3a3db50f3d363349dec1c8ae3fddd649493bd5daa0"
           }
         ]
       },
@@ -287,12 +287,12 @@
       "version": "10.0.13",
       "versionEvidence": {
         "kind": "files",
-        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.AspNetCore.App 10.0.13. MIT identifies the framework project's license; the matching release's original THIRD-PARTY-NOTICES.txt retains separately licensed material without claiming every listed item ships in this Linux application.",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:8af87eba5e7cdafb1514d7388be287365da97c132509e84dfe252ffd552398ca as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.AspNetCore.App 10.0.13. MIT identifies the framework project's license; the matching release's original THIRD-PARTY-NOTICES.txt retains separately licensed material without claiming every listed item ships in this Linux application.",
         "files": [
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "ad356f38523ea4d8a94b443cd9a4d7ff6d59dca22ee55f8cd73e6a9c372ca959"
+            "sha256": "8929f63f7f3123e974a63f3a3db50f3d363349dec1c8ae3fddd649493bd5daa0"
           }
         ]
       },
