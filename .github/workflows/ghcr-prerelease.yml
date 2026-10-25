@@ -1,4 +1,4 @@
-name: GHCR Prerelease
+name: GHCR Pre-release
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - name: Validate protected prerelease identity
+      - name: Validate protected pre-release identity
         id: identity
         run: |
           test "$GITHUB_REF_TYPE" = tag
@@ -194,7 +194,7 @@ jobs:
           trap 'rm -rf "$anonymous"' EXIT
           docker --config "$anonymous" pull "$IMAGE@$DIGEST"
           test "$(docker image inspect "$IMAGE@$DIGEST" --format '{{.Id}}')" = "$(jq -er '.[0].Id' verified/image.json)"
-      - name: Attach digest-pinned deployment assets and publish the reviewed prerelease
+      - name: Attach digest-pinned deployment assets and publish the reviewed pre-release
         id: assets
         env:
           GH_TOKEN: ${{ github.token }}
@@ -207,9 +207,9 @@ jobs:
           printf '# Reuse the existing project name when upgrading; this selects the data volume.\nCOMPOSE_PROJECT_NAME=pocket-monkey\n' > bundle/compose.env.example
           cat verified/compose.env.example >> bundle/compose.env.example
           cat > bundle/DEPLOYMENT.md <<'GUIDE'
-          # POCKET MONkEY Prerelease
+          # POCKET MONkEY Pre-release
 
-          This Linux amd64 prerelease is for acceptance testing, not production readiness.
+          This Linux amd64 pre-release is for acceptance testing, not production readiness.
           Copy compose.env.example to a private compose.env and configure your HTTPS origin,
           reverse proxy, timezone and settings. For an existing installation, retain its exact
           Compose project name and data volume; do not accept a new name that creates empty storage.
@@ -242,4 +242,4 @@ jobs:
               "$IMAGE" "$DIGEST" "$REVISION" >> notes.md
           fi
           gh release edit "$RELEASE_TAG" --repo "$GH_REPO" --draft=false --prerelease --latest=false --notes-file notes.md
-          printf 'Published prerelease %s\n\nImage: %s@%s\n' "$RELEASE_TAG" "$IMAGE" "$DIGEST" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Published pre-release %s\n\nImage: %s@%s\n' "$RELEASE_TAG" "$IMAGE" "$DIGEST" >> "$GITHUB_STEP_SUMMARY"
