@@ -145,7 +145,7 @@ try {
     fs.writeFileSync(path.join(fixtureRoot, 'top.json'), JSON.stringify(top));
     fs.writeFileSync(path.join(fixtureRoot, 'child.json'), JSON.stringify(child));
     const script = `
-      function jq() { "$JQ_EXECUTABLE" "$@"; }
+      function jq() { command "$JQ_EXECUTABLE" "$@"; }
       function curl() {
         local output headers url
         while test "$#" -gt 0; do
