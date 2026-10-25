@@ -130,10 +130,20 @@ passwords, authentication keys and images; they are **not full backups**. For a 
 backup, stop the app and preserve the complete `/data` volume and configuration. See
 [financial recovery details](docs/development.md#portable-financial-recovery).
 
+## Project Background
+
+POCKET MONkEY is a revamp of an application I originally built several years ago.
+This new version would not be possible without GitHub Copilot, which is heavily
+involved throughout its development. I use it as a development partner while
+keeping responsibility for the project's direction and decisions.
+
 ## Development
 
 Builds, local development and detailed operations: [technical guide](docs/development.md).
-This is a spare-time hobby project; use GitHub Issues for bugs and suggestions.
+This is a spare-time hobby project, and I do not depend on outside code
+contributions to move it forward. Bug reports, feedback and suggestions are
+welcome through GitHub Issues. Please read the [contribution guide](CONTRIBUTING.md)
+before starting work on a pull request.
 
 ## License
 
