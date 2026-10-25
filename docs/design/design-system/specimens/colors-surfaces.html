@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Surfaces</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
+</head>
+
+<body>
+    <div class="row">
+        <div class="sw"><div class="chip" style="background:var(--pm-color-background)"></div><div class="n">background</div><div class="v">#FFFFFF</div></div>
+        <div class="sw"><div class="chip" style="background:var(--pm-color-surface)"></div><div class="n">surface</div><div class="v">#F5F5F5</div></div>
+        <div class="sw"><div class="chip" style="background:var(--pm-color-background-dark)"></div><div class="n">background-dark</div><div class="v">#121212</div></div>
+        <div class="sw"><div class="chip" style="background:var(--pm-color-surface-dark)"></div><div class="n">surface-dark</div><div class="v">#1E1E1E</div></div>
+        <div class="sw"><div class="chip" style="background:var(--pm-color-surface-raised-dark)"></div><div class="n">raised-dark</div><div class="v">#262626</div></div>
+    </div>
+    <div class="surface-examples">
+        <section class="surface-stage" data-theme="light" aria-label="Light surfaces">
+            <h2>Light</h2>
+            <a class="surface-sample-card" href="../../prototypes/accounts-overview/index.html">
+                <strong>Emma</strong>
+                <span class="surface-sample-caption">Balance</span>
+                <span class="surface-sample-balance">+42.50 EUR</span>
+                <span class="surface-sample-caption">+5.00 EUR monthly</span>
+                <span class="surface-sample-dimmed">Credited 1 Oct 2026</span>
+            </a>
+            <div class="surface-sample-panel">
+                <strong>Allowance execution</strong>
+                <span class="surface-sample-error">Credit failed</span>
+            </div>
+            <div class="surface-sample-panel">
+                <strong>Preferences</strong>
+                <span class="surface-sample-caption">English &middot; System theme</span>
+            </div>
+            <button class="button button-secondary" type="button">Cancel</button>
+        </section>
+        <section class="surface-stage" data-theme="dark" aria-label="Dark surfaces">
+            <h2>Dark</h2>
+            <a class="surface-sample-card" href="../../prototypes/accounts-overview/index.html">
+                <strong>Emma</strong>
+                <span class="surface-sample-caption">Balance</span>
+                <span class="surface-sample-balance">+42.50 EUR</span>
+                <span class="surface-sample-caption">+5.00 EUR monthly</span>
+                <span class="surface-sample-dimmed">Credited 1 Oct 2026</span>
+            </a>
+            <div class="surface-sample-panel">
+                <strong>Allowance execution</strong>
+                <span class="surface-sample-error">Credit failed</span>
+            </div>
+            <div class="surface-sample-panel">
+                <strong>Preferences</strong>
+                <span class="surface-sample-caption">English &middot; System theme</span>
+            </div>
+            <button class="button button-secondary" type="button">Cancel</button>
+        </section>
+    </div>
+</body>
+
+</html>

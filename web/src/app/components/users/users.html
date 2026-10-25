@@ -1,0 +1,220 @@
+<section *transloco="let t" [attr.aria-label]="t('auth.users')" [attr.aria-busy]="loading()">
+  @if (auth.user()?.role !== 'Manager') {
+    <div class="message message-info" id="users-managers-only">
+      <span class="icon icon-info" aria-hidden="true"></span>
+      <div class="message-body">{{ t('users.managersOnly') }}</div>
+    </div>
+  } @else {
+    <div class="toolbar">
+      <button tuiButton appearance="primary" size="m" type="button" id="users-create" [disabled]="busy() || !interactive()" (click)="openCreate()">
+        <span class="icon icon-plus" aria-hidden="true"></span>{{ t('auth.createUser') }}
+      </button>
+    </div>
+
+    @if (saved()) {
+      <div class="message message-success" id="users-saved" role="status">
+        <span class="icon icon-circle-check" aria-hidden="true"></span>
+        <div class="message-body">{{ t('users.saved', { name: saved() }) }}</div>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="message message-danger" id="users-error" role="alert">
+        <span class="icon icon-circle-alert" aria-hidden="true"></span>
+        <div class="message-body">
+          <span>{{ t(error()) }}</span>
+          <div>
+            <button tuiButton appearance="secondary" size="s" type="button" id="users-retry" (click)="load()">{{ t('tryAgain') }}</button>
+          </div>
+        </div>
+      </div>
+    } @else if (loading() && !accounts().length) {
+      <p class="muted" id="users-loading" role="status">{{ t('users.loading') }}</p>
+    } @else {
+      <div class="table-wrap">
+        <table class="table stack-table" id="users-table">
+          <thead>
+            <tr>
+              <th>{{ t('auth.displayName') }}</th>
+              <th>{{ t('auth.username') }}</th>
+              <th>{{ t('auth.role') }}</th>
+              <th>{{ t('users.status') }}</th>
+              <th>
+                <span class="visually-hidden">{{ t('users.actions') }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (account of accounts(); track account.user.id) {
+              <tr data-testid="user-row" [attr.data-username]="account.user.username">
+                <td class="user-name">{{ account.user.displayName }}</td>
+                <td class="detail">{{ account.user.username }}</td>
+                <td class="detail">{{ t('auth.' + account.user.role) }}</td>
+                <td class="detail">
+                  {{ t(!account.isActive ? 'auth.disabled' : account.user.mustChangePassword ? 'users.mustChange' : 'auth.active') }}
+                </td>
+                <td class="row-actions">
+                  <button
+                    tuiButton
+                    data-testid="user-row-edit"
+                    appearance="flat"
+                    size="s"
+                    type="button"
+                    [disabled]="busy() || !interactive()"
+                    [attr.aria-label]="t('auth.editUser', { name: account.user.username })"
+                    [title]="t('auth.editUser', { name: account.user.username })"
+                    (click)="openEdit(account)"
+                  >
+                    <span class="icon icon-pencil" aria-hidden="true"></span>
+                  </button>
+                  <button
+                    tuiButton
+                    data-testid="user-row-reset"
+                    appearance="flat"
+                    size="s"
+                    type="button"
+                    [disabled]="busy() || !interactive()"
+                    [attr.aria-label]="t('users.resetNamed', { name: account.user.username })"
+                    [title]="t('users.resetNamed', { name: account.user.username })"
+                    (click)="openReset(account)"
+                  >
+                    <span class="icon icon-key-round" aria-hidden="true"></span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <app-modal-dialog dialogId="users-create-dialog" [open]="dialog() === 'create'" [heading]="t('auth.createUser')" (closed)="close()">
+      <form class="form" id="users-create-form" (ngSubmit)="create()">
+        @if (dialogError()) {
+          <div class="message message-danger" id="users-create-error" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(dialogError()) }}</div>
+          </div>
+        }
+        <div class="field">
+          <label for="users-create-username">{{ t('auth.username') }}</label>
+          <input
+            class="input"
+            id="users-create-username"
+            name="username"
+            autocomplete="off"
+            autocapitalize="none"
+            required
+            maxlength="100"
+            aria-describedby="users-create-username-hint"
+            [(ngModel)]="username"
+          />
+          <span class="hint" id="users-create-username-hint">{{ t('users.usernameHint') }}</span>
+        </div>
+        <div class="field">
+          <label for="users-create-display-name">{{ t('auth.displayName') }}</label>
+          <input class="input" id="users-create-display-name" name="displayName" required maxlength="100" [(ngModel)]="displayName" />
+        </div>
+        <fieldset class="field">
+          <legend>{{ t('auth.role') }}</legend>
+          <div class="segments">
+            <label
+              ><input type="radio" id="users-create-role-member" name="role" value="Member" [(ngModel)]="role" /><span>{{ t('auth.Member') }}</span></label
+            >
+            <label
+              ><input type="radio" id="users-create-role-manager" name="role" value="Manager" [(ngModel)]="role" /><span>{{ t('auth.Manager') }}</span></label
+            >
+          </div>
+        </fieldset>
+      </form>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="users-create-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="submit" id="users-create-submit" form="users-create-form" [disabled]="busy()">{{ t('auth.createUser') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+
+    <app-modal-dialog dialogId="users-edit-dialog" [open]="dialog() === 'edit'" [heading]="t('auth.editUser', { name: selected()?.user?.username ?? '' })" (closed)="close()">
+      <form class="form" id="users-edit-form" (ngSubmit)="update()">
+        @if (lastManager()) {
+          <div class="message message-info" id="users-edit-last-manager">
+            <span class="icon icon-info" aria-hidden="true"></span>
+            <div class="message-body">{{ t('users.lastManager', { name: selected()?.user?.displayName ?? '' }) }}</div>
+          </div>
+        }
+        @if (dialogError()) {
+          <div class="message message-danger" id="users-edit-error" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(dialogError()) }}</div>
+          </div>
+        }
+        <div class="field">
+          <label for="users-edit-display-name">{{ t('auth.displayName') }}</label>
+          <input class="input" id="users-edit-display-name" name="displayName" required maxlength="100" [(ngModel)]="displayName" />
+        </div>
+        <fieldset class="field">
+          <legend>{{ t('auth.role') }}</legend>
+          <div class="segments">
+            <label
+              ><input type="radio" id="users-edit-role-member" name="role" value="Member" [disabled]="lastManager()" [(ngModel)]="role" /><span>{{ t('auth.Member') }}</span></label
+            >
+            <label
+              ><input type="radio" id="users-edit-role-manager" name="role" value="Manager" [(ngModel)]="role" /><span>{{ t('auth.Manager') }}</span></label
+            >
+          </div>
+        </fieldset>
+        <div class="switch-row">
+          <span class="field-label" id="users-edit-active-label">{{ t('auth.active') }}</span>
+          <button
+            class="switch"
+            id="users-edit-active"
+            type="button"
+            role="switch"
+            aria-labelledby="users-edit-active-label"
+            [attr.aria-checked]="active"
+            [disabled]="lastManager()"
+            (click)="toggleActive()"
+          ></button>
+        </div>
+        <div class="message message-warning" id="users-edit-sessions-revoked">
+          <span class="icon icon-triangle-alert" aria-hidden="true"></span>
+          <div class="message-body">{{ t('users.sessionsRevoked') }}</div>
+        </div>
+      </form>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="users-edit-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="submit" id="users-edit-save" form="users-edit-form" [disabled]="busy()">{{ t('auth.save') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+
+    <app-modal-dialog dialogId="users-reset-dialog" [open]="dialog() === 'reset'" [heading]="t('users.resetNamed', { name: selected()?.user?.username ?? '' })" (closed)="close()">
+      @if (dialogError()) {
+        <div class="message message-danger" id="users-reset-error" role="alert">
+          <span class="icon icon-circle-alert" aria-hidden="true"></span>
+          <div class="message-body">{{ t(dialogError()) }}</div>
+        </div>
+      }
+      <p>{{ t('users.resetConfirm', { name: selected()?.user?.displayName ?? '' }) }}</p>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="users-reset-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="button" id="users-reset-submit" [disabled]="busy()" (click)="reset()">{{ t('auth.resetPassword') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+
+    <app-modal-dialog dialogId="users-password-dialog" [open]="dialog() === 'password'" [heading]="t('auth.temporaryPassword')" [dismissible]="false" (closed)="finishPassword()">
+      <p>{{ t('users.temporaryFor', { name: selected()?.user?.displayName ?? '' }) }}</p>
+      <div class="temporary-password">
+        <code id="users-temporary-password">{{ temporaryPassword() }}</code>
+        <button tuiButton appearance="secondary" size="m" type="button" id="users-temporary-password-copy" (click)="copyPassword()">
+          <span class="icon icon-copy" aria-hidden="true"></span>{{ t(copied() ? 'users.copied' : 'users.copy') }}
+        </button>
+      </div>
+      <div class="message message-warning">
+        <span class="icon icon-triangle-alert" aria-hidden="true"></span>
+        <div class="message-body">{{ t('users.temporaryOnce', { name: selected()?.user?.displayName ?? '' }) }}</div>
+      </div>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="primary" size="m" type="button" id="users-password-done" (click)="finishPassword()">{{ t('users.done') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+  }
+</section>

@@ -1,0 +1,198 @@
+// POCKET MONkEY design tokens, synchronized with docs/design/design-system/styles.
+
+@mixin light-tokens {
+  --pm-color-primary: #650000;
+  --pm-color-secondary: #e5bfa7;
+  --pm-color-tertiary: #f7ebe3;
+  --pm-color-text-dimmed: #666666;
+  --pm-color-text-dimmed-dark: #a6a6a6;
+  --pm-white: #ffffff;
+  --grey-0: #ffffff;
+  --grey-25: #fafafa;
+  --grey-50: #f5f5f5;
+  --grey-100: #ebebeb;
+  --grey-200: #d6d6d6;
+  --grey-300: #bdbdbd;
+  --grey-400: #8a8a8a;
+  --grey-500: #6e6e6e;
+  --grey-600: #545454;
+  --grey-700: #3d3d3d;
+  --grey-800: #2e2e2e;
+  --grey-900: #1f1f1f;
+
+  --text-primary: #242424;
+  --text-dimmed: var(--pm-color-text-dimmed);
+  --text-secondary: var(--grey-600);
+  --text-muted: var(--grey-500);
+  --text-disabled: var(--grey-400);
+  --text-link: var(--pm-color-primary);
+  --text-link-hover: #841a1a;
+  --text-selected: var(--pm-color-primary);
+  --text-nav: var(--grey-700);
+  --text-placeholder: var(--grey-500);
+  --surface-app: #ffffff;
+  --surface-panel: #f5f5f5;
+  --surface-raised: #ffffff;
+  --surface-card: var(--surface-panel);
+  --surface-card-hover: var(--surface-hover);
+  --surface-sunken: var(--grey-25);
+  --surface-header: #2e2e2e;
+  --surface-header-hover: rgba(255, 255, 255, 0.12);
+  --text-on-header: #ffffff;
+  --border-header: var(--grey-900);
+  --focus-on-header: var(--pm-color-secondary);
+  --surface-nav: var(--grey-25);
+  --surface-hover: var(--grey-100);
+  --surface-selected: var(--pm-color-tertiary);
+  --surface-input: #ffffff;
+  --surface-overlay: rgba(18, 18, 18, 0.5);
+  --border-subtle: var(--grey-100);
+  --border-default: var(--grey-200);
+  --border-strong: var(--grey-400);
+  --border-focus: var(--pm-color-primary);
+  --control-border: var(--grey-500);
+  --indicator-selected: var(--pm-color-primary);
+  --icon-default: var(--grey-700);
+  --action-primary: var(--pm-color-primary);
+  --action-primary-hover: #841a1a;
+  --action-primary-active: #4a0000;
+  --action-primary-text: #ffffff;
+  --action-secondary: var(--grey-100);
+  --action-secondary-hover: var(--grey-200);
+  --action-secondary-active: var(--grey-300);
+  --action-danger: #c62828;
+  --action-danger-hover: #a61f1f;
+  --action-disabled: var(--grey-100);
+  --action-deposit: #00732f;
+  --action-deposit-hover: #005c25;
+  --action-deposit-text: #ffffff;
+  --action-withdrawal: #c62828;
+  --action-withdrawal-hover: #a61f1f;
+  --action-withdrawal-text: #ffffff;
+  --amount-positive: #00732f;
+  --amount-negative: #c62828;
+  --amount-zero: var(--text-primary);
+  --status-success-fg: #00732f;
+  --status-success-bg: #e0f8ea;
+  --status-success-solid: #00c853;
+  --status-warning-fg: #8a4b00;
+  --status-warning-bg: #fff1dc;
+  --status-warning-solid: #ff9800;
+  --status-danger-fg: #c62828;
+  --error-text-fg: #c4352b;
+  --status-error-fg: var(--error-text-fg);
+  --status-danger-bg: #fdecea;
+  --status-danger-solid: #f44336;
+  --status-info-fg: #0b5fae;
+  --status-info-bg: #e3f2fd;
+  --status-info-solid: #2196f3;
+}
+
+@mixin dark-tokens {
+  color-scheme: dark;
+  --text-primary: #e0e0e0;
+  --text-dimmed: var(--pm-color-text-dimmed-dark);
+  --text-secondary: #b3b3b3;
+  --text-muted: #9d9d9d;
+  --text-disabled: #6b6b6b;
+  --text-link: var(--pm-color-secondary);
+  --text-link-hover: #edcfbc;
+  --text-selected: var(--pm-color-secondary);
+  --text-nav: var(--text-primary);
+  --text-placeholder: #9d9d9d;
+  --surface-app: #121212;
+  --surface-panel: #1e1e1e;
+  --surface-raised: #262626;
+  --surface-card: var(--surface-panel);
+  --surface-card-hover: var(--surface-hover);
+  --surface-sunken: #181818;
+  --surface-header: #1f1f1f;
+  --border-header: #3c3c3c;
+  --surface-nav: #181818;
+  --surface-hover: #2c2c2c;
+  --surface-selected: #3b2a22;
+  --surface-input: #1e1e1e;
+  --border-subtle: #2b2b2b;
+  --border-default: #3c3c3c;
+  --border-strong: #6b6b6b;
+  --border-focus: var(--pm-color-secondary);
+  --control-border: #858585;
+  --indicator-selected: var(--pm-color-secondary);
+  --icon-default: var(--text-primary);
+  --action-primary: var(--pm-color-secondary);
+  --action-primary-hover: #edcfbc;
+  --action-primary-active: #d4a88c;
+  --action-primary-text: #242424;
+  --action-secondary: #333333;
+  --action-secondary-hover: var(--grey-700);
+  --action-secondary-active: var(--grey-600);
+  --action-disabled: #262626;
+  --action-deposit: #5fd38d;
+  --action-deposit-hover: #7fdda3;
+  --action-deposit-text: #242424;
+  --action-withdrawal: #ff8a80;
+  --action-withdrawal-hover: #ffa49c;
+  --action-withdrawal-text: #242424;
+  --amount-positive: #5fd38d;
+  --amount-negative: #ff8a80;
+  --status-success-fg: #5fd38d;
+  --status-success-bg: #0f2e1c;
+  --status-warning-fg: #ffb65c;
+  --status-warning-bg: #33240c;
+  --status-danger-fg: #ff8a80;
+  --error-text-fg: #ff6b60;
+  --status-error-fg: var(--error-text-fg);
+  --status-danger-bg: #3a1416;
+  --status-info-fg: #7cbdf5;
+  --status-info-bg: #0e2438;
+}
+
+:root {
+  @include light-tokens;
+
+  --font-sans: 'Roboto', Arial, sans-serif;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --type-display: var(--weight-light) 40px/1.15 var(--font-sans);
+  --type-h1: var(--weight-bold) 24px/1.25 var(--font-sans);
+  --type-h2: var(--weight-bold) 18px/1.3 var(--font-sans);
+  --type-h3: var(--weight-medium) 16px/1.35 var(--font-sans);
+  --type-body: var(--weight-regular) 14px/1.5 var(--font-sans);
+  --type-body-lg: var(--weight-regular) 16px/1.5 var(--font-sans);
+  --type-label: var(--weight-medium) 13px/1.35 var(--font-sans);
+  --type-caption: var(--weight-regular) 12px/1.4 var(--font-sans);
+  --space-2: 0.25rem;
+  --space-3: 0.5rem;
+  --space-4: 0.75rem;
+  --space-5: 1rem;
+  --space-7: 1.5rem;
+  --space-9: 2.5rem;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+  --control-md: 2.25rem;
+  --control-lg: 2.75rem;
+  --header-height: 3.5rem;
+  --nav-width: 16.5rem;
+  --content-max-width: 90rem;
+  --account-name-column-width: 22.5rem;
+  --account-balance-column-width: 13.75rem;
+  --account-allowance-column-width: 15rem;
+  --account-action-column-width: 5rem;
+  --shadow-1: 0 1px 2px rgba(20, 20, 20, 0.08);
+  --shadow-2: 0 2px 6px rgba(20, 20, 20, 0.1), 0 1px 2px rgba(20, 20, 20, 0.06);
+  --shadow-3: 0 12px 32px rgba(20, 20, 20, 0.18), 0 2px 6px rgba(20, 20, 20, 0.08);
+}
+
+:root[tuiTheme='dark'] {
+  @include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme-preference='system']:not([tuiTheme='light']) {
+    @include dark-tokens;
+  }
+}

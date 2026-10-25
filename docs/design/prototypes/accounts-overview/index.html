@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POCKET MONkEY</title>
+  <link rel="stylesheet" href="../../design-system/styles.css">
+  <link rel="stylesheet" href="../shared/prototype.css">
+  <style>
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-7); list-style: none; margin: 0; padding: 0; }
+    .card { display: grid; gap: var(--space-4); height: 100%; padding: var(--space-5); border: 0; border-radius: var(--radius-md); background: var(--surface-card); color: var(--text-primary); text-decoration: none; }
+    .card:hover { background: var(--surface-card-hover); box-shadow: var(--shadow-1); color: var(--text-primary); }
+    .card-head { display: flex; align-items: center; gap: var(--space-5); }
+    .card-name { font: var(--type-h2); overflow-wrap: anywhere; }
+    .card-label { font: var(--type-caption); color: var(--text-secondary); }
+    .card-balance { font: var(--type-h1); font-size: var(--fs-32); text-align: end; font-variant-numeric: tabular-nums; }
+    .card-balance.muted { font: var(--type-body-lg); }
+    .card-allowance { padding-block: var(--space-2); font: var(--type-caption); }
+    .allowance-execution { display: block; margin-top: var(--space-1); color: var(--text-dimmed); }
+    .allowance-execution-failed { color: var(--status-error-fg); }
+    .skeleton-card { height: 196px; }
+    @media (max-width: 599px) { .cards { grid-template-columns: 1fr; gap: var(--space-4); } .manage-long { display: none; } }
+    @media (min-width: 600px) { .manage-short { display: none; } }
+  </style>
+</head>
+<body>
+  <div id="view"></div>
+  <script src="../shared/data.js"></script>
+  <script src="../shared/prototype.js"></script>
+  <script>
+    const view = document.getElementById('view');
+
+    function allowanceLine(account) {
+      const status = PM.allowanceStatus(account);
+
+      if (!status.configured) {
+        return PM.esc(PM.t('noAllowance'));
+      }
+
+      const amount = PM.amountHtml(status.amount);
+      const failed = !status.credited && status.failed;
+      const state = status.credited ? PM.t('creditedOn', { date: PM.date(status.credited, false) })
+        : failed ? PM.t('creditFailed')
+        : PM.t('nextOn', { date: PM.date(status.next, false) });
+      return `${PM.t('perMonth', { amount })}<span class="allowance-execution${failed ? ' allowance-execution-failed' : ''}">${PM.esc(state)}</span>`;
+    }
+
+    function render() {
+      const manager = PM.isManager();
+      const header = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('overview'))}</h1>${manager ? `<a href="../accounts/index.html"><span class="manage-long">${PM.esc(PM.t('manageAccounts'))}</span><span class="manage-short">${PM.esc(PM.t('manage'))}</span>${PM.icon('forward')}</a>` : ''}</div>`;
+      const state = PM.prefs.viewState;
+
+      if (state === 'loading') {
+        view.innerHTML = `${header}<ul class="cards" aria-busy="true" aria-label="${PM.esc(PM.t('loading'))}">${'<li class="skeleton skeleton-card"></li>'.repeat(4)}</ul>`;
+        return;
+      }
+
+      if (state === 'error') {
+        view.innerHTML = `${header}<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body"><span>${PM.esc(PM.t('loadFailed'))}</span><div><button class="button button-secondary" type="button" id="retry">${PM.esc(PM.t('tryAgain'))}</button></div></div></div>`;
+        document.getElementById('retry').addEventListener('click', () => PM.savePrefs({ viewState: 'normal' }));
+        return;
+      }
+
+      const accounts = state === 'empty' ? [] : PM.accountsByName();
+
+      if (!accounts.length) {
+        view.innerHTML = `${header}<div class="empty"><strong>${PM.esc(PM.t('empty'))}</strong>${manager ? `<a href="../accounts/index.html">${PM.esc(PM.t('createFirst'))}</a>` : ''}</div>`;
+        return;
+      }
+
+      view.innerHTML = `${header}<ul class="cards">${accounts.map(account => {
+        const balance = PM.money(PM.balance(account));
+        return `<li><a class="card" href="../account-details/index.html?account=${account.id}">
+          <span class="card-head">${PM.avatar(account)}<span><span class="card-name">${PM.esc(account.name)}</span><br><span class="card-label">${PM.esc(PM.t('balance'))}</span></span></span>
+          <span class="card-balance ${balance.cls}">${PM.esc(balance.text)}</span>
+          <span class="card-allowance">${allowanceLine(account)}</span>
+        </a></li>`;
+      }).join('')}</ul>`;
+    }
+
+    PM.init({
+      active: 'overview',
+      title: 'overview',
+      states: ['normal', 'loading', 'empty', 'error'],
+      render,
+      strings: {
+        en: { manageAccounts: 'Manage accounts', manage: 'Manage', balance: 'Balance', loading: 'Loading accounts', loadFailed: 'Accounts could not be loaded.', empty: 'No accounts yet', createFirst: 'Create the first account in Accounts', noAllowance: 'No monthly allowance', perMonth: '{amount} monthly', creditedOn: 'credited {date}', nextOn: 'next on {date}', creditFailed: 'credit failed' },
+        de: { manageAccounts: 'Konten verwalten', manage: 'Verwalten', balance: 'Kontostand', loading: 'Konten werden geladen', loadFailed: 'Die Konten konnten nicht geladen werden.', empty: 'Noch keine Konten', createFirst: 'Erstes Konto unter Konten anlegen', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} monatlich', creditedOn: 'gutgeschrieben am {date}', nextOn: 'nächste Gutschrift am {date}', creditFailed: 'Gutschrift fehlgeschlagen' }
+      }
+    });
+  </script>
+</body>
+</html>

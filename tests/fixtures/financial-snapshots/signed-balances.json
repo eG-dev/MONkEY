@@ -1,0 +1,105 @@
+{
+  "formatVersion": 1,
+  "snapshotId": "90000000-0000-0000-0000-000000000002",
+  "capturedAtUtc": "2026-06-15T12:00:00.0000000Z",
+  "applicationVersion": "fixture",
+  "currency": "EUR",
+  "timezone": "UTC",
+  "transactionRetentionMonths": 24,
+  "accounts": [
+    {
+      "id": "10000000-0000-0000-0000-000000000001",
+      "name": "Positive",
+      "normalizedName": "POSITIVE",
+      "balance": "12.50"
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000002",
+      "name": "Negative",
+      "normalizedName": "NEGATIVE",
+      "balance": "-5.00"
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000003",
+      "name": "Zero",
+      "normalizedName": "ZERO",
+      "balance": "0.00"
+    }
+  ],
+  "ledgerEntries": [
+    {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "amount": "10.00",
+      "sequenceNumber": "1",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000001",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000001Z",
+      "source": "opening",
+      "comment": null,
+      "allowanceMonth": null
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000002",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "amount": "5.00",
+      "sequenceNumber": "2",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000002",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000002Z",
+      "source": "deposit",
+      "comment": null,
+      "allowanceMonth": null
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000003",
+      "accountId": "10000000-0000-0000-0000-000000000001",
+      "amount": "-2.50",
+      "sequenceNumber": "3",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000003",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000003Z",
+      "source": "withdrawal",
+      "comment": null,
+      "allowanceMonth": null
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000004",
+      "accountId": "10000000-0000-0000-0000-000000000002",
+      "amount": "-5.00",
+      "sequenceNumber": "4",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000004",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000004Z",
+      "source": "opening",
+      "comment": null,
+      "allowanceMonth": null
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000005",
+      "accountId": "10000000-0000-0000-0000-000000000003",
+      "amount": "0.00",
+      "sequenceNumber": "5",
+      "idempotencyKey": "30000000-0000-0000-0000-000000000005",
+      "actorId": "historical-manager",
+      "actorDisplayName": "Historical Manager",
+      "occurredAtUtc": "2026-06-15T12:00:00.0000005Z",
+      "source": "opening",
+      "comment": null,
+      "allowanceMonth": null
+    }
+  ],
+  "auditEvents": [],
+  "allowanceRevisions": [],
+  "allowanceExecutions": [],
+  "retiredLedgerKeys": [],
+  "ledgerMaintenanceState": {
+    "lastAllocatedSequenceNumber": "5",
+    "retentionRevision": "0",
+    "lastCompletedAtUtc": null
+  }
+}

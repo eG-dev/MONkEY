@@ -1,0 +1,6 @@
+// Global design foundations; component-specific layout stays in each component's SCSS.
+@use 'styles/fonts';
+@use 'styles/tokens';
+@use 'styles/taiga';
+@use 'styles/base';
+@use 'styles/components';

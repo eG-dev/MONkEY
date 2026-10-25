@@ -1,0 +1,48 @@
+@baseUrl = http://127.0.0.1:5180
+@accountId = account-id
+@sessionCookie = monkey-session=replace-with-local-session-cookie
+@csrfToken = replace-with-local-antiforgery-token
+@idempotencyKey = 00000000-0000-0000-0000-000000000002
+@cursor = replace-with-url-encoded-nextCursor
+
+### Read history after signing in with a ready local Manager or Member.
+GET {{baseUrl}}/api/accounts/{{accountId}}/transactions?pageSize=20
+Cookie: {{sessionCookie}}
+
+### Continue the same snapshot using the returned nextCursor.
+GET {{baseUrl}}/api/accounts/{{accountId}}/transactions?pageSize=20&cursor={{cursor}}
+Cookie: {{sessionCookie}}
+
+### Deposit; retain the key only when replaying this exact posting.
+POST {{baseUrl}}/api/accounts/{{accountId}}/transactions
+Content-Type: application/json
+Cookie: {{sessionCookie}}
+X-Monkey-CSRF: {{csrfToken}}
+
+{
+  "source": "deposit",
+  "amount": "1.25",
+  "comment": "Manual deposit",
+  "idempotencyKey": "{{idempotencyKey}}"
+}
+
+### Withdrawal; choose a fresh key for a different posting.
+POST {{baseUrl}}/api/accounts/{{accountId}}/transactions
+Content-Type: application/json
+Cookie: {{sessionCookie}}
+X-Monkey-CSRF: {{csrfToken}}
+
+{
+  "source": "withdrawal",
+  "amount": "2.50",
+  "comment": "Manual withdrawal",
+  "idempotencyKey": "00000000-0000-0000-0000-000000000003"
+}
+
+### A ready user receives not_found for a missing account.
+GET {{baseUrl}}/api/accounts/missing/transactions
+Cookie: {{sessionCookie}}
+
+### Page sizes outside the bounded range are rejected.
+GET {{baseUrl}}/api/accounts/{{accountId}}/transactions?pageSize=101
+Cookie: {{sessionCookie}}

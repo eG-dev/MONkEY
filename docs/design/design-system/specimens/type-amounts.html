@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Amounts</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
+    <style>
+        .stage {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            margin: -20px;
+        }
+
+        .stage > div {
+            padding: 20px;
+            background: var(--surface-app);
+            color: var(--text-primary);
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 4px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        td:last-child {
+            text-align: right;
+        }
+
+        tfoot td {
+            border-top: 2px solid var(--border-strong);
+            border-bottom: 0;
+            font-weight: var(--weight-medium);
+        }
+
+        .positive {
+            color: var(--amount-positive);
+        }
+
+        .negative {
+            color: var(--amount-negative);
+        }
+
+        .zero {
+            color: var(--amount-zero);
+        }
+
+        .figure {
+            margin-top: 12px;
+            font: var(--type-figure);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stage">
+        <div>
+            <table class="pm-num">
+                <tbody>
+                    <tr><td>Pocket money</td><td class="positive">+5.00 EUR</td></tr>
+                    <tr><td>Book</td><td class="negative">&minus;12.99 EUR</td></tr>
+                    <tr><td>Correction</td><td class="zero">0.00 EUR</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr><td>Balance</td><td class="negative">&minus;7.99 EUR</td></tr>
+                </tfoot>
+            </table>
+            <div class="figure pm-num positive">+1.248,50 <span style="font:var(--type-h3)">EUR</span></div>
+            <div class="v">positive · negative · zero, light theme</div>
+        </div>
+        <div data-theme="dark">
+            <table class="pm-num">
+                <tbody>
+                    <tr><td>Pocket money</td><td class="positive">+5.00 EUR</td></tr>
+                    <tr><td>Book</td><td class="negative">&minus;12.99 EUR</td></tr>
+                    <tr><td>Correction</td><td class="zero">0.00 EUR</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr><td>Balance</td><td class="negative">&minus;7.99 EUR</td></tr>
+                </tfoot>
+            </table>
+            <div class="figure pm-num zero">0,00 <span style="font:var(--type-h3)">EUR</span></div>
+            <div class="v">dark theme</div>
+        </div>
+    </div>
+</body>
+
+</html>

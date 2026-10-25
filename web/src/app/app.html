@@ -1,0 +1,26 @@
+<tui-root>
+  @if (signedIn()) {
+    <app-shell>
+      <router-outlet />
+    </app-shell>
+  } @else {
+    <app-login />
+  }
+  @defer (when about.opened()) {
+    <app-about-dialog />
+  } @loading {
+    <p id="about-loading" role="status" *transloco="let t">{{ t('about.loading') }}</p>
+  } @error {
+    @if (about.opened()) {
+      <app-modal-dialog dialogId="about-load-error-dialog" [open]="true" [heading]="t('about.title')" (closed)="about.close()" *transloco="let t">
+        <div class="message message-danger" id="about-load-error" role="alert">
+          <span class="icon icon-circle-alert" aria-hidden="true"></span>
+          <div class="message-body">{{ t('about.loadFailed') }}</div>
+        </div>
+        <ng-container dialog-actions>
+          <button tuiButton appearance="secondary" size="m" type="button" id="about-load-error-reload" (click)="reload()">{{ t('about.reload') }}</button>
+        </ng-container>
+      </app-modal-dialog>
+    }
+  }
+</tui-root>

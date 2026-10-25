@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dark palette</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
+    <style>
+        .dark {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: -20px;
+            padding: 20px;
+            background: var(--surface-app);
+            color: var(--text-primary);
+        }
+
+        .top {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+            gap: 16px;
+        }
+
+        .panel {
+            flex: 1;
+            padding: 16px;
+            background: var(--surface-panel);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+        }
+
+        .actions {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button-primary:hover {
+            background: var(--action-primary-hover);
+        }
+
+        .button-primary:active {
+            background: var(--action-primary-active);
+        }
+
+        .messages {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .message {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid;
+            color: var(--text-primary);
+        }
+
+        .message b {
+            font: var(--type-label);
+        }
+
+        .count {
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            font: var(--weight-medium) var(--fs-11)/20px var(--font-sans);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dark" data-theme="dark">
+        <div class="top">
+            <div class="panel">
+                <div style="font:var(--type-h3)">Panel on surface-dark</div>
+                <div style="color:var(--text-secondary);margin-top:4px">Secondary text · <a href="#">link in peach</a></div>
+                <div style="font:var(--type-h2);margin-top:12px" class="pm-num">1.234,50 EUR</div>
+            </div>
+            <div class="actions">
+                <button class="button button-primary" type="button">Record deposit</button>
+                <span class="button button-secondary">Cancel</span>
+            </div>
+        </div>
+        <div class="messages">
+            <div class="message" style="background:var(--status-success-bg);border-color:var(--status-success-solid)"><b style="color:var(--status-success-fg)">Success</b>Deposit recorded</div>
+            <div class="message" style="background:var(--status-warning-bg);border-color:var(--status-warning-solid)"><b style="color:var(--status-warning-fg)">Warning</b>Unsaved changes</div>
+            <div class="message" style="background:var(--status-danger-bg);border-color:var(--status-danger-solid)"><b style="color:var(--status-danger-fg)">Error</b>Could not save</div>
+            <div class="message" style="background:var(--status-info-bg);border-color:var(--status-info-solid)"><b style="color:var(--status-info-fg)">Info</b>Allowance planned</div>
+            <span class="count" style="background:var(--count-bg);color:var(--count-fg)">3</span>
+            <span class="count" style="background:var(--count-danger-bg);color:var(--pm-white)">2</span>
+        </div>
+    </div>
+</body>
+
+</html>

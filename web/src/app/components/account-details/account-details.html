@@ -1,0 +1,320 @@
+<section *transloco="let t" aria-labelledby="account-details-title">
+  <a class="back-link" id="account-details-back" routerLink="/"><span class="icon icon-arrow-left" aria-hidden="true"></span>{{ t('shell.overview') }}</a>
+
+  @if (loading()) {
+    <div class="layout" id="account-details-loading" [attr.aria-label]="t('accounts.loading')" aria-busy="true">
+      <div class="skeleton" style="height: 20rem"></div>
+      <div class="skeleton" style="height: 30rem"></div>
+    </div>
+  } @else if (error()) {
+    <div class="message message-danger" id="account-details-error" role="alert">
+      <span class="icon icon-circle-alert" aria-hidden="true"></span>
+      <div class="message-body">
+        <span>{{ t(error()) }}</span>
+        <div>
+          <button tuiButton appearance="secondary" size="s" type="button" id="account-details-retry" [disabled]="!interactive()" (click)="reload()">
+            {{ t('tryAgain') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  } @else if (account(); as current) {
+    <div class="details-head">
+      @if (auth.user()?.role === 'Manager') {
+        <button class="avatar-button" id="account-details-image-edit" type="button" [disabled]="busy() || !interactive()" (click)="openImage()"
+          [attr.aria-label]="t('accounts.changeImage', { name: current.name })" [title]="t('accounts.changeImage', { name: current.name })">
+          <app-account-avatar id="account-details-avatar" [name]="current.name" [imageUrl]="current.imageUrl" />
+          <span class="avatar-badge icon icon-pencil" id="account-details-image-edit-badge" aria-hidden="true"></span>
+        </button>
+      } @else {
+        <app-account-avatar id="account-details-avatar" [name]="current.name" [imageUrl]="current.imageUrl" />
+      }
+      <h1 class="page-title" id="account-details-title">{{ current.name }}</h1>
+      @if (auth.user()?.role === 'Manager') {
+        <button tuiButton appearance="flat" size="s" type="button" id="account-details-rename" [disabled]="busy() || !interactive()"
+          [attr.aria-label]="t('accounts.editNamed', { name: current.name })" [title]="t('accounts.editNamed', { name: current.name })"
+          (click)="openRename()">
+          <span class="icon icon-pencil" aria-hidden="true"></span>
+        </button>
+      }
+      <div class="view-actions">
+        <button
+          tuiButton
+          appearance="flat"
+          size="s"
+          type="button"
+          id="account-details-refresh"
+          [disabled]="busy() || !interactive()"
+          [attr.aria-label]="t('accounts.refresh')"
+          [title]="t('accounts.refresh')"
+          (click)="reload()"
+        >
+          <span class="icon icon-refresh-cw" aria-hidden="true"></span>
+        </button>
+        @if (auth.user()?.role === 'Manager' && current.balance !== null) {
+          <button tuiButton appearance="primary" size="m" type="button" id="account-details-record-transaction" [disabled]="busy() || !interactive()" (click)="transactionDialog.set(true)">
+            <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.recordTransaction') }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <app-modal-dialog dialogId="account-details-image-dialog" [open]="imageDialog()" [heading]="t('accounts.accountImage')" (closed)="closeImage()">
+      <div class="form">
+        @if (imageError()) {
+          <div class="message message-danger" id="account-details-image-error" role="alert"><div class="message-body">{{ t(imageError()) }}</div></div>
+        }
+        <div class="image-field">
+          <app-account-avatar id="account-details-image-preview" [name]="current.name" [imageUrl]="imagePreview()" />
+          <div class="field">
+            <label for="account-details-image-upload">{{ t('accounts.uploadImage') }}</label>
+            <input id="account-details-image-upload" type="file" accept="image/png,image/jpeg,image/webp" [disabled]="busy()"
+              aria-describedby="account-details-image-hint" (change)="chooseImage($event)" />
+          </div>
+        </div>
+        <span class="hint" id="account-details-image-hint">{{ t('accounts.imageHint') }}</span>
+        @if (imagePreview()) {
+          <button tuiButton appearance="flat" size="m" type="button" id="account-details-image-remove" [disabled]="busy()" (click)="removeImageDraft()">
+            <span class="icon icon-trash-2" aria-hidden="true"></span>{{ t('accounts.removeImage') }}
+          </button>
+        }
+      </div>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="account-details-image-cancel" [disabled]="busy()" (click)="closeImage()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="button" id="account-details-image-save" [disabled]="busy() || !imageDirty()" (click)="saveImage()">{{ t('accounts.save') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+
+    <app-modal-dialog dialogId="account-details-rename-dialog" [open]="renaming()" [heading]="t('accounts.editNamed', { name: current.name })" (closed)="renaming.set(false)">
+      <form class="form" id="account-details-rename-form" (ngSubmit)="saveName()">
+        @if (renameError()) {
+          <div class="message message-danger" id="account-details-rename-error" role="alert"><div class="message-body">{{ t(renameError()) }}</div></div>
+        }
+        <div class="field">
+          <label for="account-details-rename-name">{{ t('accounts.name') }}</label>
+          <input class="input" id="account-details-rename-name" name="accountName" maxlength="40" required autocomplete="off"
+            aria-describedby="account-details-rename-name-hint" [attr.aria-invalid]="renameError() ? 'true' : null" [disabled]="busy()" [(ngModel)]="name" />
+          <span class="hint" id="account-details-rename-name-hint">{{ t('accounts.nameHint') }}</span>
+        </div>
+      </form>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="account-details-rename-cancel" [disabled]="busy()" (click)="renaming.set(false)">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="submit" id="account-details-rename-save" form="account-details-rename-form" [disabled]="busy()">{{ t('accounts.save') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+
+    @if (saved()) {
+      <div class="message message-success saved" id="account-details-saved" role="status">
+        <span class="icon icon-circle-check" aria-hidden="true"></span>
+        <div class="message-body">{{ t(saved()) }}</div>
+      </div>
+    }
+
+    <div class="layout">
+      <div class="side">
+        <section class="panel" aria-labelledby="account-details-balance-label">
+          <div class="label" id="account-details-balance-label">{{ t('accounts.balance') }}</div>
+          <div class="balance" id="account-details-balance" [class]="current.balance | amountTone">
+            {{ current.balance === null ? t('accounts.uninitialized') : (current.balance | currencyAmount: language.locale() : current.currency : true) }}
+          </div>
+        </section>
+
+        <app-account-allowance [account]="current" />
+
+        @if (auth.user()?.role === 'Manager') {
+          @if (current.balance === null) {
+            <section class="panel" aria-labelledby="account-details-opening-title">
+              <h2 class="panel-title" id="account-details-opening-title">{{ t('accounts.openingTitle') }}</h2>
+              <form class="form" id="account-details-opening-form" (ngSubmit)="confirmOpening()">
+                <p class="muted">{{ t('accounts.openingIntro') }}</p>
+                @if (formError()) {
+                  <div class="message message-danger" id="account-details-opening-error" role="alert">
+                    <span class="icon icon-circle-alert" aria-hidden="true"></span>
+                    <div class="message-body">{{ t(formError()) }}</div>
+                  </div>
+                }
+                <div class="field">
+                  <label for="account-details-opening-amount">{{ t('accounts.openingAmount', { currency: current.currency }) }}</label>
+                  <input
+                    class="input"
+                    id="account-details-opening-amount"
+                    name="openingAmount"
+                    inputmode="decimal"
+                    maxlength="21"
+                    required
+                    autocomplete="off"
+                    aria-describedby="account-details-opening-hint"
+                    [attr.aria-invalid]="formError() ? 'true' : null"
+                    [disabled]="busy() || !interactive()"
+                    [(ngModel)]="amount"
+                  />
+                  <span class="hint" id="account-details-opening-hint">{{ t('accounts.openingHint') }}</span>
+                </div>
+                <div class="field">
+                  <label for="account-details-opening-comment">{{ t('accounts.comment') }}</label>
+                  <textarea
+                    class="input"
+                    id="account-details-opening-comment"
+                    name="openingComment"
+                    maxlength="500"
+                    rows="3"
+                    [disabled]="busy() || !interactive()"
+                    [(ngModel)]="comment"
+                  ></textarea>
+                </div>
+                <button tuiButton appearance="primary" size="m" type="submit" id="account-details-opening-submit" [disabled]="busy() || !interactive()">
+                  {{ t('accounts.postOpening') }}
+                </button>
+              </form>
+            </section>
+          }
+        } @else if (current.balance === null) {
+          <div class="message message-info" id="account-details-no-opening">
+            <span class="icon icon-info" aria-hidden="true"></span>
+            <div class="message-body">{{ t('accounts.noOpeningMember') }}</div>
+          </div>
+        }
+      </div>
+
+      @if (current.balance !== null) {
+        <section class="panel" aria-labelledby="account-details-history-title">
+          <h2 class="panel-title" id="account-details-history-title">{{ t('accounts.history') }}</h2>
+          @if (historyError()) {
+            <div class="message message-danger" id="account-details-history-error" role="alert">
+              <span class="icon icon-circle-alert" aria-hidden="true"></span>
+              <div class="message-body">{{ t(historyError()) }}</div>
+            </div>
+          }
+          @if (historyLoading()) {
+            <p class="muted" id="account-details-history-loading" role="status">{{ t('accounts.historyLoading') }}</p>
+          } @else if (history().length) {
+            <div class="table-wrap">
+              <table class="table history" id="account-details-history">
+                <thead>
+                  <tr>
+                    <th class="numeric">{{ t('accounts.amount') }}</th>
+                    <th>{{ t('accounts.type') }}</th>
+                    <th>{{ t('accounts.commentHeader') }}</th>
+                    <th>{{ t('accounts.postedBy') }}</th>
+                    <th>{{ t('accounts.postedAt') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (entry of history(); track entry.id) {
+                    <tr data-testid="ledger-entry">
+                      <td class="numeric" [class]="entry.amount | amountTone">
+                        {{ entry.amount | currencyAmount: language.locale() : entry.currency : true }}
+                      </td>
+                      <td class="type">{{ t('accounts.sources.' + entry.source) }}</td>
+                      <td class="comment">
+                        @if (entry.source === 'allowance' && entry.allowanceMonth) {
+                          {{ t('accounts.allowancePeriod', { month: entry.allowanceMonth }) }}
+                        } @else if (entry.comment) {
+                          {{ entry.comment }}
+                        } @else {
+                          <span class="wide-only muted">—</span><span class="phone-only">{{ t('accounts.sources.' + entry.source) }}</span>
+                        }
+                      </td>
+                      <td class="by">{{ entry.source === 'allowance' ? t('accounts.automatic') : entry.actorDisplayName }}</td>
+                      <td class="meta">{{ historyDate(entry.occurredAtUtc, false) }} · {{ entry.source === 'allowance' ? t('accounts.automatic') : entry.actorDisplayName }}</td>
+                      <td class="date">
+                        <time [attr.datetime]="entry.occurredAtUtc">{{ historyDate(entry.occurredAtUtc) }}</time>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="empty" id="account-details-history-empty">{{ t('accounts.historyEmpty') }}</div>
+          }
+          <nav class="pager" [attr.aria-label]="t('accounts.historyPages')">
+            <button tuiButton appearance="secondary" size="s" type="button" id="account-details-history-previous" [disabled]="historyPage() === 0 || historyLoading() || busy()" (click)="previousHistory()">
+              <span class="icon icon-chevron-left" aria-hidden="true"></span>{{ t('accounts.previousPage') }}
+            </button>
+            <span id="account-details-history-page">{{ t('accounts.page', { page: historyPage() + 1 }) }}</span>
+            <button tuiButton appearance="secondary" size="s" type="button" id="account-details-history-next" [disabled]="!nextCursor() || historyLoading() || busy()" (click)="nextHistory()">
+              {{ t('accounts.nextPage') }}<span class="icon icon-chevron-right" aria-hidden="true"></span>
+            </button>
+          </nav>
+        </section>
+      }
+    </div>
+
+    <app-modal-dialog dialogId="account-details-transaction-dialog" [open]="transactionDialog()" [heading]="t('accounts.recordTransaction')" (closed)="transactionDialog.set(false)">
+      @if (transactionDialog()) {
+        <ng-container [ngTemplateOutlet]="transactionForm" [ngTemplateOutletContext]="{ $implicit: current }" />
+      }
+    </app-modal-dialog>
+
+    <app-modal-dialog dialogId="account-details-opening-confirm-dialog" [open]="confirmingOpening()" [heading]="t('accounts.confirmOpeningTitle')" (closed)="confirmingOpening.set(false)">
+      <p id="account-details-opening-confirm-summary">{{ t('accounts.confirmOpening', { amount: openingPreview() | currencyAmount: language.locale() : current.currency : true, name: current.name }) }}</p>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="account-details-opening-confirm-cancel" [disabled]="busy()" (click)="confirmingOpening.set(false)">
+          {{ t('accounts.cancel') }}
+        </button>
+        <button tuiButton appearance="primary" size="m" type="button" id="account-details-opening-confirm-submit" [disabled]="busy()" (click)="postOpening()">{{ t('accounts.postOpening') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+
+    <ng-template #transactionForm let-current>
+      <form class="form transaction-form" id="account-details-transaction-form" [attr.data-mode]="source()" (ngSubmit)="postTransaction()">
+        <fieldset class="field">
+          <legend class="visually-hidden">{{ t('accounts.type') }}</legend>
+          <div class="segments">
+            <label>
+              <input type="radio" id="account-details-transaction-deposit" name="source" value="deposit" [checked]="source() === 'deposit'" (change)="chooseSource('deposit')" />
+              <span><span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.deposit') }}</span>
+            </label>
+            <label>
+              <input type="radio" id="account-details-transaction-withdrawal" name="source" value="withdrawal" [checked]="source() === 'withdrawal'" (change)="chooseSource('withdrawal')" />
+              <span><span class="icon icon-minus" aria-hidden="true"></span>{{ t('accounts.withdrawal') }}</span>
+            </label>
+          </div>
+        </fieldset>
+        @if (formError()) {
+          <div class="message message-danger" id="account-details-transaction-error" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">{{ t(formError()) }}</div>
+          </div>
+        }
+        <div class="field">
+          <label for="account-details-transaction-amount">{{ t('accounts.transactionAmount', { currency: current.currency }) }}</label>
+          <div class="input-wrap">
+            <span class="input-prefix" aria-hidden="true">{{ source() === 'deposit' ? '+' : '−' }}</span>
+            <input
+              class="input"
+              id="account-details-transaction-amount"
+              name="transactionAmount"
+              inputmode="decimal"
+              maxlength="20"
+              required
+              autocomplete="off"
+              aria-describedby="account-details-transaction-hint"
+              [attr.aria-invalid]="formError() ? 'true' : null"
+              [disabled]="busy() || !interactive()"
+              [(ngModel)]="amount"
+            />
+          </div>
+          <span class="hint" id="account-details-transaction-hint">{{ t('accounts.amountHint') }}</span>
+        </div>
+        <div class="field">
+          <label for="account-details-transaction-comment">{{ t('accounts.comment') }}</label>
+          <textarea
+            class="input"
+            id="account-details-transaction-comment"
+            name="transactionComment"
+            maxlength="500"
+            rows="3"
+            [disabled]="busy() || !interactive()"
+            [(ngModel)]="comment"
+          ></textarea>
+        </div>
+        <button tuiButton size="m" type="submit" id="account-details-transaction-submit" [appearance]="source() === 'deposit' ? 'pm-deposit' : 'pm-withdrawal'" [disabled]="busy() || !interactive()">
+          <span class="icon" [class]="source() === 'deposit' ? 'icon-plus' : 'icon-minus'" aria-hidden="true"></span>
+          {{ t(source() === 'deposit' ? 'accounts.recordDeposit' : 'accounts.recordWithdrawal') }}
+        </button>
+      </form>
+    </ng-template>
+  }
+</section>

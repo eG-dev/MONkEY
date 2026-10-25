@@ -1,0 +1,116 @@
+.name-cell > a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  text-decoration: none;
+}
+
+.account-name {
+  overflow-wrap: anywhere;
+}
+
+.account-identity {
+  min-width: 0;
+}
+
+.name-cell app-account-avatar {
+  flex-shrink: 0;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.mobile-status {
+  display: none;
+}
+
+.row-actions {
+  text-align: end;
+}
+
+@media (min-width: 600px) {
+  .table {
+    table-layout: fixed;
+  }
+
+  .name-column {
+    width: var(--account-name-column-width);
+  }
+
+  .balance-column {
+    width: var(--account-balance-column-width);
+  }
+
+  .allowance-column {
+    width: var(--account-allowance-column-width);
+  }
+
+  .actions-column {
+    width: var(--account-action-column-width);
+  }
+
+  .table td.numeric {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+  .name-column,
+  .allowance-column {
+    width: 26%;
+  }
+
+  .balance-column {
+    width: 20%;
+  }
+}
+
+@media (max-width: 599px) {
+  .stack-table tr {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 40%);
+    grid-template-rows: auto 1fr;
+  }
+
+  .stack-table td {
+    min-width: 0;
+  }
+
+  .stack-table td.name {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+  }
+
+  .name-cell > a {
+    min-height: 44px;
+    align-items: start;
+  }
+
+  .mobile-status {
+    display: block;
+    margin-top: var(--space-1);
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .numeric {
+    grid-column: 2;
+    grid-row: 1;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .allowance {
+    grid-row: 2;
+    align-self: start;
+    font: var(--type-caption);
+  }
+
+  .status,
+  .row-actions {
+    display: none;
+  }
+}

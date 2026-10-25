@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="about-legal-r5" name="About - Legal information (R5 draft)">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageScale="1" pageWidth="2700" pageHeight="1240" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="viewport" parent="1" vertex="1" value="" style="rounded=0;fillColor=none;strokeColor=#000000;strokeWidth=3;dashed=1;">
+          <mxGeometry x="600" y="200" width="1440" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="dialog" parent="1" vertex="1" value="" style="rounded=0;fillColor=#FFFFFF;strokeColor=#999999;">
+          <mxGeometry x="620" y="220" width="1400" height="820" as="geometry" />
+        </mxCell>
+        <mxCell id="heading" parent="1" vertex="1" value="About" style="text;html=1;fontFamily=Calibri;fontSize=28;fontStyle=1;align=left;">
+          <mxGeometry x="640" y="230" width="1240" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="close" parent="1" vertex="1" value="&#215;" style="rounded=0;html=1;fontFamily=Calibri;fontSize=28;fillColor=#FFFFFF;strokeColor=#999999;">
+          <mxGeometry x="1956" y="230" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="header-rule" parent="1" vertex="1" value="" style="fillColor=#999999;strokeColor=none;">
+          <mxGeometry x="640" y="300" width="1360" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-overview" parent="1" vertex="1" value="Overview" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="640" y="330" width="200" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-notices" parent="1" vertex="1" value="Third-party notices" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="1100" y="330" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-legal" parent="1" vertex="1" value="Legal information" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fontStyle=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;">
+          <mxGeometry x="1400" y="330" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tab-license" parent="1" vertex="1" value="Project license" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#999999;">
+          <mxGeometry x="840" y="330" width="260" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="operator-heading" parent="1" vertex="1" value="Operator responsibilities" style="text;html=1;fontFamily=Calibri;fontSize=20;fontStyle=1;align=left;">
+          <mxGeometry x="640" y="410" width="1320" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="operator-content" parent="1" vertex="1" value="[Reviewed operator information: hosting, access/security, updates, backups and recovery]" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;">
+          <mxGeometry x="640" y="455" width="1360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="warranty-heading" parent="1" vertex="1" value="Warranty and liability" style="text;html=1;fontFamily=Calibri;fontSize=20;fontStyle=1;align=left;">
+          <mxGeometry x="640" y="580" width="1320" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="warranty-content" parent="1" vertex="1" value="[Reviewed warranty/liability information, subject to applicable law and consistent with AGPL]" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;">
+          <mxGeometry x="640" y="625" width="1360" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="privacy-heading" parent="1" vertex="1" value="Privacy information" style="text;html=1;fontFamily=Calibri;fontSize=20;fontStyle=1;align=left;">
+          <mxGeometry x="640" y="745" width="1320" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="privacy-content" parent="1" vertex="1" value="[Reviewed privacy information: actual instance data processing and the instance operator's responsibilities]" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;">
+          <mxGeometry x="640" y="790" width="1360" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="tabs-note" parent="1" vertex="1" value="Last tab: Legal information. Distinct operator, warranty/liability and privacy sections in the same modal from login or app, for both roles. Retain current language/theme. Close or Escape restores focus to the opener; background stays inert. No consent gate or per-user acceptance state." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="2140" y="200" width="480" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="operator-note" parent="1" vertex="1" value="Placeholder structure only, not approved legal wording. Distinguish the person operating the instance from household users and project maintainers. Review hosting, access/HTTPS, configuration, updates, storage and backups/recovery responsibilities. No invented operator identity, contact or hosting promise." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="40" y="400" width="480" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="warranty-note" parent="1" vertex="1" value="Wording remains subject to review. Qualify warranty/liability statements by mandatory law; do not promise absolute immunity, a service-level agreement or continued maintenance/support. This information must not restrict AGPL rights or replace the full text on the dedicated Project license tab." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="2140" y="560" width="480" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="privacy-note" parent="1" vertex="1" value="Privacy is a distinct section, not a liability disclaimer. Describe actual local processing and operator responsibilities after review; do not imply project maintainers host household data or reuse cloud legal texts. Publish no household/user details. German/English content must be reviewed separately from this layout." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="40" y="760" width="480" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="phone-note" parent="1" vertex="1" value="Desktop: near-full viewport dialog; phone: full-screen with one readable column. Header/tabs remain visible; content scrolls internally. Text grows naturally; dashed boxes are placeholders, not fixed-height panels. Scroll the tab strip horizontally without page overflow. Accessible tabs and visible focus. Bundle required content locally." style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;spacing=16;">
+          <mxGeometry x="2140" y="800" width="480" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="tabs-arrow" parent="1" edge="1" source="tabs-note" target="tab-legal" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="operator-arrow" parent="1" edge="1" source="operator-note" target="operator-content" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="warranty-arrow" parent="1" edge="1" source="warranty-note" target="warranty-content" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="privacy-arrow" parent="1" edge="1" source="privacy-note" target="privacy-content" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="phone-arrow" parent="1" edge="1" source="phone-note" target="privacy-heading" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

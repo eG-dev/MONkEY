@@ -1,0 +1,52 @@
+# Local development databases, media, and authentication keys
+/.local/
+
+# .NET build outputs and diagnostics
+[Bb]in/
+[Oo]bj/
+artifacts/
+publish/
+[Tt]est[Rr]esult*/
+*.log
+*.binlog
+
+# Local Azure settings, publish credentials, and certificates
+local.settings.json
+*.pubxml
+*.azurePubxml
+*.publishsettings
+*.pfx
+
+# Python deployment helper bytecode
+__pycache__/
+*.pyc
+
+# Draw.io diagram backup files
+*.drawio.bkp
+
+# Local editor state; keep shared VS Code configuration
+.vs/
+*.suo
+*.user
+*.rsuser
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+**/playwright-report/
+**/test-results/
+.local/
+.build/

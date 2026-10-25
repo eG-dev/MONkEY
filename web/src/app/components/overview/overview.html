@@ -1,0 +1,72 @@
+<section *transloco="let t" [attr.aria-labelledby]="'overview-title'" [attr.aria-busy]="loading()">
+  <div class="page-header">
+    <h1 class="page-title" id="overview-title">{{ t('shell.overview') }}</h1>
+    @if (auth.user()?.role === 'Manager') {
+      <a id="overview-manage-accounts" routerLink="/accounts">{{ t('overview.manage') }}<span class="icon icon-arrow-right" aria-hidden="true"></span></a>
+    }
+  </div>
+
+  @if (loading()) {
+    <ul class="cards" [attr.aria-label]="t('accounts.loading')">
+      @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+        <li class="skeleton placeholder"></li>
+      }
+    </ul>
+  } @else if (error()) {
+    <div class="message message-danger" id="overview-error" role="alert">
+      <span class="icon icon-circle-alert" aria-hidden="true"></span>
+      <div class="message-body">
+        <span>{{ t(error()) }}</span>
+        <div>
+          <button tuiButton appearance="secondary" size="s" type="button" id="overview-retry" [disabled]="!interactive()" (click)="load()">{{ t('tryAgain') }}</button>
+        </div>
+      </div>
+    </div>
+  } @else if (accounts().length) {
+    <ul class="cards" id="overview-accounts">
+      @for (account of accounts(); track account.id) {
+        <li>
+          <a class="card" data-testid="account-card" [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
+            <span class="card-head">
+              <app-account-avatar [name]="account.name" [imageUrl]="account.imageUrl" />
+              <span class="card-title">
+                <span class="card-name">{{ account.name }}</span>
+                <span class="label">{{ t('accounts.balance') }}</span>
+              </span>
+            </span>
+            <span class="card-balance" data-testid="card-balance" [class]="account.balance | amountTone">
+              {{ account.balance === null ? t('accounts.uninitialized') : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
+            </span>
+            <span class="card-allowance" data-testid="card-allowance">
+              @if (account.allowance.current?.enabled && account.allowance.current?.amount; as amount) {
+                <span class="amount-positive">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}</span>
+                @if (account.allowance.outstandingExecution; as execution) {
+                  <span class="allowance-execution" data-testid="card-allowance-execution" [class.allowance-execution-failed]="execution.status === 'failed'">
+                    {{ t(execution.status === 'failed' ? 'accounts.creditFailed' : 'accounts.creditPending', { month: execution.businessMonth }) }}
+                  </span>
+                } @else if (account.allowance.latestExecution?.creditedAtUtc; as creditedAt) {
+                  <span class="allowance-execution" data-testid="card-allowance-execution">
+                    {{ t('accounts.lastCredit', { date: creditDate(creditedAt, account.allowance.timezone) }) }}
+                  </span>
+                } @else {
+                  <span class="allowance-execution" data-testid="card-allowance-execution">
+                    {{ t('accounts.nextCredit', { month: account.allowance.nextEffectiveMonth }) }}
+                  </span>
+                }
+              } @else {
+                {{ t('accounts.noAllowance') }}
+              }
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="empty" id="overview-empty">
+      <strong>{{ t('accounts.empty') }}</strong>
+      @if (auth.user()?.role === 'Manager') {
+        <a id="overview-create-first" routerLink="/accounts">{{ t('overview.createFirst') }}</a>
+      }
+    </div>
+  }
+</section>

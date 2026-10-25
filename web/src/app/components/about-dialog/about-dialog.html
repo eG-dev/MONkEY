@@ -1,0 +1,209 @@
+<ng-container *transloco="let t">
+  @if (about.opened()) {
+    <app-modal-dialog dialogId="about-dialog" [open]="true" [fullSize]="true" [heading]="t('about.title')" (closed)="close()">
+      <div class="about-layout">
+        <div class="about-tabs" role="tablist" [attr.aria-label]="t('about.title')">
+          @for (tab of tabs; track tab) {
+            <button
+              #tabButton
+              tuiButton
+              appearance="flat"
+              size="m"
+              type="button"
+              role="tab"
+              [id]="'about-tab-' + tab"
+              [attr.aria-selected]="selected() === tab"
+              [attr.aria-controls]="'about-panel-' + tab"
+              [tabIndex]="selected() === tab ? 0 : -1"
+              (click)="select(tab, true)"
+              (keydown)="navigateTabs($event, tab)"
+            >
+              {{ t(tab === 'license' ? 'about.projectLicense' : 'about.' + tab) }}
+            </button>
+          }
+        </div>
+        <div class="about-content" #content>
+          <div id="about-panel-overview" role="tabpanel" aria-labelledby="about-tab-overview" tabindex="0" [hidden]="selected() !== 'overview'">
+            <section aria-labelledby="about-product-title">
+              <div class="about-brand">
+                <img src="/images/monkey_face.png" alt="" width="44" height="44" />
+                <h3 id="about-product-title">POCKET MONkEY</h3>
+              </div>
+              <p class="muted" id="about-version">{{ t('shell.version', { version }) }}</p>
+              <p class="hint" id="about-revision">{{ t(revisionKey, { revision: build.revision ?? '' }) }}</p>
+              <div class="about-links">
+                @if (build.repositoryUrl) {
+                  <a id="about-github" [href]="build.repositoryUrl" target="_blank" rel="noopener"
+                    ><span class="icon icon-external-link" aria-hidden="true"></span>{{ t('about.repository') }}</a
+                  >
+                } @else {
+                  <span role="link" id="about-github" aria-disabled="true"><span class="icon icon-external-link" aria-hidden="true"></span>{{ t('about.repository') }}</span>
+                }
+                @if (build.sourceUrl) {
+                  <a id="about-source" [href]="build.sourceUrl" target="_blank" rel="noopener"><span class="icon icon-code" aria-hidden="true"></span>{{ t('about.source') }}</a>
+                } @else {
+                  <span role="link" id="about-source" aria-disabled="true"><span class="icon icon-code" aria-hidden="true"></span>{{ t('about.source') }}</span>
+                }
+              </div>
+              @if (!build.repositoryUrl || !build.sourceUrl) {
+                <p class="hint">{{ t(build.repositoryUrl ? 'about.sourceUnmatched' : 'about.sourcePending') }}</p>
+              }
+            </section>
+          </div>
+          <div id="about-panel-license" role="tabpanel" aria-labelledby="about-tab-license" tabindex="0" [hidden]="selected() !== 'license'">
+            <section aria-labelledby="about-license-title">
+              <h3 id="about-license-title">{{ t('about.projectLicense') }} &middot; AGPL-3.0-only</h3>
+              <a id="about-license-file" href="/licenses/AGPL-3.0-only.txt" target="_blank" rel="noopener">{{ t('about.openLicense') }}</a>
+              <pre id="about-license-text" tabindex="0" [attr.aria-label]="t('about.licenseText')">{{ projectLicense }}</pre>
+            </section>
+          </div>
+          <div id="about-panel-notices" role="tabpanel" aria-labelledby="about-tab-notices" tabindex="0" [hidden]="selected() !== 'notices'">
+            <section aria-labelledby="about-notices-title">
+              <h3 id="about-notices-title">{{ t('about.notices') }}</h3>
+              @if (noticesCoverage === 'partial') {
+                <div class="message message-info" id="about-inventory-review">
+                  <span class="icon icon-info" aria-hidden="true"></span>
+                  <p class="message-body">{{ t('about.inventoryPartial') }}</p>
+                </div>
+              }
+              <div class="field about-search">
+                <label for="about-search">{{ t('about.search') }}</label
+                ><input #searchInput id="about-search" class="input" type="search" autocomplete="off" [value]="search()" (input)="search.set(searchInput.value)" />
+              </div>
+              <p class="hint" id="about-search-status" role="status" aria-live="polite">{{ t('about.count', { count: filteredComponents().length }) }}</p>
+              @for (component of filteredComponents(); track component.id) {
+                <details
+                  #noticeRow
+                  class="notice-row"
+                  [attr.data-testid]="'about-component-' + component.id"
+                  [open]="expanded().has(component.id)"
+                  (toggle)="toggleComponent(component.id, noticeRow)"
+                >
+                  <summary data-testid="about-component-toggle">
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span><span class="notice-name">{{ component.name }}</span>
+                    <span class="notice-meta" data-testid="about-component-metadata-groups">
+                      @if (component.groups.length > 1) {
+                        {{ t('about.groupCount', { count: component.groups.length }) }}
+                      } @else {
+                        @for (member of component.metadata; track member.id; let first = $first) {
+                          @if (!first) {
+                            <span aria-hidden="true" data-testid="about-metadata-separator">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                          }
+                          <span data-testid="about-component-metadata"
+                            >{{ member.version ?? t('about.versionPending') }} &middot;
+                            {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</span
+                          >
+                        }
+                      }
+                    </span>
+                  </summary>
+                  <div class="notice-content">
+                    @for (group of component.groups; track group.id) {
+                      <section class="notice-group" [attr.data-testid]="group.testId" [attr.aria-labelledby]="group.id + '-title'">
+                        <header class="notice-group-heading">
+                          <h4 [id]="group.id + '-title'">{{ group.titleKey ? t(group.titleKey) : component.name }}</h4>
+                          <span class="notice-meta" data-testid="about-group-metadata">
+                            @if (group.metadata.length === 1) {
+                              {{ group.metadata[0].version ?? t('about.versionPending') }} &middot;
+                              {{ group.metadata[0].licenseExpression ?? t(group.metadata[0].licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}
+                            } @else {
+                              {{ t('about.mixedMetadata') }}
+                            }
+                          </span>
+                        </header>
+                        <p class="notice-package-label">{{ t('about.packages') }}</p>
+                        <ul class="notice-package-list" data-testid="about-group-members">
+                          @for (member of group.members; track member.id) {
+                            <li [attr.data-testid]="'about-member-' + member.id">
+                              <span class="notice-package-name">{{ member.name }}</span>
+                              @if (group.metadata.length > 1) {
+                                <span class="notice-meta" data-testid="about-member-metadata"
+                                  >{{ member.version ?? t('about.versionPending') }} &middot;
+                                  {{ member.licenseExpression ?? t(member.licensingStatus === 'public-domain' ? 'about.publicDomain' : 'about.licensePending') }}</span
+                                >
+                              }
+                              <a [href]="member.upstreamUrl" target="_blank" rel="noopener">{{ t('about.componentSource') }}</a>
+                              @if (member.reviewStatus !== 'reviewed') {
+                                <p class="hint">{{ t('about.reviewPending') }}</p>
+                              }
+                            </li>
+                          }
+                        </ul>
+                        @for (document of group.documents; track document.id) {
+                          @let title = t(document.titleKey, { license: group.licenseExpression ?? '' });
+                          <div class="notice-document" [attr.data-testid]="'about-document-' + document.id">
+                            <div class="notice-document-heading">
+                              <button
+                                tuiButton
+                                appearance="flat"
+                                size="m"
+                                class="notice-document-toggle"
+                                type="button"
+                                data-testid="about-document-toggle"
+                                [id]="document.controlId + '-toggle'"
+                                [attr.aria-expanded]="expandedDocuments().has(document.controlId)"
+                                [attr.aria-controls]="document.controlId + '-body'"
+                                (click)="toggleDocument(document.controlId)"
+                              >
+                                <span class="icon icon-chevron-right" aria-hidden="true"></span><span>{{ title }}</span>
+                              </button>
+                              <a
+                                data-testid="about-document-file"
+                                [href]="document.url"
+                                target="_blank"
+                                rel="noopener"
+                                [attr.aria-label]="t('about.openDocument', { document: title })"
+                                >{{ t('about.openOriginal') }}</a
+                              >
+                            </div>
+                            <div
+                              class="notice-document-body"
+                              role="region"
+                              [id]="document.controlId + '-body'"
+                              [attr.aria-labelledby]="document.controlId + '-toggle'"
+                              [hidden]="!expandedDocuments().has(document.controlId)"
+                            >
+                              <pre data-testid="about-document-text" tabindex="0" [attr.aria-label]="t('about.documentText', { document: title })">{{ document.text }}</pre>
+                            </div>
+                          </div>
+                        }
+                      </section>
+                    }
+                  </div>
+                </details>
+              } @empty {
+                <div class="empty" id="about-no-results">
+                  <p>{{ t('about.noResults') }}</p>
+                </div>
+              }
+            </section>
+          </div>
+          <div id="about-panel-legal" role="tabpanel" aria-labelledby="about-tab-legal" tabindex="0" [hidden]="selected() !== 'legal'">
+            <div class="message message-info" id="about-legal-review">
+              <span class="icon icon-info" aria-hidden="true"></span>
+              <p class="message-body">{{ t('about.legalContext') }}</p>
+            </div>
+            <section id="about-operator-section" aria-labelledby="about-operator-title">
+              <h3 id="about-operator-title">{{ t('about.operator') }}</h3>
+              @for (paragraph of t('about.operatorText').split('\n\n'); track $index) {
+                <p>{{ paragraph }}</p>
+              }
+            </section>
+            <section id="about-warranty-section" aria-labelledby="about-warranty-title">
+              <h3 id="about-warranty-title">{{ t('about.warranty') }}</h3>
+              @for (paragraph of t('about.warrantyText').split('\n\n'); track $index) {
+                <p>{{ paragraph }}</p>
+              }
+            </section>
+            <section id="about-privacy-section" aria-labelledby="about-privacy-title">
+              <h3 id="about-privacy-title">{{ t('about.privacy') }}</h3>
+              @for (paragraph of t('about.privacyText').split('\n\n'); track $index) {
+                <p>{{ paragraph }}</p>
+              }
+            </section>
+          </div>
+        </div>
+      </div>
+    </app-modal-dialog>
+  }
+</ng-container>

@@ -1,0 +1,70 @@
+{
+  "name": "web",
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=24.15.0 <25"
+  },
+  "scripts": {
+    "preng": "node scripts/prepare-about.mjs",
+    "ng": "ng",
+    "predev": "node scripts/prepare-about.mjs",
+    "dev": "node scripts/dev.mjs",
+    "prestart": "node scripts/prepare-about.mjs",
+    "start": "ng serve",
+    "prebuild": "node scripts/prepare-about.mjs",
+    "build": "ng build",
+    "prewatch": "node scripts/prepare-about.mjs",
+    "watch": "ng build --watch --configuration development",
+    "prepare:about": "node scripts/prepare-about.mjs",
+    "assemble:notices": "node scripts/assemble-notices.mjs",
+    "check:about": "node scripts/check-about.mjs",
+    "build:image": "node scripts/build-image.mjs",
+    "check:catalogs": "node scripts/check-catalogs.mjs",
+    "serve:ssr:web": "node dist/web/server/server.mjs"
+  },
+  "private": true,
+  "packageManager": "npm@12.2.0",
+  "dependencies": {
+    "@angular/common": "^22.2.3",
+    "@angular/compiler": "^22.2.3",
+    "@angular/core": "^22.2.3",
+    "@angular/forms": "^22.2.3",
+    "@angular/platform-browser": "^22.2.3",
+    "@angular/platform-server": "^22.2.3",
+    "@angular/router": "^22.2.3",
+    "@angular/ssr": "^22.2.4",
+    "@jsverse/transloco": "8.4.0",
+    "@jsverse/transloco-messageformat": "8.4.0",
+    "@ng-web-apis/universal": "5.4.0",
+    "@taiga-ui/cdk": "5.29.0",
+    "@taiga-ui/core": "5.29.0",
+    "@taiga-ui/i18n": "5.29.0",
+    "@taiga-ui/styles": "5.29.0",
+    "cookie-parser": "1.4.7",
+    "express": "^5.3.0",
+    "http-proxy": "1.18.1",
+    "lucide-static": "1.61.0",
+    "negotiator": "1.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.4",
+    "@angular/cli": "^22.2.4",
+    "@angular/compiler-cli": "^22.2.3",
+    "@types/cookie-parser": "1.4.10",
+    "@types/express": "^5.0.1",
+    "@types/http-proxy": "1.17.17",
+    "@types/negotiator": "0.6.5",
+    "@types/node": "24.19.2",
+    "less": "^4.2.0",
+    "prettier": "^3.9.10",
+    "semver": "7.8.5",
+    "typescript": "~6.0.2"
+  },
+  "overrides": {
+    "@angular/build": {
+      "vite": "8.3.5"
+    }
+  }
+}

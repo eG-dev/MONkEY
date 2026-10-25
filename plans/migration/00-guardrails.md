@@ -1,0 +1,135 @@
+# Implementation guardrails
+
+Status: pre-scaffolding guardrails implemented and validated on 2026-10-04.
+Application enforcement and tooling refinement continue during [stack foundation](01-stack-foundation.md) and later features.
+
+Layout update (2026-10-25): the owner approved legacy source/workflow removal
+and root promotion. Current checks enforce that layout; earlier side-by-side
+verification below remains historical evidence, not a requirement to retain it.
+
+## Goal
+
+Define repository instructions before scaffolding the replacement. Plans describe
+what to deliver and in which order; instructions describe how to implement and
+validate it. Keep instructions concise and reference the migration plans instead
+of copying their contents.
+
+## Repository-wide instructions
+
+- Create or extend `.github/copilot-instructions.md` with architectural ownership, incremental migration rules, security expectations, and required validation.
+- Use the application name **POCKET MONkEY**, preserving the lowercase `k`, in product-facing text and documentation.
+- Keep repository cleanup separate from deployed Azure resource retirement, which still requires explicit approval.
+- Record the agreed scope: no tenancy, email, or Azure data import; shared read access for members and backend-enforced manager business writes.
+- Keep business rules, authorization, persistence, and jobs in .NET; keep rendering and browser transport in Angular/Web-BFF.
+- Require atomic financial writes, exact money handling, idempotent jobs, request-scoped SSR state, and safe handling of credentials/private data.
+- Require German and English translations with each feature, locally packaged assets, and separation of language from `TZ`, currency, and stored data.
+- Distinguish confirmed requirements from proposed tooling choices; do not turn an unvalidated library or deployment assumption into a permanent rule.
+- Require key architectural decisions to be recorded in ADRs during the migration, starting with this Step 0 and continuing through every phase.
+
+## Architecture decision records
+
+Follow [ADR-0001: Architecture Decision Records](../../docs/ADR/ADR-0001-architecture-decision-records.md),
+which establishes the convention before migration execution. Store records as
+Markdown files under `/docs/ADR`.
+
+- Create an index and the initial project decision records during Step 0, then extend the records throughout subsequent phases. Timing belongs in the plans, not in the ADRs themselves.
+- Use stable numbered filenames such as `ADR-0002-short-decision-title.md`.
+- Require Context and Decision: the problem/constraints and the What/How. Do not include Reviewers or Status sections; include Alternatives only when multiple alternatives were evaluated.
+- Write records as greenfield product architecture: enduring requirements, choices, and rationale. Keep revamping context, old/new code separation, and rollout steps in migration plans.
+- Keep unresolved storage, identity, library, or deployment proposals in the plans until evaluated and agreed in the relevant phase.
+- Require GitHub instructions to enforce reading and following applicable ADRs; resolve conflicts explicitly before implementing a decision change.
+- Link relevant records from affected plans/instructions and preserve decision history according to ADR-0001.
+- Use fenced `mermaid` blocks where useful and verify GitHub rendering when diagrams are added.
+- Keep plans focused on delivery and instructions on implementation rules; ADRs own the decision rationale and tradeoffs.
+
+## Path-scoped instructions
+
+Create focused `.github/instructions/*.instructions.md` files after confirming
+the replacement workspace paths, using explicit `applyTo` patterns and meaningful
+descriptions. Cover these areas without duplicating repository-wide rules:
+
+- Angular/Web-BFF: Taiga UI, Lucide assets, accessibility, SSR/hydration, API transport, localization, and private-cache behavior.
+- .NET/backend: domain/application boundaries, API contracts, server-side authorization, monetary arithmetic, SQLite migrations, and transaction consistency.
+- Tests: extensive browser E2E coverage, targeted integration tests, deterministic clocks, concurrency/retry cases, and commands required for the touched area. Do not mandate unit tests or unit-coverage targets; any exceptional unit tests need a clear benefit over the main strategy.
+- Deployment: Docker lifecycle, persistent storage, validated ENV configuration, non-root execution, secrets, and backup/restore expectations.
+- Translation catalogs: stable keys, placeholders/plurals, language registration, completeness checks, and contributor-facing validation.
+
+Use the [configuration](configuration.md), [localization](localization.md), and
+[testing](testing.md) plans as the detailed sources for those instructions.
+
+## Confirmed replacement paths
+
+The application now lives at the repository root. Step 0 used
+representative future paths; foundation work created the
+`PocketMonkey.slnx`, backend API, Angular SSR workspace, E2E tooling, test-only
+runtime probe, and deployment files. See the [foundation guide](../../docs/development.md).
+
+| Area | Planned paths | Instructions |
+| --- | --- | --- |
+| Angular/Web-BFF | `web/**` | [Web](../../.github/instructions/web.instructions.md) |
+| .NET backend | `backend/**` | [Backend](../../.github/instructions/backend.instructions.md) |
+| E2E/integration tests | `tests/e2e/**`, `tests/integration/**` | [Tests](../../.github/instructions/tests.instructions.md) |
+| Docker and CI | `deploy/**`, `.github/workflows/*.yml`, `.github/workflows/*.yaml` | [Deployment](../../.github/instructions/deployment.instructions.md) |
+| Translation catalogs | `web/public/i18n/**/*.json` | [Translations](../../.github/instructions/translations.instructions.md) |
+
+Translation JSON intentionally also receives web instructions. If the validated
+translation library needs another catalog location, update the path and scope
+together. Do not broaden the patterns to legacy WebApp or Data projects.
+
+## Initial decision records
+
+The [ADR index](../../docs/ADR/README.md) lists the initial greenfield records for
+application boundaries, shared access, language/timezone, E2E-first verification,
+and GitHub delivery. [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
+records the locally evaluated storage, runtime, supervision, translation, and test
+stack. [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md) selects public
+GHCR distribution. Authentication/bootstrap/recovery, publishing policies,
+financial policies, and retention remain decisions for the responsible phases.
+
+## Foundation handoff
+
+The following records describe the original isolated foundation setup, before
+the approved 2026-10-25 root promotion and legacy-source cleanup.
+
+- Root `Directory.Packages.props` would be inherited by nested .NET projects. Foundation work added replacement-local package/build/source configuration; legacy package versions are unchanged.
+- Root `.editorconfig` disables primary constructors for C# and does not set `root = true`. Respect that preference and inspect any ancestor rules when setting up formatting.
+- The initial root audit found no `global.json` or `Directory.Build.props/targets`. The replacement now pins its own SDK and build configuration without changing the root's legacy behavior.
+- The initial audit found both Azure workflows deployed on replacement/docs changes. Foundation work added narrow exclusions and verified that owning/shared runtime changes and manual triggers remain intact. Step 0 itself did not modify them.
+- The [foundation guide](../../docs/development.md) now records actual application build/test/container commands and local results. Step 0's original document checks are still not evidence of runtime behavior.
+
+## Verification record
+
+Run from the repository root with Node.js and npm available. Foundation work now
+locks the parser packages in the separate test toolchain; the original Step 0
+validation used temporary tooling outside the repository.
+
+```powershell
+npm --prefix .\tests\e2e ci --ignore-scripts
+node .\plans\migration\verify-guardrails.mjs
+```
+
+The [validator](verify-guardrails.mjs) parses YAML metadata, exercises intended
+and legacy path fixtures, checks local Markdown links/anchors, verifies required
+ADR headings/greenfield wording, and parses Mermaid syntax. Instruction-content
+consistency was also reviewed against the confirmed scope and ADR-0001; automated
+syntax checks do not prove that instructions are followed by an agent.
+
+Step 0 editor diagnostics reported no errors in the affected instructions, ADRs,
+or plans. No application/runtime checks existed during that phase; foundation
+builds and real-image checks are now recorded separately. GitHub-hosted execution
+and Mermaid rendering preview remain unverified.
+
+## Acceptance gate
+
+- [x] Initial repository-wide instructions are reviewed before scaffolding.
+- [x] GitHub instructions require reading and following applicable ADRs, including the format defined in ADR-0001.
+- [x] The ADR index and initial project decision records are created under `/docs/ADR` during Step 0, following the concise greenfield format with Mermaid diagrams where useful.
+- [x] Replacement paths are confirmed and scoped instructions match representative files without unintentionally targeting legacy projects.
+- [x] Instructions reference existing plans, have valid metadata, and contain no contradictory or duplicated requirements.
+- [x] Concrete validation commands are recorded as tooling becomes available; unavailable checks are identified rather than claimed as passed.
+- [ ] Critical invariants are backed by tests/CI as their features arrive; instructions alone are not enforcement.
+- [x] Tooling-specific rules are refined against the locally verified foundation stack; hosted/deployment gates remain explicit in milestone 1.
+
+Feature-specific enforcement remains an ongoing delivery gate. The foundation
+subset is covered locally and in the CI definition; this does not claim financial
+invariants or authentication exist, or that GitHub-hosted verification has run.

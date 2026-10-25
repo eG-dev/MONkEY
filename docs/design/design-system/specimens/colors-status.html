@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Status colors</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="specimen.css">
+    <script src="specimen.js" defer></script>
+    <style>
+        .tint {
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font: var(--type-label);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="sw">
+            <div class="chip" style="background:var(--pm-color-success)"></div>
+            <div class="n">success</div>
+            <div class="v">#00C853</div>
+            <div class="tint" style="background:var(--status-success-bg);color:var(--status-success-fg)">Deposit recorded</div>
+        </div>
+        <div class="sw">
+            <div class="chip" style="background:var(--pm-color-warning)"></div>
+            <div class="n">warning</div>
+            <div class="v">#FF9800</div>
+            <div class="tint" style="background:var(--status-warning-bg);color:var(--status-warning-fg)">Unsaved changes</div>
+        </div>
+        <div class="sw">
+            <div class="chip" style="background:var(--pm-color-error)"></div>
+            <div class="n">error</div>
+            <div class="v">#F44336</div>
+            <div class="tint" style="background:var(--status-danger-bg);color:var(--status-danger-fg)">Could not save</div>
+        </div>
+        <div class="sw">
+            <div class="chip" style="background:var(--pm-color-info)"></div>
+            <div class="n">info</div>
+            <div class="v">#2196F3</div>
+            <div class="tint" style="background:var(--status-info-bg);color:var(--status-info-fg)">Allowance planned</div>
+        </div>
+        <div class="sw">
+            <div class="chip" style="background:var(--pm-color-danger)"></div>
+            <div class="n">danger</div>
+            <div class="v">#C62828</div>
+            <div class="tint" style="background:var(--action-danger);color:var(--action-danger-text)">Destructive</div>
+        </div>
+    </div>
+</body>
+
+</html>

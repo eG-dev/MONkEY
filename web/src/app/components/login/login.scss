@@ -1,0 +1,119 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--surface-panel);
+}
+
+.page {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--space-7);
+  place-items: center;
+  min-height: 100dvh;
+  padding: 4.5rem var(--space-5) 2rem;
+}
+
+.login-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  font: var(--type-caption);
+  color: var(--text-muted);
+
+  button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-link);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+}
+
+.languages {
+  position: fixed;
+  top: var(--space-5);
+  inset-inline-end: var(--space-5);
+  display: flex;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+
+  button {
+    min-height: var(--control-md);
+    padding: 0 0.875rem;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    cursor: pointer;
+
+    &[aria-pressed='true'] {
+      background: var(--action-primary);
+      color: var(--action-primary-text);
+    }
+  }
+}
+
+.column {
+  display: grid;
+  gap: var(--space-5);
+  width: min(27.5rem, 100%);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-5);
+  padding: 2rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-1);
+
+  h1 {
+    font: var(--type-h1);
+    text-align: center;
+  }
+}
+
+.card-logo {
+  justify-self: center;
+  width: 16.25rem;
+  max-width: 100%;
+  height: auto;
+}
+
+.forgot {
+  text-align: center;
+}
+
+.sign-out {
+  justify-self: center;
+  border: 0;
+  background: none;
+  color: var(--text-link);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 599px) {
+  :host {
+    background: var(--surface-raised);
+  }
+
+  .page {
+    place-items: start center;
+  }
+
+  .card {
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+}

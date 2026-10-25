@@ -1,0 +1,12 @@
+﻿root = true
+
+[*]
+end_of_line = lf
+
+[*.{bat,cmd}]
+end_of_line = crlf
+
+[*.cs]
+
+# IDE0290: Use primary constructor
+csharp_style_prefer_primary_constructors = false

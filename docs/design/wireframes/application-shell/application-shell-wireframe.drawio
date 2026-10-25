@@ -1,0 +1,100 @@
+<mxfile host="65bd71144e">
+    <diagram id="application-shell-wireframe" name="Application Shell Wireframe">
+        <mxGraphModel dx="3123" dy="1528" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3120" pageHeight="1240" background="#FFFFFF" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="iZ-_UNUgJQ3VlEOhS_UT-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=3;dashed=1;" value="" vertex="1">
+                    <mxGeometry height="1080" width="1920" x="600" y="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="menu-button" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+                    <mxGeometry height="60" width="59" x="609" y="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="menu-line-top" parent="menu-button" style="rounded=0;fillColor=#647687;strokeColor=#314354;fontColor=#ffffff;" value="" vertex="1">
+                    <mxGeometry height="2" width="36" x="11" y="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="menu-line-middle" parent="menu-button" style="rounded=0;fillColor=#647687;strokeColor=#314354;fontColor=#ffffff;" value="" vertex="1">
+                    <mxGeometry height="2" width="36" x="11" y="27" as="geometry"/>
+                </mxCell>
+                <mxCell id="menu-line-bottom" parent="menu-button" style="rounded=0;fillColor=#647687;strokeColor=#314354;fontColor=#ffffff;" value="" vertex="1">
+                    <mxGeometry height="2" width="36" x="11" y="39" as="geometry"/>
+                </mxCell>
+                <mxCell id="header-divider" parent="1" style="rounded=0;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
+                    <mxGeometry height="2" width="1920" x="600" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="primary-navigation" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=top;spacing=0;spacingLeft=7;spacingTop=11;lineHeight=1.75;" value="Side navigation" vertex="1">
+                    <mxGeometry height="904" width="430" x="609" y="171" as="geometry"/>
+                </mxCell>
+                <mxCell id="navigation-divider" parent="1" style="rounded=0;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
+                    <mxGeometry height="1000" width="2" x="1046" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="scrollable-area" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=top;spacing=0;spacingLeft=16;spacingTop=14;" value="Main content container" vertex="1">
+                    <mxGeometry height="981" width="1207" x="1180" y="171" as="geometry"/>
+                </mxCell>
+                <mxCell id="iZ-_UNUgJQ3VlEOhS_UT-22" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;span style=&quot;font-family: Calibri; text-align: left;&quot;&gt;Collapsed in &quot;compact mode&quot; on smaller&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;font-family: Calibri; text-align: left; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;screens&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: Calibri; text-align: left;&quot;&gt;(&amp;lt; 1440px)&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;div&gt;&lt;span style=&quot;font-family: Calibri;&quot;&gt;Further entries are not known, yet. They will be part of another wireframe&lt;/span&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="108" width="480" x="20" y="602" as="geometry"/>
+                </mxCell>
+                <mxCell id="ByBwkGlHtu41fAxbA_Sr-1" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;div&gt;&lt;span style=&quot;color: rgb(51, 51, 51); font-family: Calibri; text-align: left;&quot;&gt;The main container has a max width of 1440px and is centered&lt;/span&gt;&lt;/div&gt;&lt;span style=&quot;color: rgb(51, 51, 51); font-family: Calibri; text-align: left;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(51, 51, 51); font-family: Calibri; text-align: left;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;The content and layout inside is part of another wireframe&lt;/span&gt;" vertex="1">
+                    <mxGeometry height="100" width="480" x="2620" y="611.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="ByBwkGlHtu41fAxbA_Sr-6" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Top: Overview, Accounts (Manager only), Administration last. Bottom: About. Same order on phones. About opens the shared modal." vertex="1">
+                    <mxGeometry height="70" width="480" x="20" y="979" as="geometry"/>
+                </mxCell>
+                <mxCell id="about-navigation" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=16;fontStyle=1;" value="[icon]   About" vertex="1">
+                    <mxGeometry height="60" width="410" x="619" y="1004" as="geometry"/>
+                </mxCell>
+                <mxCell id="KcBmQutoUwz2jsDE7AvI-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=middle;spacing=0;spacingLeft=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="App logo" vertex="1">
+                    <mxGeometry height="60" width="361" x="680" y="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="application-name" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=middle;spacing=0;spacingLeft=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="POCKET MONkEY&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Version [build version]&lt;/font&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="60" width="430" x="609" y="1092" as="geometry"/>
+                </mxCell>
+                <mxCell id="KcBmQutoUwz2jsDE7AvI-2" parent="1" style="rounded=0;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
+                    <mxGeometry height="2" width="447" x="600" y="1083" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kfsw17YHUhQTRlnFbqN--1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Calibri;fontSize=20;align=left;verticalAlign=middle;spacing=0;spacingLeft=15;" value="" vertex="1">
+                    <mxGeometry height="60" width="59" x="2452.5" y="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="KcBmQutoUwz2jsDE7AvI-4" parent="1" style="shape=mermaidUsecaseActor;actorType=awesome;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="" vertex="1">
+                    <mxGeometry height="50" width="36" x="2464" y="97" as="geometry"/>
+                </mxCell>
+                <mxCell id="iZ-_UNUgJQ3VlEOhS_UT-16" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;span style=&quot;font-family: Calibri;&quot;&gt;Dropdown showing user name, the role, a link to profile (in administration), a switch for dark/bright mode, and a logout button&lt;/span&gt;" vertex="1">
+                    <mxGeometry height="100" width="480" x="2620" y="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="repository-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Build version remains beneath About in smaller text. GitHub/source, project license, third-party notices and operator/privacy links move to About. GitHub stays unavailable there until the future repository URL is agreed." vertex="1">
+                    <mxGeometry height="108" width="480" x="20" y="1068" as="geometry"/>
+                </mxCell>
+                <mxCell id="annotation-arrow-iZ-_UNUgJQ3VlEOhS_UT-22" edge="1" parent="1" source="iZ-_UNUgJQ3VlEOhS_UT-22" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=1;exitY=0.5;edgeStyle=none;curved=0;strokeWidth=3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="primary-navigation">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="annotation-arrow-ByBwkGlHtu41fAxbA_Sr-1" edge="1" parent="1" source="ByBwkGlHtu41fAxbA_Sr-1" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0.5;entryX=1;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;" target="scrollable-area">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="annotation-arrow-ByBwkGlHtu41fAxbA_Sr-6" edge="1" parent="1" source="ByBwkGlHtu41fAxbA_Sr-6" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=1;exitY=0.5;entryX=0;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;" target="about-navigation">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="annotation-arrow-iZ-_UNUgJQ3VlEOhS_UT-16" edge="1" parent="1" source="iZ-_UNUgJQ3VlEOhS_UT-16" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0.5;entryX=1;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;" target="Kfsw17YHUhQTRlnFbqN--1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="annotation-arrow-repository-note" edge="1" parent="1" source="repository-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=1;exitY=0.5;entryX=0;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;" target="application-name">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ByBwkGlHtu41fAxbA_Sr-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingLeft=10;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-size: 16px; font-weight: 700; text-align: center;&quot;&gt;[icon] Administration&lt;/span&gt;" vertex="1">
+                    <mxGeometry height="60" width="410" x="619" y="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="accounts-navigation" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingLeft=10;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-size: 16px; font-weight: 700; text-align: center;&quot;&gt;[icon] Accounts&lt;/span&gt;" vertex="1">
+                    <mxGeometry height="60" width="410" x="619" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="ByBwkGlHtu41fAxbA_Sr-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingLeft=10;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-size: 16px; font-weight: 700; text-align: center;&quot;&gt;[icon] Overview&lt;/span&gt;" vertex="1">
+                    <mxGeometry height="60" width="410" x="620" y="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="EW1gHobX3JWfS5e5STMY-2" edge="1" parent="1" source="EW1gHobX3JWfS5e5STMY-1" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" target="accounts-navigation">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="EW1gHobX3JWfS5e5STMY-1" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="The Accounts entry is shown only to the users with Manager role assigned&amp;nbsp;" vertex="1">
+                    <mxGeometry height="70" width="480" x="20" y="295" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
