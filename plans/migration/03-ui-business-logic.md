@@ -1,97 +1,52 @@
-# Milestone 3: incremental UI and business logic
+# Milestone 3: Business Features
 
-Status: the user accepted the [step 2B representative design](02b-ux-ui-design.md) on 2026-10-10; the design pause is lifted. Step 3D account images is locally implemented and verified on 2026-10-10. Steps 3E allowance configuration and 3F execution are locally implemented and verified on 2026-10-12; see the [final allowance acceptance evidence](03f-allowance-execution.md#delivery-evidence).
-Steps 3A, 3B, and the approved 3C scope remain locally implemented and verified on 2026-10-08;
-step 3H has not started. Dedicated correction/reversal workflows are deferred.
-Depends on [step 2A authentication](02-authentication-authorization.md) and [step 2B product design](02b-ux-ui-design.md).
+Status: the agreed first-release feature scope is implemented and locally
+verified. Remaining work is acceptance/operational closeout, not a new business
+slice. See the [finish-line plan](README.md) and [operations](04-operations-cutover.md).
 
-Monthly reports are excluded from the product scope.
+## Delivery Steps
 
-## Delivery model
+| Step | Implemented Outcome | Reference |
+| --- | --- | --- |
+| 3A | Shared accounts, listing/details and Manager create/edit | [Accounts](03a-accounts.md) |
+| 3B | Explicit signed openings, exact balances and display units | [Ledger](03b-ledger-opening-balances.md) |
+| 3C | Atomic deposits/withdrawals, safe retries and paginated history | [Transactions](03c-transactions.md) |
+| 3D | Private validated image upload/replacement/removal | [Images](03d-account-images.md) |
+| 3E | Immutable next-month allowance configuration | [Configuration](03e-allowance-configuration.md) |
+| 3F | Durable monthly credits, catch-up/retry and visible outcomes | [Execution](03f-allowance-execution.md) |
+| 3H | Profile/legal/About completion and automatic safe retention | [Lifecycle](03h-lifecycle.md) |
 
-Deliver each slice through backend rules, persistence, API contracts, and Angular
-UI together. Each slice must be usable and tested before starting the next.
-Managers can administer the instance; members can read every account.
+Portable financial export/recovery is also implemented under
+[operations](04-operations-cutover.md#portable-financial-export-and-recovery).
+Dedicated reversals are deferred. Monthly reports, archival, user deletion/
+anonymization, tenancy, email and Azure import are outside the first-release scope.
 
-Functional slice acceptance does not approve the final visual design. Complete
-[step 2B](02b-ux-ui-design.md), including approved references and established
-representative UI patterns, before resuming. Adapt existing screens as part of
-that work; preserve their business rules and recorded delivery history. Remaining
-slices follow the approved patterns and review newly introduced ones explicitly.
-Application-wide design acceptance remains a distinct gate before release.
+## Decision Boundaries
 
-Use Taiga UI consistently and locally packaged Lucide icon fonts/assets. Give
-icon-only controls accessible names and tooltips. Validate keyboard operation,
-responsive layouts, loading/empty/error states, and SSR/hydration behavior.
-Image cropping and other browser-only interactions must not execute during SSR.
+- Account identity/names/access: [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
+- Exact minor-unit arithmetic, openings and EUR/USD display: [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md).
+- Signed money, source-aware retries, history and UTC-month retention: [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md).
+- Private images: [ADR-0014](../../docs/ADR/ADR-0014-private-account-images.md).
+- Allowance revisions and durable execution: [ADR-0015](../../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md).
+- About/build identity and notice review: [ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md) and [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md).
+- Offline recovery: [ADR-0021](../../docs/ADR/ADR-0021-portable-financial-recovery.md).
 
-Every slice includes complete German and English catalogs following the
-[localization plan](localization.md).
-Translate application and Taiga-provided UI consistently; do not defer translation
-until feature completion. Check longer text and localized number/date entry as
-well as display, without changing the business timezone or currency.
+These are approved implemented decisions, not pending proposals. New behavior
+still requires the applicable backend/data and UI design review; unfinished
+operations gates do not authorize extra product scope.
 
-## Delivery steps
+## Verification Across Slices
 
-Implement one step at a time, through the real backend and UI. Each linked plan
-has its own scope, decision prerequisites, and acceptance gate. Do not treat this
-milestone as one implementation task or build later-step infrastructure in advance.
+Use [E2E-first verification](testing.md) against real SSR/BFF/backend/SQLite.
+Preserve role/CSRF denials, concurrent SSR/session isolation, exact limits,
+rollback/concurrency/idempotency, restart/job safety and persisted outcomes.
+Runtime probes control time/failures where stronger than browser-only checks;
+there is no routine mocked unit-test or coverage requirement.
 
-| Step | Plan | Usable outcome | Depends on |
-| --- | --- | --- | --- |
-| 3A | [Shared accounts](03a-accounts.md) | List, view, create, and edit text-only accounts | Milestone 2 |
-| 3B | [Ledger and opening balances](03b-ledger-opening-balances.md) | Explicit opening entries and exact displayed balances | 3A and approved money policies |
-| 3C | [Deposits, withdrawals, and history](03c-transactions.md) | Manual posting and paginated ledger history | 3B |
-| 3D | [Account images](03d-account-images.md) | Safe private upload, display, replacement, and removal | 3A |
-| 3E | [Allowance configuration](03e-allowance-configuration.md) | Persisted manager settings and member-visible configuration | 3B |
-| 3F | [Allowance execution](03f-allowance-execution.md) | Durable monthly credits and visible execution outcomes | 3C and 3E |
-| 3H | [Management and lifecycle completion](03h-lifecycle.md) | Remaining profile/settings/legal/lifecycle workflows | Relevant preceding steps |
+Keep desktop/mobile checks where layout matters, German/English catalogs and
+focused localized review, EUR core flows and bounded USD coverage. Real-image
+About/offline checks verify source/notice delivery. Use isolated fixtures and
+actionable traces/logs, with no unconditional retries.
 
-Start with 3A. The table gives the default order, not a requirement to block
-independent image work on unresolved money policies: 3D can follow 3A directly.
-Complete the active step's gate before starting another. Reassess scope after each
-delivery rather than accumulating incomplete backend-only or UI-only work.
-
-For the remaining delivery sequence, proceed from 3F to 3H.
-Step 2B is a prerequisite for all remaining feature work, not a parallel
-activity or a late cosmetic pass.
-
-## Decision boundaries
-
-- 3A resolved: trimmed names of 1-40 characters, case-insensitive uniqueness, and no nine-account cap; see [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md).
-- 3B resolved: exact two-decimal integer minor units, decimal-string API, explicit single opening entries, and EUR/USD display units; see [ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md) and [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md). The original nonnegative rule is superseded by 3C.
-- 3C resolved: signed openings/balances and overdrafts, positive manual inputs, atomic source-aware posting, and snapshot-bounded history; see [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md). Dedicated correction/reversal behavior requires a separately agreed follow-up.
-- 3D resolved: PNG/JPEG/WebP, 512 pixels per axis, 2 MiB, metadata-free re-encoding, and immutable-file/reference recovery; see [ADR-0014](../../docs/ADR/ADR-0014-private-account-images.md).
-- 3E/3F resolved: next-month immutable configuration, business-time due dates, historical catch-up, automatic durable retry, and credited-history preservation after timezone changes; see [ADR-0015](../../docs/ADR/ADR-0015-monthly-allowance-configuration.md) and [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md).
-- 3H scope: account archival and user deletion/anonymization are removed, not deferred. Transaction retention configuration was accepted on 2026-10-17: `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`, minimum positive `1`, `0` unlimited. Its backend/data cleanup design and append-only ADR exception still require approval before implementation. Review sensitive-action confirmation/re-authentication only for workflows actually in scope.
-
-Proposed defaults in the child plans remain proposals. Resolve affected business
-policies before implementing them; record approved enduring decisions in ADRs
-during that step, not speculative records now. Follow the existing
-[application boundaries](../../docs/ADR/ADR-0002-application-boundaries.md),
-[shared access](../../docs/ADR/ADR-0003-shared-instance-access.md), and
-[language/timezone](../../docs/ADR/ADR-0004-language-and-timezone.md) decisions.
-
-The locally implemented authentication runtime is the starting point, not work
-to repeat in 3H. Hosted/fork CI, publishing rehearsal, and real-host deployment
-gates remain open as recorded in the [migration overview](README.md).
-
-## Verification across slices
-
-- Follow the [E2E-first testing strategy](testing.md): browser E2E tests are the primary feature acceptance and regression suite.
-- Add end-to-end scenarios with every slice, covering user-visible rules, persisted outcomes, manager/member permissions, invalid inputs, failures, and recovery through the real application.
-- No routine unit tests are required; do not create backend rule/mock test suites or coverage quotas by default. Add an exceptional unit test only when its specific benefit is justified.
-- Use targeted real-SQLite integration tests for transaction rollback/concurrency, database constraints, schema changes, and deterministic job boundary behavior that is difficult to verify reliably through the browser.
-- Use deterministic clocks for scheduling tests rather than waiting for wall-clock timers; exercise retries and restart behavior through the application/job host.
-- Check direct unauthorized requests against the running API in addition to browser role scenarios; do not rely on hidden buttons or route guards.
-- Check SSR HTML, hydration, desktop/mobile layouts, and local font/image loading.
-- Review each slice against approved [design references](../../docs/design/README.md); complete application-wide visual/usability acceptance before cutover. Passing functional E2E tests does not approve the design.
-- Run core browser workflows in English, retaining only the German desktop first-render/hydration exception in ADR-0005; verify German completeness and longer-text layouts separately through catalog checks and localized design review.
-- Verify changing language leaves ledger amounts, allowance periods, actor identity, and user-entered content unchanged.
-- Keep fixtures isolated and core services unmocked; attach traces and relevant logs when a scenario fails.
-- Update schema migrations and API contracts with each slice; keep the old application independently runnable.
-
-Current next activity: review the remaining scope and decision prerequisites for
-[step 3H management and lifecycle completion](03h-lifecycle.md).
-Remaining slice completion leads to
-[operations and cutover](04-operations-cutover.md).
+Passing local functionality does not complete hosted release verification,
+application-wide design acceptance or real-host production readiness.
