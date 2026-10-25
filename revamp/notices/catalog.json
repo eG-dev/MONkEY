@@ -455,7 +455,8 @@
         "files": [
           {
             "path": "revamp/backend/PocketMonkey.Storage/packages.lock.json",
-            "sha256": "fe60510d80a18b4fb20ebbdd54925262774d82bd17fc8c5d6b440b440e329e27"
+            "lineEndings": "lf",
+            "sha256": "7216ba1f293000954206254faf5fee247b16ac511e594f16ec5cfa949b41f4ee"
           }
         ]
       },

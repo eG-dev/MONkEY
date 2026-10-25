@@ -390,6 +390,42 @@ try {
     assert.deepEqual(first.files, second.files);
     assert(first.inputs.has('revamp/notices/catalog.json'));
   });
+  check('text evidence accepts LF and CRLF without accepting content drift', () => {
+    const original = readFileSync(resolve(manualRoot, evidencePath));
+    const lf = Buffer.from(`${JSON.stringify(JSON.parse(original), null, 2)}\n`);
+    const crlf = Buffer.from(lf.toString('utf8').replace(/\n/g, '\r\n'));
+    const change = (catalog) => {
+      catalog.components[0].versionEvidence = {
+        kind: 'files',
+        description: 'Lockfile evidence with canonical LF hashing',
+        files: [{ path: evidencePath, lineEndings: 'lf', sha256: createHash('sha256').update(lf).digest('hex') }],
+      };
+    };
+
+    try {
+      store(evidencePath, lf);
+      const first = catalogCheck(change);
+
+      store(evidencePath, crlf);
+      const second = catalogCheck(change);
+
+      assert(first.bundle.equals(second.bundle));
+      assert(second.inputs.get(evidencePath).equals(crlf));
+      store(evidencePath, `${crlf.toString('utf8')} `);
+      assert.throws(() => catalogCheck(change), /Asset hash mismatch/);
+      store(evidencePath, crlf);
+      assert.throws(
+        () =>
+          catalogCheck((catalog) => {
+            change(catalog);
+            delete catalog.components[0].versionEvidence.files[0].lineEndings;
+          }),
+        /Asset hash mismatch/,
+      );
+    } finally {
+      store(evidencePath, original);
+    }
+  });
   check('manual inputs survive a standalone container snapshot', () => {
     const first = catalogCheck();
     const copiedRoot = resolve(temporary, 'standalone-inputs');

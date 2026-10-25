@@ -724,7 +724,14 @@ inputs and rejects drift in web evidence against the actual build context.
 Supported evidence is `npm` (lockfile `path`, `package`), `nuget` (lockfile `path`,
 `framework`, `package`), or `files` (review description and `path`/`sha256` records).
 File hashes bind manually reviewed runtime/asset evidence; the assembler does not
-infer font or runtime versions. Release-input validation rejects an incomplete
+infer font or runtime versions. File evidence defaults to byte-exact SHA-256.
+For UTF-8 text evidence affected by checkout or tool-generated line endings,
+set `lineEndings: "lf"` and record the SHA-256 of its CRLF-to-LF-normalized bytes.
+This ignores only CRLF/LF differences; content changes still fail validation.
+Snapshots retain the actual input bytes, and original legal documents always
+remain byte-exact.
+
+Release-input validation rejects an incomplete
 curated collection, pending release review and unresolved mapped components.
 Marking coverage complete alone cannot authorize release.
 

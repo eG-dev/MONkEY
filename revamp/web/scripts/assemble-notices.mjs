@@ -120,7 +120,16 @@ export function assembleNotices({ inputRoot, release = false }) {
       assert(Array.isArray(evidence.files) && evidence.files.length > 0, 'Missing asset evidence files.');
 
       for (const file of evidence.files) {
-        assert(/^[a-f0-9]{64}$/.test(file.sha256) && digest(input(file.path)) === file.sha256, `Asset hash mismatch: ${file.path}`);
+        assert(file.lineEndings === undefined || file.lineEndings === 'lf', 'Invalid evidence line endings.');
+        const bytes = input(file.path);
+
+        if (file.lineEndings === 'lf') {
+          assert(isUtf8(bytes), `Normalized evidence must be UTF-8: ${file.path}`);
+        }
+
+        const hashInput = file.lineEndings === 'lf' ? Buffer.from(bytes.toString('utf8').replace(/\r\n/g, '\n')) : bytes;
+
+        assert(/^[a-f0-9]{64}$/.test(file.sha256) && digest(hashInput) === file.sha256, `Asset hash mismatch: ${file.path}`);
       }
     } else {
       const lock = JSON.parse(input(evidence.path).toString('utf8'));
