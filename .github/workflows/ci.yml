@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
   workflow_call:
@@ -96,7 +97,15 @@ jobs:
         env:
           PW_TEST_CONNECT_WS_ENDPOINT: ws://127.0.0.1:3000/
           PW_TEST_CONNECT_EXPOSE_NETWORK: "<loopback>"
-        run: npm --prefix tests/e2e test
+          FULL_E2E: ${{ contains(github.event.pull_request.labels.*.name, 'full-e2e') }}
+          EXPORT_IMAGE: ${{ inputs.export_image }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == pull_request && "$FULL_E2E" != true && "$EXPORT_IMAGE" != true && -z "$RELEASE_TAG" ]]; then
+            npm --prefix tests/e2e run test:smoke
+          else
+            npm --prefix tests/e2e test
+          fi
       - name: Export verified image without publishing
         if: ${{ inputs.export_image }}
         run: |

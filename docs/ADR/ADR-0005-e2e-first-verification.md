@@ -1,7 +1,7 @@
 # ADR-0005 E2E-First Verification
 
 _Creation date_: 2026-10-04
-_Updated_: 2026-10-10
+_Updated_: 2026-10-25
 
 ## Context
 
@@ -13,10 +13,13 @@ Repeating the same workflows for every language duplicates E2E coverage;
 translation correctness needs dedicated localization checks instead.
 Browser selectors must remain stable across languages and visual changes without
 concealing accessibility regressions or relying on component-library internals.
+PR feedback should remain fast as the regression suite grows, while merged code
+and release artifacts still receive complete verification.
 
 ## Decision
 
 - Make real-application browser E2E tests the primary acceptance and regression suite, adding meaningful scenarios with each feature.
+- Run a bounded real-image smoke suite on pull requests, covering SSR/startup, authentication, role restrictions, and persisted financial writes. Run the full regression suite on every push to `main`, manual verification, and release or image-export verification. Allow a `full-e2e` PR label to require full coverage before merging, including higher-risk dependency updates. Keep builds, audits, type checks, and catalog validation on every PR. Reduced PR coverage means other regressions may first be detected after merge; it does not weaken the release gate.
 - Organize E2E specs in category folders, with multiple focused files separating browser workflows, API rules, persistence, and recovery where appropriate. Share reusable helpers outside the specs rather than growing one long file per category.
 - Run through actual frontend, backend, authentication, and persistence rather than mocking core services. Include persisted outcomes, permissions, errors, and responsive workflows.
 - Run application E2E workflows in English. Do not duplicate scenarios for German or other languages, or add per-language E2E projects. The sole non-English exception is one focused desktop browser check that an explicit German selection initializes the first SSR render and hydration correctly; it does not repeat application workflows.
@@ -49,3 +52,7 @@ when interactions use IDs. Stable selectors do not replace accessibility or
 the separate localization checks.
 - IDs do not establish hydration readiness. Wait for enabled interactive
 	controls and completed navigation before filling or submitting forms.
+
+## Change History
+
+- 2026-10-25: Approved bounded PR smoke coverage with an explicit full-suite override, retaining complete verification on `main` and before artifact export/publication to reduce repeated PR cost without changing E2E-first acceptance.

@@ -8,6 +8,7 @@
     "check": "tsc --noEmit",
     "scenario": "node scenarios.mjs",
     "test": "playwright test",
+    "test:smoke": "playwright test --project=desktop specs/shell/rendering.spec.ts specs/authentication/workflows.spec.ts specs/ledger/transaction-workflows.spec.ts",
     "test:shell": "playwright test specs/shell"
   },
   "devDependencies": {

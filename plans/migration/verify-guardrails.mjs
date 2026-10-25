@@ -157,6 +157,44 @@ for (const change of [
 assert(Object.hasOwn(ci.on, 'workflow_call'));
 assert.equal(ci.on.workflow_call.inputs.export_image.default, false);
 const verificationSteps = ci.jobs.verify.steps;
+function validateVerificationTiers(workflow) {
+  for (const activity of ['opened', 'synchronize', 'reopened', 'labeled', 'unlabeled']) {
+    assert(workflow.on.pull_request.types.includes(activity), `Missing PR activity: ${activity}`);
+  }
+  const verification = workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image');
+  assert.equal(verification.if, undefined, 'Production-image verification must not be skipped');
+  assert.equal(verification.env.FULL_E2E, "${{ contains(github.event.pull_request.labels.*.name, 'full-e2e') }}");
+  assert.equal(verification.env.EXPORT_IMAGE, '${{ inputs.export_image }}');
+  assert.equal(verification.env.RELEASE_TAG, '${{ inputs.release_tag }}');
+  assert.equal(verification.run.trim(), [
+    'if [[ "$GITHUB_EVENT_NAME" == pull_request && "$FULL_E2E" != true && "$EXPORT_IMAGE" != true && -z "$RELEASE_TAG" ]]; then',
+    '  npm --prefix tests/e2e run test:smoke',
+    'else',
+    '  npm --prefix tests/e2e test',
+    'fi',
+  ].join('\n'));
+}
+validateVerificationTiers(ci);
+for (const change of [
+  workflow => { workflow.on.pull_request.types = ['opened', 'reopened', 'labeled', 'unlabeled']; },
+  workflow => { workflow.on.pull_request.types = ['opened', 'synchronize', 'reopened']; },
+  workflow => { workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image').if = 'false'; },
+  workflow => { workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image').env.FULL_E2E = 'false'; },
+  workflow => { workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image').env.EXPORT_IMAGE = 'false'; },
+  workflow => { workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image').env.RELEASE_TAG = ''; },
+  workflow => { workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image').run = 'npm --prefix tests/e2e run test:smoke'; },
+  workflow => { workflow.jobs.verify.steps.find(step => step.name === 'Verify the production image').run = 'npm --prefix tests/e2e test'; },
+]) {
+  const changed = structuredClone(ci);
+  change(changed);
+  assert.throws(() => validateVerificationTiers(changed), 'Unsafe verification-tier fixture was accepted');
+}
+const testCommands = JSON.parse(fs.readFileSync(path.join(testTools, 'package.json'), 'utf8')).scripts;
+assert.equal(testCommands.test, 'playwright test');
+const smokeSpecs = ['specs/shell/rendering.spec.ts', 'specs/authentication/workflows.spec.ts', 'specs/ledger/transaction-workflows.spec.ts'];
+assert.equal(testCommands['test:smoke'], `playwright test --project=desktop ${smokeSpecs.join(' ')}`);
+for (const spec of smokeSpecs) assert(fs.existsSync(path.join(testTools, spec)), `Missing smoke spec: ${spec}`);
+console.log('PASS: PR smoke selection, full-e2e label, full non-PR/release/export verification; 8 unsafe tier mutations rejected');
 const localImage = 'pocket-monkey:local';
 assert.equal(ci.jobs.verify.env.MONKEY_TEST_IMAGE, localImage);
 assert.equal(YAML.parse(fs.readFileSync(path.join(root, 'deploy/compose.yaml'), 'utf8')).services.app.image, localImage);

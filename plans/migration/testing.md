@@ -87,10 +87,18 @@ percentage or tests that merely duplicate E2E coverage.
 - Add targeted integration tests only where they provide stronger, more deterministic evidence: actual SQLite rollback/concurrency/constraints, migration behavior, job idempotency, and controlled clock/failure scenarios. Avoid mocked repository tests as substitutes for real behavior.
 - Introduce clock control and failure injection only through isolated test-host composition or protected host tooling; production must not expose arbitrary time-changing or failure-injection endpoints.
 - Begin with Chromium desktop/mobile viewport coverage in English. Validate a broader Firefox/WebKit matrix on scheduled/release runs where supported; do not claim untested browser compatibility.
-- Run the growing core E2E suite on pull requests and the full regression/container lifecycle suite before release. Keep fixtures and runtime efficient rather than disabling important tests to shorten CI.
+- Run the bounded real-image smoke suite on pull requests and the full regression/container lifecycle suite on `main`, manual runs, and release/image-export verification, following [ADR-0005](../../docs/ADR/ADR-0005-e2e-first-verification.md). Keep the complete suite maintained; reduced PR coverage is not reduced release coverage.
 - Preserve Playwright traces/screenshots and application logs on failure, with private data/credentials handled safely. Do not hide flakes with unconditional retries; investigate and repair nondeterminism.
 - Document one reproducible local E2E command and the CI commands once scaffolding exists. Test dependencies belong in the development/test runner, not the production image.
 - Run these checks in [GitHub Actions](builds-releases.md) and use the release suite as a publishing gate for GitHub Releases. Validate the same production image that is published, rather than a separately rebuilt application.
+
+## CI Verification Tiers
+
+- Every PR, including Renovate: builds, dependency audits, catalog/type checks, About-input checks, guardrails, and `npm --prefix tests/e2e run test:smoke` against the production image.
+- The smoke command runs six existing desktop cases across SSR rendering, authentication/user administration, and transaction workflows. It covers login/logout, forced password changes, Manager/Member restrictions, financial posting/retry/history/reload, and retention recovery without duplicating tests.
+- Pushes to `main`, manual dispatches, release calls, and image exports: `npm --prefix tests/e2e test`, retaining all desktop/mobile, persistence, recovery, and lifecycle cases.
+- Add the `full-e2e` label to a PR to require the full suite before merging. Adding/removing labels triggers CI again; the label persists across subsequent PR updates. Use it for major dependency upgrades or other high-risk changes. Verification remains read-only and fork-safe.
+- Regressions outside smoke coverage can be detected after merge. A passing PR smoke run must never be presented as full regression or release verification.
 
 ## Delivery sequence
 

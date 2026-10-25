@@ -1733,10 +1733,14 @@ also checks the resolved data-directory output and absence of EF query chatter;
 successful recovery still requires a password change after login.
 
 The [CI workflow](../.github/workflows/ci.yml) defines locked,
-read-only PR verification with pinned official actions. Its optional manual export
-produces a tested image archive/checksums without registry or GitHub Release
-publishing. Azure triggers exclude replacement-only changes; mixed commits with
-legacy/shared runtime changes still trigger the appropriate existing deployments.
+read-only PR verification with pinned official actions. Every PR keeps builds,
+audits, catalogs, type checks, and a six-case real-image desktop smoke run:
+`npm --prefix tests/e2e run test:smoke`. Add the `full-e2e` PR label for the complete
+suite before merging; label changes rerun CI. Pushes to `main`, manual runs,
+release verification, and image exports always run `npm --prefix tests/e2e test`,
+including mobile and lifecycle coverage. Its optional manual export produces a
+fully tested image archive/checksums without publishing. See the
+[verification tiers](../plans/migration/testing.md#ci-verification-tiers).
 
 ## Remaining Gates
 
