@@ -1,7 +1,7 @@
 # ADR-0006 GitHub Delivery
 
 _Creation date_: 2026-10-04
-_Updated_: 2026-10-19
+_Updated_: 2026-10-25
 
 ## Context
 
@@ -10,7 +10,7 @@ Docker use. Contributors need reproducible verification, and operators need
 versioned releases traceable to tested source and runtime artifacts.
 Public image distribution should integrate with these workflows without requiring
 a separate registry account.
-Release identities must remain immutable, while maintenance branches should exist
+Published release identities must remain immutable, while maintenance branches should exist
 only when an older version needs fixes independently of ongoing development.
 
 ## Decision
@@ -34,6 +34,12 @@ only when an older version needs fixes independently of ongoing development.
 	Each maintenance release still receives its own immutable tag, such as `v1.0.1`.
 - Protect `v*` release tags with a ruleset restricting creation, modification,
 	and deletion. Never move a published release tag or reuse its version.
+- An owner may explicitly authorize moving a tag for a failed, unpublished
+	release attempt after confirming that no versioned image, public release or
+	distributed release assets exist. Remove stale draft assets and refresh draft
+	metadata if present, retain the failed run's history, and rerun verification
+	against the new commit. Use an existing authorized ruleset bypass, not weaker
+	tag protection. Publication makes the tag and version permanently immutable.
 
 ### Publishing flow
 
@@ -72,4 +78,5 @@ only when an older version needs fixes independently of ongoing development.
 
 ## Change History
 
+- 2026-10-25: Approved an explicit owner-authorized exception for failed, unpublished release attempts so verification fixes can reuse a version without weakening published-version immutability.
 - 2026-10-19: Approved source-only public development before completion of third-party release preparation; public Docker images and versioned releases remain separately gated.
