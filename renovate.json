@@ -8,7 +8,7 @@
       "description": "Angular framework and CLI packages pin each other's exact versions as peers",
       "extends": [
         "monorepo:angular",
-        "monorepo:angularcli"
+        "monorepo:angular-cli"
       ],
       "groupName": "angular"
     }
