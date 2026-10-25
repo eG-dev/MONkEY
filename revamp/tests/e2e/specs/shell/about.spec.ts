@@ -390,6 +390,8 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
       await expect(last).toHaveAttribute("aria-expanded", "false");
       await expect(first).toHaveAttribute("aria-expanded", "true");
       await last.press("Enter");
+
+      await expect(last).toHaveAttribute('aria-expanded', 'true');
     }
 
     await page.locator('#about-search').fill(entry.components[0].name);
@@ -397,9 +399,9 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     await expect(page.locator('#about-search-status')).toHaveText(`Matching components: ${matchingEntryCount(entry.components[0].name)}`);
     await expect(row).toHaveAttribute('open', '');
     await expect(row.getByTestId('about-document-text')).toHaveCount(documentIds.length);
-    expect(await row.getByTestId('about-document-toggle').evaluateAll((buttons) =>
-      buttons.every((button) => button.getAttribute("aria-expanded") === "true"),
-    )).toBe(true);
+    await expect
+      .poll(() => row.getByTestId('about-document-toggle').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-expanded'))))
+      .toEqual(documentIds.map(() => 'true'));
     expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
     await page.screenshot({ path: test.info().outputPath(`about-notices-${entry.id}.png`), fullPage: true });
   }
@@ -410,9 +412,9 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     const row = page.getByTestId(`about-component-${entry.id}`);
 
     await expect(row).toHaveAttribute("open", "");
-    expect(await row.getByTestId("about-document-toggle").evaluateAll((buttons) =>
-      buttons.every((button) => button.getAttribute("aria-expanded") === "true"),
-    )).toBe(true);
+    await expect
+      .poll(() => row.getByTestId('about-document-toggle').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-expanded'))))
+      .toEqual([...new Set(entry.components.flatMap((component) => component.documentIds))].map(() => 'true'));
   }
 
   await page.locator("#about-tab-license").click();

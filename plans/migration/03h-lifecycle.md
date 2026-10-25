@@ -1,8 +1,8 @@
 # Step 3H: management and lifecycle completion
 
-Status: partially implemented. The approved shared About dialog and shell/login
-entry points are implemented with explicitly marked review content. Release-ready
-legal/notices content and the remaining lifecycle work are not complete. Depends
+Status: partially implemented. The shared About dialog, shell/login entry points
+and approved bilingual self-hosted legal wording are implemented. Deployment-specific
+legal review, release notice review and operations acceptance remain open. Depends
 on the preceding features affected by each operation. Apply the
 [milestone delivery and verification rules](03-ui-business-logic.md).
 
@@ -30,8 +30,11 @@ scanning/review and About integration are not completed by this preparation.
 Continue the remaining non-notice Step 3H work. Transaction retention follows the
 approved [R1 and 2026-10-19 amendments](#transaction-retention-backenddata-proposal-r1)
 and its [local delivery evidence](#retention-delivery-evidence-2026-10-19).
-Final self-hosted operator/privacy wording and operations/deployment acceptance
-remain separate work; postponing third-party work does not waive their gates.
+The general bilingual self-hosted operator/privacy wording is approved and
+implemented, including [R2](../../docs/terms/self_hosted_legal_information.md)
+approved on 2026-10-24. Do not reopen this completed wording task as remaining
+implementation work. Deployment-specific legal review and operations/deployment
+acceptance remain separate gates; postponing third-party work does not waive them.
 
 On 2026-10-19 the user explicitly confirmed source-only GitHub publication first,
 with Docker images and releases later. Put ORT setup and release third-party
@@ -178,9 +181,11 @@ the earlier commercial-permission restriction is not part of the chosen license.
 The general bilingual wording is approved as recorded below; deployment-specific
 publication review remains open. No in-app acceptance flow is approved.
 
-The [self-hosted information R1](../../docs/terms/self_hosted_legal_information.md)
+The [self-hosted information](../../docs/terms/self_hosted_legal_information.md)
 records German and English operator, warranty/liability and privacy wording,
 approved by the user on 2026-10-23: "sounds good, lets keep it".
+R2 replaces the explanatory SPDX identifier with the full license name;
+its presentation was approved and implemented on 2026-10-24.
 It distinguishes the operator from household users and
 project maintainers, preserves AGPL rights, and explains shared-account visibility
 and the limits of transaction-detail retention. Its deployment-specific review

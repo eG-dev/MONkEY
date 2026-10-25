@@ -34,16 +34,207 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 
 ## Backup, restore, and upgrades
 
+- Agreed on 2026-10-25: keep full installation backup and restore as documented manual operator procedures using ordinary host/container tools. Do not add application-specific full-backup/restore commands, backend endpoints, scheduled full-backup jobs, or settings UI. The separately requested portable financial export/recovery feature is covered by the draft below; it does not replace this procedure.
+- Stop the container before backing up the complete private data root and preserve deployment configuration separately. Restore into an empty volume with a compatible application version, preserve required ownership/permissions, then start and verify the instance. Rehearse with disposable data; do not touch an operator's installation without explicit approval.
 - Back up the database, image files, and persistent authentication keys with appropriate confidentiality protections.
 - Preserve deployment configuration, particularly `TZ`, with the recovery documentation so restored jobs use the original business-period rules.
-- Use SQLite's supported backup mechanisms or a coordinated stopped-instance backup. Do not copy only a live database file while ignoring WAL state.
-- Establish database/image consistency during backup; document whether writes must pause.
+- Use the coordinated stopped-instance backup above for database/image consistency. Do not copy only a live database file while ignoring WAL state.
 - Store backups outside the container and preferably outside the Docker host; a mounted volume alone is not a backup.
 - Decide backup frequency, retention, encryption, recovery point objective, and recovery time objective.
 - Provide a restore procedure and rehearse it on a clean host/volume.
 - Take a pre-upgrade backup and apply schema migrations before readiness succeeds.
 - Define schema compatibility explicitly. Rolling back an image does not undo a database migration; restore or a supported compatibility path is required.
 - Explain recovery behavior for users, keys, sessions, and scheduled jobs after restoring an older backup.
+
+## Portable Financial Export and Recovery R3
+
+Draft backend/data proposal, 2026-10-25. **Awaiting explicit R3 design approval;
+not implemented.** The request to proceed authorizes preparing this proposal,
+not bypassing the [backend design gate](../../.github/instructions/backend.instructions.md#design-review-gate).
+
+R3 incorporates the user's 2026-10-25 scheduling clarification: once daily at
+01:00 business time in configured `TZ`, superseding R2's fixed UTC schedule,
+without a configurable hourly interval. This accepts the schedule policy only,
+not the complete backend/data proposal.
+
+### Purpose and Agreed Scope
+
+- Produce one versioned JSON file per complete instance financial snapshot, not
+	separate files per account. Prioritize accounts, exact balances and retained
+	transactions. Exclude images, image keys, Identity users/roles/credentials,
+	sessions and Data Protection keys. Restored accounts use the default image.
+- Include the permanent financial state required for safe recovery: audit
+	metadata, allowance revisions/executions, retired posting keys and ledger
+	maintenance counters. Preserve historical actor IDs and display-name snapshots
+	as attribution, without recreating login identities or remapping old actions
+	to the new operator. Audit metadata may refer to users not recreated on import.
+- Export only transaction details still present at snapshot time: default
+	retention is 24 UTC calendar months, with openings and permanent safety records
+	retained independently. Never claim that retained deltas reconstruct a balance
+	after pruning, or that an older export contains changes made after its snapshot.
+- Schedule exports to a private, configurable directory that can be bind-mounted
+	separately. No HTTP endpoint, browser download, settings UI or image archive.
+- Reuse the same JSON contract and importer for isolated E2E state setup. Keep
+	real UI/API creation tests; this is not an Azure-data import facility.
+
+### Proposed Contract and Types
+
+All paths/types below are **proposed**, except the linked existing code.
+
+| Type / namespace / proposed location | Responsibility |
+| --- | --- |
+| `FinancialSnapshot` and one explicit record type per exported collection, `PocketMonkey.Host.Contracts.Recovery`, under `revamp/backend/PocketMonkey.Host/Contracts/Recovery/` | Versioned transport DTOs, separate files, no direct EF/Identity serialization. |
+| `FinancialSnapshotService`, `PocketMonkey.Host.Services`, under `revamp/backend/PocketMonkey.Host/Services/FinancialSnapshotService.cs` | Read a consistent snapshot; validate and atomically import financial state through the existing context. |
+| `FinancialExportStore`, `PocketMonkey.Host.Services`, under `revamp/backend/PocketMonkey.Host/Services/FinancialExportStore.cs` | Private temporary files, atomic publication, completed-export discovery and bounded retention. |
+| `FinancialExportWorker`, `PocketMonkey.Host.HostedServices`, under `revamp/backend/PocketMonkey.Host/HostedServices/FinancialExportWorker.cs` | Wake at startup/minutely, determine whether an export is due, retry failures without stopping financial workflows. |
+| `FinancialImportCommand`, `PocketMonkey.Host.Operations`, under `revamp/backend/PocketMonkey.Host/Operations/FinancialImportCommand.cs` | Offline `import-financial <absolute-json-path>` entry point, stable diagnostics/exit codes, no host or workers started. |
+
+Existing integration points are
+[Program.cs](../../revamp/backend/PocketMonkey.Host/Program.cs),
+[InstanceSettings](../../revamp/backend/PocketMonkey.Host/Configuration/InstanceSettings.cs)
+and [PocketMonkeyDbContext](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs).
+Keep financial import dispatch separate from the interactive username/password
+flow in [OperatorCommands](../../revamp/backend/PocketMonkey.Host/Operations/OperatorCommands.cs).
+No new persisted entity, relationship, index or migration is proposed.
+
+The document contains `formatVersion: 1`, a unique snapshot ID, capture time in
+UTC, application version, source currency/timezone/transaction-retention settings,
+and the collections `accounts`, `ledgerEntries`, `auditEvents`,
+`allowanceRevisions`, `allowanceExecutions`, `retiredLedgerKeys` and
+`ledgerMaintenanceState`. Export IDs, relationships, immutable provenance and
+nullable fields explicitly; retain allowance revision order, execution outcomes,
+attempt metadata, sequence high-water mark and retention revision.
+
+Money uses canonical two-decimal strings with the existing signed 64-bit cent
+limits. Other 64-bit counters/IDs use canonical integer strings to avoid loss in
+JavaScript fixture tooling. UTC instants preserve all supported timestamp
+precision; closed categories use validated stable strings. Currency/timezone are
+metadata, not permission to change deployment configuration silently. JSON is
+human-readable UTF-8; files contain private financial and attribution data.
+
+### Proposed Scheduling and Filesystem Policy
+
+- Opt in by setting `MONKEY_EXPORT_PATH` to an absolute private directory outside
+	the main data root. Unset means disabled. Document a separate optional Compose
+	bind mount, writable only by the application owner; no world-readable files.
+- Export once daily at 01:00 in the configured business timezone `TZ`, not the
+	host-local timezone or fixed UTC. This is one hour after the normal midnight
+	allowance eligibility boundary, not a guarantee that retries/catch-up have
+	completed. No interval or separate schedule configuration initially.
+	Proposed `MONKEY_EXPORT_KEEP_COUNT`: `30` by default, whole counts `1..1000`;
+	this file-retention policy still awaits approval. Transaction retention and
+	export-file retention remain independent.
+- Determine due work from successfully completed files and the injected
+	`TimeProvider`, not an in-memory timer alone. The most recent elapsed 01:00
+	business-time boundary, converted to a UTC instant, defines the due slot;
+	a completed snapshot captured at or after it
+	satisfies that slot, including after restart. Proposed startup behavior: when
+	that slot has no completed export, capture one current snapshot, including on
+	first enabled start. After downtime do not fabricate exports for missed days.
+	On failure leave the last completed export untouched and retry on a later wake.
+- Proposed daylight-saving handling: if 01:00 is ambiguous, use its first
+	occurrence and do not export again for the repeated occurrence. If 01:00 does
+	not exist, use the first valid local instant after the gap. Calculate boundaries
+	from business calendar dates, not by adding 24 elapsed hours. Snapshot timestamps
+	and filenames remain UTC. After a `TZ` change, calculate due slots using the new
+	zone without altering existing snapshots or financial history.
+- Materialize a stable DTO graph inside one SQLite read transaction, then end
+	that transaction before serialization/filesystem work. Concurrent postings and
+	cleanup must not mix pre-change balances with post-change rows.
+- Write a uniquely named temporary file in the destination directory, flush and
+	close it, then atomically rename without overwrite to a timestamp/snapshot-ID
+	`.json` name. Interrupted writes never become completed exports. Clean only
+	application-owned temporary files and prune only matching completed export
+	files, oldest first, after successful publication. Never delete arbitrary files.
+- Validate enabled configuration/storage at startup. Runtime export failures
+	produce nonfinancial structured diagnostics, never payloads, and do not block
+	posting or readiness. Do not claim host-disk disaster protection from a bind
+	mount or guarantee durability beyond the host filesystem.
+
+### Proposed Offline Import and Financial Validation
+
+- Stop the application container; run a one-off command with its data volume and
+	a read-only snapshot mount. Require exclusive database access, with a bounded
+	lock wait and a stable failure if another writer is active. Never run HTTP,
+	allowance, cleanup or export workers during import.
+- Target a current migrated schema with empty business tables and default ledger
+	maintenance state. Existing separately bootstrapped login users and their user
+	administration audit records are allowed; account/ledger/allowance/retired-key
+	data is not. Preserve those local users/audit records; allocate imported audit
+	row IDs locally while retaining event time, actor, subject and action.
+- Validate the whole document before inserting: supported format, required
+	fields, bounded strings/collections, valid exact amounts/UTC instants, unique
+	IDs and keys, account/revision references, normalized-name uniqueness, source
+	signs, exactly one opening for initialized accounts, and no ledger for an
+	uninitialized account. Reject unknown properties and unsupported categories.
+	Proposed initial file-size limit: 256 MiB; exceed it with a clear error rather
+	than allowing unbounded deserialization. Revisit with measured real fixtures.
+- Validate revision chains/order, execution account/month/revision/key agreement,
+	credited-versus-pending state, active/retired key disjointness and maintenance
+	counters at least as high as all retained sequences. Credited executions may
+	legitimately have no ledger row after pruning. Reject retained allowance rows
+	inconsistent with their durable execution evidence.
+- Import exact stored balances and retained history directly, never through
+	posting endpoints. Do not replay credits, reconstruct balances from partial
+	history, synthesize adjustment entries or overwrite existing business data.
+	Validate balance sums only when completeness can actually be established;
+	partial history cannot independently prove the exported balance is correct.
+- Require target currency and `TZ` to match the snapshot before recovery; explain
+	how to set deployment configuration, without silently overriding it. Report
+	differing transaction-retention settings and require a deliberate matching
+	setting before normal startup. Document that startup catch-up and retention
+	resume under normal policies, so old snapshots may trigger eligible credits
+	and cleanup after recovery; no stale-state recovery can preserve later writes.
+- Use one SQLite write transaction, recheck target emptiness inside it, insert in
+	dependency order, preserve counters and keys, and add a nonfinancial import
+	audit event. Any validation, constraint or write failure leaves business state
+	unchanged. A second import fails the nonempty-target check rather than merging.
+	Schema initialization may remain after failure; no financial partial recovery.
+- Return stable command errors such as `snapshot_invalid`,
+	`snapshot_version_unsupported`, `snapshot_configuration_mismatch`,
+	`recovery_target_not_empty` and `recovery_storage_busy`, with nonzero exit codes.
+	No Manager/Member API contract or authorization rule changes; host/storage
+	access is the recovery privilege. Operators recreate users separately.
+
+### E2E Reuse and Verification
+
+Extend the existing real-persistence
+[RuntimeChecks project](../../revamp/tests/integration/RuntimeChecks) with isolated
+snapshot checks and reuse the importer from test-only tooling. Minimal fixtures
+contain valid complete financial state, not relaxed production validation.
+Create users separately, use fresh volumes, and inject a fixed clock for
+time-sensitive scenarios without adding a production clock override/endpoint.
+
+Required checks: export/import/export semantic round trip including pruned
+history; exact signed limits and timestamp precision; historical actor
+attribution; default images; retained/pending allowance recovery without duplicate
+credits; posting and cleanup concurrent with capture; atomic rollback; nonempty
+target/repeated import rejection; malformed/oversized/version-mismatched files;
+configuration mismatch; interrupted writes and unwritable mounts; 01:00 business
+boundary/restart/downtime detection; non-UTC `TZ`, timezone changes and
+skipped/repeated daylight-saving times; file-retention safety and no private
+payload logging. Run focused
+real-image Manager/Member read and Manager posting workflows after recovery.
+Use only disposable databases, export directories and volumes.
+
+### Architecture and Approval
+
+Follow [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md),
+[ADR-0010](../../docs/ADR/ADR-0010-ledger-and-money.md),
+[ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md),
+[ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md) and
+[ADR-0017](../../docs/ADR/ADR-0017-backend-project-boundaries.md).
+Offline empty-target reconstruction is a new recovery capability, not permission
+to edit live financial history. After approval, record a distinct portable
+financial-recovery ADR and link this plan; clarify its controlled reconstruction
+exception relative to ADR-0012 before implementing dependent code. Do not revise
+the manual full-backup decision or imply restored credentials/images.
+
+Evaluated alternatives: CSV loses typed relationships and recovery metadata;
+per-account files risk mixed snapshots; ZIP adds no value without images; full
+SQLite copies remain the separate manual backup; a web import endpoint adds
+unnecessary attack surface. Approval must cover R3, including the proposed
+defaults, file bounds, identity exclusion and offline import entry point.
 
 ## Observability and security
 
