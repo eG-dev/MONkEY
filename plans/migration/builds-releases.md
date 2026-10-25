@@ -1,7 +1,8 @@
 # GitHub builds and releases
 
-Status: independent build/E2E workflow implemented with an optional non-publishing
-image export. GitHub-hosted/fork execution and publishing rehearsal remain unverified.
+Status: root CI and a protected public GHCR prerelease workflow are implemented,
+including same-run tested-image transfer and digest-pinned deployment assets.
+The new publishing workflow has not run on GitHub or published any image/release.
 See the [foundation guide](../../docs/development.md); complete production publishing
 during [operations and cutover](04-operations-cutover.md).
 
@@ -12,8 +13,8 @@ Releases. Contributors must not need Azure credentials or access to the original
 developer's machine. Docker is the primary distribution format; GHCR is the
 selected primary public image registry, as recorded in
 [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md). Anonymous public
-pulls must be verified before release; no registry publishing has been implemented
-or performed yet. Confirm the owner/image namespace during publishing setup.
+pulls must be verified before release. The initial workflow uses the lowercase
+repository namespace, `ghcr.io/<owner>/<repository>`; no publishing has occurred.
 
 ## Build and verification workflows
 
@@ -40,9 +41,9 @@ from framework or dependency versions.
 1. Validate tag format, intended source commit, and that the commit belongs to the reviewed release history. Derive a consistent application/image/release version from the tag.
 2. Build the production image and deployment bundle from that exact source revision using the locked toolchain/dependencies.
 3. Run the release verification gates against that image, including E2E, targeted integration checks, container lifecycle checks, and the agreed security scan policy.
-4. Publish the tested image to GHCR with the version and source revision recorded in OCI labels. Preserve its digest; do not rebuild a different image after testing.
-5. Create a draft GitHub Release for the same tag and attach the release assets below. Link to the published image by version and digest.
-6. Complete the configured release approval/checks, then publish the release. Mark prereleases explicitly; only a successful stable release may update a convenience tag such as `latest`.
+4. Prepare a draft GitHub Release with generated notes for review before approving publication; preserve reviewed notes on reruns.
+5. After protected-environment approval, publish the tested image to GHCR and verify its anonymous digest-pinned pull. Preserve version/source identity and do not rebuild after testing.
+6. Attach matching deployment assets and publish the reviewed draft. Mark prereleases explicitly; only a future successful stable-release path may update a convenience tag such as `latest`.
 
 Publishing jobs use narrowly scoped GitHub token permissions such as
 `contents: write` and `packages: write`, with additional attestation permissions
@@ -59,6 +60,47 @@ never silently overwrite a published version with a different digest, and do not
 publish a release when a required check failed. Exact versions/digests are the
 recovery reference; convenience tags are not immutable release identifiers.
 
+### Implemented Public Prerelease Path
+
+On 2026-10-25 the owner selected **public prereleases** for the first GHCR
+workflow, rather than a private-beta exception. This selects the workflow policy,
+not an immediate visibility change or authorization to publish.
+
+The [prerelease workflow](../../.github/workflows/ghcr-prerelease.yml) accepts
+protected prerelease tags reachable from `main`, with the exact package version,
+or a manual rerun selected on such a tag. It calls the same read-only
+[CI workflow](../../.github/workflows/ci.yml) used for PR verification. Full
+real-image E2E/lifecycle checks and existing dependency audits run before export.
+The release build wrapper still rejects dirty source and pending notice review.
+
+Draft creation has only `contents: write`. The `release` environment gates the
+separate publisher, which downloads only this run's checksum-checked image and
+does not check out code or build again. It checks Linux amd64, build identity,
+required reviewer configuration and anonymous matching-source access before
+publishing. Version-only pushes reject an existing different image; an identical
+image can resume a failed publisher. Anonymous image access gates GitHub Release
+publication. No stable, major/minor or `latest` aliases are supported yet.
+
+The bundle includes a digest-pinned Compose file, optional export override,
+ENV example and setup/backup/upgrade guidance. Image inspection, build identity,
+release identity and download checksums accompany it. These build records are not
+a generated SBOM or a cryptographic attestation; those tooling/review tasks and
+the complete security/source-delivery review remain separate release gates.
+
+Follow the [GitHub and GHCR setup guide](../../docs/development.md#ghcr-prereleases)
+before creating a tag. In particular, configure `v*` protection and required
+environment reviewers, review the draft before approval, and make the package
+public explicitly. Workflow creation does not close the catalog's pending
+release review, alter repository/package visibility, or approve distribution.
+
+Local verification (2026-10-25): workflow YAML/expression/ShellCheck validation,
+eight rejected unsafe workflow mutations, actual deployment-export generation
+with fresh/existing Compose volume identities and missing-name refusal, all 28
+About input checks, documentation links and editor diagnostics passed. The
+actionlint image does not recognize the existing `ubuntu-26.04` label; only that
+runner-label warning was excluded. No hosted publisher, approval, registry push,
+anonymous pull or GitHub Release operation was executed.
+
 ## About content and release inputs
 
 The user accepted defining the About update process before further Step 3H work
@@ -68,8 +110,9 @@ The approved ORT-assisted notice process is recorded in
 [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md), with mandatory
 bespoke per-build collection/reconciliation retained as an evaluated alternative.
 Follow the [ORT preparation guide](../../notices/README.md); scanner
-version/invocation and reporting still need verification. Complete reviewed
-notices and final legal content remain pending.
+version/invocation and reporting still need verification. The agreed curated
+notice collection and reviewed self-hosted legal information are delivered;
+the independent release review remains pending, not a renewed manual backlog.
 
 Application/build identity and project-license generation are implemented under
 [ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md). Use
@@ -82,7 +125,7 @@ not its legal completeness. See the [current build commands](../../docs/developm
 and [notice review guidance](../../docs/development.md#third-party-notices).
 
 - Capture the application version, exact source revision, source cleanliness, and agreed repository/source references before Docker packaging; use the same identity in About, OCI labels, and release assets.
-- Generate local project-license assets from the canonical root license. Use ORT for the dependency/license overview and assemble reviewed required license/copyright/NOTICE text in the root distribution document; manual original-notice collection is acceptable. Review actual shipped npm/NuGet/runtime/container/font/icon/asset material, including transitives/native payloads and gaps in scan coverage; external package links do not replace required text. The current placeholder is not release-ready.
+- Generate local project-license assets from the canonical root license. Use ORT for the dependency/license overview and assemble reviewed required license/copyright/NOTICE text in the root distribution document; manual original-notice collection is acceptable. Review actual shipped npm/NuGet/runtime/container/font/icon/asset material, including transitives/native payloads and gaps in scan coverage; external package links do not replace required text. The curated collection is complete; its independent pending release review is not release approval.
 - Keep reviewed German/English legal documents separately revisioned. Shipped dependency/runtime/asset changes trigger human notice review, not automatic changes to operator/privacy wording or acceptance state. Inspect final OS package inputs before release even if the manifest did not change. Optional initial/release audits assist that review without mandatory per-build archive reconciliation.
 - Bundle all outputs before testing the image and publish that tested digest without rebuilding or modifying it. Record reviewed inputs, reviewer/date, unresolved findings and release content checksums. Resolve applicable source delivery, source-offer, relinking and other obligations separately from notices.
 - Gate release publication on matching version/tag/source identity, complete reviewed notices and legal revisions, source access, and offline real-image About checks. Development placeholders do not satisfy these release gates.
@@ -138,7 +181,7 @@ resolve any blocking publication-policy decisions explicitly.
 - Milestones 2 and 3: expand workflow gates alongside authentication and business features; keep tagged development releases explicitly prerelease.
 - Step 2B: preserve real-stack/security regression gates while establishing the approved UX/UI design before remaining milestone 3 features resume.
 - Milestone 4: verify application-wide design acceptance, the production release process, downloadable assets, public image access, upgrade instructions, and release approval policy.
-- Keep legacy Azure workflows independent during migration; new paths must not accidentally deploy the old application. Retire them only through approved cutover.
+- Legacy Azure workflows were removed in the owner-approved root cleanup on 2026-10-25. No release workflow may stop or delete deployed Azure resources implicitly.
 - Record key build/publishing/versioning decisions in `/docs/ADR` during the relevant phase, following the [ADR lifecycle](00-guardrails.md#architecture-decision-records).
 
 ## Acceptance gates

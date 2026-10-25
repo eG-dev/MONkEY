@@ -94,6 +94,75 @@ assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verificatio
 assert(Object.values(foundation.jobs).every(job => !job.defaults?.run?.['working-directory']), 'CI commands must run from the repository root');
 console.log('PASS: root application inputs present; legacy source absent; CI is root-scoped, read-only, unfiltered, secret-free, and SHA-pinned');
 
+function validatePrereleaseWorkflow(workflow) {
+  assert.deepEqual(Object.keys(workflow.on).sort(), ['push', 'workflow_dispatch']);
+  assert.deepEqual(workflow.on.push.tags, ['v*-*']);
+  assert.deepEqual(workflow.permissions, { contents: 'read' });
+  assert.equal(workflow.concurrency['cancel-in-progress'], false);
+  assert.deepEqual(workflow.jobs.verify.permissions, { contents: 'read' });
+  assert.equal(workflow.jobs.verify.uses, './.github/workflows/ci.yml');
+  assert.deepEqual(workflow.jobs.verify.with, {
+    release_tag: '${{ github.ref_name }}',
+    repository_url: 'https://github.com/${{ github.repository }}',
+    export_image: true,
+  });
+  assert(!Object.hasOwn(workflow.jobs.verify, 'secrets'));
+  assert.deepEqual(workflow.jobs.draft.needs, ['identity', 'verify']);
+  assert.deepEqual(workflow.jobs.draft.permissions, { contents: 'write' });
+  assert.deepEqual(workflow.jobs.publish.needs, ['identity', 'verify', 'draft']);
+  assert.equal(workflow.jobs.publish.environment.name, 'release');
+  assert.deepEqual(workflow.jobs.publish.permissions, { actions: 'read', contents: 'write', packages: 'write' });
+
+  for (const job of Object.values(workflow.jobs)) {
+    for (const step of job.steps ?? []) {
+      if (step.uses) assert(/^actions\/[a-z-]+@[a-f0-9]{40}$/.test(step.uses), `Unpinned release action: ${step.uses}`);
+    }
+  }
+
+  const identity = workflow.jobs.identity.steps.find(step => step.id === 'identity').run;
+  assert(identity.includes('GITHUB_REF_PROTECTED'));
+  assert(identity.includes('git merge-base --is-ancestor "$GITHUB_SHA" origin/main'));
+  const publisher = workflow.jobs.publish.steps;
+  assert.deepEqual(publisher.map(step => step.id), ['access', 'download', 'image', 'push', 'anonymous', 'assets']);
+  assert(publisher.every(step => !step.uses), 'Publisher must not check out or execute source actions');
+  assert(!/\bdocker\s+(build|buildx)\b/.test(publisher.map(step => step.run ?? '').join('\n')), 'Publisher must not rebuild the tested image');
+  assert(publisher[0].run.includes('required_reviewers'));
+  assert(publisher[0].run.includes('https://api.github.com/repos/$GH_REPO/git/commits/$REVISION'));
+  assert(publisher[1].run.includes('gh run download "$GITHUB_RUN_ID"'));
+  assert(publisher[1].run.includes('sha256sum --check SHA256SUMS'));
+  assert(publisher[2].run.includes('org.opencontainers.image.revision'));
+  assert(publisher[2].run.includes('org.pocketmonkey.build.dirty'));
+  assert(publisher[3].run.includes('test "$(jq -er \'.config.digest\' manifest.json)" = "$expected_id"'));
+  assert.deepEqual([...publisher[3].run.matchAll(/^\s*docker push\s+(.+)$/gm)].map(match => match[1]), ['"$IMAGE:$VERSION"']);
+  assert(publisher[4].run.includes('docker --config "$anonymous" pull "$IMAGE@$DIGEST"'));
+  assert(publisher[5].run.includes('--draft=false --prerelease --latest=false'));
+}
+
+const prerelease = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/ghcr-prerelease.yml'), 'utf8'), { uniqueKeys: true });
+validatePrereleaseWorkflow(prerelease);
+for (const change of [
+  workflow => { workflow.on.pull_request = {}; },
+  workflow => { workflow.jobs.verify.permissions.packages = 'write'; },
+  workflow => { workflow.jobs.publish.environment.name = 'unprotected'; },
+  workflow => { workflow.jobs.publish.steps[1].run = 'gh run download 123'; },
+  workflow => { workflow.jobs.publish.steps[2].uses = 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'; },
+  workflow => { workflow.jobs.publish.steps[2].run += '\ndocker build .'; },
+  workflow => { workflow.jobs.publish.steps[3].run += '\ndocker push "$IMAGE:latest"'; },
+  workflow => { workflow.jobs.publish.steps.reverse(); },
+]) {
+  const changed = structuredClone(prerelease);
+  change(changed);
+  assert.throws(() => validatePrereleaseWorkflow(changed), 'Unsafe release workflow fixture was accepted');
+}
+assert(Object.hasOwn(foundation.on, 'workflow_call'));
+assert.equal(foundation.on.workflow_call.inputs.export_image.default, false);
+const verificationSteps = foundation.jobs.foundation.steps;
+const imageBuilds = verificationSteps.filter(step => step.run?.includes('npm --prefix web run build:image'));
+assert.equal(imageBuilds.length, 1, 'CI must build exactly one production image');
+assert(verificationSteps.findIndex(step => step.run?.includes('npm --prefix tests/e2e test')) <
+  verificationSteps.findIndex(step => step.run?.includes('docker save pocket-monkey:foundation')));
+console.log('PASS: protected prerelease flow, same-run tested artifact, immutable version-only pushes, anonymous pull gate; 8 unsafe workflow mutations rejected');
+
 const backendDirectory = path.join(root, 'backend');
 const migrationDirectory = path.join(backendDirectory, 'PocketMonkey.Storage/Migrations');
 

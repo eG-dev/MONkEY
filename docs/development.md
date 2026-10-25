@@ -1045,6 +1045,71 @@ success. The enum and its shared `ToCode()` conversion live beside the service.
 HTTP and operator boundaries retain stable snake-case error strings; only the
 endpoint mapper assigns HTTP statuses.
 
+## GHCR Prereleases
+
+The [GHCR Prerelease workflow](../.github/workflows/ghcr-prerelease.yml) publishes
+public Linux amd64 prereleases to `ghcr.io/<owner>/<repository>`, all lowercase.
+It reuses CI, exports the tested image, prepares draft notes, waits for approval,
+then publishes that image without rebuilding. Stable releases and `latest` aliases
+are deliberately not enabled. No image, tag or release was created during setup.
+
+Before the first run:
+
+1. Complete the rights/history/private-data review before changing repository visibility. The publisher requires the exact source commit to be anonymously accessible, but never changes visibility itself.
+2. Protect `v*` Git tags with an active ruleset restricting creation, modification and deletion. The workflow rejects unprotected tags or commits outside `main` history.
+3. Create the GitHub `release` environment with required reviewers and restrict deployment to release tags. Review/edit the prepared draft notes before approving the job. For a sole maintainer, allow that maintainer to approve their own run or nominate another reviewer; otherwise self-review prevention blocks publication. The workflow checks reviewer rules and refuses an unprotected environment.
+4. Allow the repository's `GITHUB_TOKEN` to publish packages in its owner namespace. No PAT or additional registry secret is required. Package visibility must be set to public explicitly; repository visibility does not do that.
+5. Complete applicable release security, notice and corresponding-source approvals. The current catalog is still `releaseReview: pending`; the release build intentionally fails until genuine review is recorded. This setup does not install ORT, change that status or reopen completed manual collection.
+6. Commit and push the workflow and reviewed version inputs to `main`. The application currently remains `0.0.0`; a prerelease needs a matching strict SemVer version in both package and lockfile fields.
+
+For a future approved first beta, update the single version source without
+creating a tag automatically:
+
+```powershell
+npm --prefix web version 0.1.0-beta.1 --no-git-tag-version --ignore-scripts
+```
+
+After committing that version change, pushing it to `main`, completing the gates
+above and selecting the verified commit, create a new immutable tag:
+
+```powershell
+git tag -a v0.1.0-beta.1 -m "POCKET MONkEY 0.1.0-beta.1"
+git push origin v0.1.0-beta.1
+```
+
+The package version is `0.1.0-beta.1`, without the tag's `v`. Review the generated
+draft while the publisher waits for environment approval. Notes from earlier
+attempts are preserved. After approval, the publisher checks the saved image's
+config digest, clean tagged build metadata, source, version and platform; it
+pushes only this version and verifies an anonymous pull of its exact digest.
+
+A first GHCR package may initially be private. If anonymous pull fails, make
+that package public in GitHub package settings and rerun **only the failed
+publishing job**, using the retained verified artifact. Matching existing image
+content can resume; different content is rejected. Do not move/reuse a published
+tag or rebuild a replacement for it; use another prerelease version. Publishing
+artifacts are retained for seven days. Already published GitHub releases cannot
+be overwritten by a workflow rerun.
+
+Actions artifacts are not private escrow: users allowed to read this public
+repository's Actions artifacts can download the tested image before official
+release approval. Do not include secrets/private data or defer applicable
+distribution rights/notice review until after artifact export.
+
+The prerelease contains `deployment.tar.gz`, `SHA256SUMS`, image inspection,
+build metadata and release identity. Verify checksums before unpacking. The
+bundle removes source-build configuration and pins the published image digest.
+Its ENV example sets a stable `COMPOSE_PROJECT_NAME`: **reuse the existing
+installation's exact project name and data volume when upgrading**, rather than
+silently creating an empty volume. The bundled guide covers first Manager setup,
+HTTPS, backups and upgrades; production/real-host acceptance is still separate.
+The JSON build records are not an SBOM or cryptographic attestation.
+
+Local verification uses the [guardrail checker](../plans/migration/verify-guardrails.mjs),
+including rejected unsafe workflow fixtures. GitHub approval enforcement,
+registry credentials, actual public pulls and release creation still require a
+hosted rehearsal; syntax checks alone do not establish those results.
+
 ## Build and Verify
 
 Run from the repository root. Node 24, .NET SDK 10.0.402, and Docker
