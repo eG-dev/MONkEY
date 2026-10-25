@@ -57,8 +57,14 @@ jobs:
         run: npm --prefix tests/e2e ci --ignore-scripts
       - name: Verify About build-input generation and release validation
         run: npm --prefix web run check:about
-      - name: Verify instructions, ADRs, links, and workflow scopes
-        run: node plans/migration/verify-guardrails.mjs
+      - name: Verify workflow safety and EF artifacts
+        run: |
+          node scripts/verify-workflows.mjs
+          node scripts/verify-migrations.mjs
+      - name: Check changed documentation
+        env:
+          DOCS_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/check-docs.mjs --base "$DOCS_BASE"
       - name: Verify translation catalogs
         run: npm --prefix web run check:catalogs
       - name: Audit web dependencies

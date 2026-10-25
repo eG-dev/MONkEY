@@ -64,7 +64,7 @@ GitHub dependency reporting and targeted distribution review replace ORT under
 
 | Milestone | Reference | Current State |
 | --- | --- | --- |
-| 0 | [Guardrails](00-guardrails.md) | Implemented; maintained by automated checks |
+| 0 | [Guardrails](00-guardrails.md) | Implemented; focused workflow/EF checks and change-scoped documentation validation |
 | 1 | [Runtime stack](01-runtime-stack.md) | Implemented and locally verified |
 | 2A | [Authentication](02-authentication-authorization.md) | Implemented and locally verified |
 | 2B | [UX/UI design](02b-ux-ui-design.md) | Representative design accepted; application-wide review remains |

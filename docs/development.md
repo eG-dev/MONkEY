@@ -1038,12 +1038,12 @@ Generate migrations from the repository root using the pinned EF tool and explic
 ```text
 dotnet tool restore
 dotnet ef migrations add <Name> --project backend/PocketMonkey.Storage --startup-project backend/PocketMonkey.Host --context PocketMonkeyDbContext --output-dir Migrations --namespace PocketMonkey.Storage.Migrations
-node plans/migration/verify-guardrails.mjs
+node scripts/verify-migrations.mjs
 ```
 
 Keep every migration and the single `PocketMonkeyDbContextModelSnapshot` in
 `backend/PocketMonkey.Storage/Migrations`. Do not create a second folder or snapshot. The backend build
-rejects misplaced timestamped migration/snapshot files; the CI guard also checks
+rejects misplaced timestamped migration/snapshot files; the focused EF check verifies
 namespace consistency, matching implementation/designer pairs, and one snapshot.
 Relocating generated history must preserve migration IDs and schema operations.
 
@@ -1112,8 +1112,10 @@ silently creating an empty volume. The bundled guide covers first Manager setup,
 HTTPS, backups and upgrades; production/real-host acceptance is still separate.
 The JSON build records are not an SBOM or cryptographic attestation.
 
-Local verification uses the [guardrail checker](../plans/migration/verify-guardrails.mjs),
-including rejected unsafe workflow fixtures. GitHub approval enforcement,
+Local verification uses the [workflow safety checker](../scripts/verify-workflows.mjs),
+including rejected unsafe publishing changes and actual smoke/full shell selection.
+It checks safety boundaries, not exact step names or complete script text, and is
+not a substitute for workflow review. GitHub approval enforcement,
 registry credentials, actual public pulls and release creation still require a
 hosted rehearsal; syntax checks alone do not establish those results.
 
@@ -1132,7 +1134,9 @@ npm --prefix tests/e2e ci --ignore-scripts
 npm --prefix web run check:catalogs
 npm --prefix web run build
 npm --prefix tests/e2e run check
-node plans/migration/verify-guardrails.mjs
+node scripts/verify-workflows.mjs
+node scripts/verify-migrations.mjs
+node scripts/check-docs.mjs
 npm --prefix web run build:image
 npm --prefix tests/e2e exec -- playwright install chromium
 npm --prefix tests/e2e test
@@ -1141,6 +1145,14 @@ npm --prefix tests/e2e test
 CI does not install a host browser; see the isolated browser server below. On a corporate network
 whose CA is trusted by Windows, `NODE_USE_SYSTEM_CA=1` allows Node downloads to use
 that trust store; never disable certificate verification to download a browser.
+
+CI checks workflow safety and EF artifact integrity on every run. Documentation
+links, Mermaid syntax and instruction metadata run only when Markdown or their
+tooling changes, or files are deleted, relative to the PR base or previous pushed revision. Manual and
+release runs without a comparison base check all maintained documentation.
+Run `node scripts/check-docs.mjs` locally for an unconditional documentation check.
+Legacy-layout fixtures, instruction-routing fixtures, arbitrary metadata lengths
+and ADR vocabulary bans are retired; the architecture and release rules remain.
 
 The solution build includes the test-only `RuntimeChecks` probe. E2E fixtures use
 English browser/request defaults and English preferences for ready users. Core

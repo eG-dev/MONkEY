@@ -1,7 +1,7 @@
 # Implementation Guardrails
 
-Status: implemented. Maintain the repository instructions, ADRs and executable
-guards as the application evolves. Remaining delivery work is in the
+Status: implemented. Migration-only automation is retired; maintain the repository
+instructions, ADRs and focused safety checks as the application evolves. Remaining delivery work is in the
 [finish-line plan](README.md), not a new scaffolding phase.
 
 ## Architecture Decision Records
@@ -44,13 +44,18 @@ history rewriting or data disposal. Commands are maintained in the
 
 ```text
 npm --prefix tests/e2e ci --ignore-scripts
-node plans/migration/verify-guardrails.mjs
+node scripts/verify-workflows.mjs
+node scripts/verify-migrations.mjs
+node scripts/check-docs.mjs
 ```
 
-The validator checks instruction metadata/scopes, root layout, safe CI/release
-tiers, migration placement, Markdown links, ADR structure and Mermaid syntax.
-These checks complement real-image verification; valid instructions alone do
-not prove application behavior or agent compliance.
+Workflow checks retain read-only verification, protected same-artifact publishing
+and smoke/full selection. The EF check covers namespaces, designer pairs and one
+snapshot; the build owns placement. Documentation links, Mermaid syntax and basic
+instruction metadata run only for Markdown/tooling changes or file deletions in CI, or unconditionally with
+the local command above. Legacy-layout/routing fixtures, arbitrary metadata lengths
+and ADR vocabulary bans are removed. These checks complement real-image tests;
+they do not establish agent compliance or prove publishing enforcement on GitHub.
 
 ## Acceptance Gate
 

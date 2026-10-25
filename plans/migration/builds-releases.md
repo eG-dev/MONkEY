@@ -8,7 +8,7 @@ checking its actual failure. See the [finish-line plan](README.md).
 
 ## Verification Tiers
 
-- PRs: locked builds, dependency audits, catalog/type/About-input checks, guardrails and six real-image desktop smoke cases.
+- PRs: locked builds, dependency audits, catalog/type/About-input checks, workflow/EF safety checks and six real-image desktop smoke cases. Documentation validation is change-scoped.
 - PRs labelled `full-e2e`: full regression in addition to the normal checks.
 - `main`, manual verification, release calls and image export: full real-image E2E, persistence, recovery and container-lifecycle suite.
 - Ordinary verification is read-only, fork-safe and secret-free; privileged publishing does not execute PR code or rebuild an untrusted artifact.

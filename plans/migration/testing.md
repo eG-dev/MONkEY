@@ -25,7 +25,7 @@ time, native files or job/recovery behavior.
 
 ## CI Verification Tiers
 
-- Every PR, including dependency updates: locked builds, audits, translation/type/About-input checks, guardrails and `npm --prefix tests/e2e run test:smoke`.
+- Every PR, including dependency updates: locked builds, audits, translation/type/About-input checks, workflow/EF safety checks and `npm --prefix tests/e2e run test:smoke`. Documentation validation runs for Markdown/tooling changes or file deletions.
 - Smoke contains six existing desktop cases covering SSR, authentication/user administration and financial posting/history; it is not a separate mocked suite.
 - `main`, manual runs, releases and image export: `npm --prefix tests/e2e test` runs the full regression/container-lifecycle suite.
 - The `full-e2e` PR label selects full regression before merge for high-risk changes; keep its result read-only and fork-safe.
@@ -55,7 +55,9 @@ to install locked tooling, build Release runtime probes and prepare the image.
 npm --prefix tests/e2e run check
 npm --prefix tests/e2e run test:smoke
 npm --prefix tests/e2e test
-node plans/migration/verify-guardrails.mjs
+node scripts/verify-workflows.mjs
+node scripts/verify-migrations.mjs
+node scripts/check-docs.mjs
 ```
 
 Test dependencies belong in the runner, not the production image. Use narrow
