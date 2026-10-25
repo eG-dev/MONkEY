@@ -262,19 +262,19 @@
       "id": "dotnet-runtime",
       "kind": "runtime",
       "name": "Microsoft.NETCore.App",
-      "version": "10.0.13",
+      "version": "10.0.14",
       "versionEvidence": {
         "kind": "files",
-        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:8af87eba5e7cdafb1514d7388be287365da97c132509e84dfe252ffd552398ca as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.NETCore.App 10.0.13. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material.",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.14-noble@sha256:d247d17dd429d96580eeb96cfce220c1089d860dbbf9f94d599ca64cf3604fe4 as the final runtime base, selecting Microsoft.NETCore.App 10.0.14. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material. Original documents retain their recorded capture provenance and are reused under the approved major-series policy.",
         "files": [
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "8929f63f7f3123e974a63f3a3db50f3d363349dec1c8ae3fddd649493bd5daa0"
+            "sha256": "cb217b86804222734bf09890311d47bcc9429a3e63f0616d0eaca71092830c99"
           }
         ]
       },
-      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -284,19 +284,19 @@
       "id": "aspnet-core-runtime",
       "kind": "runtime",
       "name": "Microsoft.AspNetCore.App",
-      "version": "10.0.13",
+      "version": "10.0.14",
       "versionEvidence": {
         "kind": "files",
-        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:8af87eba5e7cdafb1514d7388be287365da97c132509e84dfe252ffd552398ca as the final runtime base. dotnet --list-runtimes in the built Linux image reports Microsoft.AspNetCore.App 10.0.13. MIT identifies the framework project's license; the matching release's original THIRD-PARTY-NOTICES.txt retains separately licensed material without claiming every listed item ships in this Linux application.",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.14-noble@sha256:d247d17dd429d96580eeb96cfce220c1089d860dbbf9f94d599ca64cf3604fe4 as the final runtime base, selecting Microsoft.AspNetCore.App 10.0.14. MIT identifies the framework project's license; the retained upstream THIRD-PARTY-NOTICES.txt identifies separately licensed material without claiming every listed item ships in this Linux application. Original documents retain their recorded capture provenance and are reused under the approved major-series policy.",
         "files": [
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "8929f63f7f3123e974a63f3a3db50f3d363349dec1c8ae3fddd649493bd5daa0"
+            "sha256": "cb217b86804222734bf09890311d47bcc9429a3e63f0616d0eaca71092830c99"
           }
         ]
       },
-      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -306,15 +306,15 @@
       "id": "microsoft-entityframeworkcore",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.EntityFrameworkCore"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -324,15 +324,15 @@
       "id": "microsoft-entityframeworkcore-sqlite",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Sqlite",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.EntityFrameworkCore.Sqlite"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -342,15 +342,15 @@
       "id": "microsoft-entityframeworkcore-sqlite-core",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Sqlite.Core",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite.Core@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite.Core@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.EntityFrameworkCore.Sqlite.Core"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -360,15 +360,15 @@
       "id": "microsoft-data-sqlite-core",
       "kind": "nuget",
       "name": "Microsoft.Data.Sqlite.Core",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.Data.Sqlite.Core@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.Data.Sqlite.Core@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.Data.Sqlite.Core"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13/src/Microsoft.Data.Sqlite.Core",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14/src/Microsoft.Data.Sqlite.Core",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -458,7 +458,7 @@
           {
             "path": "backend/PocketMonkey.Storage/packages.lock.json",
             "lineEndings": "lf",
-            "sha256": "7216ba1f293000954206254faf5fee247b16ac511e594f16ec5cfa949b41f4ee"
+            "sha256": "43088c841ae9f96c6f7378818921be6d8306e795689553ee93ae5d30a89a4829"
           }
         ]
       },
@@ -815,15 +815,15 @@
       "id": "microsoft-aspnetcore-identity-entityframeworkcore",
       "kind": "nuget",
       "name": "Microsoft.AspNetCore.Identity.EntityFrameworkCore",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.AspNetCore.Identity.EntityFrameworkCore@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.AspNetCore.Identity.EntityFrameworkCore@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.AspNetCore.Identity.EntityFrameworkCore"
       },
-      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.13/src/Identity/EntityFrameworkCore",
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/Identity/EntityFrameworkCore",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -833,15 +833,15 @@
       "id": "microsoft-aspnetcore-openapi",
       "kind": "nuget",
       "name": "Microsoft.AspNetCore.OpenApi",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.AspNetCore.OpenApi@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.AspNetCore.OpenApi@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.AspNetCore.OpenApi"
       },
-      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.13/src/OpenApi",
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/OpenApi",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -869,15 +869,15 @@
       "id": "microsoft-entityframeworkcore-abstractions",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Abstractions",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Abstractions@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Abstractions@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.EntityFrameworkCore.Abstractions"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -887,15 +887,15 @@
       "id": "microsoft-entityframeworkcore-relational",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Relational",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Relational@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Relational@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.EntityFrameworkCore.Relational"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.13",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -905,15 +905,15 @@
       "id": "microsoft-extensions-dependencymodel",
       "kind": "nuget",
       "name": "Microsoft.Extensions.DependencyModel",
-      "version": "10.0.13",
-      "purl": "pkg:nuget/Microsoft.Extensions.DependencyModel@10.0.13",
+      "version": "10.0.14",
+      "purl": "pkg:nuget/Microsoft.Extensions.DependencyModel@10.0.14",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
         "framework": "net10.0",
         "package": "Microsoft.Extensions.DependencyModel"
       },
-      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.13/src/libraries/Microsoft.Extensions.DependencyModel",
+      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.14/src/libraries/Microsoft.Extensions.DependencyModel",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",

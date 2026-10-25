@@ -896,7 +896,7 @@ the configured currency or business timezone.
 
 | Component | Verified version |
 | --- | --- |
-| .NET SDK / runtime / EF Core | 10.0.402 / 10.0.13 / 10.0.13 |
+| .NET SDK / runtime / EF Core | 10.0.403 / 10.0.14 / 10.0.14 |
 | Node / Angular framework / SSR and CLI | 24.22.1 / 22.2.3 / 22.2.4 |
 | npm / TypeScript | 12.2.1 / 6.0.3 |
 | Taiga / universal Web APIs | 5.29.0 / 5.4.0 |
@@ -910,11 +910,12 @@ CommonJS and adds approximately 77 KB to the initial browser bundle; the explici
 initial budget is 650 KB warning / 800 KB error. No runtime CDN is used.
 No ARM, Firefox, or WebKit compatibility claim is made yet.
 
-Runtime refresh verified on 2026-10-25: Node 24.22.1, npm 12.2.1, and
-refreshed .NET SDK/ASP.NET image digests (versions remain 10.0.402/10.0.13).
-The production image build, six desktop smoke checks, and npm 12.2.1 locked
-installation with install scripts disabled passed; the npm audit found no
-vulnerabilities. TypeScript remains on the Angular-compatible 6.0 line.
+The .NET patch refresh uses SDK 10.0.403 and ASP.NET runtime, EF Core, and
+`dotnet-ef` 10.0.14. The locked Release solution build in the exact Linux SDK
+container, production image build, and 29 About/build-input checks passed.
+Validation did not upgrade the Windows host SDK; local .NET commands require
+10.0.403 or a compatible later patch according to `global.json`.
+Node remains 24.22.1, npm 12.2.1, and TypeScript on the Angular-compatible 6.0 line.
 
 Dependency refresh verified on 2026-10-23: npm 12.2.0 clean installation,
 Angular SSR and replacement .NET builds, production image, 24 About/build-input

@@ -20,7 +20,7 @@ RUN MONKEY_PACKAGED_BUILD=1 \
     MONKEY_BUILD_DIRTY="${BUILD_DIRTY}" \
     MONKEY_BUILD_REPOSITORY="${BUILD_REPOSITORY}" npm run build
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0.402-noble@sha256:747cbade5bfd918a175ac32f8f1d931edec2c7d0d5397a3de72eaef1ac1f66d2 AS backend-build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.403-noble@sha256:afd0ccff9d306812a69ef0f47458376b6acb544ae866cfc4b8d28ff0eef35ea7 AS backend-build
 WORKDIR /build
 
 COPY global.json Directory.Build.props Directory.Packages.props NuGet.Config ./
@@ -31,7 +31,7 @@ RUN dotnet restore backend/PocketMonkey.Host/PocketMonkey.Host.csproj --locked-m
 COPY backend/ ./backend/
 RUN dotnet publish backend/PocketMonkey.Host/PocketMonkey.Host.csproj --configuration Release --no-restore --output /publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:8af87eba5e7cdafb1514d7388be287365da97c132509e84dfe252ffd552398ca
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.14-noble@sha256:d247d17dd429d96580eeb96cfce220c1089d860dbbf9f94d599ca64cf3604fe4
 
 ARG BUILD_VERSION
 ARG BUILD_REVISION

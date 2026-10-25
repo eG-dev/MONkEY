@@ -41,54 +41,54 @@ Documents: angular-license
 
 .NET
 ----
-Microsoft.NETCore.App 10.0.13
+Microsoft.NETCore.App 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/runtime/tree/v10.0.13
+Source: https://github.com/dotnet/runtime/tree/v10.0.14
 Documents: dotnet-license, dotnet-third-party-notices
 
 ASP.NET Core
 ------------
-Microsoft.AspNetCore.App 10.0.13
+Microsoft.AspNetCore.App 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/aspnetcore/tree/v10.0.13
+Source: https://github.com/dotnet/aspnetcore/tree/v10.0.14
 Documents: dotnet-license, aspnet-core-third-party-notices
-Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.13
+Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/aspnetcore/tree/v10.0.13/src/Identity/EntityFrameworkCore
+Source: https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/Identity/EntityFrameworkCore
 Documents: dotnet-license, aspnet-core-third-party-notices
-Microsoft.AspNetCore.OpenApi 10.0.13
+Microsoft.AspNetCore.OpenApi 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/aspnetcore/tree/v10.0.13/src/OpenApi
+Source: https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/OpenApi
 Documents: dotnet-license, aspnet-core-third-party-notices
 
 Entity Framework Core
 ---------------------
-Microsoft.EntityFrameworkCore 10.0.13
+Microsoft.EntityFrameworkCore 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.13
+Source: https://github.com/dotnet/efcore/tree/v10.0.14
 Documents: ef-core-license
-Microsoft.EntityFrameworkCore.Abstractions 10.0.13
+Microsoft.EntityFrameworkCore.Abstractions 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.13
+Source: https://github.com/dotnet/efcore/tree/v10.0.14
 Documents: ef-core-license
-Microsoft.EntityFrameworkCore.Relational 10.0.13
+Microsoft.EntityFrameworkCore.Relational 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.13
+Source: https://github.com/dotnet/efcore/tree/v10.0.14
 Documents: ef-core-license
 
 SQLite
 ------
-Microsoft.EntityFrameworkCore.Sqlite 10.0.13
+Microsoft.EntityFrameworkCore.Sqlite 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.13
+Source: https://github.com/dotnet/efcore/tree/v10.0.14
 Documents: ef-core-license
-Microsoft.EntityFrameworkCore.Sqlite.Core 10.0.13
+Microsoft.EntityFrameworkCore.Sqlite.Core 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.13
+Source: https://github.com/dotnet/efcore/tree/v10.0.14
 Documents: ef-core-license
-Microsoft.Data.Sqlite.Core 10.0.13
+Microsoft.Data.Sqlite.Core 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.13/src/Microsoft.Data.Sqlite.Core
+Source: https://github.com/dotnet/efcore/tree/v10.0.14/src/Microsoft.Data.Sqlite.Core
 Documents: ef-core-license
 SQLitePCLRaw.core 2.1.13
 Licensing: Apache-2.0; review: reviewed
@@ -235,9 +235,9 @@ Documents: openapi-net-license
 
 .NET DependencyModel
 --------------------
-Microsoft.Extensions.DependencyModel 10.0.13
+Microsoft.Extensions.DependencyModel 10.0.14
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/runtime/tree/v10.0.13/src/libraries/Microsoft.Extensions.DependencyModel
+Source: https://github.com/dotnet/runtime/tree/v10.0.14/src/libraries/Microsoft.Extensions.DependencyModel
 Documents: dotnet-license, dotnet-dependency-model-third-party-notices
 
 === angular-license (license) ===
@@ -269,7 +269,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 === dotnet-license (license) ===
-Applies to: Microsoft.NETCore.App 10.0.13; Microsoft.AspNetCore.App 10.0.13; Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.13; Microsoft.AspNetCore.OpenApi 10.0.13; Microsoft.Extensions.DependencyModel 10.0.13
+Applies to: Microsoft.NETCore.App 10.0.14; Microsoft.AspNetCore.App 10.0.14; Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.14; Microsoft.AspNetCore.OpenApi 10.0.14; Microsoft.Extensions.DependencyModel 10.0.14
 Source: https://raw.githubusercontent.com/dotnet/runtime/v10.0.13/LICENSE.TXT
 Revision: v10.0.13; captured from /usr/share/dotnet/LICENSE.txt in the pinned ASP.NET runtime image; identical bytes in dotnet/runtime v10.0.13 LICENSE.TXT and dotnet/aspnetcore v10.0.13 LICENSE.txt
 SHA-256: cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310
@@ -299,7 +299,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 === dotnet-third-party-notices (notice) ===
-Applies to: Microsoft.NETCore.App 10.0.13
+Applies to: Microsoft.NETCore.App 10.0.14
 Source: https://mcr.microsoft.com/v2/dotnet/aspnet/manifests/sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac
 Revision: mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac: /usr/share/dotnet/ThirdPartyNotices.txt, copied unchanged from the built Linux image
 SHA-256: 2dc8f8c5a39401e928b5784ab564eb8b3ceb99ead3df8f260e0cab7e0bbecc7a
@@ -1757,7 +1757,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 === aspnet-core-third-party-notices (notice) ===
-Applies to: Microsoft.AspNetCore.App 10.0.13; Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.13; Microsoft.AspNetCore.OpenApi 10.0.13
+Applies to: Microsoft.AspNetCore.App 10.0.14; Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.14; Microsoft.AspNetCore.OpenApi 10.0.14
 Source: https://raw.githubusercontent.com/dotnet/aspnetcore/v10.0.13/THIRD-PARTY-NOTICES.txt
 Revision: dotnet/aspnetcore v10.0.13: THIRD-PARTY-NOTICES.txt, retained in full without inferring a Linux shipped-component inventory; also the full text supplied by Microsoft.AspNetCore.Identity.EntityFrameworkCore and Microsoft.AspNetCore.OpenApi 10.0.13, differing only by CRLF in those NuGet archives
 SHA-256: 52af3d603b6d069e635f8afd08ec44ec01559255b5f3afd161ae9e6fe7e7aa54
@@ -2874,7 +2874,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 === ef-core-license (license) ===
-Applies to: Microsoft.EntityFrameworkCore 10.0.13; Microsoft.EntityFrameworkCore.Sqlite 10.0.13; Microsoft.EntityFrameworkCore.Sqlite.Core 10.0.13; Microsoft.Data.Sqlite.Core 10.0.13; Microsoft.EntityFrameworkCore.Abstractions 10.0.13; Microsoft.EntityFrameworkCore.Relational 10.0.13
+Applies to: Microsoft.EntityFrameworkCore 10.0.14; Microsoft.EntityFrameworkCore.Sqlite 10.0.14; Microsoft.EntityFrameworkCore.Sqlite.Core 10.0.14; Microsoft.Data.Sqlite.Core 10.0.14; Microsoft.EntityFrameworkCore.Abstractions 10.0.14; Microsoft.EntityFrameworkCore.Relational 10.0.14
 Source: https://raw.githubusercontent.com/dotnet/efcore/v10.0.13/LICENSE.txt
 Revision: v10.0.13
 SHA-256: ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b
@@ -7148,7 +7148,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 === dotnet-dependency-model-third-party-notices (notice) ===
-Applies to: Microsoft.Extensions.DependencyModel 10.0.13
+Applies to: Microsoft.Extensions.DependencyModel 10.0.14
 Source: https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencymodel/10.0.13/microsoft.extensions.dependencymodel.10.0.13.nupkg
 Revision: Microsoft.Extensions.DependencyModel 10.0.13: complete unchanged THIRD-PARTY-NOTICES.TXT; distinct from the already captured .NET runtime notice bundle; NuGet signature-aware content hash verified against packages.lock.json
 SHA-256: 6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21
