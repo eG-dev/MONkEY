@@ -26,7 +26,7 @@ responsive layouts, loading/empty/error states, and SSR/hydration behavior.
 Image cropping and other browser-only interactions must not execute during SSR.
 
 Every slice includes complete German and English catalogs following the
-[localization foundation](localization.md).
+[localization plan](localization.md).
 Translate application and Taiga-provided UI consistently; do not defer translation
 until feature completion. Check longer text and localized number/date entry as
 well as display, without changing the business timezone or currency.
@@ -72,13 +72,13 @@ during that step, not speculative records now. Follow the existing
 [shared access](../../docs/ADR/ADR-0003-shared-instance-access.md), and
 [language/timezone](../../docs/ADR/ADR-0004-language-and-timezone.md) decisions.
 
-The locally implemented authentication foundation is the starting point, not work
+The locally implemented authentication runtime is the starting point, not work
 to repeat in 3H. Hosted/fork CI, publishing rehearsal, and real-host deployment
 gates remain open as recorded in the [migration overview](README.md).
 
 ## Verification across slices
 
-- Follow the [E2E-first testing foundation](testing.md): browser E2E tests are the primary feature acceptance and regression suite.
+- Follow the [E2E-first testing strategy](testing.md): browser E2E tests are the primary feature acceptance and regression suite.
 - Add end-to-end scenarios with every slice, covering user-visible rules, persisted outcomes, manager/member permissions, invalid inputs, failures, and recovery through the real application.
 - No routine unit tests are required; do not create backend rule/mock test suites or coverage quotas by default. Add an exceptional unit test only when its specific benefit is justified.
 - Use targeted real-SQLite integration tests for transaction rollback/concurrency, database constraints, schema changes, and deterministic job boundary behavior that is difficult to verify reliably through the browser.

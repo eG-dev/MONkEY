@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       export_image:
-        description: Export the verified foundation image and Compose example as a non-publishing rehearsal
+        description: Export the verified application image and Compose example as a non-publishing rehearsal
         type: boolean
         default: false
 
@@ -30,11 +30,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  foundation:
+  verify:
     runs-on: ubuntu-26.04
     timeout-minutes: 25
     env:
-      MONKEY_TEST_IMAGE: pocket-monkey:foundation
+      MONKEY_TEST_IMAGE: pocket-monkey:local
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -101,8 +101,8 @@ jobs:
         if: ${{ inputs.export_image }}
         run: |
           mkdir -p .local/rehearsal
-          docker save pocket-monkey:foundation | gzip > .local/rehearsal/foundation-image.tar.gz
-          docker image inspect pocket-monkey:foundation > .local/rehearsal/image.json
+          docker save pocket-monkey:local | gzip > .local/rehearsal/verified-image.tar.gz
+          docker image inspect pocket-monkey:local > .local/rehearsal/image.json
           cp deploy/compose.yaml .local/rehearsal/compose.yaml
           cp deploy/compose.exports.yaml deploy/compose.env.example .local/rehearsal/
           cp .build/about/build-info.json .local/rehearsal/
@@ -114,12 +114,12 @@ jobs:
           fs.writeFileSync('.local/rehearsal/deployment.json', JSON.stringify(compose, null, 2) + '\n');
           NODE
           cd .local/rehearsal
-          sha256sum foundation-image.tar.gz image.json compose.yaml compose.exports.yaml compose.env.example build-info.json deployment.json > SHA256SUMS
+          sha256sum verified-image.tar.gz image.json compose.yaml compose.exports.yaml compose.env.example build-info.json deployment.json > SHA256SUMS
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
-          name: foundation-test-results
+          name: test-results
           path: |
             tests/e2e/playwright-report
             tests/e2e/test-results
@@ -129,7 +129,7 @@ jobs:
         if: ${{ success() && inputs.export_image }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
-          name: foundation-rehearsal
+          name: verified-image
           path: .local/rehearsal
           if-no-files-found: error
           retention-days: 7

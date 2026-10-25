@@ -7,7 +7,7 @@ import { prepareAbout, webRoot } from './prepare-about.mjs';
 try {
   const { values } = parseArgs({
     options: {
-      tag: { type: 'string', default: 'pocket-monkey:foundation' },
+      tag: { type: 'string', default: 'pocket-monkey:local' },
       'release-tag': { type: 'string' },
       'repository-url': { type: 'string' },
     },

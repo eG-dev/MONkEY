@@ -3,7 +3,7 @@
 Status: local authentication, operator bootstrap/recovery, cookie/CSRF transport,
 and manager user administration are implemented. Local verification is recorded in
 the [development guide](../../docs/development.md). The user approved this work on the
-locally verified [stack foundation](01-stack-foundation.md); its hosted/fork CI,
+locally verified [runtime stack](01-runtime-stack.md); its hosted/fork CI,
 publishing, and deployment-host gates remain open, not waived.
 
 The approved choices are recorded in [ADR-0008](../../docs/ADR/ADR-0008-local-authentication.md).
@@ -54,7 +54,7 @@ Do not build an embedded authorization server merely to label local login OAuth.
 - [x] A fresh instance can bootstrap one manager without default passwords or email.
 - [x] Setup cannot be reused once initialized.
 - [x] Login, logout, expiry, password change, and non-email recovery work.
-- [x] Anonymous protected API requests fail even when bypassing Angular routes; harmless foundation diagnostics remain an explicit development exception.
+- [x] Anonymous protected API requests fail even when bypassing Angular routes; harmless runtime diagnostics remain an explicit development exception.
 - [x] Members can read their session and manage personal preferences; direct member user-administration writes fail. Shared-account reads and financial writes must be verified with their milestone 3 contracts.
 - [x] The last active manager cannot be disabled or demoted, even through concurrent requests; user deletion is not exposed.
 - [x] Disabled users and revoked manager sessions lose access on the next authenticated request.
@@ -66,7 +66,7 @@ Do not build an embedded authorization server merely to label local login OAuth.
 These are local acceptance results, not a claim that hosted CI or production
 deployment is complete. On 2026-10-07 all 31 production-image acceptance cases
 passed. The web dependency audit remains blocked by a critical advisory in the
-existing development-only `concurrently` / `shell-quote` chain; foundation
+existing development-only `concurrently` / `shell-quote` chain; runtime
 hosted/fork CI, publishing, and deployment-host gates also remain open.
 
 ## Browser synchronization regression
@@ -95,7 +95,7 @@ confirmed that all tests pass in GitHub Actions; see the [testing record](testin
 - Members may change their own password and German/English language preference. These operations do not grant business-write permissions.
 - MFA and OIDC are deferred. Host-operator powers remain separate from the in-application Manager role.
 
-The harmless read-only foundation diagnostics remain public during development.
+The harmless read-only runtime diagnostics remain public during development.
 Financial routes do not exist yet; their Manager/Member access checks must be added
 with each milestone 3 feature, not inferred from frontend controls.
 

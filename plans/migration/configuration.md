@@ -1,8 +1,8 @@
 # Docker environment configuration
 
-Status: implemented and locally verified in [stack foundation](01-stack-foundation.md).
+Status: implemented and locally verified in [runtime stack](01-runtime-stack.md).
 Real host HTTPS/mount configuration remains an operational gate; see the
-[foundation guide](../../docs/development.md) and [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md).
+[development guide](../../docs/development.md) and [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md).
 
 ## Environment contract
 

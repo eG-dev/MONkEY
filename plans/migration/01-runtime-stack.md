@@ -1,8 +1,8 @@
-# Milestone 1: stack foundation
+# Milestone 1: runtime stack
 
 Status: in progress. The initial build/run/storage slice is implemented and verified locally on 2026-10-04. Hosted CI, publishing rehearsal, and the real host's HTTPS setup remain open.
 
-See the [foundation guide and verification record](../../docs/development.md) and
+See the [development guide and verification record](../../docs/development.md) and
 [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). Local authentication
 and user administration are now implemented under
 [milestone 2](02-authentication-authorization.md); financial functionality has not
@@ -16,7 +16,7 @@ Docker host before implementing authentication or financial behavior.
 ## Supporting plans
 
 Complete [Step 0: implementation guardrails](00-guardrails.md) before scaffolding.
-During this milestone, establish the cross-cutting foundations described in:
+During this milestone, establish the cross-cutting core capabilities described in:
 
 - [Docker environment configuration](configuration.md).
 - [Localization](localization.md).
@@ -38,7 +38,7 @@ requirements and acceptance checks live in those documents.
 8. Build a multi-stage container containing production Angular assets, Node SSR, and the published .NET application; do not ship development toolchains.
 9. Add a proven supervisor/init arrangement that forwards signals, reaps child processes, and causes container failure when either application process fails. A health check alone must not leave a broken container indefinitely running.
 10. Establish Playwright E2E infrastructure and independent GitHub Actions builds/tests/container checks, plus a publishing rehearsal, following [GitHub builds and releases](builds-releases.md). Do not deploy to Azure.
-11. Establish the [localization foundation](localization.md) and demonstrate German/English switching before implementing authentication or business screens.
+11. Establish [localization](localization.md) and demonstrate German/English switching before implementing authentication or business screens.
 12. Extend the ADRs created during Step 0 with the key stack, storage, deployment, localization, and testing decisions resolved by this spike; follow the [ADR lifecycle](00-guardrails.md#architecture-decision-records).
 
 ## Minimal demonstration
@@ -63,11 +63,11 @@ requirements and acceptance checks live in those documents.
 
 ## Acceptance gate
 
-- [x] The [guardrail acceptance gate](00-guardrails.md#acceptance-gate) is satisfied for the current foundation scope; feature-specific enforcement continues as features arrive.
-- [ ] The [configuration](configuration.md#acceptance-gate), [localization](localization.md#acceptance-gate), and [testing](testing.md#foundation-acceptance-gate) foundation gates are satisfied. Local checks pass; GitHub-hosted execution remains pending.
+- [x] The [guardrail acceptance gate](00-guardrails.md#acceptance-gate) is satisfied for the current runtime scope; feature-specific enforcement continues as features arrive.
+- [ ] The [configuration](configuration.md#acceptance-gate), [localization](localization.md#acceptance-gate), and [testing](testing.md#runtime-acceptance-gate) runtime gates are satisfied. Local checks pass; GitHub-hosted execution remains pending.
 - [x] Key local stack/storage/lifecycle/localization/testing decisions and their rationale are recorded in `/docs/ADR`; publishing/host decisions remain explicit pending gates.
 - [ ] Local builds and container builds succeed from a clean checkout. Locked local builds and an isolated Docker build pass; clean GitHub checkout execution remains pending.
-- [ ] GitHub-hosted CI builds and runs the current E2E suite, including fork contributions, without Azure secrets; a release publishing dry run or foundation prerelease is verified.
+- [ ] GitHub-hosted CI builds and runs the current E2E suite, including fork contributions, without Azure secrets; a release publishing dry run or development prerelease is verified.
 - [x] Angular SSR works with Taiga components, Lucide fonts, and hydration.
 - [x] Fonts/icons load with outbound networking disabled; no runtime CDN dependency exists.
 - [x] Database and files persist across restart and container replacement.

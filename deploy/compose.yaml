@@ -1,6 +1,6 @@
 services:
   app:
-    image: pocket-monkey:foundation
+    image: pocket-monkey:local
     build:
       context: ..
       dockerfile: deploy/Dockerfile

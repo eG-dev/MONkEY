@@ -42,17 +42,17 @@ auth.MapGet("/me", async Task<IResult> (
 ```
 
 ```csharp
-modelBuilder.Entity<FoundationState>(stateEntity =>
+modelBuilder.Entity<Account>(accountEntity =>
 {
-	stateEntity.HasKey(x => x.Id);
+	accountEntity.HasKey(x => x.Id);
 
-	stateEntity
-		.Property(x => x.SampleId)
-		.HasMaxLength(36)
+	accountEntity
+		.Property(x => x.Name)
+		.HasMaxLength(40)
 		.IsRequired();
 
-	stateEntity.ToTable("FoundationState", table =>
-		table.HasCheckConstraint("CK_FoundationState_Singleton", "Id = 1"));
+	accountEntity.ToTable("Accounts", table =>
+		table.HasCheckConstraint("CK_Accounts_NameLength", "length(Name) BETWEEN 1 AND 40"));
 });
 ```
 

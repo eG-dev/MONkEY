@@ -1,6 +1,6 @@
-# E2E-first testing foundation
+# E2E-first testing strategy
 
-Status: local foundation suite implemented and verified. On 2026-10-10, the user
+Status: local runtime suite implemented and verified. On 2026-10-10, the user
 confirmed that all tests pass in GitHub Actions; hosted test execution is no
 longer pending for that earlier run. A subsequent supplied run passed 56 of 57
 cases but exposed an image-load assertion race. On 2026-10-12, the user confirmed
@@ -8,7 +8,7 @@ that all tests pass in GitHub Actions again, closing the pending hosted rerun.
 No run URL or exact case count was supplied for this confirmation. Fork-specific
 verification, publishing rehearsal, and real-host deployment remain separate
 gates. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
-and the [foundation guide](../../docs/development.md). Extend with each feature.
+and the [development guide](../../docs/development.md). Extend with each feature.
 
 ## Latest Hosted Verification, 2026-10-25
 
@@ -99,7 +99,7 @@ Milestone 2 adds real authentication and permission scenarios; milestone 3 grows
 the suite slice by slice. Container restart, backup/restore, and upgrade scenarios
 are automated as the corresponding operational features become available.
 
-## Foundation acceptance gate
+## Runtime acceptance gate
 
 - [x] A reproducible Playwright suite runs against the real stack locally and in CI without requiring unit tests; GitHub Actions success confirmed by the user on 2026-10-10.
 - [x] E2E fixtures are isolated, reproducible, and unavailable as production backdoors; failed runs produce useful diagnostics.

@@ -3,7 +3,7 @@
 Status: root CI and a protected public GHCR prerelease workflow are implemented,
 including same-run tested-image transfer and digest-pinned deployment assets.
 The new publishing workflow has not run on GitHub or published any image/release.
-See the [foundation guide](../../docs/development.md); complete production publishing
+See the [development guide](../../docs/development.md); complete production publishing
 during [operations and cutover](04-operations-cutover.md).
 
 ## Goal
@@ -117,7 +117,7 @@ the independent release review remains pending, not a renewed manual backlog.
 Application/build identity and project-license generation are implemented under
 [ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md). Use
 `npm --prefix web run build:image` from the repository root to prepare metadata/license
-inputs and validate matching OCI labels; the foundation workflow uses this same
+inputs and validate matching OCI labels; the CI workflow uses this same
 non-publishing wrapper. Ordinary builds copy the maintained local notice document;
 they no longer require bespoke inventory collectors or image scanning. The
 offline runtime test checks the served document against its checked-in bytes,
@@ -134,7 +134,7 @@ and [notice review guidance](../../docs/development.md#third-party-notices).
 
 - A GitHub Release with release notes, known limitations, supported host architectures, and the exact source commit/image digest.
 - A deployment bundle containing the example Docker/Compose configuration, non-secret ENV examples, and install/upgrade/backup/restore instructions. Pin its image reference to the tested release.
-- SHA-256 checksums for downloadable assets and an SBOM/provenance record describing the build and dependencies, using tooling selected during the foundation spike.
+- SHA-256 checksums for downloadable assets and an SBOM/provenance record describing the build and dependencies, using tooling selected during the runtime spike.
 - Optional offline image archives only if agreed as a distribution requirement; publishing to GitHub Releases does not automatically require a second non-Docker runtime package.
 
 Do not publish untested architectures. Start with the verified target platform;
@@ -177,7 +177,7 @@ resolve any blocking publication-policy decisions explicitly.
 
 ### Milestone Delivery
 
-- Milestone 1: independent GitHub Actions builds/E2E checks and a publishing dry run or clearly labeled foundation prerelease. Do not claim feature completeness.
+- Milestone 1: independent GitHub Actions builds/E2E checks and a publishing dry run or clearly labeled development prerelease. Do not claim feature completeness.
 - Milestones 2 and 3: expand workflow gates alongside authentication and business features; keep tagged development releases explicitly prerelease.
 - Step 2B: preserve real-stack/security regression gates while establishing the approved UX/UI design before remaining milestone 3 features resume.
 - Milestone 4: verify application-wide design acceptance, the production release process, downloadable assets, public image access, upgrade instructions, and release approval policy.

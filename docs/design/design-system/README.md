@@ -3,7 +3,7 @@
 Status: Approved by the user on 2026-10-10 in the [phase 2B design review](../../../plans/migration/02b-ux-ui-design.md).
 The structure was adapted from an earlier product's design system; colors,
 typography, and the application shell are specific to POCKET MONkEY. The current
-foundations and representative [Angular screens](../../../web) are accepted.
+design primitives and representative [Angular screens](../../../web) are accepted.
 Design approval does not certify outstanding accessibility or technical checks.
 
 **Approved revision, 2026-10-23:** neutral tonal panels/cards and restrained
@@ -27,7 +27,7 @@ decoration.
 - [Logo](logo.md): supplied assets and usage rules.
 - [Accessibility](accessibility.md): WCAG 2.2 AA target and outstanding verification.
 - [Component design notes](components.md): product-specific patterns on top of Taiga UI.
-- [Foundation specimens](specimens/index.html): browser-viewable colors, typography, spacing, and shell examples.
+- [Design-system specimens](specimens/index.html): browser-viewable colors, typography, spacing, and shell examples.
 - [Click prototypes](../prototypes/README.md): the application shell and every view, offline.
 - [Reference stylesheet](styles.css): imports the design tokens and base styles.
 
@@ -57,7 +57,7 @@ not create a requirement, permission, API, or business rule.
 | Click prototypes | [prototypes](../prototypes/README.md), outside the application build |
 | Angular application | [web](../../../web) with Taiga UI 5 and locally bundled Lucide assets |
 
-Do not import the specimen stylesheet into Angular. When the foundations are
+Do not import the specimen stylesheet into Angular. When the design primitives are
 approved, map the tokens onto Taiga's CSS variables in the web application in a
 separate, verified change.
 
@@ -78,7 +78,7 @@ separate, verified change.
 - Hide or disable Manager-only actions for Members for clarity only; the backend
   enforces authorization.
 
-## Visual Foundations
+## Visual Design
 
 | Area | Baseline |
 | --- | --- |

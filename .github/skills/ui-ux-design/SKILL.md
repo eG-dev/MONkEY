@@ -95,7 +95,7 @@ PM.init({
 ## 4. Design system
 
 - Change tokens in `design-system/styles/*.css` with light and dark values.
-- Calculate contrast for new color pairs and document them in `color-scheme.md`; update `components.md` or `typography.md` for new patterns and the specimens when a foundation changes.
+- Calculate contrast for new color pairs and document them in `color-scheme.md`; update `components.md` or `typography.md` for new patterns and the specimens when a design-system primitive changes.
 
 ## 5. Verify
 

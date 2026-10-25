@@ -18,5 +18,5 @@ assembly boundary without a separate process or repository abstraction layer.
 - Keep images and Data Protection filesystem configuration and lifecycle in Host. Both projects form one backend process; the boundary does not change the public API or storage format.
 
 This specializes [application boundaries](ADR-0002-application-boundaries.md),
-preserves the [foundation deployment](ADR-0007-application-foundation.md), and
+preserves the [runtime deployment](ADR-0007-application-foundation.md), and
 retains [local authentication](ADR-0008-local-authentication.md).

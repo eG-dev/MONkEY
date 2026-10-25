@@ -31,7 +31,7 @@ and ledger credits; managers see execution outcomes and failures.
 
 ## Delivery evidence
 
-Verified locally on 2026-10-12 against the final `pocket-monkey:foundation`
+Verified locally on 2026-10-12 against the final `pocket-monkey:local`
 Linux production image: **17 checks passed**, one worker, zero retries. Run
 from the repository root after the Release solution and production-image builds:
 

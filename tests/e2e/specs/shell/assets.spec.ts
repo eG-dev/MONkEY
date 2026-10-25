@@ -52,8 +52,8 @@ test('hydrated English shell survives reload and uses local assets', async ({ pa
 
 test('API routes stay outside SSR fallback and local assets are downloadable', async ({ request }) => {
   const missing = await request.get('/api/not-found');
-  const write = await request.post('/api/foundation');
-  const file = await request.get('/api/foundation/file');
+  const write = await request.post('/api/unsupported');
+  const file = await request.get('/api/unsupported/file');
   const font = await request.get('/assets/lucide/lucide.woff2');
   const favicon = await request.get('/favicon.png');
   const roboto = await request.get('/fonts/roboto/Roboto-Regular.woff2');
@@ -63,7 +63,7 @@ test('API routes stay outside SSR fallback and local assets are downloadable', a
   expect(write.status()).toBe(404);
 
   expect(file.status()).toBe(404);
-  expect((await request.get('/api/foundation')).status()).toBe(404);
+  expect((await request.get('/api/unsupported')).status()).toBe(404);
 
   expect(font.status()).toBe(200);
 

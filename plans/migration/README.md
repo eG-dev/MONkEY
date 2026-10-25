@@ -1,6 +1,6 @@
 # POCKET MONkEY migration plan
 
-Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage foundation. Local authentication and user administration are implemented as step 2A. The user accepted step 2B design references, foundations, and implemented representative screens on 2026-10-10; the design pause is lifted. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented with their existing verification records. Step 3D account images is locally implemented and verified on 2026-10-10. Steps 3E allowance configuration and 3F execution are locally implemented and verified on 2026-10-12; see the [final allowance acceptance evidence](03f-allowance-execution.md#delivery-evidence). The user's earlier GitHub Actions success confirmations remain recorded in the [testing record](testing.md); hosted verification for this new revision remains open. Step 3H lifecycle completion, fork-specific CI verification, publishing rehearsal, and the real deployment host remain open. Dedicated reversals are deferred from the first release. Monthly reports are excluded from the product scope.
+Status: Step 0 guardrails are implemented; milestone 1 has a locally verified build/run/storage runtime. Local authentication and user administration are implemented as step 2A. The user accepted step 2B design references, core capabilities, and implemented representative screens on 2026-10-10; the design pause is lifted. Steps 3A shared accounts, 3B ledger/opening balances, and the approved 3C manual transaction/history scope remain locally implemented with their existing verification records. Step 3D account images is locally implemented and verified on 2026-10-10. Steps 3E allowance configuration and 3F execution are locally implemented and verified on 2026-10-12; see the [final allowance acceptance evidence](03f-allowance-execution.md#delivery-evidence). The user's earlier GitHub Actions success confirmations remain recorded in the [testing record](testing.md); hosted verification for this new revision remains open. Step 3H lifecycle completion, fork-specific CI verification, publishing rehearsal, and the real deployment host remain open. Dedicated reversals are deferred from the first release. Monthly reports are excluded from the product scope.
 
 ## Confirmed scope
 
@@ -34,7 +34,7 @@ financial rules. Both API requests and SSR data reads require backend authorizat
 
 The following packaging/storage choices are now implemented and evaluated locally
 in [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). See the
-[foundation guide](../../docs/development.md) for verified commands and remaining gates.
+[development guide](../../docs/development.md) for verified commands and remaining gates.
 
 Initially package Node and ASP.NET Core in one image as two supervised processes.
 Expose only the web-facing port; bind the backend to loopback in that deployment.
@@ -90,9 +90,9 @@ Independent publication gates remain unchanged.
 
 | Order | Plan | Outcome |
 | --- | --- | --- |
-| 1 | [Stack foundation](01-stack-foundation.md) | Runnable .NET + Angular SSR + storage in Docker |
+| 1 | [Runtime stack](01-runtime-stack.md) | Runnable .NET + Angular SSR + storage in Docker |
 | 2A | [Authentication and authorization](02-authentication-authorization.md) | Local users, sessions, and enforced roles; locally implemented |
-| 2B | [Product UX and UI design](02b-ux-ui-design.md) | Approved workflows/wireframes/visual foundations and established representative UI patterns |
+| 2B | [Product UX and UI design](02b-ux-ui-design.md) | Approved workflows/wireframes/visual design and established representative UI patterns |
 | 3 | [Incremental UI and business logic](03-ui-business-logic.md) | Separately gated business slices with usable, tested UI |
 | 4 | [Operations and cutover](04-operations-cutover.md) | Application-wide design acceptance, restorable deployment, and deliberate Azure retirement |
 
@@ -101,7 +101,7 @@ account listing, detail, creation/editing, explicit signed opening entries, atom
 configuration/execution now adds durable monthly credits and approved localized execution status. Lifecycle completion remains a separate subsequent step; dedicated reversals are deferred from the first release. Follow the
 [delivery order and decision gates](03-ui-business-logic.md#delivery-steps).
 
-[Step 2B design foundations and representative screens](02b-ux-ui-design.md#acceptance-gate)
+[Step 2B design system and representative screens](02b-ux-ui-design.md#acceptance-gate)
 were accepted by the user on 2026-10-10; remaining milestone 3 work may resume
 subject to each slice's policy and verification prerequisites. Store references under
 [docs/design](../../docs/design/README.md). Approved design patterns guide each
@@ -113,7 +113,7 @@ are not a deferred feature or a planned follow-up.
 
 Each milestone has an acceptance gate. Work may be demonstrated before feature
 parity, but the replacement is not the production system until its release gates
-pass. Add foundational operational checks in milestone 1; do not postpone all
+pass. Add core operational checks in milestone 1; do not postpone all
 deployment validation until milestone 4.
 
 Every phase also adds or resolves the relevant ADRs before its acceptance gate is
@@ -127,7 +127,7 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 
 | Plan | When to apply |
 | --- | --- |
-| [Step 0: implementation guardrails](00-guardrails.md) | Before scaffolding; refine after the foundation spike |
+| [Step 0: implementation guardrails](00-guardrails.md) | Before scaffolding; refine after the runtime spike |
 | [Docker environment configuration](configuration.md) | Establish in milestone 1; maintain through deployment and recovery |
 | [Localization](localization.md) | Establish in milestone 1; deliver German/English with every feature |
 | [E2E-first testing](testing.md) | Establish in milestone 1; grow through all subsequent milestones |
@@ -137,7 +137,7 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 
 - On 2026-10-25 the owner explicitly approved removing the legacy source, solution, and Azure publish workflows, and moving the application to the repository root. This supersedes the earlier side-by-side source/deployment strategy.
 - Current paths are `web/`, `backend/`, `tests/e2e/`, `tests/integration/`, and `deploy/`, with `PocketMonkey.slnx` and shared .NET configuration at the root. The [development guide](../../docs/development.md) contains root-level commands.
-- The root CI workflow verifies the application without publishing or requiring Azure secrets. Earlier isolation checks in the [foundation handoff](00-guardrails.md#foundation-handoff) are historical evidence; current guardrails verify the root layout and absence of retired source.
+- The root CI workflow verifies the application without publishing or requiring Azure secrets. Earlier isolation checks in the [runtime handoff](00-guardrails.md#runtime-handoff) are historical evidence; current guardrails verify the root layout and absence of retired source.
 - No dual writes, Azure/local synchronization, or data import is planned.
 - This cleanup preserves Git history and does not retire deployed cloud resources, change repository visibility, or authorize publishing. The owner also permitted removing disposable local build/development state.
 

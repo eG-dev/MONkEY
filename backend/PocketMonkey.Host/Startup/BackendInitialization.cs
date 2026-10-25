@@ -32,7 +32,7 @@ public static class BackendInitialization
 
         scope.ServiceProvider
             .GetRequiredService<IDataProtectionProvider>()
-            .CreateProtector("foundation-key-check")
-            .Protect("foundation");
+            .CreateProtector("startup-key-check")
+            .Protect("key-check");
     }
 }

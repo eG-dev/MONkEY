@@ -62,7 +62,7 @@ POCKET MONkEY uses Angular, .NET, and SQLite, packaged together in a Docker imag
 
 ## Run With Docker
 
-The current image is a development/foundation build, not a production release.
+The current image is a development build, not a production release.
 These examples run from the repository root and use PowerShell. You need Node.js
 24 with npm and Docker Compose with a Linux container engine. The image builds
 .NET inside Docker; a host .NET SDK is not required for this route.
