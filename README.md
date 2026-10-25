@@ -2,197 +2,140 @@
 
 <img src="docs/design/assets/images/monkey_face.png" alt="POCKET MONkEY logo" width="256" height="256">
 
-Welcome to POCKET MONkEY!
+Self-hosted tracking for children's pocket money and savings, in German and English.
 
-What started as a small hobby project to manage my children's pocket money has grown into an application for tracking pocket money and savings for specific goals.
+When your children want to put cash aside, keep it somewhere suitable, such as a
+savings account, and record the deposit. When they need cash, hand it over and
+record the withdrawal. Each account shows the balance and transaction history.
 
-## Why POCKET MONkEY?
+You can also use separate accounts for savings goals, such as a bicycle, a holiday,
+or another planned purchase. The money stays wherever you keep it; POCKET MONkEY
+records it without holding or transferring funds.
 
-### 💰 Too much cash at home?
-
-Collect your children's spare cash, put it somewhere suitable, such as a savings account, and record the deposit in POCKET MONkEY. When a child needs cash, hand it over and record the withdrawal.
-
-You always have an overview of each account's balance. POCKET MONkEY records the money you manage; it does not hold or transfer funds.
-
-### 🔄 Forgetting to credit pocket money?
-
-Set a monthly allowance for each child and POCKET MONkEY automatically credits it to their account.
-
-### 🎯 Saving for something special?
-
-Whether it is a bicycle, a holiday, or your next big purchase, create an account for that purpose. Record the money you set aside and any spending against it, so you can see how much you have saved and what remains available.
-
-The money stays wherever you keep it; the account gives you a separate record for your savings goal.
-
-## Features
-
-POCKET MONkEY is a simple way to track virtual account balances, with less paperwork and a clearer history of where the money went.
-
-### 🏠 Self-hosted
-
-Run your own instance and keep your data under your control.
-
-### 👥 Shared accounts
-
-Manage pocket-money and savings accounts together with local user accounts.
-
-### 🔐 Role-based permissions
-
-Managers administer accounts and record transactions; Members can view all accounts and their history.
-
-### 💰 Account balances
-
-Record opening balances, deposits, and withdrawals.
-
-### 📒 Transaction history
-
-See who recorded each transaction, how much, when, and why.
-
-### 🔄 Automatic pocket-money credits
-
-Monthly bookings using the allowance you choose.
-
-### 🌍 German and English
-
-Choose your preferred interface language.
-
-## Technology
-
-POCKET MONkEY uses Angular, .NET, and SQLite, packaged together in a Docker image. See the [technical guide](docs/development.md) for setup and verification commands.
+> [!IMPORTANT]
+> From personal experience, I recommend giving children pocket money in cash.
+> Let them deposit excess cash with you once they have more than EUR 100 on hand,
+> and record it here. If you prefer not to use cash, automatic monthly allowance
+> credits are available instead.
 
 ## Run With Docker
 
-The current image is a development build, not a production release.
-These examples run from the repository root and use PowerShell. You need Node.js
-24 with npm and Docker Compose with a Linux container engine. The image builds
-.NET inside Docker; a host .NET SDK is not required for this route.
+GHCR publishing is prepared, but no image has been released yet. The following
+template is for published Linux amd64 releases; choose an exact version or digest.
+Set `MONKEY_IMAGE` in your `.env`:
 
-Install the build tooling and build the local image:
-
-```powershell
-npm --prefix web ci --ignore-scripts
-npm --prefix web run build:image
+```dotenv
+MONKEY_IMAGE=ghcr.io/eg-dev/monkey:<version>
 ```
 
-For first-time setup, create an ignored local configuration from the
-[Compose environment example](deploy/compose.env.example). Do not overwrite
-an existing configuration:
+Create `compose.yaml`, replacing the domain and Traefik names as appropriate:
 
-```powershell
-New-Item -ItemType Directory -Force .local | Out-Null
-Copy-Item deploy/compose.env.example .local/compose.env
+```yaml
+services:
+  app:
+    image: ${MONKEY_IMAGE:?Set a published GHCR image}
+    restart: on-failure
+    stop_grace_period: 25s
+    environment:
+      MONKEY_PUBLIC_URL: https://monkey.example.com
+      TZ: Europe/Berlin
+      # MONKEY_EXPORT_PATH: /exports
+      # MONKEY_EXPORT_KEEP_COUNT: "30"
+    volumes:
+      - monkey-data:/data
+      # - /srv/pocket-monkey/exports:/exports
+    networks: [proxy]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: proxy
+      traefik.http.routers.monkey.rule: Host(`monkey.example.com`)
+      traefik.http.routers.monkey.entrypoints: websecure
+      traefik.http.routers.monkey.tls.certresolver: letsencrypt
+      traefik.http.services.monkey.loadbalancer.server.port: "8080"
+volumes:
+  monkey-data:
+networks:
+  proxy:
+    external: true
 ```
 
-Edit the copied file, replacing `MONKEY_PUBLIC_URL` with the HTTPS origin supplied
-by your reverse proxy. Review the timezone, language, currency and retention
-settings, then validate the configuration and start:
-
-```powershell
-docker compose --env-file .local/compose.env -f deploy/compose.yaml config --quiet
-docker compose --env-file .local/compose.env -f deploy/compose.yaml up -d --no-build
+```sh
+docker compose pull
+docker compose up -d
 ```
 
-Compose publishes HTTP at `127.0.0.1:8080` for your host reverse proxy. Configure
-that proxy to serve your chosen HTTPS origin and forward requests to this port,
-then open the HTTPS URL. Compose does not install TLS or configure DNS, and
-signed-in production use requires HTTPS because session cookies are Secure.
+### HTTPS With Traefik
 
-Create the first Manager while the container is running:
-
-```powershell
-docker compose --env-file .local/compose.env -f deploy/compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
-```
-
-Enter the username and password at the prompts; there is no default account or
-public registration. Passwords require at least 12 characters, uppercase and
-lowercase letters, and a digit. Use `recover-manager` instead of
-`bootstrap-manager` to recover an existing Manager's access.
-
-Stop the instance without deleting its persistent data:
-
-```powershell
-docker compose --env-file .local/compose.env -f deploy/compose.yaml down
-```
-
-The named volume stores the database, account images and authentication keys.
-Do not add `--volumes` to the shutdown command unless you intend to delete that
-state. Full backups require stopping the instance and preserving the complete
-data volume together with deployment configuration.
+The example assumes an existing Traefik Docker provider, external `proxy` network,
+`websecure` entrypoint and `letsencrypt` certificate resolver. Point DNS at Traefik;
+TLS terminates there, forwarding HTTP to port 8080. No application port needs
+publishing. HTTPS is required for authentication cookies.
 
 ## Configuration
 
-Edit your local environment file and repeat `up -d --no-build` after configuration
-changes; `restart` alone does not apply them. Existing shell environment variables
-take precedence over values in that file. Keep a private backup of the settings.
+Set these under `app.environment`; apply changes with `docker compose up -d`.
 
-An environment file supplies values to Compose, not automatically to the
-container: only variables referenced by the selected Compose files are forwarded.
-See the [Compose guide](docs/development.md#docker-compose-configuration) for the
-service layout, ports, persistent storage, HTTPS proxy example and export override.
-
-| Variable | Default | Example or meaning |
+| Variable | Default | Meaning |
 | --- | --- | --- |
-| `MONKEY_PUBLIC_URL` | Required | Your HTTPS origin, such as `https://monkey.home.example`. |
-| `TZ` | `UTC` | Business timezone, such as `Europe/Berlin`, used for monthly allowances. |
-| `MONKEY_DEFAULT_LOCALE` | `de-DE` | `de-DE` or `en-US`; users can choose their own interface language. |
-| `MONKEY_CURRENCY` | `EUR` | `EUR` or `USD`; changes the displayed unit, not the amounts or exchange rate. |
-| `MONKEY_TRANSACTION_RETENTION_MONTHS` | `24` | Keep transaction details for 1 through 120 UTC calendar months; `0` keeps unlimited history. |
-| `MONKEY_TRUSTED_PROXIES` | Empty | Explicit trusted proxy IPs/CIDRs when forwarded headers are needed; do not trust arbitrary clients. |
+| `MONKEY_PUBLIC_URL` | Required | Public HTTPS origin. |
+| `TZ` | `UTC` | Business timezone, including allowance and export scheduling. |
+| `MONKEY_DEFAULT_LOCALE` | `de-DE` | `de-DE` or `en-US`. |
+| `MONKEY_CURRENCY` | `EUR` | `EUR` or `USD`; display unit only, no conversion. |
+| `MONKEY_TRANSACTION_RETENTION_MONTHS` | `24` | Detail retention: 1–120 UTC calendar months; `0` unlimited. Balances remain intact. |
+| `MONKEY_TRUSTED_PROXIES` | Empty | Explicit trusted proxy IPs/CIDRs, if forwarded headers are needed. |
+| `MONKEY_EXPORT_PATH` | Unset | Enable financial exports to a separate mounted directory. |
+| `MONKEY_EXPORT_KEEP_COUNT` | `30` | Keep 1–365 snapshots; `0` unlimited. |
 
-Retention cleanup preserves openings, stored balances and permanent safety
-records. Increasing retention cannot recover details that have already been
-removed. Language, currency and business timezone are independent settings.
+Full reference: [environment settings](plans/migration/configuration.md).
 
-Daily change-only financial JSON exports are optional and disabled by default.
-Enable them with a separate private export mount using the
-[export configuration and recovery guide](docs/development.md#portable-financial-recovery).
-These exports do not replace full backups or include users, passwords or images.
-See the [complete environment reference](plans/migration/configuration.md) for
-storage paths, export retention and other settings.
+## First Manager and Password Reset
 
-## Local Development
+With the app running, create the first Manager:
 
-For hot reload without Docker, install Node.js 24 and the .NET SDK pinned in
-[global.json](global.json), then run from the repository root:
-
-```powershell
-npm --prefix web ci --ignore-scripts
-npm --prefix web run dev
+```sh
+docker compose exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
 ```
 
-Open http://127.0.0.1:4180. The launcher starts Angular SSR and the .NET backend,
-keeps development data separate from Docker data, and stops both with Ctrl+C.
-Before signing in for the first time, follow the
-[development Manager setup](docs/development.md#first-manager-and-recovery) in a
-second terminal so the operator command uses the same development database.
+Follow the prompts, then sign in at your HTTPS URL. There is no default account or
+public registration. Passwords need at least 12 characters, upper/lowercase letters
+and a digit. Create further users and reset their passwords in user administration.
 
-If the default ports are occupied, choose another pair:
+To recover an existing Manager's access:
 
-```powershell
-npm --prefix web run dev -- --web-port 4182 --backend-port 5182
+```sh
+docker compose exec app dotnet /app/backend/PocketMonkey.Host.dll recover-manager
 ```
 
-The development launcher uses local HTTP authentication settings; do not expose
-it as a production deployment. See the [technical guide](docs/development.md#build-and-verify)
-for builds, tests and verification commands.
+Recovery requires another password change after login; there is no email recovery.
 
-## Questions or Suggestions?
+## Financial Export and Import
 
-Use this repository's GitHub Issues tab for questions, bug reports, and feature suggestions. Check existing issues before opening a new one, and include relevant details or steps to reproduce a problem.
+Uncomment the export settings and mount in the Compose example. Pre-create the
+private host directory with owner UID/GID `10001` and permissions `0700`. An initial
+JSON snapshot is created on startup; subsequent checks run at 01:00 in `TZ` and
+write only changed financial data. Copy exports off-host.
 
-## About This Project
+Import offline into a fresh data volume, with currency, timezone and transaction
+retention matching the snapshot. Replace the snapshot directory and filename:
 
-⚠️ This is a hobby project, developed by me alone and in my spare time.
+```sh
+docker compose stop app
+docker compose run --rm --no-deps --entrypoint dotnet --volume /absolute/private/snapshots:/recovery:ro app /app/backend/PocketMonkey.Host.dll import-financial /recovery/snapshot.json
+docker compose up -d
+```
+
+Imports never merge or overwrite existing financial state. Bootstrap a new Manager
+afterward, then recreate other users in user administration. Exports exclude users,
+passwords, authentication keys and images; they are **not full backups**. For a full
+backup, stop the app and preserve the complete `/data` volume and configuration. See
+[financial recovery details](docs/development.md#portable-financial-recovery).
+
+## Development
+
+Builds, local development and detailed operations: [technical guide](docs/development.md).
+This is a spare-time hobby project; use GitHub Issues for bugs and suggestions.
 
 ## License
 
-POCKET MONkEY is licensed under the **GNU Affero General Public License,
-version 3 only** (`AGPL-3.0-only`). See [LICENSE](LICENSE) for the full terms.
-
-Commercial use is permitted under the license. Covered distributions carry
-source-sharing obligations, and modified versions made available over a network
-must offer their corresponding source to remote users as required by section 13.
-The software is provided without warranty to the extent permitted by applicable law.
-
-Third-party dependencies, fonts, and other separately licensed assets retain their
-respective licenses and notices.
+Licensed under **AGPL-3.0-only**, without warranty; see [LICENSE](LICENSE).
+Third-party components retain their [own licenses and notices](THIRD-PARTY-NOTICES.txt).

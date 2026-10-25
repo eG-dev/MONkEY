@@ -1520,8 +1520,9 @@ dependencies. Use that wrapper rather than a bare Compose build: it prepares
 the build identity and legal assets required by the Dockerfile.
 
 All commands in this section run from the **repository root**.
-The [main README](../README.md#run-with-docker) shows first-time setup using the
-[environment template](../deploy/compose.env.example) and an ignored local copy.
+For these local-build examples, create an ignored `.local/compose.env` from the
+[environment template](../deploy/compose.env.example). The
+[main README](../README.md#run-with-docker) instead shows GHCR deployment with Traefik.
 
 ### Environment Files and Updates
 
