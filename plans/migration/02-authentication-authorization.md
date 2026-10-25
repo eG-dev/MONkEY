@@ -2,7 +2,7 @@
 
 Status: local authentication, operator bootstrap/recovery, cookie/CSRF transport,
 and manager user administration are implemented. Local verification is recorded in
-the [development guide](../../revamp/README.md). The user approved this work on the
+the [development guide](../../docs/development.md). The user approved this work on the
 locally verified [stack foundation](01-stack-foundation.md); its hosted/fork CI,
 publishing, and deployment-host gates remain open, not waived.
 

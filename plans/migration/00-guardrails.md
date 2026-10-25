@@ -3,6 +3,10 @@
 Status: pre-scaffolding guardrails implemented and validated on 2026-10-04.
 Application enforcement and tooling refinement continue during [stack foundation](01-stack-foundation.md) and later features.
 
+Layout update (2026-10-25): the owner approved legacy source/workflow removal
+and root promotion. Current checks enforce that layout; earlier side-by-side
+verification below remains historical evidence, not a requirement to retain it.
+
 ## Goal
 
 Define repository instructions before scaffolding the replacement. Plans describe
@@ -14,7 +18,7 @@ of copying their contents.
 
 - Create or extend `.github/copilot-instructions.md` with architectural ownership, incremental migration rules, security expectations, and required validation.
 - Use the application name **POCKET MONkEY**, preserving the lowercase `k`, in product-facing text and documentation.
-- Keep the current Azure application independently runnable; apply replacement-only requirements to the replacement, not retroactively to legacy projects.
+- Keep repository cleanup separate from deployed Azure resource retirement, which still requires explicit approval.
 - Record the agreed scope: no tenancy, email, or Azure data import; shared read access for members and backend-enforced manager business writes.
 - Keep business rules, authorization, persistence, and jobs in .NET; keep rendering and browser transport in Angular/Web-BFF.
 - Require atomic financial writes, exact money handling, idempotent jobs, request-scoped SSR state, and safe handling of credentials/private data.
@@ -55,18 +59,18 @@ Use the [configuration](configuration.md), [localization](localization.md), and
 
 ## Confirmed replacement paths
 
-The user confirmed `revamp/` as the independent replacement root. Step 0 used
-representative future paths; foundation work has now created the independent
+The application now lives at the repository root. Step 0 used
+representative future paths; foundation work created the
 `PocketMonkey.slnx`, backend API, Angular SSR workspace, E2E tooling, test-only
-runtime probe, and deployment files. See the [foundation guide](../../revamp/README.md).
+runtime probe, and deployment files. See the [foundation guide](../../docs/development.md).
 
 | Area | Planned paths | Instructions |
 | --- | --- | --- |
-| Angular/Web-BFF | `revamp/web/**` | [Web](../../.github/instructions/web.instructions.md) |
-| .NET backend | `revamp/backend/**` | [Backend](../../.github/instructions/backend.instructions.md) |
-| E2E/integration tests | `revamp/tests/e2e/**`, `revamp/tests/integration/**` | [Tests](../../.github/instructions/tests.instructions.md) |
-| Docker and new CI | `revamp/deploy/**`, `.github/workflows/revamp-*.yml`, `.github/workflows/revamp-*.yaml` | [Deployment](../../.github/instructions/deployment.instructions.md) |
-| Translation catalogs | `revamp/web/public/i18n/**/*.json` | [Translations](../../.github/instructions/translations.instructions.md) |
+| Angular/Web-BFF | `web/**` | [Web](../../.github/instructions/web.instructions.md) |
+| .NET backend | `backend/**` | [Backend](../../.github/instructions/backend.instructions.md) |
+| E2E/integration tests | `tests/e2e/**`, `tests/integration/**` | [Tests](../../.github/instructions/tests.instructions.md) |
+| Docker and CI | `deploy/**`, `.github/workflows/*.yml`, `.github/workflows/*.yaml` | [Deployment](../../.github/instructions/deployment.instructions.md) |
+| Translation catalogs | `web/public/i18n/**/*.json` | [Translations](../../.github/instructions/translations.instructions.md) |
 
 Translation JSON intentionally also receives web instructions. If the validated
 translation library needs another catalog location, update the path and scope
@@ -84,11 +88,14 @@ financial policies, and retention remain decisions for the responsible phases.
 
 ## Foundation handoff
 
+The following records describe the original isolated foundation setup, before
+the approved 2026-10-25 root promotion and legacy-source cleanup.
+
 - Root `Directory.Packages.props` would be inherited by nested .NET projects. Foundation work added replacement-local package/build/source configuration; legacy package versions are unchanged.
 - Root `.editorconfig` disables primary constructors for C# and does not set `root = true`. Respect that preference and inspect any ancestor rules when setting up formatting.
 - The initial root audit found no `global.json` or `Directory.Build.props/targets`. The replacement now pins its own SDK and build configuration without changing the root's legacy behavior.
 - The initial audit found both Azure workflows deployed on replacement/docs changes. Foundation work added narrow exclusions and verified that owning/shared runtime changes and manual triggers remain intact. Step 0 itself did not modify them.
-- The [foundation guide](../../revamp/README.md) now records actual application build/test/container commands and local results. Step 0's original document checks are still not evidence of runtime behavior.
+- The [foundation guide](../../docs/development.md) now records actual application build/test/container commands and local results. Step 0's original document checks are still not evidence of runtime behavior.
 
 ## Verification record
 
@@ -97,7 +104,7 @@ locks the parser packages in the separate test toolchain; the original Step 0
 validation used temporary tooling outside the repository.
 
 ```powershell
-npm --prefix .\revamp\tests\e2e ci --ignore-scripts
+npm --prefix .\tests\e2e ci --ignore-scripts
 node .\plans\migration\verify-guardrails.mjs
 ```
 

@@ -1,6 +1,6 @@
 ---
 description: "Use when writing replacement browser E2E or .NET integration tests: real-stack coverage, fixture isolation, deterministic time, security checks, and failure diagnostics."
-applyTo: "revamp/tests/e2e/**,revamp/tests/integration/**"
+applyTo: "tests/e2e/**,tests/integration/**"
 ---
 # Tests
 
@@ -8,13 +8,13 @@ applyTo: "revamp/tests/e2e/**,revamp/tests/integration/**"
 - Exercise real SSR, Web-BFF, backend, authentication, and persistence. Do not mock core services in the main E2E suite or replace login coverage entirely with preloaded browser state.
 - Isolate mutable data/session state per test or worker, using separate instances/data roots where required. Avoid execution-order dependencies and arbitrary sleeps.
 - Follow [ADR-0005 browser selectors](../../docs/ADR/ADR-0005-e2e-first-verification.md#browser-selectors): interact through document-unique `<scope>-<purpose>` IDs, row-scoped `data-testid` values for repeated items, and role/label locators only when no stable ID exists. Keep explicit accessible role/name and English text assertions; never use Taiga implementation selectors. Wait for enabled controls and completed navigation (for example, the post-login reload) before interacting. Assert persisted results and meaningful user outcomes.
-- Keep browser tests in category folders beneath `revamp/tests/e2e/specs/`, with multiple focused spec files for workflows, API rules, persistence, or recovery instead of one long category suite. Configuration and shared fixtures/helpers live outside that folder; reusable category helpers belong in `revamp/tests/e2e/helpers/`. Include nested specs in discovery and TypeScript checks, and route fixture setup by category rather than individual filenames.
-- Keep C# runtime probe implementations beneath `revamp/tests/integration/RuntimeChecks/Tests/`, with namespaces matching the folder. Leave only command dispatch in `Program.cs` and keep project/configuration files at the project root.
+- Keep browser tests in category folders beneath `tests/e2e/specs/`, with multiple focused spec files for workflows, API rules, persistence, or recovery instead of one long category suite. Configuration and shared fixtures/helpers live outside that folder; reusable category helpers belong in `tests/e2e/helpers/`. Include nested specs in discovery and TypeScript checks, and route fixture setup by category rather than individual filenames.
+- Keep C# runtime probe implementations beneath `tests/integration/RuntimeChecks/Tests/`, with namespaces matching the folder. Leave only command dispatch in `Program.cs` and keep project/configuration files at the project root.
 - Separate Arrange, Act, and Assert phases with blank lines. Multi-stage browser/lifecycle workflows may repeat action/assertion groups; do not force them into one oversized Act block or add comments that merely label obvious steps.
 - Cover manager/member behavior, direct API denials and CSRF attempts, invalid inputs, failure recovery, and relevant desktop/mobile layouts in English. Follow [ADR-0005](../../docs/ADR/ADR-0005-e2e-first-verification.md) for the sole German first-render/hydration exception and separate localization verification; do not duplicate workflows by language.
 - Use EUR for core E2E workflows. Do not duplicate workflows for USD; follow [ADR-0011](../../docs/ADR/ADR-0011-currency-display-unit.md) for the focused USD setting/rendering check, display-unit-change persistence checks, and unsupported-currency startup validation.
 - Use focused integration checks for actual persistence rollback, constraints, concurrency, migrations, job retries, and deterministic period boundaries. Do not substitute mocked repositories for those guarantees.
 - Provision fixtures and control clocks/failures through isolated test-host composition or protected operator tooling, never production-accessible test backdoors.
 - Attach traces/screenshots and relevant logs to failures without exposing credentials or private data. Diagnose flaky tests rather than hiding them with unconditional retries.
-- Playwright is the selected browser runner. Follow the [foundation guide](../../revamp/README.md) for locked installs, the solution build/test-only runtime probe, image build, and checks against the actual production artifact.
+- Playwright is the selected browser runner. Follow the [foundation guide](../../docs/development.md) for locked installs, the solution build/test-only runtime probe, image build, and checks against the actual production artifact.
 - Fixtures use their own containers/volumes and dynamically published loopback ports. Rediscover ports after Docker restart; do not assume an automatically assigned port is stable.

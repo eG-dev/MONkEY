@@ -2,7 +2,7 @@
 
 Status: design approved and accepted by the user on 2026-10-10, including the
 current wireframes, click prototypes, visual foundations, subsequent refinements,
-and implemented representative screens in `revamp/web`. The design pause is
+and implemented representative screens in `web`. The design pause is
 lifted; proceed to [step 3D account images](03d-account-images.md), resolving its
 separate policy prerequisites before implementation. Authentication and existing
 3A-3C implementation and verification records remain intact.

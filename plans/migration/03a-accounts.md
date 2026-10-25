@@ -39,7 +39,7 @@ not a financial or media feature.
 - Browser cases cover both languages and desktop/mobile, manager create/edit/reload, Member read-only access, empty/missing states, keyboard navigation, long-name wrapping, and clearing a revoked Member's private view. Private SSR is isolated from concurrent anonymous requests; persistence survives restart.
 
 Reproducible commands and broader open gates are recorded in the
-[replacement guide](../../revamp/README.md#build-and-verify). Local acceptance does
+[replacement guide](../../docs/development.md#build-and-verify). Local acceptance does
 not close hosted CI, publishing, or real-host deployment gates.
 
 ## Deferred

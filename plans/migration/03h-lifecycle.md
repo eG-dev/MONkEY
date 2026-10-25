@@ -21,7 +21,7 @@ cleanup jobs, or deletion/anonymization endpoints for these removed workflows.
 
 On 2026-10-18, after postponing the unsatisfactory notice approach, the user
 selected ORT and approved preparation and cleanup. Follow the
-[ORT preparation guide](../../revamp/notices/README.md) and current
+[ORT preparation guide](../../notices/README.md) and current
 [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md). The bespoke
 audit dump and findings worksheet are superseded; preserve N09's first-party
 artwork confirmation and the reusable exact-copy delivery checks. Detailed
@@ -61,12 +61,12 @@ review or an assertion that redistribution obligations are satisfied. This
 does not authorize postponing required notices for material already distributed;
 preserve accompanying upstream material and resolve distribution obligations or
 withhold the affected artifact. See the
-[staged delivery checklist](../../revamp/notices/README.md#staged-delivery).
+[staged delivery checklist](../../notices/README.md#staged-delivery).
 
 The approved manual proof is implemented locally, not an ORT setup:
 the user requested a manual-first package/component-to-About mapping with explicit
 artifact locations and associations. See
-[manual mapping concept R1](../../revamp/notices/README.md#manual-mapping-concept-r1).
+[manual mapping concept R1](../../notices/README.md#manual-mapping-concept-r1).
 It uses separate component, About-entry and original-document records, then
 one deterministic assembly path reusable by later automation. On 2026-10-19 the
 user explicitly approved R1 with "okay approved" after the ownership review and
@@ -83,13 +83,13 @@ On 2026-10-24 the initial manual About set reached all eight agreed component
 groups: Angular, .NET, ASP.NET Core, Entity Framework Core, SQLite, Taiga UI,
 Lucide and Roboto. SQLite includes its provider/binding/native chain and the
 separately identified public-domain engine. See the
-[collection and local verification record](../../revamp/notices/README.md#sqlite-provider-bindings-and-engine-2026-10-24).
+[collection and local verification record](../../notices/README.md#sqlite-provider-bindings-and-engine-2026-10-24).
 Coverage remains explicitly partial; this does not close comprehensive ORT,
 transitive/runtime/OS review, source-publication rights or release acceptance.
 
 The user then explicitly approved the R6 notice hierarchy wireframe and its
 matching click prototype on 2026-10-24 ("prototype approved, implement").
-The [Angular delivery record](../../revamp/README.md#grouped-notice-documents-r6-2026-10-24)
+The [Angular delivery record](../../docs/development.md#grouped-notice-documents-r6-2026-10-24)
 documents package/license applicability groups, independent document expansion,
 unchanged original texts and the passing focused production-image/localization
 checks. This presentation revision does not close the remaining release gates.
@@ -98,13 +98,13 @@ The next manual slice on 2026-10-24 added the nine remaining direct web runtime
 packages, reusing R6 without UI changes. All 22 manifest runtime dependencies
 now have explicit notice mappings; the catalog has 16 entries, 34 components
 and 21 originals. The
-[direct-web delivery record](../../revamp/README.md#direct-web-runtime-notices-2026-10-24)
+[direct-web delivery record](../../docs/development.md#direct-web-runtime-notices-2026-10-24)
 records archive/source verification, 27 isolated input checks and 11 passing
 production-image About/offline checks. Transitive, remaining backend/native and
 Node/container/OS coverage remains separate work; the overall set stays partial.
 
 On 2026-10-24 the user approved the
-[proportional workflow](../../revamp/notices/README.md#proportional-review-approved-2026-10-24):
+[proportional workflow](../../notices/README.md#proportional-review-approved-2026-10-24):
 stop manual npm-transitive expansion, retain the curated About list and supplied
 upstream notices, and use ORT for discovery with targeted exception review.
 The following bounded slice covers separately shipped SkiaSharp/native material
@@ -113,7 +113,7 @@ in upstream bundles/files or generated notices without a per-component UI entry.
 This updates the maintenance approach under ADR-0020, not distribution
 obligations or release approval.
 
-The [backend/native delivery record](../../revamp/README.md#backend-and-native-notices-2026-10-24)
+The [backend/native delivery record](../../docs/development.md#backend-and-native-notices-2026-10-24)
 adds ten package mappings and four originals, bringing the catalog to 20 entries,
 44 components and 25 documents. All 18 NuGet packages in the current published
 backend are mapped; native Skia's supplied third-party material is preserved as
@@ -154,7 +154,7 @@ in `7b6f917`, alongside the approved tonal styling. Eight production-image About
 checks passed across desktop/mobile public, Manager, Member and forced-password
 flows. Eight separate English/German, light/dark layout checks passed at
 1440px/360px; desktop and 320px phone license screenshots were inspected.
-See the [current Angular delivery record](../../revamp/README.md#four-tab-about-delivery-2026-10-23).
+See the [current Angular delivery record](../../docs/development.md#four-tab-about-delivery-2026-10-23).
 These checks do not approve final legal wording or complete notice coverage.
 
 ## Decisions before implementation
@@ -199,7 +199,7 @@ integrated combinations with both roles and real navigation. See the
 Angular now presents the accepted bilingual paragraphs and privacy caveat.
 Production-image build/catalog/type checks, eight focused production-image About
 checks and eight separate bilingual/theme layout checks passed; see the
-[delivery record](../../revamp/README.md#legal-information-delivery-2026-10-23).
+[delivery record](../../docs/development.md#legal-information-delivery-2026-10-23).
 The existing cloud documents are unchanged. No consent state or acceptance gate
 is introduced; deployment-specific legal review remains open.
 
@@ -209,12 +209,12 @@ accepted; committed as `9ab7739`. The next staged notice slice now adds Angular'
 eight locked `22.2.3` runtime packages under the existing catalog/original-document
 contract, sharing their byte-identical MIT original. All 24 build-input checks
 and nine production-image About/offline checks passed; see the
-[Angular notice record](../../revamp/notices/README.md#angular-runtime-packages-2026-10-23).
+[Angular notice record](../../notices/README.md#angular-runtime-packages-2026-10-23).
 The remaining initial components, Angular's separate dependencies, ORT and
 comprehensive release coverage remain later work. This acceptance does not
 authorize publication or claim deployment-specific legal readiness.
 
-- Write fresh German and English self-hosted terms/operator notices. Leave the [existing cloud usage terms](../../docs/terms/usage_terms_v1_0.md) and [cloud privacy declaration](../../docs/terms/data_privacy_declaration_v1_0.md) unchanged for the independently runnable Azure application. Do not carry over a central service operator, cloud support contact, availability promise, or account/data-deletion promise.
+- Use the reviewed German and English [self-hosted legal information](../../docs/terms/self_hosted_legal_information.md). Obsolete cloud usage terms and the cloud privacy declaration were removed with the owner-approved legacy repository cleanup on 2026-10-25. Do not carry over a central service operator, cloud support contact, availability promise, or account/data-deletion promise.
 - Distinguish the instance operator from ordinary household members: the person running the instance is responsible for its hosting, access control, HTTPS/network exposure, persistent storage, backups and restore, configuration, and installing application/dependency/security updates. Using an old version is not a project-provided managed service.
 - Explain that the community project supplies software, not hosting or a service-level agreement. Provide an "as is"/"as available" disclaimer and no promised availability, fitness, correctness of balances, continuing maintenance, support, or security-update schedule, to the extent permitted by applicable law. These disclaimers do not justify weakening implementation or verification requirements.
 - Do not promise an absolute exclusion of every warranty or all liability. Review applicable mandatory law and the chosen license's standard disclaimer; additional operator information must not contradict the license or remove recipients' OSS rights. Treat the text as a reviewable draft, not legal advice or a guarantee of enforceability.
@@ -253,7 +253,7 @@ The requested pre-implementation commit is `ef89c09` (`Approve About dialog desi
 and adopt AGPL-3.0-only`). The subsequent Angular implementation is delivered
 separately from that design/license commit.
 
-- [AboutDialog](../../revamp/web/src/app/components/about-dialog/about-dialog.ts) is hosted once by the root application. [AboutService](../../revamp/web/src/app/services/about/about.service.ts) opens the same dialog from public login/forced-password-change and either signed-in role; no backend contract, authorization rule, consent state, or persistence changed.
+- [AboutDialog](../../web/src/app/components/about-dialog/about-dialog.ts) is hosted once by the root application. [AboutService](../../web/src/app/services/about/about.service.ts) opens the same dialog from public login/forced-password-change and either signed-in role; no backend contract, authorization rule, consent state, or persistence changed.
 - The existing native modal has an opt-in full-size layout. Header/tabs remain fixed while content scrolls; keyboard tab navigation, native modal background inertness, Close/Escape, opener focus return, and preservation of the underlying form/view are verified. Ordinary modal layout remains unchanged.
 - Login uses text-only `Version | About` / `Version | Info`. Shell order is Overview, Administration, Manager-only Accounts, then labelled About at the bottom above the smaller version. The former unavailable GitHub footer link moved into About.
 - The Overview tab uses the actual web package version, currently `0.0.0`, and explicitly reports that this build does not supply its source revision. Repository and version-specific source links remain unavailable rather than inventing release metadata. Both inline project-license text and the local license-file link match the canonical root license exactly.
@@ -262,11 +262,11 @@ separately from that design/license commit.
 Commands run from the repository root:
 
 ```text
-npm --prefix revamp/web run build
-npm --prefix revamp/web run check:catalogs
-npm --prefix revamp/tests/e2e run check
-docker build --file revamp/deploy/Dockerfile --tag pocket-monkey:foundation revamp
-npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
+npm --prefix web run build
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+docker build --file deploy/Dockerfile --tag pocket-monkey:foundation revamp
+npm --prefix tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts --workers 1
 ```
 
 The final production image passed **21 checks**: eight About cases across desktop
@@ -282,7 +282,7 @@ Separate from the English E2E suite, a real-browser German localization review
 checked all three tabs at actual 1440px/320px widths in light/dark themes (12
 layout combinations), translated runtime-name search, and absence of browser
 errors/overflow. Uncropped screenshots were captured beneath the ignored
-`revamp/.local/about-review/`; desktop Overview and phone notice/legal screens
+`.local/about-review/`; desktop Overview and phone notice/legal screens
 were inspected. These local checks do not waive hosted/release gates or constitute
 application-wide visual or legal acceptance.
 
@@ -308,7 +308,7 @@ The final production image passed **eight checks** using the following command
 from the repository root after the documented image build:
 
 ```text
-npm --prefix revamp/tests/e2e test -- specs/accounts/images-workflows.spec.ts specs/authentication/about.spec.ts --workers 1
+npm --prefix tests/e2e test -- specs/accounts/images-workflows.spec.ts specs/authentication/about.spec.ts --workers 1
 ```
 
 Coverage includes borderless/centered/panel-background badges in light/dark,
@@ -344,9 +344,9 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 
 | Area | Authoritative input | Build/distribution output |
 | --- | --- | --- |
-| Application identity | Proposed single version source: [web package](../../revamp/web/package.json), with its lockfile root version kept equal. Release tag must be exactly `v<version>`, including any prerelease suffix. | The same application version in About, shell/login version labels, OCI labels, and release assets. Framework/package versions remain separate component versions. No manually maintained second application version. |
-| Build identity and source | Full Git commit and clean/dirty state captured before Docker packaging; the agreed public repository URL. Docker's `revamp/` context does not contain the repository root or Git metadata. | Build metadata bundled into the tested image; immutable revision-specific source links for clean builds, plus matching release source access. Local/PR builds are identified as development builds; dirty or unavailable provenance must not be presented as release-matched source. Release builds require clean, known provenance and matching tag/version/commit. |
-| Project license | Canonical root [LICENSE](../../LICENSE), `AGPL-3.0-only`. | Mechanically generated inline text and downloadable local file through the [build-input generator](../../revamp/web/scripts/prepare-about.mjs), replacing manually synchronized copies. Preserve the authoritative text exactly and verify equality. |
+| Application identity | Proposed single version source: [web package](../../web/package.json), with its lockfile root version kept equal. Release tag must be exactly `v<version>`, including any prerelease suffix. | The same application version in About, shell/login version labels, OCI labels, and release assets. Framework/package versions remain separate component versions. No manually maintained second application version. |
+| Build identity and source | Full Git commit and clean/dirty state captured before Docker packaging; the agreed public repository URL. The root Docker context excludes Git metadata and private local state through `.dockerignore`; prepared inputs are captured before packaging. | Build metadata bundled into the tested image; immutable revision-specific source links for clean builds, plus matching release source access. Local/PR builds are identified as development builds; dirty or unavailable provenance must not be presented as release-matched source. Release builds require clean, known provenance and matching tag/version/commit. |
+| Project license | Canonical root [LICENSE](../../LICENSE), `AGPL-3.0-only`. | Mechanically generated inline text and downloadable local file through the [build-input generator](../../web/scripts/prepare-about.mjs), replacing manually synchronized copies. Preserve the authoritative text exactly and verify equality. |
 | Third-party notices | ORT discovery of resolved npm/NuGet dependencies, shipped browser/server/backend material, runtime/base-image inputs, and bundled assets; supplied upstream licenses/notice bundles. | Curated About entries and canonical generated bundle, plus preserved upstream files/bundles or generated notices for required material outside that list. Retain exact identities/provenance for curated mappings; review automated findings and shipped transitive/native/runtime/asset obligations without a manual record or UI entry for every package. Exclude build-only tools unless their material ships. |
 | Operator/privacy information | Separately maintained German/English source documents, with stable document IDs, explicit revisions/review dates, and reviewed wording. | Locally bundled documents and their revisions, independent of the application version. Preserve prior revisions in Git. A language is not current until its matching revision is reviewed; package updates never silently rewrite these texts. No per-user consent or acceptance storage is introduced. |
 
@@ -355,7 +355,7 @@ Follow [ADR-0006](../../docs/ADR/ADR-0006-github-delivery.md),
 1. Before development/CI packaging, capture application/build identity and derive
 	the project-license assets from the root source. Generate into build outputs;
 	do not require maintainers to edit duplicate license text or component versions
-	inside [AboutDialog](../../revamp/web/src/app/components/about-dialog/about-dialog.ts).
+	inside [AboutDialog](../../web/src/app/components/about-dialog/about-dialog.ts).
 2. Use ORT discovery and supplemental runtime/asset evidence from the actual
 	locked build and distribution inputs, not only direct manifests. Review
 	dependency, publish, runtime/image, OS-package and bundled-asset changes;
@@ -405,11 +405,11 @@ accepted application/build identity and automatic license-synchronization rules.
 Notice tooling, final legal wording/revisions, public repository URLs, and
 publication remain outside this delivered slice.
 
-- The [generator](../../revamp/web/scripts/prepare-about.mjs) uses the web package as the sole application SemVer input, verifies both lockfile version fields, and captures commit/cleanliness without borrowing an unrelated parent repository's identity. Generated files are ignored; the former tracked license copies are removed.
+- The [generator](../../web/scripts/prepare-about.mjs) uses the web package as the sole application SemVer input, verifies both lockfile version fields, and captures commit/cleanliness without borrowing an unrelated parent repository's identity. Generated files are ignored; the former tracked license copies are removed.
 - Npm build/server entry points prepare the metadata and exact inline/downloadable license assets. Login, shell, and About consume the same generated identity; German/English build labels distinguish release, clean development, dirty development, and unavailable revision states. The public metadata asset contains no household data or secrets.
-- The [Docker wrapper](../../revamp/web/scripts/build-image.mjs) prepares the restricted build context and passes matching OCI labels. The in-container generator validates snapshot/license/label agreement; the wrapper rechecks inputs after building. CI runs isolated build-input checks and uses the wrapper; no publishing permissions or release job was added.
+- The [Docker wrapper](../../web/scripts/build-image.mjs) prepares the restricted build context and passes matching OCI labels. The in-container generator validates snapshot/license/label agreement; the wrapper rechecks inputs after building. CI runs isolated build-input checks and uses the wrapper; no publishing permissions or release job was added.
 - Release identity validation rejects mismatched or non-HEAD tags, dirty/unknown provenance, inconsistent versions, and missing/unsafe repository URLs. No future repository URL is invented. A valid clean revision link alone does not satisfy all Corresponding Source or release-content obligations.
-- The existing real-image About tests now verify package/UI/OCI identity agreement and canonical license/hash fidelity. Offline runtime coverage includes metadata and license assets. Reproducible commands and watch-mode behavior are in the [foundation guide](../../revamp/README.md#build-metadata-and-license-generation).
+- The existing real-image About tests now verify package/UI/OCI identity agreement and canonical license/hash fidelity. Offline runtime coverage includes metadata and license assets. Reproducible commands and watch-mode behavior are in the [foundation guide](../../docs/development.md#build-metadata-and-license-generation).
 - Build-only `devDependencies`, including the metadata parser, are excluded from delivered-component notices unless their material actually ships. Inventory generation and its review remain pending; illustrative third-party rows have not been replaced.
 
 Verification on 2026-10-17 passed **13 isolated real-Git build-input checks**
@@ -423,19 +423,19 @@ determinism, and unavailable/unrelated-parent Git provenance.
 Commands run from the repository root:
 
 ```text
-npm --prefix revamp/web run check:about
-npm --prefix revamp/web run check:catalogs
-npm --prefix revamp/web run build
-npm --prefix revamp/tests/e2e run check
-npm --prefix revamp/web run build:image
-npm --prefix revamp/tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts specs/lifecycle/runtime.spec.ts --workers 1
+npm --prefix web run check:about
+npm --prefix web run check:catalogs
+npm --prefix web run build
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/shell specs/authentication/about.spec.ts specs/authentication/workflows.spec.ts specs/lifecycle/runtime.spec.ts --workers 1
 node plans/migration/verify-guardrails.mjs
 ```
 
 Separate German browser review passed at actual 1440px/320px in both light/dark
 themes: four combinations, no revision/link overlap, overflow, or browser errors.
 Desktop/light and phone/dark screenshots were inspected under ignored
-`revamp/.local/build-metadata-review/`. The temporary review container was removed;
+`.local/build-metadata-review/`. The temporary review container was removed;
 no preview was left running. Release-input validation uses isolated fixture tags
 and an example repository, not an approved public project URL or publishing
 rehearsal. Hosted execution, complete notices, legal review, Corresponding Source
@@ -450,7 +450,7 @@ The user authorized continuing with the inventory collector after confirming the
 preceding revision passed GitHub checks. The evaluated hybrid approach is retained
 as an alternative in [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md);
 the current process is in the
-[maintained build guide](../../revamp/README.md#third-party-notices).
+[maintained build guide](../../docs/development.md#third-party-notices).
 
 - Angular statistics select positive emitted-byte npm contributions and copied assets. NuGet collection now runs in an intermediate Docker stage using that build's locked restore, package archives and published output. Structured XML/ZIP parsers remain build-only.
 - NuGet evidence preserves declarations, copyright and original license/NOTICE bytes, separates locked content hashes from signed-archive hashes, and verifies actual published bytes against archive entries. Build-only exclusions and metadata-only dependencies remain explicit.
@@ -508,7 +508,7 @@ separate supersession records are not mandatory.
 
 - Removed the three collectors, fixture suite, XML/ZIP parser dependencies, automatic Angular statistics, intermediate Docker inventory stage and mandatory CI scan/artifact upload. Normal build/version/project-license generation and upstream runtime notices remain intact.
 - The single maintained [root notice document](../../THIRD-PARTY-NOTICES.txt), beside the project license, contains the component index and available license/copyright/NOTICE texts. The existing preparation helper copies its exact bytes into ignored Docker inputs and generated assets with freshness checks; Angular bundles that copy without regenerating its content. The initial draft was mechanically seeded once from existing audit evidence and upstream OS/runtime files, sharing only identical texts and retaining explicit associations.
-- The short [review checklist](../../revamp/notices/README.md) covers shipped dependency/transitive/native/asset/runtime changes, final installed OS inputs, optional initial/release audits and independent source/relinking checks. No generic templates or package links silently resolve missing material.
+- The short [review checklist](../../notices/README.md) covers shipped dependency/transitive/native/asset/runtime changes, final installed OS inputs, optional initial/release audits and independent source/relinking checks. No generic templates or package links silently resolve missing material.
 - The existing network-disabled image test checks availability and byte fidelity. The baseline remains explicitly draft; complete attribution, missing texts, rights, compatibility and release review are not implied by successful copying or test results.
 - About remains on its approved illustrative UI. Integrating the reviewed document/content, final operator/privacy wording, source URLs and publication remain open; no design approval or release gate has been inferred from the simplification approval.
 
@@ -526,7 +526,7 @@ publication was performed.
 The user explicitly selected ORT and requested preparation plus removal of
 superseded material. [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md)
 now selects ORT's dependency/license overview; original notice collection may
-remain manual. The [preparation guide](../../revamp/notices/README.md) replaces
+remain manual. The [preparation guide](../../notices/README.md) replaces
 the bespoke findings worksheet and preserves the supplied N09 artwork-authorship
 confirmation. The large unreviewed root audit dump is replaced by an explicit
 development-only placeholder, not a claim that notices are no longer required.
@@ -541,7 +541,7 @@ source obligations and About integration remain release gates.
 ### Manual mapping proof (2026-10-19)
 
 Approved R1 is implemented with EF Core `10.0.12` and all four local Roboto
-`3.015` font files. The [catalog](../../revamp/notices/catalog.json) binds exact
+`3.015` font files. The [catalog](../../notices/catalog.json) binds exact
 component/version/license identities to retained upstream MIT/OFL originals,
 About entries, provenance and hashes. Roboto's name tables were inspected with
 disposable fontTools `4.61.1`, consistent with the user's Google Fonts source.
@@ -564,7 +564,7 @@ Local delivery evidence:
 	network-disabled runtime check verifies mapped entries and served original
 	hashes against the catalog, and public About passes on desktop/mobile.
 
-See the [manual proof guide](../../revamp/notices/README.md#implemented-manual-proof-2026-10-19)
+See the [manual proof guide](../../notices/README.md#implemented-manual-proof-2026-10-19)
 for reproducible commands, paths and evidence fields. This assembly proof did not
 change the UI artifacts; the subsequent approved reuse is delivered below.
 No full initial collection, ORT scan, complete distribution review, hosted CI or
@@ -611,7 +611,7 @@ cleanup design or authorization to delete existing transactions.
 
 - Accepted: Docker environment setting `MONKEY_TRANSACTION_RETENTION_MONTHS`, default `24`, positive values from `1` through `120` (10 years), and `0` meaning unlimited retention. The maximum was accepted on 2026-10-19; use `0` when more than 10 years are needed. Configure duration independently of `TZ`; the range is a product choice, not a SQLite limit. Disabling cleanup cannot restore previously deleted history.
 - Still to design: whether the cutoff uses calendar months in the configured business timezone, which records it covers, and what happens when the value changes. The accepted default must not trigger deletion before the cleanup design is reviewed and implemented.
-- A plain age-based delete is not safe: [LedgerAdministration](../../revamp/backend/PocketMonkey.Host/Services/LedgerAdministration.cs) uses stored ledger entries for idempotency and posting sequence allocation. The [model](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs) also enforces opening-entry and account/month uniqueness. Preserve balances, initialization, retry guarantees, allowance credit identities, and consistent pagination before removing history.
+- A plain age-based delete is not safe: [LedgerAdministration](../../backend/PocketMonkey.Host/Services/LedgerAdministration.cs) uses stored ledger entries for idempotency and posting sequence allocation. The [model](../../backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs) also enforces opening-entry and account/month uniqueness. Preserve balances, initialization, retry guarantees, allowance credit identities, and consistent pagination before removing history.
 - Decide treatment of opening entries, audit details, and allowance execution records explicitly. Deleting visible history is not necessarily erasing every record of a transaction. Take a backup before any first destructive cleanup; disabling retention later cannot recover deleted history.
 - Automatic history removal requires a reviewed exception to the append-only policy in [ADR-0012](../../docs/ADR/ADR-0012-manual-transactions-and-signed-balances.md) and must preserve [ADR-0016](../../docs/ADR/ADR-0016-monthly-allowance-execution.md). Next, present a revisioned class/namespace-linked backend/data proposal for approval before changing schema, runtime configuration, or jobs. Record the accepted enduring retention design in an ADR, preserving the existing decision history; configuration-policy acceptance alone does not approve cleanup implementation.
 
@@ -714,35 +714,35 @@ Existing ownership stays unchanged: Host owns behavior/jobs; Storage owns entiti
 mapping and migrations. Existing references:
 
 - `PocketMonkey.Host.Services.LedgerAdministration` in
-	[LedgerAdministration.cs](../../revamp/backend/PocketMonkey.Host/Services/LedgerAdministration.cs):
+	[LedgerAdministration.cs](../../backend/PocketMonkey.Host/Services/LedgerAdministration.cs):
 	its current ledger-only key lookup and `MAX(SequenceNumber) + 1` allocation must
 	be changed atomically with cleanup support, not after deletion is enabled.
 - `PocketMonkey.Storage.PocketMonkeyDbContext` in
-	[PocketMonkeyDbContext.cs](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs):
+	[PocketMonkeyDbContext.cs](../../backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs):
 	retain existing money, opening, sequence, account and allowance-month constraints.
 - `PocketMonkey.Storage.Entities.LedgerEntry` in
-	[LedgerEntry.cs](../../revamp/backend/PocketMonkey.Storage/Entities/LedgerEntry.cs)
+	[LedgerEntry.cs](../../backend/PocketMonkey.Storage/Entities/LedgerEntry.cs)
 	remains the retained immutable financial record; do not add nullable financial
 	fields or overwrite entries to simulate deletion.
 - `PocketMonkey.Storage.Entities.AllowanceExecution` in
-	[AllowanceExecution.cs](../../revamp/backend/PocketMonkey.Storage/Entities/AllowanceExecution.cs)
+	[AllowanceExecution.cs](../../backend/PocketMonkey.Storage/Entities/AllowanceExecution.cs)
 	keeps its unique account/month and posting-key identities and credited outcome.
 
 Proposed new types/paths, not files created by this proposal:
 
 | Type and namespace | Proposed path | Responsibility / fields |
 | --- | --- | --- |
-| `PocketMonkey.Storage.Entities.LedgerMaintenanceState` | `revamp/backend/PocketMonkey.Storage/Entities/LedgerMaintenanceState.cs` | Singleton primary key constrained to `1`; nonnegative `long LastAllocatedSequenceNumber` and `long RetentionRevision`; nullable UTC `ActivatedAtUtc` and `LastCompletedAtUtc`. Durable sequence high-water mark, cleanup activation and cursor generation. No secrets or financial amounts. |
-| `PocketMonkey.Storage.Entities.RetiredLedgerKey` | `revamp/backend/PocketMonkey.Storage/Entities/RetiredLedgerKey.cs` | Required canonical 36-character `IdempotencyKey` primary key and non-null UTC `RetiredAtUtc`. No comment, amount or actor snapshot; no foreign key to a deleted ledger row. Keep indefinitely to reject reuse, not replay deleted payloads. |
-| `PocketMonkey.Host.Services.TransactionRetention` | `revamp/backend/PocketMonkey.Host/Services/TransactionRetention.cs` | Scoped cleanup coordinator using the configured duration and injectable time source. Select bounded eligible rows, retain their keys, delete rows and advance the retention revision in one serializable SQLite transaction per batch. |
-| `PocketMonkey.Host.HostedServices.TransactionRetentionWorker` | `revamp/backend/PocketMonkey.Host/HostedServices/TransactionRetentionWorker.cs` | Wake at startup and daily; persisted activation and current eligibility control work. Resume safely after interruption; do not hold a database transaction during backup/filesystem/network operations. |
+| `PocketMonkey.Storage.Entities.LedgerMaintenanceState` | `backend/PocketMonkey.Storage/Entities/LedgerMaintenanceState.cs` | Singleton primary key constrained to `1`; nonnegative `long LastAllocatedSequenceNumber` and `long RetentionRevision`; nullable UTC `ActivatedAtUtc` and `LastCompletedAtUtc`. Durable sequence high-water mark, cleanup activation and cursor generation. No secrets or financial amounts. |
+| `PocketMonkey.Storage.Entities.RetiredLedgerKey` | `backend/PocketMonkey.Storage/Entities/RetiredLedgerKey.cs` | Required canonical 36-character `IdempotencyKey` primary key and non-null UTC `RetiredAtUtc`. No comment, amount or actor snapshot; no foreign key to a deleted ledger row. Keep indefinitely to reject reuse, not replay deleted payloads. |
+| `PocketMonkey.Host.Services.TransactionRetention` | `backend/PocketMonkey.Host/Services/TransactionRetention.cs` | Scoped cleanup coordinator using the configured duration and injectable time source. Select bounded eligible rows, retain their keys, delete rows and advance the retention revision in one serializable SQLite transaction per batch. |
+| `PocketMonkey.Host.HostedServices.TransactionRetentionWorker` | `backend/PocketMonkey.Host/HostedServices/TransactionRetentionWorker.cs` | Wake at startup and daily; persisted activation and current eligibility control work. Resume safely after interruption; do not hold a database transaction during backup/filesystem/network operations. |
 
 Extend existing Host instance configuration with the validated retention duration.
 The owning type is `PocketMonkey.Host.Configuration.InstanceSettings` in
-[InstanceSettings.cs](../../revamp/backend/PocketMonkey.Host/Configuration/InstanceSettings.cs);
+[InstanceSettings.cs](../../backend/PocketMonkey.Host/Configuration/InstanceSettings.cs);
 propose an `int TransactionRetentionMonths` property populated by `Read`.
 `PocketMonkey.Host.Services.AllowanceExecutor` in
-[AllowanceExecutor.cs](../../revamp/backend/PocketMonkey.Host/Services/AllowanceExecutor.cs)
+[AllowanceExecutor.cs](../../backend/PocketMonkey.Host/Services/AllowanceExecutor.cs)
 already skips months with retained credited execution records; preserve that
 behavior and verify it after ledger pruning rather than rebuilding those records
 from visible history.
@@ -793,17 +793,17 @@ jobs and posting must remain safe against cleanup running concurrently.
 
 Concrete existing integration targets are
 `PocketMonkey.Host.Endpoints.TransactionEndpoints` in
-[TransactionEndpoints.cs](../../revamp/backend/PocketMonkey.Host/Endpoints/TransactionEndpoints.cs),
+[TransactionEndpoints.cs](../../backend/PocketMonkey.Host/Endpoints/TransactionEndpoints.cs),
 `PocketMonkey.Host.Services.LedgerHistoryCursor` in
-[LedgerHistoryCursor.cs](../../revamp/backend/PocketMonkey.Host/Services/LedgerHistoryCursor.cs),
+[LedgerHistoryCursor.cs](../../backend/PocketMonkey.Host/Services/LedgerHistoryCursor.cs),
 and `PocketMonkey.Host.Contracts.Accounts.LedgerHistoryResponse` in
-[LedgerHistoryResponse.cs](../../revamp/backend/PocketMonkey.Host/Contracts/Accounts/LedgerHistoryResponse.cs).
+[LedgerHistoryResponse.cs](../../backend/PocketMonkey.Host/Contracts/Accounts/LedgerHistoryResponse.cs).
 Add the two error cases to the existing `LedgerError` mapping and GET OpenAPI
 `409` metadata. The affected routes remain `GET` and `POST`
 `/api/accounts/{id}/transactions`; opening replay is unchanged because openings
 are never pruned. Update the existing
-[history caller](../../revamp/web/src/app/components/account-details/account-details.ts)
-and [history model](../../revamp/web/src/app/models/accounts/ledger-history.ts),
+[history caller](../../web/src/app/components/account-details/account-details.ts)
+and [history model](../../web/src/app/models/accounts/ledger-history.ts),
 including clearing cached pages before restarting, rather than creating a second
 history transport or silently showing stale cached pages as current.
 
@@ -838,8 +838,8 @@ cursor restart and normal posting snapshots; Manager/Member reads, direct Member
 write denials and antiforgery; and the operator backup/activation/recovery path.
 Use existing E2E/integration harnesses rather than routine mock/unit suites.
 Extend the real-persistence slices in
-[LedgerPersistenceCheck.cs](../../revamp/tests/integration/RuntimeChecks/Tests/LedgerPersistenceCheck.cs)
-and [AllowanceExecutionCheck.cs](../../revamp/tests/integration/RuntimeChecks/Tests/AllowanceExecutionCheck.cs);
+[LedgerPersistenceCheck.cs](../../tests/integration/RuntimeChecks/Tests/LedgerPersistenceCheck.cs)
+and [AllowanceExecutionCheck.cs](../../tests/integration/RuntimeChecks/Tests/AllowanceExecutionCheck.cs);
 their current existence is not a claim that retention has been tested.
 Rollback after deletion requires restoring a tested backup, not a down migration.
 
@@ -859,7 +859,7 @@ of R1 is authoritative; this original draft is retained as review history.
 
 1. **Operator activation:** propose `activate-retention` as a local Host command,
 	following the operator-only routing in
-	[Program.cs](../../revamp/backend/PocketMonkey.Host/Program.cs). It prints the
+	[Program.cs](../../backend/PocketMonkey.Host/Program.cs). It prints the
 	resolved data directory and configured duration, requires an interactive
 	confirmation that a complete, recoverable instance backup exists, then records
 	`ActivatedAtUtc` and a nonfinancial activation audit atomically. An absent
@@ -883,7 +883,7 @@ of R1 is authoritative; this original draft is retained as review history.
 	make a query sortable.
 3. **History contract/caller:** propose additive `int RetentionMonths`,
 	`DateTimeOffset? RetentionCutoffUtc` and `bool RetentionActivated` properties on
-	[LedgerHistoryResponse.cs](../../revamp/backend/PocketMonkey.Host/Contracts/Accounts/LedgerHistoryResponse.cs).
+	[LedgerHistoryResponse.cs](../../backend/PocketMonkey.Host/Contracts/Accounts/LedgerHistoryResponse.cs).
 	The cutoff describes configured eligibility, not proof that every eligible row
 	was removed; use null for unlimited retention. Both roles receive the same
 	policy information and retained rows, without operator backup locations or
@@ -915,11 +915,11 @@ implementation from the mapped LINQ implementation.
 #### Scope and mapping
 
 - Keep `PocketMonkey.Storage.Entities.LedgerEntry.OccurredAtUtc` in
-	[LedgerEntry.cs](../../revamp/backend/PocketMonkey.Storage/Entities/LedgerEntry.cs)
+	[LedgerEntry.cs](../../backend/PocketMonkey.Storage/Entities/LedgerEntry.cs)
 	as a non-null `DateTimeOffset`. Preserve the existing API response fields,
 	UTC instants, full 100-nanosecond precision, financial data and actor snapshots.
 - In `PocketMonkey.Storage.PocketMonkeyDbContext` in
-	[PocketMonkeyDbContext.cs](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs),
+	[PocketMonkeyDbContext.cs](../../backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs),
 	configure that property with an inline EF value converter: write
 	`DateTimeOffset.UtcDateTime` as provider `DateTime`; on read explicitly mark the
 	provider value as `DateTimeKind.Utc` and construct a zero-offset
@@ -955,7 +955,7 @@ implementation from the mapped LINQ implementation.
 
 - Replace both raw selection queries in
 	`PocketMonkey.Host.Services.TransactionRetention` in
-	[TransactionRetention.cs](../../revamp/backend/PocketMonkey.Host/Services/TransactionRetention.cs)
+	[TransactionRetention.cs](../../backend/PocketMonkey.Host/Services/TransactionRetention.cs)
 	with EF LINQ: eligible source and timestamp predicates, matching credited
 	allowance execution through `Any`, timestamp/sequence ordering and `Take(200)`.
 	Filtering, existence checks, ordering and the limit must execute in SQLite,
@@ -977,7 +977,7 @@ the approved provider mapping with a dated rationale; no new architecture record
 or change to UTC retention/business-timezone scheduling.
 
 Extend the existing real SQLite
-[LedgerPersistenceCheck.cs](../../revamp/tests/integration/RuntimeChecks/Tests/LedgerPersistenceCheck.cs)
+[LedgerPersistenceCheck.cs](../../tests/integration/RuntimeChecks/Tests/LedgerPersistenceCheck.cs)
 with populated pre-R2 upgrades covering old UTC representations, seven-digit
 fractions, unchanged instants/balances/provenance, atomic rejection of malformed
 data and round-trip normalization under non-UTC host timezones. Prove LINQ
@@ -1010,7 +1010,7 @@ it cannot recover details already pruned by retention.
 
 Actual focused verification:
 
-- Locked Release Host build passed. From `revamp/`, both
+- Locked Release Host build passed. From the repository root, both
 	`dotnet run --configuration Release --project tests/integration/RuntimeChecks -p:RestoreLockedMode=true -- ledger-persistence`
 	and the corresponding `-- allowance-execution` probe passed.
 - The extended ledger probe covers populated pre-R2 data, leap/calendar edge
@@ -1025,8 +1025,8 @@ Actual focused verification:
 	executed command includes the database-side 200-row limit.
 - `dotnet ef migrations has-pending-model-changes --project backend/PocketMonkey.Storage --startup-project backend/PocketMonkey.Host --context PocketMonkeyDbContext`
 	reported no model changes. The production image built successfully using
-	`npm --prefix revamp/web run build:image`.
-- `npm --prefix revamp/tests/e2e test -- ledger/persistence.spec.ts ledger/transaction-workflows.spec.ts --grep "history restarts once|ledger persistence" --workers=1`
+	`npm --prefix web run build:image`.
+- `npm --prefix tests/e2e test -- ledger/persistence.spec.ts ledger/transaction-workflows.spec.ts --grep "history restarts once|ledger persistence" --workers=1`
 	selected and passed both desktop/mobile retention restart cases. The separately
 	named SQLite case was not selected by that filter; the complete ledger probe
 	was instead run directly in the production Linux image as UID 10001, network
@@ -1063,7 +1063,7 @@ No visible layout/text or catalog keys were added.
 Actual local verification:
 
 - Locked .NET Release build and Angular SSR build passed; production Linux image
-	built with `npm --prefix revamp/web run build:image`.
+	built with `npm --prefix web run build:image`.
 - Real SQLite `ledger-persistence` probe passed: populated upgrade, signed money,
 	configuration boundaries/default/unlimited, exact UTC month/year/tick cutoff,
 	clamping, atomic rollback, committed-batch interruption/restart, retired keys,
@@ -1072,15 +1072,15 @@ Actual local verification:
 - Real SQLite `allowance-execution` probe passed: missing credit evidence blocks
 	cleanup; restoration permits it; retained revisions/executions prevent repeated
 	credit attempts or balance changes after pruning, restart and `TZ` changes.
-- `npm --prefix revamp/tests/e2e test -- ledger/ --workers=1` initially passed
+- `npm --prefix tests/e2e test -- ledger/ --workers=1` initially passed
 	13/14 cases, including the new desktop/mobile startup-retention flow. The sole
 	failure was a test-runner exact-output mismatch from an extra success line, not
 	a financial failure; the original output contract was restored.
-- `npm --prefix revamp/tests/e2e test -- ledger/persistence.spec.ts accounts/allowance-execution.spec.ts --workers=1`
+- `npm --prefix tests/e2e test -- ledger/persistence.spec.ts accounts/allowance-execution.spec.ts --workers=1`
 	then passed all 7 cases, including the repaired caller and desktop/mobile
 	allowance crash/retry/recovery checks.
 - After adding the opening-endpoint expired-key mapping and rebuilding the image,
-	`npm --prefix revamp/tests/e2e test -- ledger/transaction-workflows.spec.ts --grep "history restarts once" --workers=1`
+	`npm --prefix tests/e2e test -- ledger/transaction-workflows.spec.ts --grep "history restarts once" --workers=1`
 	passed both desktop/mobile cases. These use real login, BFF, backend, SQLite and
 	worker startup; they assert a real `409` followed by one successful reload,
 	cleared previous-page cache, permanent signed opening/balance, expired-key

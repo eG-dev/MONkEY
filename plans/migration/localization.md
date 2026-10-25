@@ -2,7 +2,7 @@
 
 Status: foundation implemented and locally verified. Extend throughout
 [UI and business logic](03-ui-business-logic.md); see [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
-and the [foundation guide](../../revamp/README.md).
+and the [foundation guide](../../docs/development.md).
 
 ## Requirements
 
@@ -10,7 +10,7 @@ German (`de`) and English (`en`) are first-release languages, not a later UI
 polish task. Translation catalogs, locale formatting, and Taiga component language
 resources must be packaged locally and work without an external translation service.
 
-- Selected approach: Transloco with its MessageFormat integration, verified with Angular SSR/Taiga. Catalogs under `revamp/web/public/i18n/{de,en}/` are bundled locally through the central registry. Avoid separate container builds per language and a custom translation engine.
+- Selected approach: Transloco with its MessageFormat integration, verified with Angular SSR/Taiga. Catalogs under `web/public/i18n/{de,en}/` are bundled locally through the central registry. Avoid separate container builds per language and a custom translation engine.
 - Use stable semantic translation keys and version-controlled JSON catalogs grouped by feature. Do not use German strings as keys or concatenate translated sentence fragments.
 - Use English as the selected source catalog and missing-key fallback; this is separate from the German instance default. CI requires complete German and English catalogs rather than relying on that fallback.
 - Support interpolation and locale-aware pluralization through the library's supported message-format tooling. Include validation errors, notifications, tooltips, accessibility labels, page titles, empty states, and authentication screens.

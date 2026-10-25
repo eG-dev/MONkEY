@@ -6,29 +6,27 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const testTools = path.join(root, 'revamp/tests/e2e');
+const testTools = path.join(root, 'tests/e2e');
 const toolingRoot = fs.existsSync(path.join(testTools, 'node_modules/yaml/package.json'))
   ? testTools : path.join(os.tmpdir(), 'pocket-monkey-guardrail-tools');
 const require = createRequire(path.join(toolingRoot, 'package.json'));
 const YAML = require('yaml');
 const { minimatch } = require('minimatch');
 const expected = {
-  'web.instructions.md': ['revamp/web/src/app/app.ts', 'revamp/web/public/i18n/de/shell.json'],
-  'backend.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Host/PocketMonkey.Host.csproj', 'revamp/backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj'],
-  'csharp.instructions.md': ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
-  'typescript.instructions.md': ['revamp/web/src/foundation-server.ts', 'revamp/web/scripts/dev.mjs', 'revamp/tests/e2e/specs/shell.spec.ts'],
-  'tests.instructions.md': ['revamp/tests/e2e/specs/shell.spec.ts', 'revamp/tests/integration/RuntimeChecks/Program.cs'],
-  'deployment.instructions.md': ['revamp/deploy/Dockerfile', '.github/workflows/revamp-foundation.yml', '.github/workflows/revamp-release.yaml'],
-  'translations.instructions.md': ['revamp/web/public/i18n/de/shell.json', 'revamp/web/public/i18n/en/shell.json'],
+  'web.instructions.md': ['web/src/app/app.ts', 'web/public/i18n/de/shell.json'],
+  'backend.instructions.md': ['backend/PocketMonkey.Host/Program.cs', 'backend/PocketMonkey.Host/PocketMonkey.Host.csproj', 'backend/PocketMonkey.Storage/PocketMonkey.Storage.csproj'],
+  'csharp.instructions.md': ['backend/PocketMonkey.Host/Program.cs', 'backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs', 'tests/integration/RuntimeChecks/Program.cs'],
+  'typescript.instructions.md': ['web/src/foundation-server.ts', 'web/scripts/dev.mjs', 'tests/e2e/specs/shell.spec.ts'],
+  'tests.instructions.md': ['tests/e2e/specs/shell.spec.ts', 'tests/integration/RuntimeChecks/Program.cs'],
+  'deployment.instructions.md': ['deploy/Dockerfile', '.github/workflows/ci.yml', '.github/workflows/release.yaml'],
+  'translations.instructions.md': ['web/public/i18n/de/shell.json', 'web/public/i18n/en/shell.json'],
 };
 const legacy = [
   'WebApp/Program.cs',
   'Data/Entities/Account.cs',
   'Functions/Workers/PocketMoneyCredit.cs',
   'BusinessLogic/Services/AccountManagementService.cs',
-  '.github/workflows/publish-monkey-webapp.yml',
-  '.github/workflows/publish-monkey-functions.yml',
-  'Directory.Packages.props',
+  'MONkEY.sln',
 ];
 
 let matches = 0;
@@ -49,12 +47,12 @@ for (const [name, fixtures] of Object.entries(expected)) {
   }
   for (const filename of legacy) assert(!applies(filename), `${name}: must exclude ${filename}`);
   if (name === 'csharp.instructions.md') {
-    for (const filename of ['revamp/web/src/app/app.ts', 'revamp/tests/e2e/specs/shell.spec.ts']) {
+    for (const filename of ['web/src/app/app.ts', 'tests/e2e/specs/shell.spec.ts']) {
       assert(!applies(filename), `${name}: must exclude non-C# ${filename}`);
     }
   }
   if (name === 'typescript.instructions.md') {
-    for (const filename of ['revamp/backend/PocketMonkey.Host/Program.cs', 'revamp/web/public/i18n/de/shell.json']) {
+    for (const filename of ['backend/PocketMonkey.Host/Program.cs', 'web/public/i18n/de/shell.json']) {
       assert(!applies(filename), `${name}: must exclude unrelated language ${filename}`);
     }
   }
@@ -72,34 +70,17 @@ assert.equal(typeof skillMetadata.description, 'string');
 assert(skillMetadata.description.length > 30 && skillMetadata.description.length <= 1024);
 console.log('PASS: backend/data design skill discovery metadata and folder/name match');
 
-const replacementChanges = [
-  'THIRD-PARTY-NOTICES.txt',
-  'revamp/web/src/app/app.ts',
-  'revamp/backend/PocketMonkey.Host/Program.cs',
-  'revamp/deploy/Dockerfile',
-  'plans/migration/01-stack-foundation.md',
-  'docs/ADR/ADR-0002-application-boundaries.md',
-  '.github/instructions/web.instructions.md',
-  '.github/copilot-instructions.md',
-  '.github/workflows/revamp-foundation.yml',
-];
-for (const [name, own, other] of [
-  ['publish-monkey-webapp.yml', 'WebApp/Program.cs', 'Functions/Program.cs'],
-  ['publish-monkey-functions.yml', 'Functions/Program.cs', 'WebApp/Program.cs'],
-]) {
-  const workflow = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows', name), 'utf8'));
-  const ignores = workflow.on.push['paths-ignore'];
-  const triggers = files => files.some(filename => !ignores.some(pattern => minimatch(filename, pattern, { dot: true })));
-  assert(!triggers(replacementChanges), `${name}: replacement-only changes trigger Azure`);
-  assert(triggers([own]), `${name}: owning application must trigger`);
-  assert(!triggers([other]), `${name}: other application must stay excluded`);
-  for (const shared of ['Directory.Packages.props', 'Support/AmountUtils.cs', 'docs/terms/usage_terms_v1_0.md']) {
-    assert(triggers([...replacementChanges, shared]), `${name}: shared runtime change ${shared} must trigger`);
-  }
-  assert(Object.hasOwn(workflow.on, 'workflow_dispatch'), `${name}: keep manual deployment available`);
+for (const retired of ['BusinessLogic', 'Data', 'Functions', 'Identity', 'Notifications.Email', 'Support', 'WebApp', 'MONkEY.sln', 'revamp',
+  '.github/workflows/publish-monkey-webapp.yml', '.github/workflows/publish-monkey-functions.yml']) {
+  assert(!fs.existsSync(path.join(root, retired)), `Retired source remains: ${retired}`);
 }
-const foundation = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/revamp-foundation.yml'), 'utf8'));
-assert(foundation.on.push.paths.some(pattern => minimatch('THIRD-PARTY-NOTICES.txt', pattern, { dot: true })), 'Root notice changes must trigger foundation push verification');
+for (const required of ['PocketMonkey.slnx', 'global.json', 'Directory.Build.props', 'Directory.Packages.props', 'NuGet.Config',
+  'web/package-lock.json', 'backend/PocketMonkey.Host/Program.cs', 'tests/e2e/package-lock.json', 'deploy/Dockerfile']) {
+  assert(fs.existsSync(path.join(root, required)), `Root application input is missing: ${required}`);
+}
+const foundation = YAML.parse(fs.readFileSync(path.join(root, '.github/workflows/ci.yml'), 'utf8'));
+assert.deepEqual(foundation.on.push.branches, ['main']);
+assert(!foundation.on.push.paths && !foundation.on.push['paths-ignore'], 'All main changes must trigger CI');
 assert(Object.hasOwn(foundation.on, 'pull_request'));
 assert(!foundation.on.pull_request?.paths && !foundation.on.pull_request?.['paths-ignore']);
 assert(!Object.hasOwn(foundation.on, 'pull_request_target'));
@@ -110,9 +91,10 @@ for (const job of Object.values(foundation.jobs)) {
   }
 }
 assert(!JSON.stringify(foundation).includes('secrets.'), 'Foundation verification must not require secrets');
-console.log('PASS: Azure trigger isolation preserves legacy/shared changes; foundation PR checks are read-only, unfiltered, secret-free, and SHA-pinned');
+assert(Object.values(foundation.jobs).every(job => !job.defaults?.run?.['working-directory']), 'CI commands must run from the repository root');
+console.log('PASS: root application inputs present; legacy source absent; CI is root-scoped, read-only, unfiltered, secret-free, and SHA-pinned');
 
-const backendDirectory = path.join(root, 'revamp/backend');
+const backendDirectory = path.join(root, 'backend');
 const migrationDirectory = path.join(backendDirectory, 'PocketMonkey.Storage/Migrations');
 
 function csharpFiles(directory) {
@@ -145,8 +127,8 @@ assert.deepEqual(migrationArtifacts.filter(filename => /\bclass\s+\w+\s*:\s*Mode
 console.log(`PASS: ${migrationArtifacts.length} EF artifacts in PocketMonkey.Storage/Migrations; matching namespace/pairs and one snapshot`);
 
 const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
-const markdown = ['.github/copilot-instructions.md', backendDesignSkill];
-if (fs.existsSync(path.join(root, 'revamp/README.md'))) markdown.push('revamp/README.md');
+const markdown = ['README.md', '.github/copilot-instructions.md', backendDesignSkill];
+if (fs.existsSync(path.join(root, 'docs/development.md'))) markdown.push('docs/development.md');
 for (const directory of directories) {
   for (const name of fs.readdirSync(path.join(root, directory))) {
     if (name.endsWith('.md')) markdown.push(`${directory}/${name}`);

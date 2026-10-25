@@ -3,7 +3,7 @@
 Status: Approved by the user on 2026-10-10 in the [phase 2B design review](../../../plans/migration/02b-ux-ui-design.md).
 The structure was adapted from an earlier product's design system; colors,
 typography, and the application shell are specific to POCKET MONkEY. The current
-foundations and representative [Angular screens](../../../revamp/web/) are accepted.
+foundations and representative [Angular screens](../../../web) are accepted.
 Design approval does not certify outstanding accessibility or technical checks.
 
 **Approved revision, 2026-10-23:** neutral tonal panels/cards and restrained
@@ -52,10 +52,10 @@ not create a requirement, permission, API, or business rule.
 | Material | Location |
 | --- | --- |
 | Guide, tokens, and specimens | This directory |
-| Shared fonts and images | [docs/design/assets](../assets/) |
+| Shared fonts and images | [docs/design/assets](../assets) |
 | Shell wireframe | [draw.io source](../wireframes/application-shell/application-shell-wireframe.drawio) and [PNG export](../wireframes/application-shell/application-shell-wireframe.png) |
 | Click prototypes | [prototypes](../prototypes/README.md), outside the application build |
-| Angular application | [revamp/web](../../../revamp/web/) with Taiga UI 5 and locally bundled Lucide assets |
+| Angular application | [web](../../../web) with Taiga UI 5 and locally bundled Lucide assets |
 
 Do not import the specimen stylesheet into Angular. When the foundations are
 approved, map the tokens onto Taiga's CSS variables in the web application in a
@@ -131,13 +131,13 @@ Taiga owns standard controls, dialogs, notifications, and other primitives. The
 
 ## Tokens and Assets
 
-The [reference styles](styles/) contain the [colors](styles/colors.css),
+The [reference styles](styles) contain the [colors](styles/colors.css),
 [typography](styles/typography.css), [spacing](styles/spacing.css),
 [font declarations](styles/fonts.css), and [base rules](styles/base.css) used by
 the specimens and the prototype. Keep token names and values synchronized when
 they are adopted in Angular.
 
-Fonts and images live once in [docs/design/assets](../assets/); do not duplicate
+Fonts and images live once in [docs/design/assets](../assets); do not duplicate
 them in the design system. Specimens and the prototype load all assets locally
 and work offline when opened directly from the file system.
 

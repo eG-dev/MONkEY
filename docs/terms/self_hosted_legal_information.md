@@ -48,7 +48,7 @@ Before publication, review:
 - Semantic agreement between the final German and English wording. Neither
   translation replaces the unmodified authoritative software-license text.
 
-Technical basis: the [application guide](../../revamp/README.md),
+Technical basis: the [application guide](../development.md),
 [configuration contract](../../plans/migration/configuration.md) and
 [operations plan](../../plans/migration/04-operations-cutover.md). In particular,
 `MONKEY_TRANSACTION_RETENTION_MONTHS` defaults to `24`; eligible transaction

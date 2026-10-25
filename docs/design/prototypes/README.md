@@ -57,7 +57,7 @@ wireframe approval with "approved", the user explicitly approved the current
 prototype with "prototype approved, implement" on 2026-10-24. Both design gates
 are complete. Angular delivery and production-image evidence are recorded
 separately from the prototype checks in the
-[R6 application delivery record](../../../revamp/README.md#grouped-notice-documents-r6-2026-10-24).
+[R6 application delivery record](../../development.md#grouped-notice-documents-r6-2026-10-24).
 
 ## Currency Formatting R1 (2026-10-24)
 
@@ -271,13 +271,13 @@ search with retained expansion, unchanged single-package rows, Escape/focus
 return, preserved preferences and no overflow or script errors. Expansion state
 is captured before filtering rather than relying on a queued native toggle event.
 Desktop English/light and integrated German/dark-phone screenshots were inspected;
-ignored evidence is under `revamp/.local/shared-notice-review/`. These checks
+ignored evidence is under `.local/shared-notice-review/`. These checks
 verify the prototype; separate Angular delivery evidence is recorded in the
 [design index](../README.md#shared-notice-documents-r1-2026-10-23).
 
 ## Integrated Application Entry
 
-Open [index.html](./index.html) to review and test the complete application.
+Open [index.html](index.html) to review and test the complete application.
 **Approved 2026-10-23.** The entry starts at Overview and frames the
 maintained pages, which already reuse the common shell, components, preferences
 and fictional data. Actual navigation opens Accounts, account details and
@@ -313,13 +313,13 @@ Integrated German dark-phone and English light-desktop screenshots were inspecte
 
 | Prototype | Wireframe |
 | --- | --- |
-| [Application shell](./application-shell/index.html) | [Shell](../wireframes/application-shell/application-shell-wireframe.png) |
-| [Overview](./accounts-overview/index.html) | [Accounts overview](../wireframes/accounts-overview/accounts-overview-wireframe.png) |
-| [Accounts](./accounts/index.html) | [Accounts](../wireframes/accounts/accounts-wireframe.png) |
-| [Account details](./account-details/index.html?account=noah) | [Account details](../wireframes/account-details/account-details-wireframe.png) |
-| [Administration](./administration/index.html) | [Profile](../wireframes/administration/administration-profile-wireframe.png) and [Users](../wireframes/administration/administration-users-wireframe.png) |
-| [Login](./login/index.html) | [Login](../wireframes/login/login-wireframe.png) |
-| [About dialog](./about/index.html) | [Overview](../wireframes/about/about-wireframe.png), [Third-party notices](../wireframes/about/about-notices-wireframe.png), [Legal information](../wireframes/about/about-legal-wireframe.png) |
+| [Application shell](application-shell/index.html) | [Shell](../wireframes/application-shell/application-shell-wireframe.png) |
+| [Overview](accounts-overview/index.html) | [Accounts overview](../wireframes/accounts-overview/accounts-overview-wireframe.png) |
+| [Accounts](accounts/index.html) | [Accounts](../wireframes/accounts/accounts-wireframe.png) |
+| [Account details](account-details/index.html%3Faccount%3Dnoah) | [Account details](../wireframes/account-details/account-details-wireframe.png) |
+| [Administration](administration/index.html) | [Profile](../wireframes/administration/administration-profile-wireframe.png) and [Users](../wireframes/administration/administration-users-wireframe.png) |
+| [Login](login/index.html) | [Login](../wireframes/login/login-wireframe.png) |
+| [About dialog](about/index.html) | [Overview](../wireframes/about/about-wireframe.png), [Third-party notices](../wireframes/about/about-notices-wireframe.png), [Legal information](../wireframes/about/about-legal-wireframe.png) |
 
 ## Approved Surface Revision (2026-10-23)
 
@@ -330,12 +330,12 @@ no longer have decorative outlines. Floating layers retain their shadows, and
 cards gain subtle hover elevation. Input boundaries, keyboard focus and selected
 navigation/tab indicators remain unchanged.
 
-Review the [overview](./accounts-overview/index.html) and
+Review the [overview](accounts-overview/index.html) and
 [light/dark surface specimen](../design-system/specimens/colors-surfaces.html).
 The user explicitly approved this revision for Angular implementation on
 2026-10-23, including the earlier Login centring correction. Earlier approvals
 below remain history. Wireframes are unchanged; Angular styling now implements
-the approved treatment. See the [delivery record](../../../revamp/README.md#tonal-surfaces-2026-10-23).
+the approved treatment. See the [delivery record](../../development.md#tonal-surfaces-2026-10-23).
 
 Checks passed 80 signed-in combinations, 16 public Login/About combinations,
 eight validation/failed-save dialog combinations and 48 overview state
@@ -346,16 +346,16 @@ Dialog/form activation used DOM events rather than full native keyboard input.
 
 ## Structure
 
-- [shared/prototype.js](./shared/prototype.js) builds the application shell
+- [shared/prototype.js](shared/prototype.js) builds the application shell
   and provides formatting, dialogs, toasts, and preferences. Each view only
   renders the main content, so the shell can change in one place.
-- [shared/prototype.css](./shared/prototype.css) contains the shell and common
+- [shared/prototype.css](shared/prototype.css) contains the shell and common
   component styles on top of the design-system tokens.
-- [shared/data.js](./shared/data.js) holds the fictional seed data. Changes made
+- [shared/data.js](shared/data.js) holds the fictional seed data. Changes made
   while clicking through are kept in the browser's local storage.
-- [shared/about.js](./shared/about.js) provides the same lazy-loaded About modal
+- [shared/about.js](shared/about.js) provides the same lazy-loaded About modal
   for login, every shell view, and the direct About review page.
-- [shared/project-license.js](./shared/project-license.js) is generated mechanically
+- [shared/project-license.js](shared/project-license.js) is generated mechanically
   from the root [LICENSE](../../../LICENSE). Its decoded text must remain identical
   to that canonical file; regenerate the asset whenever the license changes.
 
@@ -369,7 +369,7 @@ repeats an accepted sentence, not an invented operator identity or hosting polic
 The presentation was initially a draft. After verification, the user requested
 "implement" on 2026-10-23, accepting the current presentation for Angular.
 The port is now implemented and verified; see the
-[delivery record](../../../revamp/README.md#legal-information-delivery-2026-10-23).
+[delivery record](../../development.md#legal-information-delivery-2026-10-23).
 Earlier R5 and tonal styling approvals remain history for those revisions;
 approved wireframes are unchanged. No acknowledgement or consent gate is added.
 
@@ -386,7 +386,7 @@ real Administration navigation inside the root composition, opened About from
 the shell, and repeated the text/interaction/layout checks. The root URL remained
 stable and one shell remained. English light-desktop and German dark-phone
 screenshots were inspected; generated artifacts are under ignored
-`revamp/.local/legal-prototype-review/`. All data/preferences were isolated from
+`.local/legal-prototype-review/`. All data/preferences were isolated from
 the user's browser. This is prototype verification, not legal certification or
 evidence of Angular delivery; that separate verification is recorded above.
 
@@ -398,7 +398,7 @@ contains product/version/source information only; Project license is the second
 tab and shows the complete original text immediately, without an accordion.
 Notices preserve expanded rows across filtering/tab changes and reset on close.
 Eight focused desktop/mobile production-image checks passed; see the
-[delivery record](../../../revamp/README.md#four-tab-about-delivery-2026-10-23).
+[delivery record](../../development.md#four-tab-about-delivery-2026-10-23).
 That initial Angular delivery retained legal placeholders and a staged notice
 collection. The later legal-content presentation above replaces those legal
 placeholders; third-party coverage remains partial.

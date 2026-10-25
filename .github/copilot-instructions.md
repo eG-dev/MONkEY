@@ -19,16 +19,16 @@
 - Before designing or changing replacement backend models, database schemas, entities, endpoint contracts, or service responsibilities, load the combined [backend/data design skill](skills/backend-data-design/SKILL.md) and follow the [backend review gate](instructions/backend.instructions.md), including when work starts in a plan rather than a backend file.
 - Present a revisioned design proposal with class, namespace, and file references, then wait for explicit approval before implementing the reviewed design. Identify applicable ADRs and proposed architectural decisions; record accepted enduring decisions according to ADR-0001, not every implementation detail.
 
-## Incremental Migration
+## Repository Layout
 
 - Follow the [migration overview](../plans/migration/README.md) and the applicable milestone/supporting plans. Proposed choices in those plans are not automatically agreed decisions.
-- Keep the existing Azure application independently runnable while building the replacement. Apply replacement-specific requirements only to the new implementation; do not retrofit legacy projects or retire Azure resources without explicit scope.
-- The confirmed replacement paths are `revamp/web`, `revamp/backend`, `revamp/tests/e2e`, `revamp/tests/integration`, and `revamp/deploy`. Keep new projects independent of the legacy solution; selectively adapt reviewed behavior rather than referencing Azure-dependent entities.
-- Account for inherited root configuration and existing Azure workflow triggers before adding replacement builds. See the [Step 0 verification record](../plans/migration/00-guardrails.md).
+- On 2026-10-25 the owner approved removing the legacy application and Azure workflows and promoting the replacement to the repository root. Earlier migration isolation requirements are historical, not current layout requirements.
+- Application paths are `web`, `backend`, `tests/e2e`, `tests/integration`, and `deploy`; the solution and shared build configuration live at the root. Use the [development guide](../docs/development.md) for commands.
+- Repository cleanup does not authorize deleting deployed Azure resources, rewriting Git history, changing visibility, or publishing releases.
 
 ## Replacement Invariants
 
-- For `revamp/`, the backend owns authorization, business rules, persistence, and jobs; Angular/Web-BFF owns rendering and transport. UI guards are not security enforcement.
+- The backend owns authorization, business rules, persistence, and jobs; Angular/Web-BFF owns rendering and transport. UI guards are not security enforcement.
 - Use a shared instance with Manager and Member roles, not tenancy. Members read all accounts; managers perform business writes. Personal preferences do not grant business-write access. Do not add email or Azure data import.
 - Financial writes must be atomic, use exact monetary arithmetic, and be safe under retries/concurrency. Jobs must be idempotent. Do not silently rewrite financial history.
 - Keep SSR identity and language request-scoped. Never expose server secrets or privately cache one user's response for another user.

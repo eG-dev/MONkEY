@@ -1,6 +1,6 @@
 ---
 description: "Use when writing replacement C# backend or integration code: explicit properties, null validation, lambda naming, and readable method chains."
-applyTo: "revamp/backend/**/*.cs,revamp/tests/integration/**/*.cs"
+applyTo: "backend/**/*.cs,tests/integration/**/*.cs"
 ---
 # C# Style
 

@@ -58,7 +58,7 @@ Choose your preferred interface language.
 
 ## Technology
 
-POCKET MONkEY uses Angular, .NET, and SQLite, packaged together in a Docker image. See the [technical guide](revamp/README.md) for setup and verification commands.
+POCKET MONkEY uses Angular, .NET, and SQLite, packaged together in a Docker image. See the [technical guide](docs/development.md) for setup and verification commands.
 
 ## Run With Docker
 
@@ -70,17 +70,17 @@ These examples run from the repository root and use PowerShell. You need Node.js
 Install the build tooling and build the local image:
 
 ```powershell
-npm --prefix revamp/web ci --ignore-scripts
-npm --prefix revamp/web run build:image
+npm --prefix web ci --ignore-scripts
+npm --prefix web run build:image
 ```
 
 For first-time setup, create an ignored local configuration from the
-[Compose environment example](revamp/deploy/compose.env.example). Do not overwrite
+[Compose environment example](deploy/compose.env.example). Do not overwrite
 an existing configuration:
 
 ```powershell
 New-Item -ItemType Directory -Force .local | Out-Null
-Copy-Item revamp/deploy/compose.env.example .local/compose.env
+Copy-Item deploy/compose.env.example .local/compose.env
 ```
 
 Edit the copied file, replacing `MONKEY_PUBLIC_URL` with the HTTPS origin supplied
@@ -88,8 +88,8 @@ by your reverse proxy. Review the timezone, language, currency and retention
 settings, then validate the configuration and start:
 
 ```powershell
-docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml config --quiet
-docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml up -d --no-build
+docker compose --env-file .local/compose.env -f deploy/compose.yaml config --quiet
+docker compose --env-file .local/compose.env -f deploy/compose.yaml up -d --no-build
 ```
 
 Compose publishes HTTP at `127.0.0.1:8080` for your host reverse proxy. Configure
@@ -100,7 +100,7 @@ signed-in production use requires HTTPS because session cookies are Secure.
 Create the first Manager while the container is running:
 
 ```powershell
-docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
+docker compose --env-file .local/compose.env -f deploy/compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
 ```
 
 Enter the username and password at the prompts; there is no default account or
@@ -111,7 +111,7 @@ lowercase letters, and a digit. Use `recover-manager` instead of
 Stop the instance without deleting its persistent data:
 
 ```powershell
-docker compose --env-file .local/compose.env -f revamp/deploy/compose.yaml down
+docker compose --env-file .local/compose.env -f deploy/compose.yaml down
 ```
 
 The named volume stores the database, account images and authentication keys.
@@ -127,7 +127,7 @@ take precedence over values in that file. Keep a private backup of the settings.
 
 An environment file supplies values to Compose, not automatically to the
 container: only variables referenced by the selected Compose files are forwarded.
-See the [Compose guide](revamp/README.md#docker-compose-configuration) for the
+See the [Compose guide](docs/development.md#docker-compose-configuration) for the
 service layout, ports, persistent storage, HTTPS proxy example and export override.
 
 | Variable | Default | Example or meaning |
@@ -145,7 +145,7 @@ removed. Language, currency and business timezone are independent settings.
 
 Daily change-only financial JSON exports are optional and disabled by default.
 Enable them with a separate private export mount using the
-[export configuration and recovery guide](revamp/README.md#portable-financial-recovery).
+[export configuration and recovery guide](docs/development.md#portable-financial-recovery).
 These exports do not replace full backups or include users, passwords or images.
 See the [complete environment reference](plans/migration/configuration.md) for
 storage paths, export retention and other settings.
@@ -153,27 +153,27 @@ storage paths, export retention and other settings.
 ## Local Development
 
 For hot reload without Docker, install Node.js 24 and the .NET SDK pinned in
-[revamp/global.json](revamp/global.json), then run from the repository root:
+[global.json](global.json), then run from the repository root:
 
 ```powershell
-npm --prefix revamp/web ci --ignore-scripts
-npm --prefix revamp/web run dev
+npm --prefix web ci --ignore-scripts
+npm --prefix web run dev
 ```
 
 Open http://127.0.0.1:4180. The launcher starts Angular SSR and the .NET backend,
 keeps development data separate from Docker data, and stops both with Ctrl+C.
 Before signing in for the first time, follow the
-[development Manager setup](revamp/README.md#first-manager-and-recovery) in a
+[development Manager setup](docs/development.md#first-manager-and-recovery) in a
 second terminal so the operator command uses the same development database.
 
 If the default ports are occupied, choose another pair:
 
 ```powershell
-npm --prefix revamp/web run dev -- --web-port 4182 --backend-port 5182
+npm --prefix web run dev -- --web-port 4182 --backend-port 5182
 ```
 
 The development launcher uses local HTTP authentication settings; do not expose
-it as a production deployment. See the [technical guide](revamp/README.md#build-and-verify)
+it as a production deployment. See the [technical guide](docs/development.md#build-and-verify)
 for builds, tests and verification commands.
 
 ## Questions or Suggestions?

@@ -33,7 +33,7 @@ and ledger credits; managers see execution outcomes and failures.
 
 Verified locally on 2026-10-12 against the final `pocket-monkey:foundation`
 Linux production image: **17 checks passed**, one worker, zero retries. Run
-from `revamp/` after the Release solution and production-image builds:
+from the repository root after the Release solution and production-image builds:
 
 ```powershell
 npm.cmd --prefix tests/e2e test -- specs/accounts/allowance-execution.spec.ts specs/accounts/allowance-workflows.spec.ts specs/accounts/allowance-api.spec.ts specs/ledger/opening-workflows.spec.ts specs/shell/rendering.spec.ts --workers 1

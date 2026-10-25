@@ -2,7 +2,7 @@
 
 These framework-neutral notes record POCKET MONkEY-specific choices on top of
 Taiga UI. They are design inputs, not a component API or proof that a component
-exists in Angular. Use the [design guide](README.md) and [reference styles](styles/)
+exists in Angular. Use the [design guide](README.md) and [reference styles](styles)
 for shared values and the [accessibility baseline](accessibility.md) for
 interaction requirements.
 
@@ -69,7 +69,7 @@ on dialog close. The [prototype evidence](../prototypes/README.md#notice-documen
 records standalone and integrated checks. The user's "prototype approved,
 implement" completes the separate prototype approval gate.
 Angular now maps this pattern into its About SCSS and renders complete original
-legal bodies; see the [production verification](../../../revamp/README.md#grouped-notice-documents-r6-2026-10-24).
+legal bodies; see the [production verification](../../development.md#grouped-notice-documents-r6-2026-10-24).
 
 ## View Headers
 

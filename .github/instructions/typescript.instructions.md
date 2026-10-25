@@ -1,10 +1,10 @@
 ---
 description: "Use when writing replacement Angular, TypeScript, or web scripts: logical spacing, braces, readable control flow, method chains, and modern Angular conventions."
-applyTo: "revamp/web/**/*.ts,revamp/web/**/*.mjs,revamp/tests/e2e/**/*.ts"
+applyTo: "web/**/*.ts,web/**/*.mjs,tests/e2e/**/*.ts"
 ---
 # Angular and TypeScript Style
 
-- Follow the scoped web EditorConfig and Prettier configuration: two-space indentation, single quotes, and the configured 140-column print width for TypeScript/web scripts. Keep legacy projects unchanged.
+- Follow the scoped web EditorConfig and Prettier configuration: two-space indentation, single quotes, and the configured 140-column print width for TypeScript/web scripts.
 - Separate logical clusters with blank lines: configuration/validation, service setup, middleware/routes, and lifecycle handling. Within classes, separate injected dependencies, state, and methods; within methods, separate guards, preparation, actions, and results. Do not insert a blank line after every statement.
 - Group external imports separately from local imports. Wrap long import lists, configuration objects, arrays, and call arguments instead of packing them onto one line.
 - Always use braces for `if`, `else`, loops, and other block statements, even for one-line returns or throws. Keep multi-action callbacks clearly grouped.

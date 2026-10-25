@@ -46,7 +46,7 @@ entries.
 This refines [build identity and About assets](ADR-0019-build-identity-and-about-assets.md)
 and [GitHub delivery](ADR-0006-github-delivery.md), without changing application
 identity or project-license generation. Operational review guidance is maintained
-in the [build guide](../../revamp/README.md#third-party-notices).
+in the [build guide](../development.md#third-party-notices).
 
 ## Alternatives
 

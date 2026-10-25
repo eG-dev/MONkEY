@@ -40,3 +40,13 @@ __pycache__/
 # OS metadata
 .DS_Store
 Thumbs.db
+
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+**/playwright-report/
+**/test-results/
+.local/
+.build/

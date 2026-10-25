@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      export_image:
+        description: Export the verified foundation image and Compose example as a non-publishing rehearsal
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  foundation:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 25
+    env:
+      MONKEY_TEST_IMAGE: pocket-monkey:foundation
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "24.22.0"
+          cache: npm
+          cache-dependency-path: |
+            web/package-lock.json
+            tests/e2e/package-lock.json
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
+      - name: Restore locked web dependencies
+        run: npm --prefix web ci --ignore-scripts
+      - name: Restore locked test tooling
+        run: npm --prefix tests/e2e ci --ignore-scripts
+      - name: Verify About build-input generation and release validation
+        run: npm --prefix web run check:about
+      - name: Verify instructions, ADRs, links, and workflow scopes
+        run: node plans/migration/verify-guardrails.mjs
+      - name: Verify translation catalogs
+        run: npm --prefix web run check:catalogs
+      - name: Audit web dependencies
+        run: npm --prefix web audit --audit-level=high
+      - name: Audit test tooling
+        run: npm --prefix tests/e2e audit --audit-level=high
+      - name: Build backend independently
+        run: dotnet build PocketMonkey.slnx --configuration Release -p:RestoreLockedMode=true
+      - name: Build Angular SSR independently
+        run: npm --prefix web run build
+      - name: Typecheck E2E fixtures
+        run: npm --prefix tests/e2e run check
+      # The browser runs in its own network namespace so fixture container veth churn cannot cause ERR_NETWORK_CHANGED.
+      - name: Start isolated Playwright browser server
+        run: |
+          docker run --detach --rm --init --name playwright-browser \
+            --publish 127.0.0.1:3000:3000 --workdir /home/pwuser --user pwuser \
+            mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27 \
+            /bin/sh -c "npx -y playwright@1.63.0 run-server --port 3000 --host 0.0.0.0"
+      - name: Build production image
+        run: npm --prefix web run build:image
+      - name: Wait for Playwright browser server
+        run: timeout 120 sh -c 'until docker logs playwright-browser 2>&1 | grep -q "Listening on"; do sleep 1; done' || { docker logs playwright-browser; exit 1; }
+      - name: Verify the production image
+        env:
+          PW_TEST_CONNECT_WS_ENDPOINT: ws://127.0.0.1:3000/
+          PW_TEST_CONNECT_EXPOSE_NETWORK: "<loopback>"
+        run: npm --prefix tests/e2e test
+      - name: Export verified image without publishing
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.export_image }}
+        run: |
+          mkdir -p .local/rehearsal
+          docker save pocket-monkey:foundation | gzip > .local/rehearsal/foundation-image.tar.gz
+          docker image inspect pocket-monkey:foundation > .local/rehearsal/image.json
+          cp deploy/compose.yaml .local/rehearsal/compose.yaml
+          cd .local/rehearsal
+          sha256sum foundation-image.tar.gz image.json compose.yaml > SHA256SUMS
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: foundation-test-results
+          path: |
+            tests/e2e/playwright-report
+            tests/e2e/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Upload non-publishing rehearsal
+        if: ${{ success() && github.event_name == 'workflow_dispatch' && inputs.export_image }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: foundation-rehearsal
+          path: .local/rehearsal
+          if-no-files-found: error
+          retention-days: 7

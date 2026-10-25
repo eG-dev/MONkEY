@@ -1,7 +1,7 @@
 POCKET MONkEY - Third-Party Notices
 =================================
 
-Generated from revamp/notices/catalog.json; do not edit this assembled file.
+Generated from notices/catalog.json; do not edit this assembled file.
 Curated collection: COMPLETE. Collection status is not legal approval.
 
 Angular

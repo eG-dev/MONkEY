@@ -40,7 +40,7 @@ once, before adding ordinary transactions or automated credits.
 - German/English desktop/mobile entry, language switches, EUR/USD suffix display, and exact maximum-value screenshots passed. Reopening the same volume under USD preserved the original amounts and posting provenance.
 
 Hosted CI, publishing, and actual-host operational gates remain open. Reproducible
-commands and configuration are in the [replacement guide](../../revamp/README.md).
+commands and configuration are in the [replacement guide](../../docs/development.md).
 
 ## Deferred
 

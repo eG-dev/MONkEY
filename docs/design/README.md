@@ -18,7 +18,7 @@ R6's presentation and recorded approvals remain unchanged. Earlier partial
 fixtures/evidence describe their state at the time, not the current collection.
 ORT and its findings review are deferred until the revamp is finished, before
 1.0.0; separate release-review metadata does not add a new public warning.
-See the [delivery record](../../revamp/README.md#notice-collection-completion-2026-10-24).
+See the [delivery record](../development.md#notice-collection-completion-2026-10-24).
 
 ## Notice Document Hierarchy R6 (2026-10-24)
 
@@ -62,7 +62,7 @@ The user subsequently explicitly approved the current prototype with
 "prototype approved, implement" on 2026-10-24. Both R6 design gates are complete;
 earlier approvals remain history. Angular implementation and its focused
 production-image verification are complete; see the
-[R6 delivery record](../../revamp/README.md#grouped-notice-documents-r6-2026-10-24).
+[R6 delivery record](../development.md#grouped-notice-documents-r6-2026-10-24).
 The application renders full original document bodies rather than prototype
 placeholders. Its 11 focused production-image checks, 27 isolated input checks
 and separate eight-combination localization/theme/viewport review passed.
@@ -84,7 +84,7 @@ The shared prototype formatter applies the rule to balances, allowances,
 ledger rows, confirmations and monetary feedback. Its fictional fixture remains
 EUR; this revision does not add a currency selector or change existing labels.
 Wireframes are unchanged. Angular delivery is recorded in the
-[implementation guide](../../revamp/README.md). See the
+[implementation guide](../development.md). See the
 [formatting examples](design-system/typography.md#currency-formatting-r1)
 and [verification evidence](prototypes/README.md#currency-formatting-r1-2026-10-24).
 The separate prototype approval gate is complete.
@@ -101,7 +101,7 @@ Angular also restores the approved shared feedback layout: field errors have a
 separate icon column and spacing, and message icons align with the first text
 line, including wrapped errors. These are implementation corrections to the
 approved references, not new prototype designs. See the
-[delivery evidence](../../revamp/README.md#allowance-consistency-and-feedback-alignment-2026-10-24).
+[delivery evidence](../development.md#allowance-consistency-and-feedback-alignment-2026-10-24).
 
 ## Allowance Status Consistency R2 (2026-10-24)
 
@@ -160,7 +160,7 @@ The requested dialog change is scoped to Profile; the first-sign-in password
 change page and Manager-generated temporary-password dialog are unchanged.
 
 The approved Error foreground is ported to Angular; the approved password changes
-are tracked in the [Angular delivery record](../../revamp/README.md).
+are tracked in the [Angular delivery record](../development.md).
 Prototype verification evidence is recorded
 in the [prototype notes](prototypes/README.md#error-feedback-r3-2026-10-24).
 
@@ -201,7 +201,7 @@ desktop/phone Chromium screenshots and the surface specimen were inspected.
 See the [prototype evidence](prototypes/README.md#allowance-presentation-r2-2026-10-24)
 for the separate interaction/state/wrapping checks and their revision scope.
 The approved presentation is now implemented in Angular; see the
-[allowance delivery record](../../revamp/README.md#allowance-presentation-2026-10-24)
+[allowance delivery record](../development.md#allowance-presentation-2026-10-24)
 for API composition, current-month semantics and production-image verification.
 
 ## Compact Account Names R2 (2026-10-24)
@@ -238,7 +238,7 @@ desktop column at 600/899/900/1440/1920px, phone wrapping at 320/360px, and visi
 keyboard focus/Enter navigation. Desktop and 360px phone screenshots were
 inspected. The existing warning-only 750kB initial-bundle budget remains exceeded
 (753.81kB); no limits were changed. See the
-[delivery record](../../revamp/README.md#compact-account-names-2026-10-24).
+[delivery record](../development.md#compact-account-names-2026-10-24).
 
 ## Shared Notice Documents R1 (2026-10-23)
 
@@ -268,7 +268,7 @@ real-app checks covered English/German, light/dark and 1440px/360px; desktop and
 German dark-phone screenshots were inspected without overflow or script errors.
 The build retains a warning-only initial bundle budget overrun (756.75 kB versus
 750 kB); no budget limits were changed. See the
-[notice delivery record](../../revamp/notices/README.md#angular-runtime-packages-2026-10-23).
+[notice delivery record](../../notices/README.md#angular-runtime-packages-2026-10-23).
 
 Final user acceptance on 2026-10-23: "all approved now, commit". This accepts
 the delivered Angular notice collection and shared-document presentation;
@@ -295,8 +295,8 @@ shell as Manager, German, dark, 360px; revised text and overflow checks passed.
 The full integrated role/language/theme matrix was not run.
 
 After approval, all six Angular legal sections matched the R2 document paragraph
-for paragraph in English and German. `npm --prefix revamp/web run check:catalogs`
-and `npm --prefix revamp/web run build` passed. The build retains the existing
+for paragraph in English and German. `npm --prefix web run check:catalogs`
+and `npm --prefix web run build` passed. The build retains the existing
 warning-only initial bundle budget overrun (756.82 kB versus 750 kB); no budget
 limits changed. Production-image browser tests were not rerun for this copy update.
 
@@ -335,7 +335,7 @@ including every accepted English body paragraph, spacing and fixed-header
 internal scrolling, alongside the existing access/license/notice regressions.
 Eight separate development-app checks compared both languages with R1 across
 light/dark and 1440px/360px. Production desktop/320px phone and German dark-phone
-screenshots were inspected. See the [delivery record](../../revamp/README.md#legal-information-delivery-2026-10-23).
+screenshots were inspected. See the [delivery record](../development.md#legal-information-delivery-2026-10-23).
 
 ## Approved Surface Revision (2026-10-23)
 
@@ -380,7 +380,7 @@ transactions and SSR/hydration. New assertions verify borderless light cards,
 light/dark panels and secondary buttons, keyboard-visible card focus, borderless
 dialogs and retained input boundaries. Desktop/mobile transaction-dialog
 screenshots were inspected. Reproducible commands are in the
-[Angular delivery record](../../revamp/README.md#tonal-surfaces-2026-10-23).
+[Angular delivery record](../development.md#tonal-surfaces-2026-10-23).
 
 Browser verification passed 80 signed-in role/language/theme/width combinations
 across five views, 16 public Login/About combinations, eight account-dialog
@@ -610,7 +610,7 @@ light/dark and 1440px/360px, with localized license tabs, the full text, no
 horizontal overflow and no nested license scrolling. These checks waited for
 hydrated controls and did not change the existing signed-in session.
 Actual notice documents/build metadata and the explicit partial-coverage/legal placeholders
-remain unchanged. See the [delivery record](../../revamp/README.md#four-tab-about-delivery-2026-10-23).
+remain unchanged. See the [delivery record](../development.md#four-tab-about-delivery-2026-10-23).
 
 | Reference | Scope |
 | --- | --- |
@@ -764,7 +764,7 @@ the [prototype notes](prototypes/README.md).
 
 Visual foundations are documented in the [design system](design-system/README.md),
 with browser-viewable [specimens](design-system/specimens/index.html). Shared fonts
-and images are stored in [assets](assets/).
+and images are stored in [assets](assets).
 
 ## Review rules
 

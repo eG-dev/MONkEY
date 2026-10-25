@@ -49,7 +49,7 @@ strings retain their existing precision and behavior.
 
 ## Reference Assets
 
-The [Roboto folder](../assets/fonts/Roboto/) contains all 18 static styles,
+The [Roboto folder](../assets/fonts/Roboto) contains all 18 static styles,
 Thin (100) to Black (900), each upright and italic, as WOFF2. All are declared in
 [fonts.css](styles/fonts.css); browsers only download the styles that are used.
 The interface roles use these:

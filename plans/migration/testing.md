@@ -8,7 +8,7 @@ that all tests pass in GitHub Actions again, closing the pending hosted rerun.
 No run URL or exact case count was supplied for this confirmation. Fork-specific
 verification, publishing rehearsal, and real-host deployment remain separate
 gates. See [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md)
-and the [foundation guide](../../revamp/README.md). Extend with each feature.
+and the [foundation guide](../../docs/development.md). Extend with each feature.
 
 ## Latest Hosted Verification, 2026-10-25
 
@@ -49,7 +49,7 @@ width, matching the existing replacement-image check. A permanently broken
 image still fails the assertion; no sleeps or unconditional retries were added.
 
 Both desktop and mobile image workflows passed locally against the production
-image with `npm --prefix revamp/tests/e2e test -- accounts/images-workflows.spec.ts`.
+image with `npm --prefix tests/e2e test -- accounts/images-workflows.spec.ts`.
 The readability pass restores setup/action/assertion clusters with whitespace-only
 changes elsewhere in specs/helpers. The full suite was not run for this change.
 On 2026-10-12, the user confirmed the subsequent GitHub Actions tests all passed.
@@ -57,7 +57,7 @@ On 2026-10-12, the user confirmed the subsequent GitHub Actions tests all passed
 ## Strategy
 
 On 2026-10-10, the categorized suite passed all 60 production-image cases locally
-with two workers and zero retries (`npm --prefix revamp/tests/e2e test` from the
+with two workers and zero retries (`npm --prefix tests/e2e test` from the
 repository root). Specs are split across 22 files in five category folders.
 Workflows run in English, retaining EUR/USD and desktop/mobile coverage plus
 one German first-render/hydration check. This local result does not close hosted

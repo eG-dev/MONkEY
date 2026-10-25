@@ -2,7 +2,7 @@
 
 Status: implemented and locally verified in [stack foundation](01-stack-foundation.md).
 Real host HTTPS/mount configuration remains an operational gate; see the
-[foundation guide](../../revamp/README.md) and [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md).
+[foundation guide](../../docs/development.md) and [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md).
 
 ## Environment contract
 
@@ -34,7 +34,7 @@ Read configuration at startup and validate it before readiness succeeds.
 - The host bind-mount path is a Docker/Compose setting, not an application variable. For example, mount `/srv/monkey` on the host to `/data` in the container; no `MONKEY_DATA_PATH` override is needed.
 - Validate that the data path is absolute, private, and writable by the non-root backend. Do not fall back silently to ephemeral container storage if the configured path is invalid.
 - Keep the public container port fixed initially; select the host port through Docker port publishing. Keep the internal backend address server-only.
-- Export storage must not overlap the data root or use symbolic links. Use a separate private writable bind mount with owner-only permissions on Linux. `MONKEY_EXPORT_HOST_PATH` belongs to the optional Compose override, not backend configuration. No interval/schedule variable exists; export timestamps remain UTC while daily slots use `TZ`. A no-op retention scan does not trigger an export. See the [recovery guide](../../revamp/README.md#portable-financial-recovery).
+- Export storage must not overlap the data root or use symbolic links. Use a separate private writable bind mount with owner-only permissions on Linux. `MONKEY_EXPORT_HOST_PATH` belongs to the optional Compose override, not backend configuration. No interval/schedule variable exists; export timestamps remain UTC while daily slots use `TZ`. A no-op retention scan does not trigger an export. See the [recovery guide](../../docs/development.md#portable-financial-recovery).
 - Do not disable Secure cookies based on a configurable public URL; production requires HTTPS. Restrict forwarded-header trust to the configured proxies.
 - Keep passwords, bootstrap credentials, and signing keys out of ordinary ENV values; use protected secret files or an operator command for sensitive setup.
 - Document defaults and expose only safe browser configuration. Do not forward the full server environment to Angular.

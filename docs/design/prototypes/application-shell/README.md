@@ -7,10 +7,10 @@ stylesheet, Roboto fonts, and logo.
 
 | Prototype | Wireframe |
 | --- | --- |
-| [Application shell](../application-shell/index.html) | [Shell](../../wireframes/application-shell/application-shell-wireframe.png) |
+| [Application shell](index.html) | [Shell](../../wireframes/application-shell/application-shell-wireframe.png) |
 | [Overview](../accounts-overview/index.html) | [Accounts overview](../../wireframes/accounts-overview/accounts-overview-wireframe.png) |
 | [Accounts](../accounts/index.html) | [Accounts](../../wireframes/accounts/accounts-wireframe.png) |
-| [Account details](../account-details/index.html?account=noah) | [Account details](../../wireframes/account-details/account-details-wireframe.png) |
+| [Account details](../account-details/index.html%3Faccount%3Dnoah) | [Account details](../../wireframes/account-details/account-details-wireframe.png) |
 | [Administration](../administration/index.html) | [Profile](../../wireframes/administration/administration-profile-wireframe.png) and [Users](../../wireframes/administration/administration-users-wireframe.png) |
 | [Login](../login/index.html) | [Login](../../wireframes/login/login-wireframe.png) |
 

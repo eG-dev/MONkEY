@@ -1,6 +1,6 @@
 ---
 description: "Use when implementing replacement Docker deployment or GitHub Actions builds/releases: process lifecycle, persistent state, secure publishing, and operational recovery."
-applyTo: "revamp/deploy/**,.github/workflows/revamp-*.yml,.github/workflows/revamp-*.yaml"
+applyTo: "deploy/**,.github/workflows/*.yml,.github/workflows/*.yaml"
 ---
 # Deployment and CI
 
@@ -13,6 +13,6 @@ applyTo: "revamp/deploy/**,.github/workflows/revamp-*.yml,.github/workflows/reva
 - Keep test/build toolchains out of production images. Verify offline runtime assets and only advertise tested architectures.
 - GitHub PR checks must work without Azure secrets or publishing privileges. Pin third-party actions to reviewed SHAs; use read-only permissions except narrowly scoped trusted publishing jobs.
 - Never execute untrusted contribution code or PR artifacts in privileged publishing jobs. Publish the tested image/digest and matching release assets; failed checks must not publish stable releases.
-- Do not edit legacy Azure workflows incidentally. Their replacement-only exclusions are implemented; preserve owning/shared-runtime and manual deployment triggers. Run the guardrail validator when filters change.
+- Legacy Azure workflows were removed with owner approval. Keep root CI read-only and secret-free; run the guardrail validator when workflow scopes change.
 - Back up persistent state consistently, rehearse restore/upgrades, and document schema compatibility. Image rollback alone is not a database rollback.
-- Follow the [verified build/lifecycle commands and remaining gates](../../revamp/README.md). Hosted CI and publishing rehearsal remain unverified; local image tests and workflow parsing do not prove publishing or production readiness.
+- Follow the [verified build/lifecycle commands and remaining gates](../../docs/development.md). Hosted CI and publishing rehearsal remain unverified; local image tests and workflow parsing do not prove publishing or production readiness.

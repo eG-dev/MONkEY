@@ -2,7 +2,7 @@
 
 Status: independent build/E2E workflow implemented with an optional non-publishing
 image export. GitHub-hosted/fork execution and publishing rehearsal remain unverified.
-See the [foundation guide](../../revamp/README.md); complete production publishing
+See the [foundation guide](../../docs/development.md); complete production publishing
 during [operations and cutover](04-operations-cutover.md).
 
 ## Goal
@@ -67,19 +67,19 @@ on 2026-10-17. Follow the revisioned
 The approved ORT-assisted notice process is recorded in
 [ADR-0020](../../docs/ADR/ADR-0020-shipped-component-inventory.md), with mandatory
 bespoke per-build collection/reconciliation retained as an evaluated alternative.
-Follow the [ORT preparation guide](../../revamp/notices/README.md); scanner
+Follow the [ORT preparation guide](../../notices/README.md); scanner
 version/invocation and reporting still need verification. Complete reviewed
 notices and final legal content remain pending.
 
 Application/build identity and project-license generation are implemented under
 [ADR-0019](../../docs/ADR/ADR-0019-build-identity-and-about-assets.md). Use
-`npm --prefix web run build:image` from `revamp/` to prepare metadata/license
+`npm --prefix web run build:image` from the repository root to prepare metadata/license
 inputs and validate matching OCI labels; the foundation workflow uses this same
 non-publishing wrapper. Ordinary builds copy the maintained local notice document;
 they no longer require bespoke inventory collectors or image scanning. The
 offline runtime test checks the served document against its checked-in bytes,
-not its legal completeness. See the [current build commands](../../revamp/README.md#build-metadata-and-license-generation)
-and [notice review guidance](../../revamp/README.md#third-party-notices).
+not its legal completeness. See the [current build commands](../../docs/development.md#build-metadata-and-license-generation)
+and [notice review guidance](../../docs/development.md#third-party-notices).
 
 - Capture the application version, exact source revision, source cleanliness, and agreed repository/source references before Docker packaging; use the same identity in About, OCI labels, and release assets.
 - Generate local project-license assets from the canonical root license. Use ORT for the dependency/license overview and assemble reviewed required license/copyright/NOTICE text in the root distribution document; manual original-notice collection is acceptable. Review actual shipped npm/NuGet/runtime/container/font/icon/asset material, including transitives/native payloads and gaps in scan coverage; external package links do not replace required text. The current placeholder is not release-ready.
@@ -100,6 +100,39 @@ Builds may access package registries, but installed application assets must stil
 satisfy the offline runtime requirements.
 
 ## Delivery sequence
+
+### Home-Server Prerelease Verification
+
+On 2026-10-25 the user clarified that real-environment runtime/integration
+verification is only possible on their home server's Ubuntu Docker VM after a
+versioned image is available from GHCR. Do not require that host rehearsal before
+producing the prerelease artifact needed to perform it. Automated CI/image tests
+and local disposable checks remain distinct from real-host acceptance.
+
+Plan the delivery order as follows:
+
+1. Implement and verify the protected GHCR prerelease publishing workflow and
+	matching deployment assets. Confirm the image namespace and required
+	publication approvals before publishing.
+2. Build and test the exact source revision in CI, then publish an immutable
+	prerelease image and matching GitHub prerelease. The proposed first version
+	is `0.1.0-beta.1`, with Git tag `v0.1.0-beta.1`; do not advance `latest` or
+	stable convenience tags.
+3. The user pulls that version/digest onto the Ubuntu Docker VM and verifies
+	HTTPS/proxy integration, storage permissions, restart/job behavior and manual
+	full-installation backup/restore using disposable data first.
+4. Address findings in new immutable prereleases, such as `0.1.0-beta.2`.
+	Complete real-host acceptance before claiming production readiness or
+	promoting a stable release.
+
+This records the verification dependency, not authorization to publish now.
+Existing automated verification, security, licensing/notices and corresponding
+source requirements still apply to distributed beta images; a prerelease label
+does not waive them or mark the pending release review complete. Keep the
+agreed ORT/1.0.0 work order separate from this host-availability constraint and
+resolve any blocking publication-policy decisions explicitly.
+
+### Milestone Delivery
 
 - Milestone 1: independent GitHub Actions builds/E2E checks and a publishing dry run or clearly labeled foundation prerelease. Do not claim feature completeness.
 - Milestones 2 and 3: expand workflow gates alongside authentication and business features; keep tagged development releases explicitly prerelease.

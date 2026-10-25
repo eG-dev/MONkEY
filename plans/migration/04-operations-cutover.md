@@ -24,6 +24,17 @@ retiring the Azure version. This is deployment cutover, not Azure data migration
 - No Azure connection strings, SMTP configuration, public CDN assets, or external identity provider are required.
 - State the single-instance/local-disk limitation. SQLite is not an assumed multi-replica database.
 
+### Real-Host Verification Dependency
+
+The user confirmed on 2026-10-25 that real-environment verification requires a
+published GHCR prerelease they can pull onto their home server's Ubuntu Docker
+VM. Follow the [prerelease verification sequence](builds-releases.md#home-server-prerelease-verification):
+prepare a CI-tested immutable beta first, then perform the host HTTPS/storage,
+restart and full-backup/restore rehearsals. Do not make those host checks a
+circular prerequisite for obtaining the beta image. They remain required for
+production acceptance; automated checks and distribution/publication gates are
+not waived. No publishing or real-host verification is claimed complete.
+
 ## Open-source translation contributions
 
 - Document the language registry, catalog layout, source/fallback language, Taiga resource mapping, and how to add a new language in one contribution guide.
@@ -99,18 +110,18 @@ The approved types below are implemented in `PocketMonkey.Host`.
 
 | Type / namespace / location | Responsibility |
 | --- | --- |
-| `FinancialSnapshot` and one explicit record type per exported collection, `PocketMonkey.Host.Contracts.Recovery`, under [Contracts/Recovery](../../revamp/backend/PocketMonkey.Host/Contracts/Recovery) | Versioned transport DTOs, separate files, no direct EF/Identity serialization. |
-| `FinancialSnapshotService`, `PocketMonkey.Host.Services`, [FinancialSnapshotService.cs](../../revamp/backend/PocketMonkey.Host/Services/FinancialSnapshotService.cs) | Read a consistent snapshot; validate and atomically import financial state through the existing context. |
-| `FinancialExportStore`, `PocketMonkey.Host.Services`, [FinancialExportStore.cs](../../revamp/backend/PocketMonkey.Host/Services/FinancialExportStore.cs) | Deterministic content hashing, private temporary files, atomic publication, completed-export discovery, scheduler-state file and bounded retention. |
-| `FinancialExportWorker`, `PocketMonkey.Host.HostedServices`, [FinancialExportWorker.cs](../../revamp/backend/PocketMonkey.Host/HostedServices/FinancialExportWorker.cs) | Wake at startup/minutely, determine whether an export is due, retry failures without stopping financial workflows. |
-| `FinancialImportCommand`, `PocketMonkey.Host.Operations`, [FinancialImportCommand.cs](../../revamp/backend/PocketMonkey.Host/Operations/FinancialImportCommand.cs) | Offline `import-financial <absolute-json-path>` entry point, stable diagnostics/exit codes, no host or workers started. |
+| `FinancialSnapshot` and one explicit record type per exported collection, `PocketMonkey.Host.Contracts.Recovery`, under [Contracts/Recovery](../../backend/PocketMonkey.Host/Contracts/Recovery) | Versioned transport DTOs, separate files, no direct EF/Identity serialization. |
+| `FinancialSnapshotService`, `PocketMonkey.Host.Services`, [FinancialSnapshotService.cs](../../backend/PocketMonkey.Host/Services/FinancialSnapshotService.cs) | Read a consistent snapshot; validate and atomically import financial state through the existing context. |
+| `FinancialExportStore`, `PocketMonkey.Host.Services`, [FinancialExportStore.cs](../../backend/PocketMonkey.Host/Services/FinancialExportStore.cs) | Deterministic content hashing, private temporary files, atomic publication, completed-export discovery, scheduler-state file and bounded retention. |
+| `FinancialExportWorker`, `PocketMonkey.Host.HostedServices`, [FinancialExportWorker.cs](../../backend/PocketMonkey.Host/HostedServices/FinancialExportWorker.cs) | Wake at startup/minutely, determine whether an export is due, retry failures without stopping financial workflows. |
+| `FinancialImportCommand`, `PocketMonkey.Host.Operations`, [FinancialImportCommand.cs](../../backend/PocketMonkey.Host/Operations/FinancialImportCommand.cs) | Offline `import-financial <absolute-json-path>` entry point, stable diagnostics/exit codes, no host or workers started. |
 
 Existing integration points are
-[Program.cs](../../revamp/backend/PocketMonkey.Host/Program.cs),
-[InstanceSettings](../../revamp/backend/PocketMonkey.Host/Configuration/InstanceSettings.cs)
-and [PocketMonkeyDbContext](../../revamp/backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs).
+[Program.cs](../../backend/PocketMonkey.Host/Program.cs),
+[InstanceSettings](../../backend/PocketMonkey.Host/Configuration/InstanceSettings.cs)
+and [PocketMonkeyDbContext](../../backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs).
 Keep financial import dispatch separate from the interactive username/password
-flow in [OperatorCommands](../../revamp/backend/PocketMonkey.Host/Operations/OperatorCommands.cs).
+flow in [OperatorCommands](../../backend/PocketMonkey.Host/Operations/OperatorCommands.cs).
 No new persisted entity, relationship, index or migration was added.
 
 The document contains `formatVersion: 1`, a unique snapshot ID, capture time in
@@ -248,7 +259,7 @@ human-readable UTF-8; files contain private financial and attribution data.
 #### Shared Scenario Collection
 
 Maintain a small version-controlled data store of synthetic scenario exports in
-the **proposed** `revamp/tests/fixtures/financial-snapshots/` directory, shared by
+the **proposed** `tests/fixtures/financial-snapshots/` directory, shared by
 browser E2E, integration checks and manual testing rather than duplicated under
 each suite. This is a file collection, not another database or service. Each
 scenario JSON uses the production snapshot format and passes the same importer
@@ -303,7 +314,7 @@ every supported scenario in the focused real-persistence checks.
 #### Verification
 
 Extend the existing real-persistence
-[RuntimeChecks project](../../revamp/tests/integration/RuntimeChecks) with isolated
+[RuntimeChecks project](../../tests/integration/RuntimeChecks) with isolated
 snapshot checks and reuse the importer from test-only tooling. Minimal fixtures
 contain valid complete financial state, not relaxed production validation.
 Create users separately, use fresh volumes, and inject a fixed clock for
@@ -349,9 +360,9 @@ identity exclusion and offline import entry point. The enduring decision is
 ### Delivery and Verification
 
 Implemented on 2026-10-25 without schema changes or recovery HTTP/UI endpoints.
-See the [operator guide](../../revamp/README.md#portable-financial-recovery),
-[optional export mount](../../revamp/deploy/compose.exports.yaml) and
-[shared scenario catalog](../../revamp/tests/fixtures/financial-snapshots/README.md).
+See the [operator guide](../../docs/development.md#portable-financial-recovery),
+[optional export mount](../../deploy/compose.exports.yaml) and
+[shared scenario catalog](../../tests/fixtures/financial-snapshots/README.md).
 
 Local verification against disposable data and the production Linux image:
 
@@ -373,7 +384,7 @@ Local verification against disposable data and the production Linux image:
 	with the export override passed `config --no-interpolate`; no operator mounts
 	or installation data were started or changed.
 
-Reproduce from `revamp/` using the commands in the operator/scenario guides and
+Reproduce from the repository root using the commands in the operator/scenario guides and
 `dotnet run --project tests/integration/RuntimeChecks --configuration Release -- financial-recovery tests/fixtures/financial-snapshots`.
 Hosted CI for this uncommitted implementation, real operator backup/restore
 rehearsals, clean-host upgrades and release/publication gates remain separate.
@@ -392,14 +403,14 @@ rehearsals, clean-host upgrades and release/publication gates remain separate.
 
 ## Incremental rollout
 
-1. Keep the current Azure application available throughout replacement development.
+1. Repository cleanup was explicitly approved on 2026-10-25: legacy source and Azure workflows are removed, the application is at the root, and Git history is preserved. This does not remove or stop any deployed Azure resources.
 2. Run the new instance with a separate empty database for acceptance testing; no dual writes or synchronization.
 3. Complete an operational rehearsal, including restart during posting/jobs, backup/restore, and upgrade failure.
 4. Agree on the minimum release scope and communicate that old balances/history are not transferred.
 5. Start the accepted new instance with deliberately created accounts/opening entries.
 6. Retain or archive the old environment for an agreed period; avoid ongoing user writes to both systems after cutover.
-7. With explicit approval, disable Azure deployment workflows, stop the old application/Functions, and remove obsolete cloud resources and secrets.
-8. Remove obsolete Blazor/Azure/email projects and references only after the new path is accepted. Historical source can remain available through Git.
+7. With separate explicit approval, stop the old application/Functions and remove obsolete cloud resources and secrets. Repository workflows were already removed as part of the approved source cleanup.
+8. Retain historical source through Git; repository cleanup does not authorize history rewriting or publication.
 
 ## Release gate
 

@@ -34,7 +34,7 @@ financial rules. Both API requests and SSR data reads require backend authorizat
 
 The following packaging/storage choices are now implemented and evaluated locally
 in [ADR-0007](../../docs/ADR/ADR-0007-application-foundation.md). See the
-[foundation guide](../../revamp/README.md) for verified commands and remaining gates.
+[foundation guide](../../docs/development.md) for verified commands and remaining gates.
 
 Initially package Node and ASP.NET Core in one image as two supervised processes.
 Expose only the web-facing port; bind the backend to loopback in that deployment.
@@ -54,7 +54,7 @@ Internet connectivity and an external identity provider must not be required at 
 
 Work-order update (2026-10-18): the user selected ORT and approved preparing for
 it while removing the superseded notice approach. The bespoke audit dump and
-review worksheet are replaced by an [ORT preparation guide](../../revamp/notices/README.md),
+review worksheet are replaced by an [ORT preparation guide](../../notices/README.md),
 preserving the artwork-authorship confirmation and reusable notice delivery.
 On 2026-10-19 the user confirmed source-only GitHub publication first, with Docker
 images and releases later. ORT setup and release dependency/asset discovery and
@@ -69,15 +69,15 @@ Notice delivery is staged: first a manually reviewed Angular, .NET, ASP.NET Core
 EF Core, SQLite (including provider/bindings/native bundle), Taiga UI, Lucide and
 Roboto set, with optional initial About presentation before
 ORT; later tool-assisted expansion under the
-[staged checklist](../../revamp/notices/README.md#staged-delivery). Partial
+[staged checklist](../../notices/README.md#staged-delivery). Partial
 overview coverage does not postpone applicable redistribution obligations.
 
 On 2026-10-24 the user approved the
-[proportional notice workflow](../../revamp/notices/README.md#proportional-review-approved-2026-10-24):
+[proportional notice workflow](../../notices/README.md#proportional-review-approved-2026-10-24):
 automated discovery, targeted exception review and preserved upstream material.
 Keep About curated; do not turn npm transitives or OS packages into an exhaustive
 manual collection backlog. The
-[backend/native slice](../../revamp/README.md#backend-and-native-notices-2026-10-24)
+[backend/native slice](../../docs/development.md#backend-and-native-notices-2026-10-24)
 now maps all 18 packages in the published backend, preserving shared upstream
 bundles rather than enumerating their contents. The user confirmed the agreed
 manual notice work complete on 2026-10-24; ORT and its findings/release review
@@ -135,22 +135,20 @@ These plans keep cross-cutting requirements separate from the milestone sequence
 
 ## Incremental repository strategy
 
-- Leave the current WebApp and Functions deployable while building the replacement.
-- Confirmed home: `revamp/`, with `web/`, `backend/`, `tests/e2e/`, `tests/integration/`, and `deploy/`. Use a separate .NET solution and Angular workspace; confirm backend project subdivisions during scaffolding.
-- Reuse reviewed C# rules and helpers selectively; do not share Azure Table entities as the new domain model.
-- Extract behavior currently implemented in Razor pages into backend application services.
-- Keep existing Azure publish workflows independent. Milestone 1 added narrow replacement/docs exclusions and tested that owning/shared runtime changes still trigger deployment; see the [foundation handoff](00-guardrails.md#foundation-handoff). The new verification workflow does not deploy or require Azure secrets.
+- On 2026-10-25 the owner explicitly approved removing the legacy source, solution, and Azure publish workflows, and moving the application to the repository root. This supersedes the earlier side-by-side source/deployment strategy.
+- Current paths are `web/`, `backend/`, `tests/e2e/`, `tests/integration/`, and `deploy/`, with `PocketMonkey.slnx` and shared .NET configuration at the root. The [development guide](../../docs/development.md) contains root-level commands.
+- The root CI workflow verifies the application without publishing or requiring Azure secrets. Earlier isolation checks in the [foundation handoff](00-guardrails.md#foundation-handoff) are historical evidence; current guardrails verify the root layout and absence of retired source.
 - No dual writes, Azure/local synchronization, or data import is planned.
-- Do not remove old projects or cloud resources merely because an early milestone works.
+- This cleanup preserves Git history and does not retire deployed cloud resources, change repository visibility, or authorize publishing. The owner also permitted removing disposable local build/development state.
 
-## Current implementation anchors
+## Historical legacy anchors
 
-- [Web startup](../../WebApp/Program.cs): Blazor Server, Microsoft identity, Azure telemetry.
-- [Service registration](../../WebApp/ServiceCollectionExtensions.cs): Azure Tables, Blobs, and Queues.
-- [Account details](../../WebApp/Components/Pages/AccountDetails.razor): transaction and allowance behavior embedded in UI code.
-- [Account management](../../BusinessLogic/Services/AccountManagementService.cs): account/image operations and tenant-dependent checks.
-- [Tenant management](../../BusinessLogic/Services/TenantManagementService.cs): user and tenant lifecycle currently combined.
-- [Workers](../../Functions/Workers): allowance credits, monthly reporting, cleanup, and email delivery.
+- Web startup (retired legacy source): Blazor Server, Microsoft identity, Azure telemetry.
+- Service registration (retired legacy source): Azure Tables, Blobs, and Queues.
+- Account details (retired legacy source): transaction and allowance behavior embedded in UI code.
+- Account management (retired legacy source): account/image operations and tenant-dependent checks.
+- Tenant management (retired legacy source): user and tenant lifecycle currently combined.
+- Workers (retired legacy source): allowance credits, monthly reporting, cleanup, and email delivery.
 
 ## Decisions to close during implementation
 
