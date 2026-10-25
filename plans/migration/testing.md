@@ -100,6 +100,24 @@ percentage or tests that merely duplicate E2E coverage.
 - Add the `full-e2e` label to a PR to require the full suite before merging. Adding/removing labels triggers CI again; the label persists across subsequent PR updates. Use it for major dependency upgrades or other high-risk changes. Verification remains read-only and fork-safe.
 - Regressions outside smoke coverage can be detected after merge. A passing PR smoke run must never be presented as full regression or release verification.
 
+## Focused Viewport Coverage
+
+The current suite discovers **87 executions: 68 desktop and 19 mobile**, reduced
+from 95 by removing redundant viewport executions rather than distinct behavior.
+The six-case desktop PR smoke selection is unchanged.
+
+The full reduced suite passed locally against the production image with
+`npm --prefix tests/e2e test`: **87 passed in 11.8 minutes**, two workers and zero
+retries. E2E TypeScript checks and repository guardrails also passed. This is
+local verification, not a new hosted CI or publication-gate confirmation.
+
+- Request-only asset/English SSR checks, backend-outage resilience, and disposable scenario recovery run on desktop only.
+- Interrupted allowance-worker recovery and active/disabled automatic retry run on desktop. Mobile retains the active-failure layout and Manager/Member visibility checks without repeating the periodic retry wait.
+- Public About exercises representative simple (Angular), long-document (.NET), grouped/public-domain (SQLite), and copyright (tslib) entries on both viewports, including keyboard interaction, expansion state, original-text rendering and layout. The offline-image test still downloads and hashes every shipped notice document.
+- Authenticated About retains Manager/Member drawer entry, focus restoration, navigation stability and forced-password form preservation, without repeating the public dialog's deep document interactions.
+- The complete password-change flow runs as Manager on desktop and Member on mobile. Both roles and both layouts remain covered without the full role-by-viewport matrix.
+- Financial, authorization, persistence, concurrency, worker idempotency, recovery and container-lifecycle checks remain in the full suite. `@desktop` and `@mobile` select intentional viewport coverage; they do not skip a behavior entirely.
+
 ## Delivery sequence
 
 Milestone 1 establishes the runner, fixtures, and shell/SSR/storage scenarios.

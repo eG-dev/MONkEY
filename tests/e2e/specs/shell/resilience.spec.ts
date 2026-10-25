@@ -1,6 +1,6 @@
 import { test, expect, docker } from '../../fixtures';
 
-test('backend failure preserves sign-in rendering and fails readiness', async ({ page, request, instance }) => {
+test('backend failure preserves sign-in rendering and fails readiness @desktop', async ({ page, request, instance }) => {
   docker('exec', instance.container, 'supervisorctl', '-c', '/app/supervisord.conf', 'stop', 'backend');
 
   const readiness = await request.get('/health/ready');

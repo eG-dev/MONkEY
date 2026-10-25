@@ -9,7 +9,7 @@ import { csrfWrite, docker, login, secureOrigin, signIn } from '../../fixtures';
 import { createMember } from '../../helpers/accounts';
 import { Instance } from '../../instance';
 
-test('shared scenario recovery, permissions and explicit disposable reset', async ({ browser, playwright }) => {
+test('shared scenario recovery, permissions and explicit disposable reset @desktop', async ({ browser, playwright }) => {
   test.setTimeout(180_000);
   const name = `e2e-${randomUUID().slice(0, 12)}`;
   const loader = resolve('scenarios.mjs');

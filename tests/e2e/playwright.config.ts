@@ -13,7 +13,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   use: { locale: 'en-US', extraHTTPHeaders: { 'Accept-Language': 'en-US' }, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
+    { name: 'desktop', grepInvert: /@mobile/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
     {
       name: 'mobile',
       testMatch: [

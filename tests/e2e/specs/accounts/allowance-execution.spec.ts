@@ -41,7 +41,7 @@ async function restart(instance: Instance): Promise<void> {
   await waitReady(containerOrigin(instance.container));
 }
 
-test('hosted allowance worker resumes interrupted credits after a crash without duplicating history', async ({
+test('hosted allowance worker resumes interrupted credits after a crash without duplicating history @desktop', async ({
   page,
   request,
   browser,
@@ -167,11 +167,14 @@ test('hosted allowance worker resumes interrupted credits after a crash without 
 });
 
 for (const activeAllowance of [false, true]) {
-  test(`manager sees atomic failure details while member sees status and retry recovers (${activeAllowance ? 'active' : 'disabled'} allowance)`, async ({
+  const viewportTag = activeAllowance ? '' : ' @desktop';
+
+  test(`manager sees failure details while member sees status and desktop retry recovers (${activeAllowance ? 'active' : 'disabled'} allowance)${viewportTag}`, async ({
     page,
     request,
     browser,
     instance,
+    isMobile,
   }) => {
     test.setTimeout(120_000);
 
@@ -318,6 +321,10 @@ for (const activeAllowance of [false, true]) {
       }
     } finally {
       await context.close();
+    }
+
+    if (isMobile) {
+      return;
     }
 
     configureFixture(instance, account.id, 'remove-failure');

@@ -50,7 +50,7 @@ test('hydrated English shell survives reload and uses local assets', async ({ pa
   await page.screenshot({ path: test.info().outputPath('shell.png'), fullPage: true });
 });
 
-test('API routes stay outside SSR fallback and local assets are downloadable', async ({ request }) => {
+test('API routes stay outside SSR fallback and local assets are downloadable @desktop', async ({ request }) => {
   const missing = await request.get('/api/not-found');
   const write = await request.post('/api/unsupported');
   const file = await request.get('/api/unsupported/file');

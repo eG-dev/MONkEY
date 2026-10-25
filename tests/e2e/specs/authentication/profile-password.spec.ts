@@ -5,7 +5,9 @@ import { expectFeedbackAligned } from '../../helpers/feedback';
 test.use({ ignoreHTTPSErrors: true });
 
 for (const role of ['Manager', 'Member'] as const) {
-  test(`${role} changes their password with exact confirmation and failure recovery`, async ({ page, instance }) => {
+  const viewportTag = role === 'Manager' ? '@desktop' : '@mobile';
+
+  test(`${role} changes their password with exact confirmation and failure recovery ${viewportTag}`, async ({ page, instance }) => {
     let account = bootstrapManager(instance);
     const changed = credentials(account.username);
     const errors: string[] = [];

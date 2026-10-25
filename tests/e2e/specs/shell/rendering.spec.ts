@@ -22,7 +22,7 @@ test('selected German language initializes the first SSR render and hydration @d
   expect(errors).toEqual([]);
 });
 
-test('English SSR renders sign-in without exposing internal addresses or caching responses', async ({ request }) => {
+test('English SSR renders sign-in without exposing internal addresses or caching responses @desktop', async ({ request }) => {
   const english = await request.get('/');
 
   expect(english.status()).toBe(200);
