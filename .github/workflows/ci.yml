@@ -63,6 +63,8 @@ jobs:
           node scripts/verify-migrations.mjs
       - name: Verify Wiki rendering and guarded publication with local fixtures
         run: node scripts/check-wiki.mjs
+      - name: Verify Codespaces configuration and lifecycle safeguards
+        run: node scripts/check-codespaces.mjs
       - name: Check changed documentation
         env:
           DOCS_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}

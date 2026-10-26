@@ -37,8 +37,11 @@ Allowance configuration and execution follow
 The English [reader guides](wiki/Home.md) are authoritative in `docs/wiki/`.
 The [navigation manifest](wiki/navigation.json) explicitly selects pages and image
 assets. The Wiki is generated; edit source Markdown rather than published pages.
-The initial batch covers Home, Getting Started and Configuration. Other pages,
-including Codespaces, remain in the [documentation plan](../plans/migration/wiki-documentation.md).
+The first published batch covers Home, Getting Started and Configuration.
+The experimental [image-testing](wiki/Codespaces-Image-Testing.md) and
+[development](wiki/Codespaces-Development.md) profiles have local validation;
+complete browser installation and hosted checks remain open. Further pages
+remain in the [documentation plan](../plans/migration/wiki-documentation.md).
 
 ```text
 npm --prefix tests/e2e ci --ignore-scripts
@@ -71,7 +74,9 @@ unmanaged pages remain untouched. Identical publication does not commit or push.
 The fine-grained token passed the non-publishing
 [hosted credential trial](https://github.com/eG-dev/MONkEY/actions/runs/40293841009).
 The owner approved the first content batch, exact bootstrap adoption and
-commit/push on 2026-10-26; actual Wiki publication still awaits verification.
+commit/push on 2026-10-26. [The first actual publication](https://github.com/eG-dev/MONkEY/actions/runs/40300863112)
+succeeded for source `283b9a4`; an independent clone matched every generated
+file hash at Wiki commit `e942e1f322f5ea59d3ad877c148297ed2a725900`.
 Neither preview command publishes or requires that token.
 The final `--publish` operation is restricted to clean, matching trusted-main
 Actions source. Do not broaden credentials to troubleshoot a refused update;

@@ -1,6 +1,6 @@
 # Wiki Documentation Proposal
 
-Date: 2026-10-26. Revision: R6. Status: first content batch, exact bootstrap adoption, automatic publisher and commit/push approved; first real publication awaiting verification.
+Date: 2026-10-26. Revision: R7. Status: first batch published and independently verified; experimental Codespaces profiles/guides implemented locally, browser installation and hosted checks open.
 
 Approved direction: application-repository Markdown is authoritative; the GitHub
 Wiki is a published view, not a separately maintained copy. The owner approved
@@ -10,7 +10,10 @@ and Wiki initialization are verified. The hosted receive-pack dry-run passed;
 actual publication remains unverified. The first source pages, local preview,
 guarded publisher and automatic workflow are implemented. The owner approved
 the complete reviewed batch, exact bootstrap adoption and commit/push on
-2026-10-26. First actual publication must still be verified after the push.
+2026-10-26. Commit `283b9a4` was pushed and the
+[automatic publication](https://github.com/eG-dev/MONkEY/actions/runs/40300863112)
+succeeded. An independent clone verified the source revision and every managed
+file hash at Wiki commit `e942e1f322f5ea59d3ad877c148297ed2a725900`.
 
 Follow [GitHub delivery](../../docs/ADR/ADR-0006-github-delivery.md). GitHub describes
 [multiple Wiki editing methods](https://docs.github.com/en/communities/documenting-your-project-with-wikis/adding-or-editing-wiki-pages)
@@ -36,7 +39,9 @@ and [Wiki links and images](https://docs.github.com/en/communities/documenting-y
 ## Approved Page Index
 
 The page names below are approved Wiki slugs, not necessarily existing files or
-published links. Only Home, Getting-Started and Configuration currently have sources.
+published links. Home, Getting-Started and Configuration are published. The two
+experimental Codespaces guides and profiles are local follow-up work, not yet
+published or validated in an actual GitHub Codespace.
 Group them in a generated sidebar rather than introducing nested Wiki directories.
 
 | Group | Page | Contents |
@@ -134,12 +139,13 @@ no broader credential or alternative authentication mechanism is approved.
   only. Its value is not accessible to local tooling and has not been requested.
 - Confirmed that the Wiki has an initial commit and default branch `master`.
   Read access does not establish permission to push with the new token.
-- Prepared the manual, main-only [Wiki access check](../../.github/workflows/wiki-access-check.yml).
-  It grants no `GITHUB_TOKEN` permissions, uses a disposable local candidate
-  commit, and only attempts a push dry-run. It does not publish pages.
-- The [workflow checker](../../scripts/verify-workflows.mjs) executes that exact
-  shell against a disposable bare Wiki repository. Valid-fixture and missing-token
-  cases pass, and all remote refs remain unchanged.
+- The one-off manual credential probe used a disposable local candidate commit
+  and a push dry-run, without publishing pages. Its disposable bare-Git tests
+  verified accepted/missing credentials and unchanged remote refs.
+- The probe workflow and its dedicated tests were removed after successful real
+  publication superseded them. The [workflow checker](../../scripts/verify-workflows.mjs)
+  still enforces the automatic publisher's safeguards; the historical trial
+  result remains linked below.
 - With explicit owner approval, committed/pushed `8b05435` and ran the
   [hosted check](https://github.com/eG-dev/MONkEY/actions/runs/40293841009): success.
   Wiki HEAD remained `e0ddae0c1fc61f9252352750c89194925c657103` on `master`.
@@ -148,7 +154,8 @@ no broader credential or alternative authentication mechanism is approved.
 - The default bootstrap Home bytes have SHA-256
   `2391fa8ef920f50b1b0bd8ba63f89a27cc85e8919057446b03a235d7c91bb717`.
   [The manifest](../../docs/wiki/navigation.json) permits only that exact adoption,
-  not arbitrary Home/sidebar/footer overwrites. First real publication is still open.
+  not arbitrary Home/sidebar/footer overwrites. That first publication has now
+  succeeded with independently verified source and content hashes.
 
 ### Generation and Links
 
@@ -191,7 +198,7 @@ no broader credential or alternative authentication mechanism is approved.
   English documentation and automatic publication from `main`.
 2. Completed: initialization, dedicated secret and the approved hosted credential
   dry-run, with no remote changes.
-3. Locally implemented: [Home](../../docs/wiki/Home.md),
+3. Published and independently verified: [Home](../../docs/wiki/Home.md),
   [Getting Started](../../docs/wiki/Getting-Started.md) and
   [Configuration](../../docs/wiki/Configuration.md). The beta.2 deployment bundle's
   checksum, file layout and Compose configuration were checked. The ENV plan now
@@ -200,9 +207,9 @@ no broader credential or alternative authentication mechanism is approved.
   environment-file interpolation optional. Checked-in examples and future release
   bundles use direct values; published beta.2 assets remain immutable and the
   guide explains local adaptation while preserving image digest and data volume.
-4. Locally implemented: structural Markdown generation, explicit assets/navigation,
+4. Implemented and hosted-verified: structural Markdown generation, explicit assets/navigation,
   ownership hashes and guarded trusted-main publication. Read-only CI checks and
-  the [automatic workflow](../../.github/workflows/wiki-publish.yml) are prepared.
+  the [automatic workflow](../../.github/workflows/wiki-publish.yml) passed its first publication.
 5. Passed locally: focused rendering/ownership/real-Git regressions, including
   direct edits, collisions, symlinks, no-ops, managed deletions, unmanaged-file
   preservation, stale sources and concurrent Wiki commits. Source documentation
@@ -210,7 +217,8 @@ no broader credential or alternative authentication mechanism is approved.
   Git-byte settings also passed bootstrap adoption; its checkout and remote Wiki
   HEAD remained unchanged. The owner approved the generated content, exact
   bootstrap adoption, automatic workflow and commit/push on 2026-10-26.
-  Verify the resulting first real publication before marking it complete.
+  The resulting first actual publication succeeded and an independent clone
+  matched its source revision and every generated-file hash.
 6. Add the remaining pages incrementally. Add Codespaces guides with their tested
    configurations, and shorten the old guide/plans only after coverage is checked.
 
@@ -222,8 +230,30 @@ explicitly and pins its digest; development restores dependencies on creation.
 No billable Codespaces, application environments or publishing credentials are
 created by this documentation proposal.
 
+### Codespaces Local Follow-up
+
+- Added selectable [image-testing](../../.devcontainer/image-testing/devcontainer.json)
+  and [development](../../.devcontainer/development/devcontainer.json) profiles,
+  with a digest-pinned official Ubuntu base and resolved feature lockfiles.
+- Both tool images built locally with Dev Containers CLI `0.89.0`. The development
+  toolchain reports Node `24.22.1`, npm `12.2.1` and .NET SDK `10.0.403`.
+  Eight focused profile/environment/actual-script fixture checks pass and are
+  wired into secret-free CI. Application startup is manual; data is isolated.
+- In a disposable local development container, locked web/test dependency,
+  EF-tool and .NET solution restores passed. Playwright's Linux prerequisites
+  installed, but its Chromium download failed certificate trust validation even
+  with Node's system CA store. TLS verification was not disabled. Complete
+  post-create/browser acceptance remains open; do not claim it passed.
+- The [image-testing guide](../../docs/wiki/Codespaces-Image-Testing.md) and
+  [development guide](../../docs/wiki/Codespaces-Development.md) describe the
+  implemented commands and explicitly identify experimental/unverified behavior.
+  A real Codespaces session, private forwarded HTTPS/sign-in, cloud persistence
+  and reset still need acceptance. No billable Codespace was created.
+
 ## Decisions Still Needed
 
-- Verify the approved first actual publication and source/image/navigation links.
-- Continue the remaining approved pages incrementally; implement and verify both
-  Codespaces configurations before documenting them as available.
+- Review the local Codespaces follow-up and authorize its commit/push separately.
+- Resolve the local browser-download trust prerequisite without weakening TLS,
+  then obtain authorization for any billable hosted Codespaces acceptance session.
+- Continue the remaining approved pages incrementally; keep incomplete acceptance
+  explicit rather than advertising production-ready or fully verified profiles.

@@ -5,6 +5,8 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
+import { developmentEnvironment } from './dev-environment.mjs';
+
 const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const replacementRoot = resolve(webRoot, '..');
 
@@ -157,25 +159,11 @@ try {
   await checkPort(webPort);
   await checkPort(backendPort);
 
-  const origin = `http://127.0.0.1:${webPort}`;
   const backendUrl = `http://127.0.0.1:${backendPort}`;
-  const dataPath = resolve(replacementRoot, '.local/dev');
-  const env = {
-    ...process.env,
-    ASPNETCORE_ENVIRONMENT: 'Development',
-    NODE_ENV: 'development',
-    MONKEY_DATA_PATH: dataPath,
-    MONKEY_PUBLIC_URL: origin,
-    MONKEY_BACKEND_URL: backendUrl,
-    MONKEY_TRUSTED_PROXIES: '',
-    TZ: process.env['TZ'] ?? 'Europe/Berlin',
-    DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER: '1',
-    DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH: '1',
-    RestoreLockedMode: 'true',
-  };
+  const env = developmentEnvironment({ root: replacementRoot, webPort, backendPort });
 
-  console.log(`POCKET MONkEY development: ${origin}`);
-  console.log(`Persistent development data: ${dataPath}`);
+  console.log(`POCKET MONkEY development: ${env.MONKEY_PUBLIC_URL}`);
+  console.log(`Persistent development data: ${env.MONKEY_DATA_PATH}`);
   console.log('Both applications watch for changes. Ctrl+C stops both.');
 
   await supervise([

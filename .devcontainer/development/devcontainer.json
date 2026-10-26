@@ -1,0 +1,26 @@
+{
+  "name": "POCKET MONkEY - Full-stack Development",
+  "build": { "dockerfile": "../Dockerfile", "context": "../.." },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {},
+    "ghcr.io/devcontainers/features/node:2": { "version": "24.22.1", "npmVersion": "12.2.1", "pnpmVersion": "none" },
+    "ghcr.io/devcontainers/features/dotnet:2": { "version": "10.0.403" }
+  },
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "TZ": "Europe/Berlin",
+    "MONKEY_DEFAULT_LOCALE": "de-DE",
+    "MONKEY_CURRENCY": "EUR"
+  },
+  "forwardPorts": [4180],
+  "portsAttributes": {
+    "4180": { "label": "POCKET MONkEY Development", "onAutoForward": "notify", "protocol": "http" }
+  },
+  "otherPortsAttributes": { "onAutoForward": "ignore" },
+  "postCreateCommand": ["bash", ".devcontainer/setup.sh", "development"],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-dotnettools.csdevkit", "angular.ng-template", "ms-azuretools.vscode-containers"]
+    }
+  }
+}

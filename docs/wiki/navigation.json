@@ -4,7 +4,9 @@
   "pages": [
     { "slug": "Home", "title": "Home", "group": "Start" },
     { "slug": "Getting-Started", "title": "Getting Started", "group": "Start" },
-    { "slug": "Configuration", "title": "Configuration", "group": "Operate" }
+    { "slug": "Configuration", "title": "Configuration", "group": "Operate" },
+    { "slug": "Codespaces-Image-Testing", "title": "Codespaces Image Testing", "group": "Test" },
+    { "slug": "Codespaces-Development", "title": "Codespaces Development", "group": "Develop" }
   ],
   "assets": [
     {

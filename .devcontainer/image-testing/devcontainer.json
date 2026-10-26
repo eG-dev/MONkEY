@@ -1,0 +1,22 @@
+{
+  "name": "POCKET MONkEY - Published Image Testing",
+  "build": { "dockerfile": "../Dockerfile", "context": "../.." },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {}
+  },
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "TZ": "Europe/Berlin",
+    "MONKEY_DEFAULT_LOCALE": "de-DE",
+    "MONKEY_CURRENCY": "EUR"
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "POCKET MONkEY Image", "onAutoForward": "notify", "protocol": "http" }
+  },
+  "otherPortsAttributes": { "onAutoForward": "ignore" },
+  "postCreateCommand": ["bash", ".devcontainer/setup.sh", "image-testing"],
+  "customizations": {
+    "vscode": { "extensions": ["ms-azuretools.vscode-containers"] }
+  }
+}
