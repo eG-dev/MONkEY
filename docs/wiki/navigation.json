@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "repository": "eG-dev/MONkEY",
+  "pages": [
+    { "slug": "Home", "title": "Home", "group": "Start" },
+    { "slug": "Getting-Started", "title": "Getting Started", "group": "Start" },
+    { "slug": "Configuration", "title": "Configuration", "group": "Operate" }
+  ],
+  "assets": [
+    {
+      "source": "docs/design/assets/images/monkey_face.png",
+      "destination": "assets/monkey-face.png"
+    }
+  ],
+  "bootstrap": {
+    "Home.md": "2391fa8ef920f50b1b0bd8ba63f89a27cc85e8919057446b03a235d7c91bb717"
+  }
+}

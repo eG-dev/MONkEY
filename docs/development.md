@@ -32,6 +32,51 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Wiki Documentation
+
+The English [reader guides](wiki/Home.md) are authoritative in `docs/wiki/`.
+The [navigation manifest](wiki/navigation.json) explicitly selects pages and image
+assets. The Wiki is generated; edit source Markdown rather than published pages.
+The initial batch covers Home, Getting Started and Configuration. Other pages,
+including Codespaces, remain in the [documentation plan](../plans/migration/wiki-documentation.md).
+
+```text
+npm --prefix tests/e2e ci --ignore-scripts
+node scripts/check-wiki.mjs
+node scripts/check-docs.mjs
+node scripts/wiki.mjs
+```
+
+The preview writes only managed files under ignored `.local/wiki-preview` and
+reports its planned writes/removals. Source links are pinned to `HEAD`; uncommitted
+new files will not have live GitHub snapshot URLs until committed. To compare with
+a local clone of the Wiki without changing it:
+
+```text
+git -c core.autocrlf=false clone https://github.com/eG-dev/MONkEY.wiki.git .local/wiki-remote
+node scripts/wiki.mjs --check-directory .local/wiki-remote
+```
+
+Keep exact Git bytes when cloning for comparison: Windows CRLF conversion would
+correctly fail the recorded bootstrap or managed-file hashes. The publisher
+already disables that conversion for its disposable checkout.
+
+The [automatic workflow](../.github/workflows/wiki-publish.yml) validates relevant
+trusted-main changes without secrets, then gives only its final publication step
+the dedicated `WIKI_PUBLISH_TOKEN`. It skips superseded main revisions, serializes
+updates, checks source ancestry, and uses normal Git pushes. The ownership manifest
+refuses direct edits, missing managed files, unknown collisions and symlinks;
+unmanaged pages remain untouched. Identical publication does not commit or push.
+
+The fine-grained token passed the non-publishing
+[hosted credential trial](https://github.com/eG-dev/MONkEY/actions/runs/40293841009).
+The owner approved the first content batch, exact bootstrap adoption and
+commit/push on 2026-10-26; actual Wiki publication still awaits verification.
+Neither preview command publishes or requires that token.
+The final `--publish` operation is restricted to clean, matching trusted-main
+Actions source. Do not broaden credentials to troubleshoot a refused update;
+reconcile conflicting Wiki content into source, review, and retry.
+
 ## Notice Collection Completion (2026-10-24)
 
 The user accepted the current **20 entries, 44 components and 25 originals** as
@@ -790,9 +835,9 @@ UID 10001. On Linux use owner-only directory permissions (`0700`); completed
 files use `0600`. The bind mount must be pre-created and owned appropriately;
 do not fix permissions by running the application as root.
 
-The optional [Compose override](../deploy/compose.exports.yaml) mounts the host's
-`MONKEY_EXPORT_HOST_PATH` at `/exports`. With the normal required HTTPS origin
-and host variables set, run from the repository root:
+The optional [Compose override](../deploy/compose.exports.yaml) mounts its configured
+host bind `source` at `/exports`. Edit that path and the base file's public HTTPS
+origin directly in Compose, then run from the repository root:
 
 ```text
 docker compose -f deploy/compose.yaml -f deploy/compose.exports.yaml up -d
@@ -1106,10 +1151,13 @@ distribution rights/notice review until after artifact export.
 The prerelease contains `deployment.tar.gz`, `SHA256SUMS`, image inspection,
 build metadata and release identity. Verify checksums before unpacking. The
 bundle removes source-build configuration and pins the published image digest.
-Its ENV example sets a stable `COMPOSE_PROJECT_NAME`: **reuse the existing
-installation's exact project name and data volume when upgrading**, rather than
+New bundles contain direct environment values and a stable top-level Compose
+`name`: **reuse the existing installation's exact project name and data volume when upgrading**, rather than
 silently creating an empty volume. The bundled guide covers first Manager setup,
 HTTPS, backups and upgrades; production/real-host acceptance is still separate.
+Published beta.2 assets retain their original interpolation-based format; the
+[Getting Started guide](wiki/Getting-Started.md#configure-the-instance) explains
+how to adapt a local copy without changing published release assets.
 The JSON build records are not an SBOM or cryptographic attestation.
 
 Local verification uses the [workflow safety checker](../scripts/verify-workflows.mjs),
@@ -1542,40 +1590,37 @@ dependencies. Use that wrapper rather than a bare Compose build: it prepares
 the build identity and legal assets required by the Dockerfile.
 
 All commands in this section run from the **repository root**.
-For these local-build examples, create an ignored `.local/compose.env` from the
-[environment template](../deploy/compose.env.example). The
+For these local-build examples, edit `services.app.environment` directly in the
+base Compose file, including the public HTTPS origin. The
 [main README](../README.md#run-with-docker) instead shows GHCR deployment with Traefik.
 
-### Environment Files and Updates
+### Direct Settings and Updates
 
-Pass `--env-file .local/compose.env` explicitly rather than relying on implicit
-environment-file discovery. Its relative path is resolved from your current
-directory. Shell environment variables take precedence over file values; unset
-stale shell overrides if a file edit appears to have no effect.
+No separate environment file is required. Keep deployment-specific configuration
+private, and do not commit passwords, keys or certificates. Add settings such as
+`MONKEY_LOG_LEVEL` explicitly under `environment` when needed. Changing a
+container data-path variable does not relocate a Docker volume automatically.
 
-The template contains example values, not credentials. Keep passwords, keys and
-certificates out of it. Keep the actual local file private and outside source
-control. Only variables referenced in a Compose file are forwarded through its
-`environment` mapping. For example, setting `MONKEY_LOG_LEVEL` in the file alone
-does not override the image's default; that requires an explicit Compose
-`environment` entry. Likewise, changing a container data-path variable does not
-relocate a Docker volume automatically.
+Optional environment-file interpolation is still supported when you explicitly
+replace a literal with `${VARIABLE:-default}` and pass `--env-file`. An environment
+file cannot override an existing literal value by itself. See
+[Configuration](wiki/Configuration.md) for the distinction from service `env_file`.
 
 Inspect or validate without starting anything:
 
 ```text
-docker compose --env-file .local/compose.env -f deploy/compose.yaml config
-docker compose --env-file .local/compose.env -f deploy/compose.yaml config --quiet
+docker compose -f deploy/compose.yaml config
+docker compose -f deploy/compose.yaml config --quiet
 ```
 
 The first command prints resolved values and mount paths; do not publish that
 output if your local configuration contains private information. After editing
-settings, apply them with the same environment file, Compose files and project:
+settings, apply them with the same Compose files and project:
 
 ```text
-docker compose --env-file .local/compose.env -f deploy/compose.yaml up -d --no-build
-docker compose --env-file .local/compose.env -f deploy/compose.yaml ps
-docker compose --env-file .local/compose.env -f deploy/compose.yaml logs --tail 100 app
+docker compose -f deploy/compose.yaml up -d --no-build
+docker compose -f deploy/compose.yaml ps
+docker compose -f deploy/compose.yaml logs --tail 100 app
 ```
 
 `up` recreates the service when its configuration changes. `restart` only
@@ -1609,9 +1654,9 @@ and permissions are deployment-specific, not application environment variables.
 
 ### Optional Financial Export Mount
 
-The export variables in the template do nothing with the base file alone.
-Prepare a separate absolute host export directory and set
-`MONKEY_EXPORT_HOST_PATH` to that directory. On Linux, its owner must be
+Exports are not enabled by the base file alone. Prepare a separate absolute host
+export directory and set the bind mount's `source` directly in the
+[export override](../deploy/compose.exports.yaml). On Linux, its owner must be
 UID/GID 10001 and its permissions 0700. For example, an operator can provision
 `/srv/pocket-monkey/exports` with those ownership/permission settings; on Docker
 Desktop use a host path shared with the Linux engine. Never point it at the
@@ -1626,8 +1671,8 @@ finite count or `0` for unlimited retention.
 Validate and apply both files in this order:
 
 ```text
-docker compose --env-file .local/compose.env -f deploy/compose.yaml -f deploy/compose.exports.yaml config --quiet
-docker compose --env-file .local/compose.env -f deploy/compose.yaml -f deploy/compose.exports.yaml up -d --no-build
+docker compose -f deploy/compose.yaml -f deploy/compose.exports.yaml config --quiet
+docker compose -f deploy/compose.yaml -f deploy/compose.exports.yaml up -d --no-build
 ```
 
 Keep both `-f` arguments on later commands for this deployment. The override

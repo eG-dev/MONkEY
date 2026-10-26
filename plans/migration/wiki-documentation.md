@@ -1,13 +1,16 @@
 # Wiki Documentation Proposal
 
-Date: 2026-10-26. Revision: R4. Status: structure, language, publication mode and scoped credential trial approved; setup complete, hosted authentication verification pending.
+Date: 2026-10-26. Revision: R6. Status: first content batch, exact bootstrap adoption, automatic publisher and commit/push approved; first real publication awaiting verification.
 
 Approved direction: application-repository Markdown is authoritative; the GitHub
 Wiki is a published view, not a separately maintained copy. The owner approved
 the page structure, English documentation and automatic publication from `main`.
 The initially empty Wiki now has its owner-created bootstrap page. Secret metadata
-and Wiki initialization are verified; authentication and first publication remain
-unverified. No generated pages have been moved or published.
+and Wiki initialization are verified. The hosted receive-pack dry-run passed;
+actual publication remains unverified. The first source pages, local preview,
+guarded publisher and automatic workflow are implemented. The owner approved
+the complete reviewed batch, exact bootstrap adoption and commit/push on
+2026-10-26. First actual publication must still be verified after the push.
 
 Follow [GitHub delivery](../../docs/ADR/ADR-0006-github-delivery.md). GitHub describes
 [multiple Wiki editing methods](https://docs.github.com/en/communities/documenting-your-project-with-wikis/adding-or-editing-wiki-pages)
@@ -32,7 +35,8 @@ and [Wiki links and images](https://docs.github.com/en/communities/documenting-y
 
 ## Approved Page Index
 
-The page names below are approved Wiki slugs, not existing files or published links.
+The page names below are approved Wiki slugs, not necessarily existing files or
+published links. Only Home, Getting-Started and Configuration currently have sources.
 Group them in a generated sidebar rather than introducing nested Wiki directories.
 
 | Group | Page | Contents |
@@ -80,9 +84,9 @@ authoritative contract. It does not mean copying plan prose and completion boxes
 | Codespaces discussion | Add the two new guides only alongside validated configurations; there is no existing implementation to document as complete |
 
 Before extraction, reconcile stale statements against actual release evidence.
-For example, the README still says no image has been released and plans still
-attribute the beta.1 failure to SDK downloads. An image has now been published;
-that alone does not prove real-host operation, recovery or production acceptance.
+The README now links the published beta images and the new Getting Started guide;
+older plans still contain dated failure diagnoses. Publication alone does not
+prove real-host operation, recovery or production acceptance.
 
 Retire or shorten a source document only after its useful content is covered,
 local links and anchors are migrated, and remaining acceptance ownership is
@@ -111,10 +115,12 @@ no broader credential or alternative authentication mechanism is approved.
 - The owner creates the token and enters it directly into the GitHub Actions
   secret `WIKI_PUBLISH_TOKEN`. Never request or print the token in chat or logs.
   Do not reuse the owner's local GitHub CLI OAuth credential in Actions.
-- Initialize the empty Wiki through GitHub with a Home page stating:
+- The agreed initialization instruction was a Home page stating:
   "Documentation is maintained in the application repository; automated publishing
   is being configured." Treat this agreed bootstrap text as intended for later
   adoption by the generated Home page, not as approval to overwrite other content.
+  The actual owner-created page instead contains GitHub's default welcome text.
+  The approved first adoption is restricted to its exact SHA-256 below.
 - Check Git authentication with a non-mutating push dry-run against a generated
   candidate commit. Anonymous clone success alone does not establish write access.
   A dry-run does not certify the full publishing path; the first approved real
@@ -134,8 +140,15 @@ no broader credential or alternative authentication mechanism is approved.
 - The [workflow checker](../../scripts/verify-workflows.mjs) executes that exact
   shell against a disposable bare Wiki repository. Valid-fixture and missing-token
   cases pass, and all remote refs remain unchanged.
-- The actual Actions secret is still untested. Running the hosted check requires
-  approval to commit/push the workflow to `main`, then manually dispatch it.
+- With explicit owner approval, committed/pushed `8b05435` and ran the
+  [hosted check](https://github.com/eG-dev/MONkEY/actions/runs/40293841009): success.
+  Wiki HEAD remained `e0ddae0c1fc61f9252352750c89194925c657103` on `master`.
+  The dedicated fine-grained PAT was accepted for the non-mutating receive-pack
+  dry-run; no broader scope or alternate credential is needed for this trial.
+- The default bootstrap Home bytes have SHA-256
+  `2391fa8ef920f50b1b0bd8ba63f89a27cc85e8919057446b03a235d7c91bb717`.
+  [The manifest](../../docs/wiki/navigation.json) permits only that exact adoption,
+  not arbitrary Home/sidebar/footer overwrites. First real publication is still open.
 
 ### Generation and Links
 
@@ -155,10 +168,9 @@ no broader credential or alternative authentication mechanism is approved.
 
 ### Protect Existing Wiki Content
 
-- The owner reports an empty Wiki. Verify that state before the first publication;
-  no existing-page adoption is currently needed. Enabling the Wiki may still
-  require an initial page before its Git repository can be cloned. Agree ownership
-  of any bootstrap Home page rather than treating it as an unrelated collision.
+- The initially empty Wiki now contains the owner's bootstrap Home. Check its
+  exact approved-for-review hash before adoption. Any other existing content is
+  unmanaged and must not be implicitly adopted.
 - Abort on an existing destination-page or asset collision until ownership or
   import is approved, including Home, sidebar and footer collisions.
 - Track managed paths and last-published content hashes. Refuse to overwrite a
@@ -177,16 +189,28 @@ no broader credential or alternative authentication mechanism is approved.
 
 1. Completed: the owner approved the page structure, repository source location,
   English documentation and automatic publication from `main`.
-2. Initialization and secret setup are complete. Run the approved hosted credential
-  check without exposing credentials or publishing pages; retain bootstrap-page
-  ownership checks for the later real publication.
-3. Rewrite a small first batch: Home, Getting-Started and Configuration. Update
-   references only when the replacement exists and its commands are checked.
-4. Implement and test generation plus automatic trusted-main publication.
-   Extend documentation checks to the canonical Wiki sources.
-5. Verify source and rendered links, fragments, images and navigation; exercise
-   collision, manual-edit, unmanaged-file, deletion, no-op and concurrent-update
-   cases before the first approved publication.
+2. Completed: initialization, dedicated secret and the approved hosted credential
+  dry-run, with no remote changes.
+3. Locally implemented: [Home](../../docs/wiki/Home.md),
+  [Getting Started](../../docs/wiki/Getting-Started.md) and
+  [Configuration](../../docs/wiki/Configuration.md). The beta.2 deployment bundle's
+  checksum, file layout and Compose configuration were checked. The ENV plan now
+  points to the canonical guide while retaining acceptance ownership and anchors.
+  The owner subsequently approved direct Compose settings as the default, with
+  environment-file interpolation optional. Checked-in examples and future release
+  bundles use direct values; published beta.2 assets remain immutable and the
+  guide explains local adaptation while preserving image digest and data volume.
+4. Locally implemented: structural Markdown generation, explicit assets/navigation,
+  ownership hashes and guarded trusted-main publication. Read-only CI checks and
+  the [automatic workflow](../../.github/workflows/wiki-publish.yml) are prepared.
+5. Passed locally: focused rendering/ownership/real-Git regressions, including
+  direct edits, collisions, symlinks, no-ops, managed deletions, unmanaged-file
+  preservation, stale sources and concurrent Wiki commits. Source documentation
+  and workflow safety checks pass. A read-only clone using the publisher's exact
+  Git-byte settings also passed bootstrap adoption; its checkout and remote Wiki
+  HEAD remained unchanged. The owner approved the generated content, exact
+  bootstrap adoption, automatic workflow and commit/push on 2026-10-26.
+  Verify the resulting first real publication before marking it complete.
 6. Add the remaining pages incrementally. Add Codespaces guides with their tested
    configurations, and shorten the old guide/plans only after coverage is checked.
 
@@ -200,7 +224,6 @@ created by this documentation proposal.
 
 ## Decisions Still Needed
 
-- Authorize committing/pushing and running the prepared hosted credential check;
-  verify Wiki-write authentication without publishing.
-- If the scoped trial fails, agree an alternative before proceeding.
-- Approve the first published content after its source and rendered output are checked.
+- Verify the approved first actual publication and source/image/navigation links.
+- Continue the remaining approved pages incrementally; implement and verify both
+  Codespaces configurations before documenting them as available.

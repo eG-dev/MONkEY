@@ -21,7 +21,8 @@ if (values.base && !/^0+$/.test(values.base)) {
   } catch {
     console.log('Documentation comparison base unavailable; checking all maintained documentation');
   }
-  if (changed && !changed.some(({ status, filename }) => status === 'D' || filename.endsWith('.md') || filename === 'scripts/check-docs.mjs'
+  if (changed && !changed.some(({ status, filename }) => status === 'D' || filename.endsWith('.md')
+    || ['scripts/check-docs.mjs', 'scripts/wiki.mjs', 'scripts/check-wiki.mjs'].includes(filename) || filename.startsWith('docs/wiki/')
     || /^tests\/e2e\/package(-lock)?\.json$/.test(filename))) {
     console.log('SKIP: no documentation/tooling changes or deleted link targets');
     process.exit(0);
@@ -30,7 +31,7 @@ if (values.base && !/^0+$/.test(values.base)) {
 
 const require = createRequire(path.join(root, 'tests/e2e/package.json'));
 const YAML = require('yaml');
-const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
+const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'docs/wiki', 'plans/migration'];
 const markdown = ['README.md', '.github/copilot-instructions.md', '.github/skills/backend-data-design/SKILL.md', 'docs/development.md'];
 for (const directory of directories) {
   markdown.push(...fs.readdirSync(path.join(root, directory)).filter(name => name.endsWith('.md')).map(name => `${directory}/${name}`));

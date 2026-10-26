@@ -13,6 +13,60 @@ const readWorkflow = filename => YAML.parse(fs.readFileSync(path.join(root, '.gi
 const ci = readWorkflow('ci.yml');
 const release = readWorkflow('ghcr-prerelease.yml');
 const wikiAccess = readWorkflow('wiki-access-check.yml');
+const wikiPublish = readWorkflow('wiki-publish.yml');
+
+function validateWikiWorkflow(workflow) {
+  assert.deepEqual(Object.keys(workflow.on).sort(), ['push', 'workflow_dispatch']);
+  assert.deepEqual(workflow.on.push.branches, ['main']);
+  for (const required of ['docs/wiki/**', 'scripts/wiki.mjs', 'scripts/check-wiki.mjs', 'tests/e2e/package-lock.json', '.github/workflows/wiki-publish.yml']) {
+    assert(workflow.on.push.paths.includes(required), `Missing Wiki publication trigger: ${required}`);
+  }
+  assert.deepEqual(workflow.permissions, { contents: 'read' });
+  assert.equal(workflow.concurrency['cancel-in-progress'], false);
+  assert.deepEqual(Object.keys(workflow.jobs), ['publish']);
+  const job = workflow.jobs.publish;
+  assert.equal(job.if, "github.ref == 'refs/heads/main' && github.repository == 'eG-dev/MONkEY'");
+  assert.deepEqual(job.permissions ?? workflow.permissions, { contents: 'read' });
+  assert(!job.env, 'No job-wide credentials');
+  const steps = job.steps;
+  const checkout = steps.find(step => step.uses?.startsWith('actions/checkout@'));
+  assert.equal(checkout.with['persist-credentials'], false);
+  assert.equal(checkout.with['fetch-depth'], 0);
+  for (const step of steps) {
+    assert(!step.if && !step['continue-on-error'], 'Wiki checks must not be bypassed');
+    if (step.uses) assert(/@[a-f0-9]{40}$/.test(step.uses), 'Wiki actions must be pinned');
+  }
+  const credentialSteps = steps.filter(step => JSON.stringify(step).includes('secrets.'));
+  assert.equal(credentialSteps.length, 1);
+  const publisher = credentialSteps[0];
+  assert.deepEqual(publisher.env, { WIKI_PUBLISH_TOKEN: '${{ secrets.WIKI_PUBLISH_TOKEN }}' });
+  assert.equal(steps.indexOf(publisher), steps.length - 1);
+  assert(publisher.run.includes('git ls-remote --exit-code origin refs/heads/main'));
+  assert(publisher.run.includes('"$current" != "$GITHUB_SHA"'));
+  assert(publisher.run.includes('node scripts/wiki.mjs --publish'));
+  assert(!publisher.run.includes('set -x'));
+  const validation = steps.slice(0, -1).map(step => step.run ?? '').join('\n');
+  for (const command of ['npm --prefix tests/e2e ci --ignore-scripts', 'node scripts/check-wiki.mjs',
+    'node scripts/check-docs.mjs', 'node scripts/verify-workflows.mjs', 'node scripts/wiki.mjs']) {
+    assert(validation.includes(command), `Missing pre-publication check: ${command}`);
+  }
+  assert(!validation.includes('--publish'));
+}
+
+validateWikiWorkflow(wikiPublish);
+for (const mutate of [
+  workflow => { workflow.permissions.packages = 'write'; },
+  workflow => { workflow.on.pull_request_target = {}; },
+  workflow => { workflow.jobs.publish.if = "github.ref == 'refs/heads/main'"; },
+  workflow => { workflow.jobs.publish.steps[0].env = { TOKEN: '${{ secrets.WIKI_PUBLISH_TOKEN }}' }; },
+  workflow => { workflow.jobs.publish.steps[3]['continue-on-error'] = true; },
+]) {
+  const changed = structuredClone(wikiPublish);
+  mutate(changed);
+  assert.throws(() => validateWikiWorkflow(changed), 'Unsafe Wiki publication change was accepted');
+}
+assert(ci.jobs.verify.steps.some(step => step.run === 'node scripts/check-wiki.mjs'));
+console.log('PASS: validated main-only Wiki publication, isolated credential step and read-only PR checks; 5 unsafe changes rejected');
 
 assert.deepEqual(Object.keys(wikiAccess.on), ['workflow_dispatch']);
 assert.deepEqual(wikiAccess.permissions, {});
@@ -244,3 +298,67 @@ try {
   fs.rmSync(fixtureRoot, { recursive: true, force: true });
 }
 console.log(`PASS: actual registry verifier for ${manifestCases.length} index, classic, mismatch and malformed-manifest cases (jq required; JQ_EXECUTABLE overrides its path)`);
+
+const deploymentFixture = fs.mkdtempSync(path.join(tmpdir(), 'pocket-monkey-deployment-'));
+try {
+  const compose = YAML.parse(fs.readFileSync(path.join(root, 'deploy/compose.yaml'), 'utf8'));
+  delete compose.services.app.build;
+  for (const value of Object.values(compose.services.app.environment)) {
+    assert.equal(typeof value, 'string');
+    assert(!value.includes('${'), 'Default deployment settings must be directly editable');
+  }
+  const assets = release.jobs.publish.steps.find(step => step.id === 'assets').run;
+  const boundary = assets.indexOf("cat > bundle/DEPLOYMENT.md <<'GUIDE'");
+  assert(boundary > 0, 'Missing release deployment guide');
+  assert(!assets.includes('compose.env'), 'Release bundles must not require an environment file');
+  fs.mkdirSync(path.join(deploymentFixture, 'verified'));
+  fs.writeFileSync(path.join(deploymentFixture, 'verified/deployment.json'), JSON.stringify(compose));
+  fs.copyFileSync(path.join(root, 'deploy/compose.exports.yaml'), path.join(deploymentFixture, 'verified/compose.exports.yaml'));
+  const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c',
+    'function jq() { command "$JQ_EXECUTABLE" "$@"; }\n' + assets.slice(0, boundary)], {
+    cwd: deploymentFixture, encoding: 'utf8', env: { ...process.env, IMAGE: 'ghcr.io/eg-dev/monkey',
+      DIGEST: indexDigest, JQ_EXECUTABLE: process.env.JQ_EXECUTABLE ?? 'jq' },
+  });
+  assert.equal(result.status, 0, result.error?.message ?? result.stderr);
+  const generated = YAML.parse(fs.readFileSync(path.join(deploymentFixture, 'bundle/compose.yaml'), 'utf8'));
+  assert.equal(generated.name, 'pocket-monkey');
+  assert.equal(generated.services.app.image, `ghcr.io/eg-dev/monkey@${indexDigest}`);
+  assert(!generated.services.app.build);
+  assert.deepEqual(generated.services.app.environment, compose.services.app.environment);
+  assert.deepEqual(generated.services.app.volumes, ['monkey-data:/data']);
+  assert.deepEqual(Object.keys(generated.volumes), ['monkey-data']);
+  const exports = YAML.parse(fs.readFileSync(path.join(deploymentFixture, 'bundle/compose.exports.yaml'), 'utf8'));
+  assert.equal(exports.services.app.environment.MONKEY_EXPORT_KEEP_COUNT, '30');
+  assert.equal(exports.services.app.volumes[0].source, '/srv/pocket-monkey/exports');
+  assert.equal(exports.services.app.volumes[0].bind.create_host_path, false);
+  assert(!fs.existsSync(path.join(deploymentFixture, 'bundle/compose.env.example')));
+} finally {
+  fs.rmSync(deploymentFixture, { recursive: true, force: true });
+}
+console.log('PASS: actual release bundle generator preserves direct settings, digest pin, stable project/data volume and private export mount without an environment file');
+
+const exportFixture = fs.mkdtempSync(path.join(tmpdir(), 'pocket-monkey-artifact-export-'));
+try {
+  fs.mkdirSync(path.join(exportFixture, 'deploy'));
+  fs.mkdirSync(path.join(exportFixture, '.build/about'), { recursive: true });
+  fs.mkdirSync(path.join(exportFixture, 'tests/e2e'), { recursive: true });
+  fs.symlinkSync(path.join(root, 'tests/e2e/node_modules'), path.join(exportFixture, 'tests/e2e/node_modules'),
+    process.platform === 'win32' ? 'junction' : 'dir');
+  for (const filename of ['compose.yaml', 'compose.exports.yaml']) {
+    fs.copyFileSync(path.join(root, 'deploy', filename), path.join(exportFixture, 'deploy', filename));
+  }
+  fs.writeFileSync(path.join(exportFixture, '.build/about/build-info.json'), '{}\n');
+  const exporter = ci.jobs.verify.steps.find(step => step.run?.includes('docker save'));
+  assert(exporter, 'Missing verified image exporter');
+  const dockerStub = 'function docker() { case "$1" in save) printf fixture-image ;; image) printf \'[{"Id":"fixture-image"}]\\n\' ;; *) return 1 ;; esac; }\n';
+  const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c', dockerStub + exporter.run + '\nsha256sum --check SHA256SUMS'], {
+    cwd: exportFixture, encoding: 'utf8', env: process.env,
+  });
+  assert.equal(result.status, 0, result.error?.message ?? result.stderr);
+  const exported = JSON.parse(fs.readFileSync(path.join(exportFixture, '.local/rehearsal/deployment.json'), 'utf8'));
+  assert(!exported.services.app.build);
+  assert.equal(exported.services.app.environment.TZ, 'Europe/Berlin');
+} finally {
+  fs.rmSync(exportFixture, { recursive: true, force: true });
+}
+console.log('PASS: actual CI artifact-export shell and checksum verification with stubbed Docker output and real deployment files');

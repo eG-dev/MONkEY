@@ -1,0 +1,56 @@
+name: Publish Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/wiki/**
+      - docs/design/assets/images/monkey_face.png
+      - scripts/wiki.mjs
+      - scripts/check-wiki.mjs
+      - scripts/check-docs.mjs
+      - scripts/verify-workflows.mjs
+      - tests/e2e/package.json
+      - tests/e2e/package-lock.json
+      - .github/workflows/wiki-publish.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wiki-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main' && github.repository == 'eG-dev/MONkEY'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "24.22.1"
+      - name: Restore locked documentation tooling without scripts
+        run: npm --prefix tests/e2e ci --ignore-scripts
+      - name: Validate sources and publication safeguards without credentials
+        run: |
+          node scripts/check-wiki.mjs
+          node scripts/check-docs.mjs
+          node scripts/verify-workflows.mjs
+          node scripts/wiki.mjs
+      - name: Publish managed Wiki files
+        env:
+          WIKI_PUBLISH_TOKEN: ${{ secrets.WIKI_PUBLISH_TOKEN }}
+        run: |
+          set -euo pipefail
+          current=$(git ls-remote --exit-code origin refs/heads/main | cut -f1)
+          if [[ "$current" != "$GITHUB_SHA" ]]; then
+            echo "Superseded source revision; skipping publication"
+            exit 0
+          fi
+          node scripts/wiki.mjs --publish

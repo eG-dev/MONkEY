@@ -4,9 +4,10 @@
 
 Self-hosted tracking for children's pocket money and savings, in German and English.
 
-When your children want to put cash aside, keep it somewhere suitable, such as a
-savings account, and record the deposit. When they need cash, hand it over and
-record the withdrawal. Each account shows the balance and transaction history.
+When your children want to put cash aside, you could keep the money in an
+easy-access savings account rather than holding large amounts of cash at home.
+Record the deposit here; when they need cash, hand it over and record the
+withdrawal. Each account shows the balance and transaction history.
 
 You can also use separate accounts for savings goals, such as a bicycle, a holiday,
 or another planned purchase. The money stays wherever you keep it; POCKET MONkEY
@@ -14,26 +15,27 @@ records it without holding or transferring funds.
 
 > [!IMPORTANT]
 > From personal experience, I recommend giving children pocket money in cash.
-> Let them deposit excess cash with you once they have more than EUR 100 on hand,
-> and record it here. If you prefer not to use cash, automatic monthly allowance
-> credits are available instead.
+> Holding it in their hands can make receiving money feel more tangible than
+> seeing a number change on a screen.
+> Let them deposit money they do not need day to day with you, and record it here.
+> How much cash they keep on hand is up to your family. If you prefer not to use
+> cash, automatic monthly allowance credits are available instead.
 
 ## Run With Docker
 
-GHCR publishing is prepared, but no image has been released yet. The following
-template is for published Linux amd64 releases; choose an exact version or digest.
-Set `MONKEY_IMAGE` in your `.env`:
+Linux amd64 pre-release images are available from
+[Releases](https://github.com/eG-dev/MONkEY/releases). Start with the matching,
+digest-pinned deployment bundle and [Getting Started](docs/wiki/Getting-Started.md).
+These beta releases are for acceptance testing, not a production-readiness claim.
 
-```dotenv
-MONKEY_IMAGE=ghcr.io/eg-dev/monkey:<version>
-```
-
-Create `compose.yaml`, replacing the domain and Traefik names as appropriate:
+The standalone template below is an alternative for an existing Traefik setup.
+Set the exact published image and application settings directly in `compose.yaml`,
+replacing the domain and Traefik names as appropriate. No environment file is required.
 
 ```yaml
 services:
   app:
-    image: ${MONKEY_IMAGE:?Set a published GHCR image}
+    image: ghcr.io/eg-dev/monkey:0.1.0-beta.2
     restart: on-failure
     stop_grace_period: 25s
     environment:
@@ -75,18 +77,10 @@ publishing. HTTPS is required for authentication cookies.
 
 Set these under `app.environment`; apply changes with `docker compose up -d`.
 
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `MONKEY_PUBLIC_URL` | Required | Public HTTPS origin. |
-| `TZ` | `UTC` | Business timezone, including allowance and export scheduling. |
-| `MONKEY_DEFAULT_LOCALE` | `de-DE` | `de-DE` or `en-US`. |
-| `MONKEY_CURRENCY` | `EUR` | `EUR` or `USD`; display unit only, no conversion. |
-| `MONKEY_TRANSACTION_RETENTION_MONTHS` | `24` | Detail retention: 1–120 UTC calendar months; `0` unlimited. Balances remain intact. |
-| `MONKEY_TRUSTED_PROXIES` | Empty | Explicit trusted proxy IPs/CIDRs, if forwarded headers are needed. |
-| `MONKEY_EXPORT_PATH` | Unset | Enable financial exports to a separate mounted directory. |
-| `MONKEY_EXPORT_KEEP_COUNT` | `30` | Keep 1–365 snapshots; `0` unlimited. |
-
-Full reference: [environment settings](plans/migration/configuration.md).
+Set the public HTTPS origin and business timezone, preserve the data volume and
+trust only your actual reverse proxies. Language and display currency are
+independent settings. See the maintained [configuration reference](docs/wiki/Configuration.md)
+for defaults, validation, retention and optional financial exports.
 
 ## First Manager and Password Reset
 

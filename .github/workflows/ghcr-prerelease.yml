@@ -222,30 +222,31 @@ jobs:
           CONFIG_DIGEST: ${{ steps.push.outputs.config_digest }}
         run: |
           mkdir bundle
-          jq '.name = "${COMPOSE_PROJECT_NAME:?Set a stable Compose project name}" |
+          jq '.name = "pocket-monkey" |
             .services.app.image = (env.IMAGE + "@" + env.DIGEST)' verified/deployment.json > bundle/compose.yaml
           cp verified/compose.exports.yaml bundle/
-          printf '# Reuse the existing project name when upgrading; this selects the data volume.\nCOMPOSE_PROJECT_NAME=pocket-monkey\n' > bundle/compose.env.example
-          cat verified/compose.env.example >> bundle/compose.env.example
           cat > bundle/DEPLOYMENT.md <<'GUIDE'
           # POCKET MONkEY Pre-release
 
           This Linux amd64 pre-release is for acceptance testing, not production readiness.
-          Copy compose.env.example to a private compose.env and configure your HTTPS origin,
-          reverse proxy, timezone and settings. For an existing installation, retain its exact
-          Compose project name and data volume; do not accept a new name that creates empty storage.
+          Edit services.app.environment directly in compose.yaml: configure your HTTPS origin,
+          reverse proxy, timezone and settings. For an existing installation, set the top-level
+          name to its exact existing Compose project name and retain its data volume; do not
+          accept a new name that creates empty storage. Preserve your configuration on upgrades.
 
-          Run: docker compose --env-file compose.env -f compose.yaml pull
-          Then: docker compose --env-file compose.env -f compose.yaml up -d --no-build
+          Validate: docker compose -f compose.yaml config --quiet
+          Run: docker compose -f compose.yaml pull
+          Then: docker compose -f compose.yaml up -d --no-build
 
           Bootstrap a new instance with:
-          docker compose --env-file compose.env -f compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
+          docker compose -f compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
 
           Before upgrades, stop the instance and back up the complete data volume and private
           configuration. Rehearse restoration separately. Image rollback does not roll back
           database migrations. Never use down --volumes on data you intend to retain.
-          Optional exports require compose.exports.yaml and a pre-created private host directory;
-          financial JSON exports do not replace full-volume backups.
+          Optional exports require editing the bind source and environment in compose.exports.yaml,
+          then using both Compose files and a pre-created private host directory owned by UID 10001.
+          Financial JSON exports do not replace full-volume backups. Keep passwords out of Compose.
           GUIDE
           printf '\nFull setup, HTTPS, backup and recovery guide: https://github.com/%s/blob/%s/docs/development.md\n' \
             "$GH_REPO" "$REVISION" >> bundle/DEPLOYMENT.md
