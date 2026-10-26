@@ -5,6 +5,36 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Password Sampling R1 (2026-10-26)
+
+**Administration Users prototype R1 draft.** Temporary fictional passwords use
+rejection sampling before mapping 32-bit random values to the 56-character
+alphabet. This removes modulo bias without changing the twelve characters,
+four-character grouping, copy action or dialog behavior. These remain prototype
+values, not authentication credentials. Wireframes and application code are
+unchanged.
+
+Standalone browser verification passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. All eight Manager combinations
+completed the actual password-reset flow, retaining the alphabet, grouped length,
+copy-button focus and no horizontal overflow; Members had no reset controls.
+No page errors were reported.
+
+A separate integrated pass covered the same 16 outer-viewport combinations
+through actual Overview-to-Administration-to-Overview navigation, including
+eight Manager resets and eight Member restrictions, with no page errors.
+These checks used DOM-dispatched clicks, not native keyboard-input evidence.
+
+Separate standalone and integrated checks covered blank create-user validation,
+successful creation with a grouped password, a simulated failed reset with no
+password shown, and successful retry. A standalone deterministic RNG check
+forced zero, the last alphabet index, the last accepted 32-bit value, the
+rejection threshold and the maximum 32-bit value. It verified repeated rejection
+and resampling, exact grouped output and the value passed to a stubbed clipboard
+API; it did not write the operating-system clipboard. Browser test changes to
+fictional data and preferences were restored. This remains a draft reference,
+not approval of a new design or production authentication verification.
+
 ## Notice Document Hierarchy R6 (2026-10-24)
 
 **Wireframe and shared About prototype R6 explicitly approved, 2026-10-24.**

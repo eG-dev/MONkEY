@@ -32,6 +32,31 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## CodeQL Fixture Hardening (2026-10-26)
+
+The E2E HTTPS fixture takes its outgoing hostname and port only from the
+container origin. It passes incoming origin-form paths separately and rejects
+absolute, protocol-relative and backslash-containing request targets with HTTP
+400. Retry still rediscovers the container's published loopback port.
+Upstream failure diagnostics use a constant console message and omit request
+URLs, including potentially sensitive query strings.
+
+The focused authentication security suite passed all three cases against the
+existing local image, including a new canary-listener regression check and the
+existing authentication/CSRF and restart-session checks. E2E TypeScript checking
+also passed. This verifies the fixture changes, not a rebuilt production image
+or a full application regression run.
+
+```text
+npm --prefix tests/e2e run check
+npm --prefix tests/e2e test -- "security[.]spec[.]ts$" --project=desktop --workers=1
+```
+
+The independent fictional-password sampling correction is recorded in the
+[prototype notes](design/prototypes/README.md#password-sampling-r1-2026-10-26).
+No GitHub alerts have been dismissed; CodeQL must run again on the changed
+revision before alert closure can be confirmed.
+
 ## Wiki Documentation
 
 The English [reader guides](wiki/Home.md) are authoritative in `docs/wiki/`.

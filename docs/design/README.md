@@ -8,6 +8,16 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Prototype Password Sampling R1 (2026-10-26)
+
+**Administration Users prototype R1 draft.** The
+[temporary-password demonstration](prototypes/administration/index.html) now
+rejects random values outside the largest range evenly divisible by its alphabet
+length before selecting characters. The fictional password's alphabet, length,
+grouping and dialog behavior are unchanged. Wireframes and application code are
+unchanged; prior design approvals remain history. Verification is recorded in
+the [prototype notes](prototypes/README.md#password-sampling-r1-2026-10-26).
+
 ## Notice Collection State (2026-10-24)
 
 The user accepted the current curated notice collection as complete and requested
@@ -752,7 +762,7 @@ column retains the unchanged wireframe approvals.
 | Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Allowance Presentation R1 approved 2026-10-24; earlier Compact Account Names R2 approval retained as history | [Accounts](prototypes/accounts/index.html), Currency Formatting R1 approved 2026-10-24; Allowance Presentation R2 approved 2026-10-24 retained as history |
 | Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html), Currency Formatting R1 approved 2026-10-24; Allowance Status Consistency R2 approved 2026-10-24 retained as history |
 | Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Password Dialog R1 approved 2026-10-24; 2026-10-21 and earlier approvals retained as history | [Administration](prototypes/administration/index.html), Password Dialog R1 prototype approved 2026-10-24 |
-| Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html) |
+| Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html), Password Sampling R1 draft 2026-10-26; earlier approvals retained as history |
 | Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
 | About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
 | About: Project license | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |

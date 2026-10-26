@@ -1,3 +1,6 @@
+import { createServer } from 'node:http';
+import { request as httpsRequest } from 'node:https';
+
 import {
   test,
   expect,
@@ -12,6 +15,50 @@ import {
 } from '../../fixtures';
 
 test.use({ ignoreHTTPSErrors: true });
+
+test('HTTPS fixture rejects request targets that could override its upstream @api', async ({ instance }) => {
+  let unexpectedRequests = 0;
+  const canary = createServer((_request, response) => {
+    unexpectedRequests++;
+    response.writeHead(200);
+    response.end('Unexpected proxy destination');
+  });
+
+  await new Promise<void>((resolve) => canary.listen(0, '127.0.0.1', resolve));
+
+  try {
+    const address = canary.address();
+
+    if (!address || typeof address === 'string') {
+      throw new Error('Canary did not receive a loopback port.');
+    }
+
+    const send = (path: string) =>
+      new Promise<number | undefined>((resolve, reject) => {
+        const request = httpsRequest(instance.origin, { path, rejectUnauthorized: false, timeout: 5000 }, (response) => {
+          response.resume();
+          response.once('end', () => resolve(response.statusCode));
+        });
+
+        request.once('error', reject);
+        request.once('timeout', () => request.destroy(new Error('Test proxy request timed out.')));
+        request.end();
+      });
+    const authority = `127.0.0.1:${address.port}`;
+
+    expect(await send('/api/auth/me?probe=%2F%2Fexample.invalid%2F')).toBe(401);
+
+    for (const path of [`http://${authority}/probe`, `//${authority}/probe`, `/\\${authority}/probe`]) {
+      expect(await send(path)).toBe(400);
+    }
+
+    expect(unexpectedRequests).toBe(0);
+    expect(await send('/api/auth/me')).toBe(401);
+  } finally {
+    canary.closeAllConnections();
+    await new Promise<void>((resolve, reject) => canary.close((error) => (error ? reject(error) : resolve())));
+  }
+});
 
 test('bootstrap is one-time and CSRF and forged identity are rejected @api', async ({ request, instance }) => {
   const unconfirmed = credentials();

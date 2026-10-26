@@ -266,8 +266,15 @@
 
     function showTemporaryPassword(user) {
       const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+      const limit = 2 ** 32 - (2 ** 32 % alphabet.length);
       const values = crypto.getRandomValues(new Uint32Array(12));
-      const password = [...values].map(value => alphabet[value % alphabet.length]).join('').replace(/(.{4})(?=.)/g, '$1-');
+      const password = [...values].map(value => {
+        while (value >= limit) {
+          value = crypto.getRandomValues(new Uint32Array(1))[0];
+        }
+
+        return alphabet[value % alphabet.length];
+      }).join('').replace(/(.{4})(?=.)/g, '$1-');
       const result = PM.dialog({
         title: PM.t('temporaryPassword'),
         dismissible: false,

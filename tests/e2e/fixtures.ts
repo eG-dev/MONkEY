@@ -146,6 +146,15 @@ export async function secureOrigin(instance: Instance) {
   let upstreamOrigin = containerOrigin(instance.container);
 
   const server = createServer({ key: certificate.private, cert: certificate.cert }, async (request, response) => {
+    const path = request.url ?? '/';
+
+    if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
+      response.writeHead(400);
+      response.end('The test proxy requires an origin-form request target.');
+      request.resume();
+      return;
+    }
+
     const chunks: Buffer[] = [];
 
     try {
@@ -160,12 +169,22 @@ export async function secureOrigin(instance: Instance) {
     const body = Buffer.concat(chunks);
 
     const forward = (retry: boolean) => {
-      const target = new URL(request.url ?? '/', upstreamOrigin);
+      const upstreamUrl = new URL(upstreamOrigin);
       // agent: false avoids reusing pooled sockets the upstream already closed (keep-alive race -> spurious 502).
-      const upstream = httpRequest(target, { method: request.method, headers: request.headers, agent: false }, (result) => {
-        response.writeHead(result.statusCode ?? 502, result.headers);
-        result.pipe(response);
-      });
+      const upstream = httpRequest(
+        {
+          hostname: upstreamUrl.hostname,
+          port: upstreamUrl.port,
+          path,
+          method: request.method,
+          headers: request.headers,
+          agent: false,
+        },
+        (result) => {
+          response.writeHead(result.statusCode ?? 502, result.headers);
+          result.pipe(response);
+        },
+      );
 
       upstream.on('error', (error) => {
         if (retry && !response.headersSent) {
@@ -179,7 +198,7 @@ export async function secureOrigin(instance: Instance) {
           }
         }
 
-        console.warn(`HTTPS fixture upstream ${request.method} ${request.url} failed:`, error.message);
+        console.warn('HTTPS fixture upstream failed:', request.method, error.message);
 
         if (!response.headersSent) {
           response.writeHead(502);
