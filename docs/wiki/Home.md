@@ -21,6 +21,8 @@ Currency is a display unit, not a currency-conversion service.
 - [Troubleshooting](Troubleshooting.md): logs, readiness, HTTPS, access and storage diagnostics.
 - [Technical guide](../development.md): existing detailed development, recovery and operational procedures.
 - [Development and Testing](Development-and-Testing.md): local setup, locked builds, real-image tests and failure diagnostics.
+- [Translation Contributions](Translation-Contributions.md): catalog changes, language registration, completeness and layout review.
+- [Builds and Releases](Builds-and-Releases.md): protected tags, candidate review, approval, same-artifact publication and failure handling.
 - [Release notes and deployment assets](https://github.com/eG-dev/MONkEY/releases): choose an exact published version.
 
 ## Scope and Limits
