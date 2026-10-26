@@ -43,6 +43,7 @@ else
 }
 
 builder.Logging.SetMinimumLevel(isOperatorCommand ? LogLevel.Warning : settings.LogLevel);
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
 
 builder.Services.AddSingleton(settings);
 builder.Services.AddProblemDetails();

@@ -28,7 +28,7 @@ standalone(
         "--env",
         "MONKEY_DEFAULT_LOCALE=en-US",
         "--env",
-        "MONKEY_LOG_LEVEL=Warning",
+        "MONKEY_LOG_LEVEL=Information",
         image,
       );
 
@@ -105,6 +105,9 @@ standalone(
       expect(language).toBe("");
 
       expect(docker("logs", name)).not.toContain('"event":"listening"');
+      expect(docker("logs", name)).not.toMatch(
+        /"LogLevel":"(?:Trace|Debug|Information)","Category":"Microsoft\.EntityFrameworkCore/,
+      );
 
       expect(docker("exec", name, "dotnet", "--list-sdks")).toBe("");
 
