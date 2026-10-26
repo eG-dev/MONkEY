@@ -8,6 +8,64 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Prototype Settings R1 (2026-10-26)
+
+**Shared prototype settings R1 draft.** The
+[shared runtime](prototypes/shared/prototype.js) uses a labelled native dropdown
+for View state instead of a clipped single-row segmented control. Every state
+remains selectable; language, role, navigation and failure controls are unchanged.
+Four standalone/integrated account-details checks at 360px and 1440px selected
+all eight states and confirmed they apply, with no horizontal overflow.
+No application code or wireframe changed. See the
+[verification notes](prototypes/README.md#prototype-settings-r1-2026-10-26).
+
+## Allowance Clarity R2 (2026-10-26)
+
+**Account-details prototype R2 approved, 2026-10-26.** The user explicitly
+approved the current prototype, including the first-line calendar alignment,
+with "okay, prototype approved. Implement". The
+[revised prototype](prototypes/account-details/index.html) puts a calendar icon,
+"Automatic monthly allowance scheduled" and the green signed monthly amount
+first. Supporting text names the effective month/year and automatic credits.
+The current-month configuration is below in muted text, separated by 8px;
+an absent current configuration no longer dominates the enabled future state.
+Spacing groups the status/amount closely, separates the explanation and edit
+action, and leaves a larger gap before credit history, using existing tokens.
+Already-effective allowances without a pending change explicitly say "active".
+Scheduled disablement prioritizes the future stop month, with this month's amount
+as supporting text and completed credit information preserved. If current and future settings
+are disabled, show one disabled-state message and no retained amount or redundant
+month-specific messages. English/German, Member visibility
+and R1's switch-dependent dialog remain intact. Wireframe structure, financial
+policies are unchanged. Three selectable review fixtures
+cover no credit this month/planned next, credited this month/disabled next, and
+credited this month/changed amount next. They project consistent fictional
+configuration, history and balance without changing the saved account data.
+R2 supersedes the unapproved R1
+presentation below. Angular implementation is complete, with 11 focused
+production-image allowance checks and 24 separate language/theme/viewport/state
+checks passing. See the [delivery record](../development.md#allowance-clarity-r2-2026-10-26).
+See the [verification notes](prototypes/README.md#allowance-clarity-r2-2026-10-26).
+
+## Allowance Clarity R1 (2026-10-26)
+
+**Historical unapproved R1 draft, superseded by R2 above.** The
+[revised prototype](prototypes/account-details/index.html) hides the
+amount field, hint and explanatory section while the allowance switch is off.
+Re-enabling restores the entered amount; disabling retains the saved amount.
+Save and Cancel remain available in both states. The dialog info omits this
+retention detail and explains only timing and that saving does not book money.
+
+The empty current configuration explicitly means no allowance **this month**.
+A scheduled credit names its localized month and year and uses the shared green,
+signed money formatter, with an 8px gap below the current-month statement.
+The text explicitly describes a planned automatic credit, not a completed or
+guaranteed execution. English and German are included. The existing wireframe
+structure and allowance policies are unchanged; no new wireframe revision is
+needed for these dialog and wording details. Earlier approvals remain history.
+R1's dialog refinements are included in the approved R2 above.
+See the [verification notes](prototypes/README.md#allowance-clarity-r1-2026-10-26).
+
 ## Prototype Password Sampling R1 (2026-10-26)
 
 **Administration Users prototype R1 draft.** The

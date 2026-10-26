@@ -136,6 +136,60 @@ test('hosted allowance worker resumes interrupted credits after a crash without 
   await expect(page.locator('#accounts-table thead th')).toHaveText(['Account name', 'Balance', 'Monthly allowance', 'Status', 'Actions']);
   await expect(page.getByTestId('account-row-allowance')).toHaveText('+1.25 € per month');
 
+  await page.goto(`/accounts/${account.id}`);
+
+  const edit = page.locator('#account-details-allowance-edit');
+
+  await expect(edit).toBeEnabled();
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance active');
+  await edit.click();
+  await page.locator('#account-details-allowance-amount').fill('2.50');
+  await page.locator('#account-details-allowance-save').click();
+
+  const nextMonth = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+    new Date(`${state.nextEffectiveMonth}-01T12:00:00Z`),
+  );
+
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance scheduled');
+  await expect(page.locator('#account-details-allowance-amount-display')).toHaveText('+2.50 € per month');
+  await expect(page.locator('#account-details-allowance-current')).toHaveText("This month's allowance is +1.25 €.");
+  await expect(page.locator('#account-details-allowance-current .positive')).toHaveCSS('color', 'rgb(95, 211, 141)');
+  await expect(page.locator('#account-details-allowance-scheduled')).toHaveText(`Credits are posted automatically from ${nextMonth}.`);
+  await edit.click();
+  await page.locator('#account-details-allowance-enabled').click();
+  await page.locator('#account-details-allowance-save').click();
+
+  for (const width of [360, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+
+    await expect(page.locator('#account-details-allowance-scheduled')).toHaveText(
+      `Automatic allowance will be disabled from ${nextMonth}.`,
+    );
+    await expect(page.locator('#account-details-allowance-current')).toHaveText("This month's allowance is +1.25 €.");
+    await expect(page.locator('#account-details-allowance-amount-display')).toHaveCount(0);
+    await expect(page.locator('#account-details-last-credit')).toHaveText(`Last credit: ${timestamp}`);
+
+    const alignment = await page.locator('#account-details-allowance-scheduled').evaluate((element) => {
+      const icon = element.querySelector('.icon')!.getBoundingClientRect();
+      const text = element.querySelector('span:not(.icon)')!;
+      const range = document.createRange();
+      range.setStart(text.firstChild!, 0);
+      range.setEnd(text.firstChild!, 2);
+      const line = range.getBoundingClientRect();
+      const current = document.getElementById('account-details-allowance-current')!.getBoundingClientRect();
+
+      return {
+        offset: Math.abs(icon.top + icon.height / 2 - line.top - line.height / 2),
+        currentBelow: current.top >= element.getBoundingClientRect().bottom,
+      };
+    });
+
+    expect(alignment.offset).toBeLessThanOrEqual(2);
+    expect(alignment.currentBelow).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: test.info().outputPath(`allowance-stops-${width}.png`), fullPage: true });
+  }
+
   const context = await browser.newContext({
     ...test.info().project.use,
     baseURL: instance.origin,
@@ -148,6 +202,11 @@ test('hosted allowance worker resumes interrupted credits after a crash without 
     await signIn(memberPage, reader, `/accounts/${account.id}`);
 
     await expect(memberPage.locator('#account-details-last-credit')).toHaveText(`Last credit: ${timestamp}`);
+    await expect(memberPage.locator('#account-details-allowance-scheduled')).toHaveText(
+      `Automatic allowance will be disabled from ${nextMonth}.`,
+    );
+    await expect(memberPage.locator('#account-details-allowance-current')).toHaveText("This month's allowance is +1.25 €.");
+    await expect(memberPage.locator('#account-details-allowance-amount-display')).toHaveCount(0);
     await expect(memberPage.locator('#account-details-allowance-edit')).toHaveCount(0);
     await expect(memberPage.getByTestId('ledger-entry').filter({ hasText: 'Allowance' })).toHaveCount(3);
     expect(await memberPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

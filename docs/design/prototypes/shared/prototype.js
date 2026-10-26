@@ -414,7 +414,7 @@
         <fieldset class="field"><legend class="field-label">Language</legend>${segment('language', [['en', 'English'], ['de', 'Deutsch']], prefs.language)}</fieldset>
         <fieldset class="field"><legend class="field-label">Signed in as</legend>${segment('user', [['mara', 'Manager (Mara)'], ['emma', 'Member (Emma)']], prefs.user)}</fieldset>
         <fieldset class="field"><legend class="field-label">Navigation</legend>${segment('layout', [['auto', 'Auto'], ['compact', 'Compact'], ['wide', 'Wide']], prefs.layout)}</fieldset>
-        ${states.length ? `<fieldset class="field"><legend class="field-label">View state</legend>${segment('viewState', states.map(state => [state, state[0].toUpperCase() + state.slice(1)]), prefs.viewState)}</fieldset>` : ''}
+        ${states.length ? `<div class="field"><label for="prototype-view-state">View state</label><select class="input" id="prototype-view-state" name="viewState">${states.map(state => `<option value="${esc(state)}"${prefs.viewState === state ? ' selected' : ''}>${esc(state[0].toUpperCase() + state.slice(1))}</option>`).join('')}</select></div>` : ''}
         <div class="switch-row"><span class="field-label" id="fail-label">Next save fails</span><button class="switch" type="button" role="switch" id="fail-next" aria-labelledby="fail-label" aria-checked="${prefs.failNext}"></button></div>
         <button class="button button-secondary" type="button" id="reset-data">Reset prototype data</button>
       </form>`

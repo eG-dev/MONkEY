@@ -32,6 +32,45 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Allowance Clarity R2 (2026-10-26)
+
+The user approved the current account-details prototype with "okay, prototype
+approved. Implement". Angular now prioritizes the scheduled automatic allowance
+or its stop month, localizes the effective month/year, and keeps this month's
+configuration as supporting text. Positive amounts retain their sign and green
+color; calendar icons align with the first line of wrapped messages. Fully
+disabled settings have one message without exposing the retained amount.
+
+The allowance dialog hides the amount, hint and timing information when its
+switch is off. Re-enabling restores the entered value; Save and Cancel remain
+available. The timing message no longer describes retained storage. Backend
+contracts, next-month policy, exact money, stored revisions and credit history
+are unchanged.
+
+Angular and production-image builds, bilingual catalog validation, E2E type
+checking and all **11 focused production-image allowance checks** passed.
+Coverage includes Manager/Member access, hidden-field keyboard navigation,
+validation, failed-save retry, stale edits, persisted amount retention, scheduled
+changes/stops after an actual credit, icon geometry at 360px/1440px, unchanged
+ledger history and existing worker recovery/concurrency checks.
+
+Separate production-image review passed **24 combinations** of the three
+reviewed scenarios, English/German, light/dark and 360px/1440px. Checks covered
+localized effective-month wording, positive colors, first-line icon alignment,
+dialog visibility, no page errors and no horizontal overflow. German dark
+phone/desktop screenshots were captured under ignored `.local/allowance-r2-review/`;
+phone planned/stop and desktop changed-amount screenshots were inspected. The
+review used isolated disposable data and removed its container and volume.
+These focused checks do not constitute a full regression or hosted CI run.
+
+```text
+npm --prefix web run build
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts specs/accounts/allowance-execution.spec.ts --workers 1
+```
+
 ## CodeQL Fixture Hardening (2026-10-26)
 
 The E2E HTTPS fixture takes its outgoing hostname and port only from the

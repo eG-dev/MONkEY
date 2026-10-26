@@ -5,6 +5,152 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Prototype Settings R1 (2026-10-26)
+
+**Shared prototype settings R1 draft.** View state now uses a labelled native
+select so long state lists do not clip inside a single segmented row. Existing
+change handling continues to persist and apply the selected state. Other
+settings and application code are unchanged.
+
+Four focused standalone/integrated account-details checks at 360x1000 and
+1440x1000 selected all eight available states, including Credit-catch-up and
+Credit-failure-detail, and verified each applied preference. The select fits
+inside the settings form without horizontal overflow. Original stored
+preferences were restored after validation. These were programmatic selection
+checks, not native keyboard-navigation evidence.
+
+## Allowance Clarity R2 (2026-10-26)
+
+**Account-details prototype R2 approved, 2026-10-26.** The user approved the
+current revision with "okay, prototype approved. Implement" after the icon
+alignment refinement. A calendar icon and explicit scheduled
+automatic-allowance label lead the enabled future state, followed by its green
+signed monthly amount. The start month/year and automatic-credit explanation
+support it; current-month settings are muted below with an 8px separation.
+Already-effective settings without a pending change explicitly say active.
+Scheduled disablement prioritizes its future stop month, with this month's amount
+as supporting text and completed credits preserved. This supersedes R1's
+current-month-first hierarchy without changing its dialog, business rules or
+wireframe structure. Angular implementation is authorized; the checks below
+remain prototype evidence, separate from production verification.
+
+Standalone checks passed all 16 Manager/Member, English/German, light/dark,
+360x1000/1440x1000 combinations, including icon, status label, primary positive
+amount/color, muted current state, visual order, switch visibility and retained
+input. Separate integrated checks passed the same 16 combinations through actual
+Overview-to-details-to-Overview navigation, including Manager dialog toggles.
+Neither pass reported page errors or horizontal overflow; stored preferences
+and fictional data were restored. Four additional standalone/integrated language
+flows checked active settings, scheduled amount changes with distinct current
+and future amounts, scheduled disablement and absent configuration. Inline
+JavaScript parsing passed. These are prototype checks, not Angular verification.
+
+Wording refinement: "Die Gutschriften erfolgen automatisch ab {month}." /
+"Credits are posted automatically from {month}." replaces the two-sentence
+start text. Both exact rendered sentences passed integrated browser checks.
+
+Spacing refinement: 8px below the section label, 4px between state and amount,
+12px before the explanation, 8px before the current-month note, 16px before a
+wrapped edit button and 24px before credit history. All use existing spacing
+tokens. Eight focused standalone/integrated English/German checks at 360px and
+1440px confirmed the actual gaps and no horizontal overflow.
+
+Current-month wording selected during review: "Diesen Monat gibt es noch kein
+Taschengeld." / "No allowance this month yet." Both exact rendered texts passed
+integrated browser checks. This wording choice does not approve the R2 artifact.
+
+Disabled-state refinement: current and future disabled settings show only
+"Automatisches Taschengeld deaktiviert." / "Automatic allowance disabled."
+Retained amounts are not displayed on details. An active current allowance with
+scheduled disablement still shows its current amount and future stop month.
+Four standalone/integrated language checks confirmed the single disabled
+message, no exposed retained amount, hidden disabled dialog settings, retained
+value on re-enabling and the meaningful active-to-disabled transition.
+
+Three explicit View state fixtures now cover:
+
+- `no-credit-this-month-planned-next`: no October credit/current allowance;
+  automatic +20 EUR scheduled for November.
+- `credited-this-month-disabled-next`: October +20 EUR credit/current allowance;
+  disabled from November, with no retained future amount displayed.
+- `credited-this-month-changed-next`: October +20 EUR credit/current allowance;
+  automatic +30 EUR scheduled for November, with both periods distinguished.
+
+These render-only projections clone the selected account, retain earlier
+credits, replace October/future allowance entries and add an illustrative
+opening entry only if required. October credit summaries, history and balances
+agree. Source account data is unchanged; returning to Normal restores the
+original view. These are review fixtures, not persisted financial changes.
+
+All three states passed 16 standalone and 16 separate integrated combinations
+of Manager/Member, English/German, light/dark and 360x1000/1440x1000. Each was
+selected through the settings dropdown. Checks covered credits, displayed and
+computed balances, current/future amounts, role controls, unchanged source
+account data and no horizontal overflow. Integrated checks included actual
+Overview-to-details-to-Overview navigation and reported no page errors. Original
+stored preferences were restored. Inline JavaScript syntax checking passed.
+
+Current-amount wording is a full sentence: "Für diesen Monat beträgt das
+Taschengeld {amount}." / "This month's allowance is {amount}." Both exact
+sentences and their signed positive amount passed integrated browser checks.
+
+Scheduled-disablement hierarchy refinement: "Ab {month} ist das automatische
+Taschengeld deaktiviert." / "Automatic allowance will be disabled from {month}."
+is now the primary calendar-labelled message. The fluent current-month sentence
+is muted below; its amount is no longer a separate prominent line. Eight focused
+standalone/integrated English/German checks at 360px and 1440px confirmed order,
+wording, retained credit information and no horizontal overflow.
+Calendar icons align with the first text line rather than the centre of wrapped
+status messages. Four integrated English/German checks at 360px and 1440px
+confirmed first-line alignment and no horizontal overflow.
+
+The approved presentation and switch-dependent dialog are now implemented in
+Angular. Production-image evidence is recorded separately in the
+[development guide](../../development.md#allowance-clarity-r2-2026-10-26);
+the verification above describes the offline prototypes only.
+
+## Allowance Clarity R1 (2026-10-26)
+
+**Historical unapproved R1 draft, superseded by R2 above.** The allowance dialog hides its amount,
+hint and explanatory section when disabled, retaining the value when toggled.
+The details panel distinguishes this month's configuration from a scheduled
+credit, names the localized month/year and renders its signed amount in the
+existing positive color. Disabled schedules also name their effective month.
+The prototype's established October 2026 clock makes the next month November;
+an explicit scheduled effective month takes precedence. Application code and
+wireframe structure are unchanged; explicit prototype approval is pending.
+
+Standalone browser checks passed 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. They verified current-month
+wording, November 2026, +50 EUR, positive theme colors, role restrictions,
+switch visibility and retained input, with no horizontal overflow or page errors.
+A separate integrated pass covered the same 16 combinations through actual
+Overview-to-Mia-details-to-Overview navigation and dialog toggles, with no page
+errors or horizontal overflow. The initial integrated driver read the frame URL
+before navigation completed; awaiting its URL resolved that driver race.
+
+Separate standalone and integrated flows verified initially hidden settings,
+zero-amount validation, failed-save input retention, successful retry, scheduled
+disablement and saved-amount retention after re-enabling. Saving did not change
+the fictional balance or transaction history. Checks used forced clicks and
+DOM-dispatched form submissions, not native keyboard-input evidence. Stored
+fictional data and preferences were restored after each check. Inline JavaScript
+syntax checking passed. These checks do not verify Angular or backend behavior.
+
+Review refinement: the scheduled-credit statement now has an 8px top margin
+using `--space-3`. Focused standalone and integrated navigation checks at 360px
+and 1440px confirmed the token-sized gap and no horizontal overflow. Browser
+geometry assertions allow subpixel rounding. The current R1 remains a draft.
+
+Further review refinement: removed the amount-retention sentence from the
+English/German dialog info without changing retention behavior. Four focused
+standalone/integrated browser checks confirmed both revised texts and the
+remaining explanation that saving does not book money.
+
+The scheduled-credit sentence now explicitly says "automatic credit" /
+"automatische Gutschrift". Four standalone/integrated English/German browser
+checks confirmed the revised wording and the signed positive amount.
+
 ## Password Sampling R1 (2026-10-26)
 
 **Administration Users prototype R1 draft.** Temporary fictional passwords use

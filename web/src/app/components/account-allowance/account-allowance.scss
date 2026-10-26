@@ -9,6 +9,57 @@
   overflow-wrap: anywhere;
 }
 
+.allowance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-4);
+  row-gap: var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.allowance-description {
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.positive {
+  color: var(--amount-positive);
+}
+
+.panel-title {
+  margin-bottom: var(--space-3);
+}
+
+.allowance-state {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-weight: var(--weight-medium);
+  margin-bottom: var(--space-2);
+
+  > .icon {
+    flex-shrink: 0;
+  }
+}
+
+#account-details-allowance-scheduled:not(.allowance-state) {
+  margin-top: var(--space-4);
+}
+
+#account-details-allowance-current {
+  margin-top: var(--space-3);
+}
+
+.allowance-settings:not([hidden]) {
+  display: grid;
+  gap: var(--space-5);
+}
+
 p {
   margin-block: var(--space-3);
   overflow-wrap: anywhere;
