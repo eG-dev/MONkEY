@@ -1,5 +1,5 @@
 {
-  "name": "POCKET MONkEY - Published Image Testing",
+  "name": "POCKET MONkEY - Image Testing",
   "build": { "dockerfile": "../Dockerfile", "context": "../.." },
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:4": {}

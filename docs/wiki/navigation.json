@@ -4,9 +4,15 @@
   "pages": [
     { "slug": "Home", "title": "Home", "group": "Start" },
     { "slug": "Getting-Started", "title": "Getting Started", "group": "Start" },
+    { "slug": "Accounts-and-Transactions", "title": "Accounts and Transactions", "group": "Use" },
+    { "slug": "Monthly-Allowances", "title": "Monthly Allowances", "group": "Use" },
+    { "slug": "Users-and-Access", "title": "Users and Access", "group": "Use" },
     { "slug": "Configuration", "title": "Configuration", "group": "Operate" },
+    { "slug": "Backup-Restore-and-Upgrades", "title": "Backup, Restore and Upgrades", "group": "Operate" },
+    { "slug": "Troubleshooting", "title": "Troubleshooting", "group": "Operate" },
     { "slug": "Codespaces-Image-Testing", "title": "Codespaces Image Testing", "group": "Test" },
-    { "slug": "Codespaces-Development", "title": "Codespaces Development", "group": "Develop" }
+    { "slug": "Codespaces-Development", "title": "Codespaces Development", "group": "Develop" },
+    { "slug": "Development-and-Testing", "title": "Development and Testing", "group": "Develop" }
   ],
   "assets": [
     {

@@ -9,7 +9,8 @@ gh --version
 jq --version
 case "${1:-}" in
   image-testing)
-    printf '%s\n' 'Ready. Start manually: bash .devcontainer/image-testing/manage.sh start VERSION'
+    printf '%s\n' 'Ready. Review a candidate: bash .devcontainer/image-testing/manage.sh candidate RUN_ID FULL_SOURCE_SHA'
+    printf '%s\n' 'Or test a published release: bash .devcontainer/image-testing/manage.sh start VERSION'
     ;;
   development)
     node --version

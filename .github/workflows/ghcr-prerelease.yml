@@ -71,7 +71,6 @@ jobs:
     permissions:
       contents: write
     env:
-      GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
       RELEASE_TAG: ${{ github.ref_name }}
       VERSION: ${{ needs.identity.outputs.version }}
@@ -79,6 +78,8 @@ jobs:
       PREVIOUS_TAG: ${{ needs.identity.outputs.previous_tag }}
     steps:
       - name: Prepare or preserve reviewable draft notes
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api --paginate --slurp "repos/$GH_REPO/releases" > releases.json
           jq --arg tag "$RELEASE_TAG" '[.[][] | select(.tag_name == $tag)]' releases.json > matching.json
@@ -95,6 +96,39 @@ jobs:
             echo 'Unexpected duplicate release identity.' >&2
             exit 1
           fi
+      - name: Summarize manual candidate image review
+        id: candidate_review
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const { GH_REPO, RELEASE_TAG, VERSION, REVISION, GITHUB_RUN_ID, GITHUB_RUN_ATTEMPT, GITHUB_STEP_SUMMARY } = process.env;
+          const creation = new URL(`https://codespaces.new/${GH_REPO}/tree/${encodeURIComponent(RELEASE_TAG)}`);
+          creation.searchParams.set('devcontainer_path', '.devcontainer/image-testing/devcontainer.json');
+          fs.appendFileSync(GITHUB_STEP_SUMMARY, [
+            '## Candidate Image Review',
+            '',
+            `Version: ${VERSION}`,
+            '',
+            `Run: [${GITHUB_RUN_ID}](https://github.com/${GH_REPO}/actions/runs/${GITHUB_RUN_ID}) (attempt ${GITHUB_RUN_ATTEMPT})`,
+            '',
+            `Source: \`${REVISION}\``,
+            '',
+            `Reuse an existing Image Testing Codespace, or [Create an Image Testing Codespace](${creation.href}).`,
+            '',
+            'Creation is manual: confirm the Image Testing configuration and choose your machine size. Codespaces usage may incur charges.',
+            '',
+            'Run from the repository root inside that Codespace:',
+            '',
+            '```sh',
+            `bash .devcontainer/image-testing/manage.sh candidate ${GITHUB_RUN_ID} ${REVISION}`,
+            '```',
+            '',
+            'Keep forwarded port 8080 private. Check readiness, sign in, test the intended changes and review the draft release notes before approving this run.',
+            'A rerun or changed artifact requires fresh review. The candidate command loads the verified image without rebuilding or publishing it.',
+            'No Codespace is created, started or deleted by this workflow. Stop your review Codespace when finished; stopped Codespaces still use storage.',
+            '',
+          ].join('\n'));
+          NODE
 
   publish:
     needs: [identity, verify, draft]

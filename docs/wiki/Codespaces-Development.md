@@ -37,12 +37,13 @@ keeps it. Deleting the Codespace/workspace removes it; keep separate backups.
 While the application is running, use another terminal from the repository root:
 
 ```sh
-MONKEY_DATA_PATH="$PWD/.local/codespaces/development" dotnet run --project backend/PocketMonkey.Host --no-launch-profile -- bootstrap-manager
+ASPNETCORE_ENVIRONMENT=Development MONKEY_PUBLIC_URL="https://${CODESPACE_NAME}-4180.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}" MONKEY_DATA_PATH="$PWD/.local/codespaces/development" dotnet run --project backend/PocketMonkey.Host --no-launch-profile -- bootstrap-manager
 ```
 
 There are no default credentials. Enter passwords at the terminal prompt; use
 `recover-manager` for an existing Manager. Personal browser language is independent
-of the instance defaults.
+of the instance defaults. Match the launcher's printed origin if using another
+port; the second terminal does not inherit its child-process environment.
 
 ## Checks and Reset
 
@@ -53,7 +54,7 @@ npm --prefix tests/e2e run test:smoke
 ```
 
 Browser E2E runs against isolated real application images, not the development
-database. Follow [Development and Testing](../development.md#build-and-verify)
+database. Follow [Development and Testing](Development-and-Testing.md)
 for image preparation, full checks and failure diagnostics.
 
 If creation fails, fix the reported cause and rerun

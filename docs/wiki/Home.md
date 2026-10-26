@@ -13,8 +13,14 @@ Currency is a display unit, not a currency-conversion service.
 ## Start Here
 
 - [Getting Started](Getting-Started.md): install a published image and create the first Manager.
+- [Accounts and Transactions](Accounts-and-Transactions.md): shared accounts, opening balances, deposits, withdrawals, images and history.
+- [Monthly Allowances](Monthly-Allowances.md): next-month settings, automatic credits, catch-up and failure status.
+- [Users and Access](Users-and-Access.md): roles, user administration, passwords, sessions and personal preferences.
 - [Configuration](Configuration.md): environment variables, persistent storage and HTTPS.
+- [Backup, Restore and Upgrades](Backup-Restore-and-Upgrades.md): complete backups, financial snapshots, upgrades and recovery.
+- [Troubleshooting](Troubleshooting.md): logs, readiness, HTTPS, access and storage diagnostics.
 - [Technical guide](../development.md): existing detailed development, recovery and operational procedures.
+- [Development and Testing](Development-and-Testing.md): local setup, locked builds, real-image tests and failure diagnostics.
 - [Release notes and deployment assets](https://github.com/eG-dev/MONkEY/releases): choose an exact published version.
 
 ## Scope and Limits

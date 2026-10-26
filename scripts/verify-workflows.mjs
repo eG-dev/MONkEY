@@ -154,6 +154,42 @@ const bash = process.platform === 'win32'
   ? path.resolve(execFileSync('git', ['--exec-path'], { encoding: 'utf8' }).trim(), '../../../bin/bash.exe')
   : 'bash';
 
+const reviewStep = release.jobs.draft.steps.find(step => step.id === 'candidate_review');
+assert(reviewStep, 'Missing pre-approval candidate review summary');
+assert(release.jobs.draft.needs.includes('verify'));
+assert(!release.jobs.draft.environment, 'The candidate instructions must be available before environment approval');
+assert(!release.jobs.draft.env.GH_TOKEN, 'Keep draft credentials scoped to release metadata preparation');
+assert(!reviewStep.env && !reviewStep.if && !reviewStep['continue-on-error']);
+const reviewFixture = fs.mkdtempSync(path.join(tmpdir(), 'pocket-monkey-candidate-summary-'));
+try {
+  const summaryPath = path.join(reviewFixture, 'summary.md');
+  const revision = 'a'.repeat(40);
+  const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c',
+    'function gh() { return 99; }\nfunction docker() { return 99; }\n' + reviewStep.run], {
+    cwd: reviewFixture,
+    encoding: 'utf8',
+    env: { ...process.env, GH_REPO: 'eG-dev/MONkEY', RELEASE_TAG: 'v0.1.0-beta.3', VERSION: '0.1.0-beta.3',
+      REVISION: revision, GITHUB_RUN_ID: '123456', GITHUB_RUN_ATTEMPT: '2', GITHUB_STEP_SUMMARY: summaryPath },
+  });
+  assert.equal(result.status, 0, result.error?.message ?? result.stderr);
+  const summary = fs.readFileSync(summaryPath, 'utf8');
+  assert(summary.includes(`bash .devcontainer/image-testing/manage.sh candidate 123456 ${revision}`));
+  assert(summary.includes('https://github.com/eG-dev/MONkEY/actions/runs/123456'));
+  assert(summary.includes('(attempt 2)'));
+  assert(summary.includes('Version: 0.1.0-beta.3'));
+  assert(summary.includes('No Codespace is created, started or deleted'));
+  const match = summary.match(/\[Create an Image Testing Codespace\]\((https:[^)]+)\)/);
+  assert(match, 'Missing Image Testing creation link');
+  const creation = new URL(match[1]);
+  assert.equal(creation.origin, 'https://codespaces.new');
+  assert.equal(creation.pathname, '/eG-dev/MONkEY/tree/v0.1.0-beta.3');
+  assert.equal(creation.searchParams.get('devcontainer_path'), '.devcontainer/image-testing/devcontainer.json');
+  assert.deepEqual([...creation.searchParams.keys()], ['devcontainer_path'], 'Leave machine choice and creation confirmation to the user');
+} finally {
+  fs.rmSync(reviewFixture, { recursive: true, force: true });
+}
+console.log('PASS: actual pre-approval summary renders the exact candidate command, run/attempt and release-specific Image Testing creation link without lifecycle calls');
+
 for (const [event, full, exported, tag, command] of [
   ['pull_request', 'false', 'false', '', 'run test:smoke'],
   ['pull_request', 'true', 'false', '', 'test'],

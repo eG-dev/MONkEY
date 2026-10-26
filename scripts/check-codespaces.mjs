@@ -64,21 +64,71 @@ try {
   fs.writeFileSync(path.join(assets, 'release-identity.json'), JSON.stringify(identity));
   fs.writeFileSync(path.join(assets, 'SHA256SUMS'), fs.readdirSync(assets).map(filename =>
     `${createHash('sha256').update(fs.readFileSync(path.join(assets, filename))).digest('hex')}  ${filename}\n`).join(''));
+  const candidate = path.join(fixture, 'candidate');
+  fs.mkdirSync(candidate);
+  const runMetadata = { id: 123, head_sha: identity.revision, head_repository: { full_name: 'eG-dev/MONkEY' },
+    path: '.github/workflows/ghcr-prerelease.yml', event: 'push', run_attempt: 1, run_started_at: '2026-10-26T10:00:00Z' };
+  const jobs = [{ jobs: [{ name: 'verify / verify', run_attempt: 1, conclusion: 'success' }] }];
+  const artifact = { id: 456, name: 'verified-image', expired: false, created_at: '2026-10-26T10:10:00Z',
+    workflow_run: { id: 123, head_sha: identity.revision } };
+  const image = [{ Id: `sha256:${'c'.repeat(64)}`, Os: 'linux', Architecture: 'amd64', Config: { Labels: {
+    'org.opencontainers.image.version': identity.version, 'org.opencontainers.image.revision': identity.revision,
+    'org.opencontainers.image.source': 'https://github.com/eG-dev/MONkEY',
+    'org.pocketmonkey.build.kind': 'release', 'org.pocketmonkey.build.dirty': 'false',
+  } } }];
+  const writeMetadata = (runValue = runMetadata, jobsValue = jobs, artifactsValue = [{ artifacts: [artifact] }]) => {
+    fs.writeFileSync(path.join(fixture, 'run.json'), JSON.stringify(runValue));
+    fs.writeFileSync(path.join(fixture, 'jobs.json'), JSON.stringify(jobsValue));
+    fs.writeFileSync(path.join(fixture, 'artifacts.json'), JSON.stringify(artifactsValue));
+  };
+  const writeCandidate = (buildOverrides = {}, imageValue = image) => {
+    for (const filename of ['verified-image.tar.gz', 'compose.yaml', 'compose.exports.yaml', 'deployment.json']) {
+      fs.writeFileSync(path.join(candidate, filename), '{}\n');
+    }
+    fs.writeFileSync(path.join(candidate, 'image.json'), JSON.stringify(imageValue));
+    fs.writeFileSync(path.join(candidate, 'build-info.json'), JSON.stringify({ version: identity.version,
+      revision: identity.revision, kind: 'release', dirty: false, repositoryUrl: 'https://github.com/eG-dev/MONkEY',
+      releaseTag: `v${identity.version}`, ...buildOverrides }));
+    const filenames = fs.readdirSync(candidate).filter(filename => filename !== 'SHA256SUMS');
+    fs.writeFileSync(path.join(candidate, 'SHA256SUMS'), filenames.map(filename =>
+      `${createHash('sha256').update(fs.readFileSync(path.join(candidate, filename))).digest('hex')}  ${filename}\n`).join(''));
+  };
+  writeMetadata();
+  writeCandidate();
   const calls = path.join(fixture, 'calls');
-  const run = args => spawnSync(bash, ['-e', '-o', 'pipefail', '-c', `
+  const run = (args, environment = {}) => spawnSync(bash, ['-e', '-o', 'pipefail', '-c', `
     function jq() { command "$JQ_EXECUTABLE" "$@"; }
+    run_reads=0
     function gh() {
+      if test "$1" = api; then
+        case "$*" in
+          */attempts/*) cat jobs.json ;;
+          */artifacts*) cat artifacts.json ;;
+          *)
+            run_reads=$((run_reads + 1))
+            if test "$run_reads" -gt 1; then cat "\${CURRENT_RUN_FILE:-run.json}"; else cat run.json; fi
+            ;;
+        esac
+        return
+      fi
       if test "$2" = view; then printf '{"isDraft":false,"tagName":"v0.1.0-beta.2"}'; return; fi
       local directory
+      local source="$ASSETS"
+      if test "$1" = run; then source="$CANDIDATE"; fi
       while test "$#" -gt 0; do
         if test "$1" = --dir; then directory=$2; shift 2; else shift; fi
       done
-      cp "$ASSETS/"* "$directory/"
+      cp "$source/"* "$directory/"
     }
-    function docker() { printf '%s\\n' "$*" >> "$CALLS"; }
+    function docker() {
+      printf '%s\\n' "$*" >> "$CALLS"
+      if test "$1 $2" = 'image inspect'; then cat "$LOADED_IMAGE"; fi
+    }
     source .devcontainer/image-testing/manage.sh ${args}
   `], { cwd: fixture, encoding: 'utf8', env: { ...process.env, ASSETS: assets.replaceAll('\\', '/'), CALLS: calls.replaceAll('\\', '/'),
-    JQ_EXECUTABLE: process.env.JQ_EXECUTABLE ?? 'jq', CODESPACE_NAME: 'example-space', GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN: 'app.github.dev' } });
+    CANDIDATE: candidate.replaceAll('\\', '/'), LOADED_IMAGE: path.join(candidate, 'image.json').replaceAll('\\', '/'),
+    JQ_EXECUTABLE: process.env.JQ_EXECUTABLE ?? 'jq', CODESPACE_NAME: 'example-space',
+    GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN: 'app.github.dev', ...environment } });
   check('image start requires an explicit release and reset requires confirmation', () => {
     assert.notEqual(run('start latest').status, 0);
     assert.notEqual(run('reset').status, 0);
@@ -111,6 +161,128 @@ try {
     fs.writeFileSync(path.join(fixture, '.local/codespaces/image-testing/releases/0.1.0-beta.2/release-identity.json'), '{}');
     assert.notEqual(run('start 0.1.0-beta.2').status, 0);
     assert.equal(fs.readFileSync(calls, 'utf8'), before);
+  });
+  const candidateCommand = `candidate 123 ${identity.revision}`;
+  check('candidate requires an explicit run and full expected revision', () => {
+    const before = fs.readFileSync(calls, 'utf8');
+    assert.notEqual(run('candidate latest').status, 0);
+    assert.notEqual(run('candidate 123 abc123').status, 0);
+    assert.equal(fs.readFileSync(calls, 'utf8'), before);
+  });
+  check('candidate loads the verified artifact by immutable identity without registry pulls or builds', () => {
+    const before = fs.readFileSync(calls, 'utf8').length;
+    const result = run(candidateCommand);
+    assert.equal(result.status, 0, result.stderr);
+    const compose = JSON.parse(fs.readFileSync(configuration, 'utf8'));
+    assert.equal(compose.services.app.image, image[0].Id);
+    assert.equal(compose.services.app.pull_policy, 'never');
+    assert.equal(compose.services.app.environment.MONKEY_TRANSACTION_RETENTION_MONTHS, '0');
+    assert.deepEqual(compose.services.app.volumes, ['monkey-data:/data']);
+    const dockerCalls = fs.readFileSync(calls, 'utf8').slice(before);
+    assert(dockerCalls.includes('load --input'));
+    assert(dockerCalls.includes('up -d --no-build --pull never'));
+    assert(!dockerCalls.split('\n').some(line => line.endsWith(' pull')));
+    assert(!dockerCalls.split('\n').some(line => line.includes(' build ')));
+    const review = JSON.parse(fs.readFileSync(path.join(fixture, '.local/codespaces/image-testing/candidate-review.json'), 'utf8'));
+    assert.deepEqual(review, { run: 123, attempt: 1, artifactId: 456, revision: identity.revision, image: image[0].Id, version: identity.version });
+  });
+  for (const [name, metadata] of [
+    ['wrong source', { ...runMetadata, head_sha: 'd'.repeat(40) }],
+    ['fork source', { ...runMetadata, head_repository: { full_name: 'someone/MONkEY' } }],
+    ['wrong workflow', { ...runMetadata, path: '.github/workflows/ci.yml' }],
+    ['PR event', { ...runMetadata, event: 'pull_request' }],
+    ['new attempt without matching verification', { ...runMetadata, run_attempt: 2 }],
+  ]) {
+    check(`candidate rejects ${name} before Docker runs`, () => {
+      writeMetadata(metadata);
+      const before = fs.readFileSync(calls, 'utf8');
+      assert.notEqual(run(candidateCommand).status, 0);
+      assert.equal(fs.readFileSync(calls, 'utf8'), before);
+      writeMetadata();
+    });
+  }
+  check('candidate rejects failed verification before Docker runs', () => {
+    writeMetadata(runMetadata, [{ jobs: [{ ...jobs[0].jobs[0], conclusion: 'failure' }] }]);
+    const before = fs.readFileSync(calls, 'utf8');
+    assert.notEqual(run(candidateCommand).status, 0);
+    assert.equal(fs.readFileSync(calls, 'utf8'), before);
+    writeMetadata();
+  });
+  for (const [name, artifactsValue] of [
+    ['missing artifact', []], ['ambiguous artifact', [artifact, artifact]],
+    ['expired artifact', [{ ...artifact, expired: true }]],
+    ['previous-attempt artifact', [{ ...artifact, created_at: '2026-10-26T09:00:00Z' }]],
+    ['mismatched artifact revision', [{ ...artifact, workflow_run: { id: 123, head_sha: 'd'.repeat(40) } }]],
+  ]) {
+    check(`candidate rejects ${name} before Docker runs`, () => {
+      writeMetadata(runMetadata, jobs, [{ artifacts: artifactsValue }]);
+      const before = fs.readFileSync(calls, 'utf8');
+      assert.notEqual(run(candidateCommand).status, 0);
+      assert.equal(fs.readFileSync(calls, 'utf8'), before);
+      writeMetadata();
+    });
+  }
+  for (const [name, overrides] of [
+    ['dirty build', { dirty: true }], ['development build', { kind: 'development' }],
+    ['mismatched build revision', { revision: 'd'.repeat(40) }],
+  ]) {
+    check(`candidate rejects ${name} before Docker runs`, () => {
+      writeCandidate(overrides);
+      const before = fs.readFileSync(calls, 'utf8');
+      assert.notEqual(run(candidateCommand).status, 0);
+      assert.equal(fs.readFileSync(calls, 'utf8'), before);
+      writeCandidate();
+    });
+  }
+  check('candidate rejects archive tampering before Docker runs', () => {
+    fs.appendFileSync(path.join(candidate, 'verified-image.tar.gz'), 'tampered');
+    const before = fs.readFileSync(calls, 'utf8');
+    assert.notEqual(run(candidateCommand).status, 0);
+    assert.equal(fs.readFileSync(calls, 'utf8'), before);
+    writeCandidate();
+  });
+  check('candidate rejects loaded identity mismatch before changing Compose or starting containers', () => {
+    const wrongImage = path.join(fixture, 'wrong-image.json');
+    fs.writeFileSync(wrongImage, JSON.stringify([{ ...image[0], Id: `sha256:${'d'.repeat(64)}` }]));
+    const before = fs.readFileSync(calls, 'utf8').length;
+    const original = fs.readFileSync(configuration, 'utf8');
+    assert.notEqual(run(candidateCommand, { LOADED_IMAGE: wrongImage.replaceAll('\\', '/') }).status, 0);
+    assert.equal(fs.readFileSync(configuration, 'utf8'), original);
+    assert(!fs.readFileSync(calls, 'utf8').slice(before).includes(' up '));
+  });
+  check('candidate rejects unexpected checksum paths before Docker runs', () => {
+    fs.appendFileSync(path.join(candidate, 'SHA256SUMS'), `${'0'.repeat(64)}  ../outside\n`);
+    const before = fs.readFileSync(calls, 'utf8');
+    assert.notEqual(run(candidateCommand).status, 0);
+    assert.equal(fs.readFileSync(calls, 'utf8'), before);
+    writeCandidate();
+  });
+  check('candidate rejects another image platform before Docker runs', () => {
+    writeCandidate({}, [{ ...image[0], Architecture: 'arm64' }]);
+    const before = fs.readFileSync(calls, 'utf8');
+    assert.notEqual(run(candidateCommand).status, 0);
+    assert.equal(fs.readFileSync(calls, 'utf8'), before);
+    writeCandidate();
+  });
+  check('candidate rejects a run restarted during download before Docker runs', () => {
+    const current = path.join(fixture, 'current-run.json');
+    fs.writeFileSync(current, JSON.stringify({ ...runMetadata, run_attempt: 2 }));
+    const before = fs.readFileSync(calls, 'utf8');
+    assert.notEqual(run(candidateCommand, { CURRENT_RUN_FILE: current.replaceAll('\\', '/') }).status, 0);
+    assert.equal(fs.readFileSync(calls, 'utf8'), before);
+  });
+  check('published release can resume after candidate review without a stale no-pull policy or review record', () => {
+    const cached = path.join(fixture, '.local/codespaces/image-testing/releases/0.1.0-beta.2/release-identity.json');
+    fs.copyFileSync(path.join(assets, 'release-identity.json'), cached);
+    const before = fs.readFileSync(calls, 'utf8').length;
+    const result = run('start 0.1.0-beta.2');
+    assert.equal(result.status, 0, result.stderr);
+    const compose = JSON.parse(fs.readFileSync(configuration, 'utf8'));
+    assert.equal(compose.services.app.image, identity.image);
+    assert.equal(compose.services.app.pull_policy, undefined);
+    assert.equal(compose.services.app.environment.MONKEY_TRANSACTION_RETENTION_MONTHS, '0');
+    assert(fs.readFileSync(calls, 'utf8').slice(before).split('\n').some(line => line.endsWith(' pull')));
+    assert(!fs.existsSync(path.join(fixture, '.local/codespaces/image-testing/candidate-review.json')));
   });
   console.log(`PASS: ${checks} Codespaces profile, environment and actual shell safety checks; Docker and GitHub calls stubbed`);
 } finally {
