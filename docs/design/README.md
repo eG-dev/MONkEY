@@ -8,6 +8,87 @@ refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
 
+## Overview Balance Label R1 (2026-10-26)
+
+**Overview Balance Label R1 wireframe and matching prototype approved,
+2026-10-26.** The user explicitly confirmed "wireframe approved, implement" after
+adjusting the balance-note arrow. The
+[editable source](wireframes/accounts-overview/accounts-overview-wireframe.drawio)
+and [synchronized PNG](wireframes/accounts-overview/accounts-overview-wireframe.png)
+place all six Balance labels right-aligned directly above their amounts instead
+of below account names. The review marker was restored to yellow/black and the
+PNG re-exported and inspected, preserving the user's source edits and routing.
+The [overview prototype](prototypes/accounts-overview/index.html) now groups the
+right-aligned label directly above its amount using existing spacing tokens.
+Sixteen standalone and sixteen integrated checks passed across roles,
+languages, themes and phone/desktop widths. The user subsequently confirmed
+"prototype approved" for the current integrated revision. Angular implementation
+is complete, with four focused production-image E2E checks and eight localized
+layout reviews passing. Earlier allowance/typography approval below remains
+historical. See the
+[verification notes](prototypes/README.md#overview-balance-label-r1-2026-10-26).
+See the [delivery record](../development.md#approved-balance-label-and-profile-key-icon-2026-10-26).
+
+## User Action Icons R1 (2026-10-26)
+
+**User Action Icons R1 prototype approved, 2026-10-26.** The
+[Users prototype](prototypes/administration/index.html) now matches Angular's
+icon-only pencil Edit and key Reset password actions, with translated accessible
+names and native title tooltips. Existing action placement, dialogs and role
+rules are unchanged; no wireframe or Angular change is needed. Sixteen standalone
+and sixteen integrated scenarios covered both roles, languages, themes and
+phone/desktop widths; Manager checks exercised keyboard Edit and native reset
+confirmation/cancellation. The user approved the current integrated revision
+with "prototype approved"; Angular already uses these icon-only actions.
+See the [verification notes](prototypes/README.md#user-action-icons-r1-2026-10-26).
+
+## Profile Key Icon R1 (2026-10-26)
+
+**Profile Key Icon R1 prototype approved, 2026-10-26.** The
+[Profile prototype](prototypes/administration/index.html) replaces the
+square-asterisk on Change password with the existing shared key shape, matching
+password reset. Control placement, translated names and password behavior are
+unchanged; no wireframe revision is needed. Sixteen standalone and sixteen
+integrated ordinary-Chromium checks passed, including native dialog open/cancel
+and phone screenshots. Earlier square-asterisk approval remains history.
+The user approved the current integrated revision with "prototype approved".
+Angular now uses the same locally bundled key-round icon as password reset;
+production verification is recorded in the
+[delivery record](../development.md#approved-balance-label-and-profile-key-icon-2026-10-26).
+See the [verification notes](prototypes/README.md#profile-key-icon-r1-2026-10-26).
+
+## Overview Allowance and Panel Labels R1 (2026-10-26)
+
+**Overview Allowance and Panel Labels R1 approved, 2026-10-26.** The user
+explicitly answered "approved" to the named current revision, including the
+single-sentence wording, matching title styles and 16px gap.
+The user reported that an account with an enabled next-month allowance still
+showed "No monthly allowance" on its overview card, and requested panel titles
+at Balance's text size rather than oversized headings. The
+[overview prototype](prototypes/accounts-overview/index.html) now shows the
+scheduled signed green amount and localized start month in one sentence
+("+20 EUR monthly from November 2026") when no allowance is active yet.
+Active accounts preserve current amounts and credit/failure status;
+scheduled changes or disablement appear as additional period-specific text.
+
+In the [details prototype](prototypes/account-details/index.html), Balance,
+Monthly Allowance and Transaction History now share the existing caption size,
+regular weight and secondary color. Monthly Allowance already matched Balance;
+Transaction History is corrected without removing its semantic heading.
+The gap below Monthly Allowance increases from 8px to the existing 16px token;
+spacing within its content is unchanged.
+This is a wording/state and typography refinement within the existing wireframe
+structure. Angular implementation is complete: 11 focused production-image
+allowance checks and eight separate localized layout reviews passed. Earlier R2
+approval below remains the historical implemented baseline. See the
+[delivery record](../development.md#overview-allowance-and-panel-labels-r1-2026-10-26).
+See the [verification notes](prototypes/README.md#overview-allowance-and-panel-labels-r1-2026-10-26).
+
+Follow-up implementation alignment: Angular's Credit runs heading now uses the
+same caption font as the other panel labels, matching the prototype's existing
+size. Two focused production-image workflows passed with all four labels
+compared. See the [delivery record](../development.md#credit-runs-label-alignment-2026-10-26).
+
 ## Prototype Settings R1 (2026-10-26)
 
 **Shared prototype settings R1 draft.** The

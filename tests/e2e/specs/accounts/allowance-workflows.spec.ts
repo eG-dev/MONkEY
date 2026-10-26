@@ -106,13 +106,65 @@ test('manager schedules allowance changes and members read them without ledger c
   await expect(page.locator('#account-details-allowance-current')).toHaveText('No allowance this month yet.');
   await expect(page.locator('#account-details-balance')).toHaveText('0 €');
 
+  const panelStyles = await page.evaluate(() => {
+    const titles = [
+      'account-details-balance-label',
+      'account-details-allowance-title',
+      'account-details-history-title',
+      'account-details-credit-runs-title',
+    ];
+    const allowance = document.querySelector('app-account-allowance .allowance')!.getBoundingClientRect();
+    const title = document.getElementById('account-details-allowance-title')!.getBoundingClientRect();
+
+    return {
+      titles: titles.map((id) => {
+        const style = getComputedStyle(document.getElementById(id)!);
+
+        return { size: style.fontSize, weight: style.fontWeight, color: style.color };
+      }),
+      gap: allowance.top - title.bottom,
+    };
+  });
+
+  expect(panelStyles.titles[1]).toEqual(panelStyles.titles[0]);
+  expect(panelStyles.titles[2]).toEqual(panelStyles.titles[0]);
+  expect(panelStyles.titles[3]).toEqual(panelStyles.titles[0]);
+  expect(panelStyles.gap).toBeCloseTo(16, 1);
+
   await page.goto('/accounts');
 
   await expect(page.getByTestId('account-row-allowance')).toHaveText('No monthly allowance');
-  await page.goto('/');
+  const overview = await page.goto('/');
 
-  await expect(page.getByTestId('card-allowance')).toHaveText('No monthly allowance');
+  expect(await overview!.text()).toContain(`monthly from ${month}`);
+  await expect(page.getByTestId('card-allowance')).toHaveText(`+12.34 € monthly from ${month}`);
+  await expect(page.getByTestId('card-allowance').locator('.amount-positive')).toHaveText('+12.34 €');
+  await expect(page.getByTestId('card-allowance').locator('.amount-positive')).toHaveCSS('color', 'rgb(0, 115, 47)');
   await expect(page.getByTestId('card-allowance-execution')).toHaveCount(0);
+
+  const balanceLayout = await page.getByTestId('account-card').evaluate((card) => {
+    const label = card.querySelector<HTMLElement>('[data-testid="card-balance-label"]')!;
+    const amount = card.querySelector<HTMLElement>('[data-testid="card-balance"]')!;
+    const labelBox = label.getBoundingClientRect();
+    const amountBox = amount.getBoundingClientRect();
+
+    return {
+      grouped: label.parentElement === amount.parentElement,
+      inName: card.querySelector('.card-head')!.contains(label),
+      alignment: getComputedStyle(label).textAlign,
+      rightDifference: labelBox.right - amountBox.right,
+      gap: amountBox.top - labelBox.bottom,
+      expectedGap: parseFloat(getComputedStyle(label.parentElement!).rowGap),
+    };
+  });
+
+  await expect(page.getByTestId('card-balance-label')).toHaveText('Balance');
+  expect(balanceLayout.grouped).toBe(true);
+  expect(balanceLayout.inName).toBe(false);
+  expect(balanceLayout.alignment).toBe('end');
+  expect(balanceLayout.rightDifference).toBeCloseTo(0, 1);
+  expect(balanceLayout.gap).toBeCloseTo(balanceLayout.expectedGap, 1);
+
   await page.goto(`/accounts/${account.id}`);
   await page.reload();
 

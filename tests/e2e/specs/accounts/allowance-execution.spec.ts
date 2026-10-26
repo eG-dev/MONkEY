@@ -155,6 +155,14 @@ test('hosted allowance worker resumes interrupted credits after a crash without 
   await expect(page.locator('#account-details-allowance-current')).toHaveText("This month's allowance is +1.25 €.");
   await expect(page.locator('#account-details-allowance-current .positive')).toHaveCSS('color', 'rgb(95, 211, 141)');
   await expect(page.locator('#account-details-allowance-scheduled')).toHaveText(`Credits are posted automatically from ${nextMonth}.`);
+
+  await page.goto('/');
+
+  await expect(page.getByTestId('card-allowance-scheduled')).toHaveText(`From ${nextMonth}: +2.50 € per month`);
+  await expect(page.getByTestId('card-allowance-execution')).toHaveText(`Last credit: ${creditDate}`);
+  await expect(page.getByTestId('card-allowance-scheduled').locator('.amount-positive')).toHaveCSS('color', 'rgb(95, 211, 141)');
+  await page.goto(`/accounts/${account.id}`);
+  await expect(edit).toBeEnabled();
   await edit.click();
   await page.locator('#account-details-allowance-enabled').click();
   await page.locator('#account-details-allowance-save').click();
@@ -212,6 +220,7 @@ test('hosted allowance worker resumes interrupted credits after a crash without 
     expect(await memberPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await memberPage.goto('/');
 
+    await expect(memberPage.getByTestId('card-allowance-scheduled')).toHaveText(`Automatic allowance disabled from ${nextMonth}`);
     await expect(memberPage.getByTestId('card-allowance-execution')).toHaveText(`Last credit: ${creditDate}`);
     await expect(memberPage.getByTestId('card-allowance-execution')).toHaveCSS('color', 'rgb(102, 102, 102)');
   } finally {

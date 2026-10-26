@@ -111,6 +111,8 @@
     "allowancePerMonth": "{amount} pro Monat",
     "allowanceActive": "Automatisches monatliches Taschengeld aktiv",
     "allowanceScheduledTitle": "Automatisches monatliches Taschengeld geplant",
+    "allowanceScheduledMonthly": "{amount} monatlich ab {month}",
+    "allowanceScheduledStop": "Automatisches Taschengeld deaktiviert ab {month}",
     "allowanceStarts": "Die Gutschriften erfolgen automatisch ab {month}.",
     "allowanceStops": "Ab {month} ist das automatische Taschengeld deaktiviert.",
     "allowanceCurrent": "Für diesen Monat beträgt das Taschengeld {amount}.",

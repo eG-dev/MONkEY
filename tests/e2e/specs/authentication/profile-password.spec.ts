@@ -30,7 +30,7 @@ for (const role of ['Manager', 'Member'] as const) {
     const confirmation = page.locator('#profile-confirm-password');
     const confirmationError = page.locator('#profile-confirm-password-error');
     const submit = page.locator('#profile-password-submit');
-    const icon = trigger.locator('.icon-square-asterisk');
+    const icon = trigger.locator('.icon-key-round');
     let passwordWrites = 0;
 
     page.on('request', (request) => {
@@ -42,7 +42,8 @@ for (const role of ['Manager', 'Member'] as const) {
     await expect(trigger).toHaveAccessibleName('Change password');
     await expect(icon).toBeVisible();
     expect(await icon.evaluate((element) => getComputedStyle(element, '::before').content)).not.toBe('none');
-    await trigger.click();
+    await trigger.focus();
+    await page.keyboard.press('Enter');
 
     await expect(dialog).toHaveAccessibleName('Change password');
     await expect(current).toHaveAccessibleName('Current password');

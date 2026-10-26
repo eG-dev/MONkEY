@@ -5,6 +5,128 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Overview Balance Label R1 (2026-10-26)
+
+**Wireframe and matching prototype approved, 2026-10-26.** The user explicitly approved
+the current wireframe with "wireframe approved, implement" after adjusting its
+arrow. The [overview prototype](accounts-overview/index.html) now groups Balance
+and its amount separately from the account name. The label is right-aligned
+directly above the amount, with the existing `--space-2` gap. Amount formatting,
+allowance summaries and card navigation are unchanged. The user subsequently
+confirmed "prototype approved" for the current integrated revision. Angular
+implementation and its separate production verification are complete; see the
+[delivery record](../../development.md#approved-balance-label-and-profile-key-icon-2026-10-26).
+
+Ordinary Chromium passed 16 standalone and 16 integrated combinations of
+Manager/Member, English/German, light/dark and 360x1000/1440x1000. All six cards
+had matching label/amount right edges and the exact token gap, with no label in
+the name row or horizontal overflow. Integrated checks followed a card to
+details and back before visiting Administration and returning to Overview.
+No page errors or fictional data changes occurred. The German light phone
+screenshot was inspected; captures are under ignored
+`.local/balance-label-r1-{360,1440}.png`.
+
+## User Action Icons R1 (2026-10-26)
+
+**Prototype approved, 2026-10-26.** The user confirmed "prototype approved" for
+the current integrated revision. The
+[Users prototype](administration/index.html) replaces visible Edit/Reset password
+text with the existing shared pencil/key icons, matching Angular. Both buttons
+retain translated user-specific accessible names and gain matching title
+tooltips. Existing square icon-button dimensions and phone action layout are
+reused; dialog behavior and role visibility are unchanged.
+
+Ordinary Chromium passed 16 standalone Administration and 16 separate integrated
+scenarios across Manager/Member, English/German, light/dark and
+360x1000/1440x1000. Manager checks verified every row's exact icons, absent visible
+action text, accessible names, matching titles and square dimensions. Enter
+opened Edit; native clicks opened reset confirmation; both cancelled without
+data changes. Members retained Profile and no user actions. Integrated checks
+used the actual navigation drawer/sidebar and Users tab, then returned to
+Overview. No page errors or horizontal overflow occurred. German light phone
+and desktop screenshots were inspected under ignored
+`.local/user-action-icons-r1-{360,1440}.png`.
+
+The reproducible ignored review probe is
+`.local/review-balance-and-user-icons-r1.mjs`. These are prototype checks,
+not production verification; Angular already uses icon-only user actions.
+
+## Profile Key Icon R1 (2026-10-26)
+
+**Profile Key Icon R1 approved, 2026-10-26.** The user confirmed
+"prototype approved" for the current integrated revision. On
+[Profile](administration/index.html), Change password now uses the
+existing shared key icon instead of square-asterisk. No layout, strings or
+password rules changed. Angular now uses its matching key-round icon, with
+separate production verification in the
+[delivery record](../../development.md#approved-balance-label-and-profile-key-icon-2026-10-26).
+This approval does not retroactively change the historical square-asterisk
+approval below.
+
+Ordinary Chromium passed 16 standalone and 16 separate integrated combinations:
+Manager/Member, English/German, light/dark and 360x1000/1440x1000. Native clicks
+opened and cancelled the dialog with all three password fields intact. Checks
+confirmed the exact shared key SVG, localized action name, button fit and no
+horizontal overflow or page errors. Integrated checks used actual Overview,
+user-menu Profile, dialog and return-to-Overview navigation. German light phone
+screenshots were inspected under ignored
+`.local/profile-key-r1-{standalone,integrated}-chromium.png`.
+
+The integrated-browser tab separately passed the same two 16-case matrices
+using forced clicks, with preferences restored and fictional data unchanged.
+Its hidden-tab screenshots were clipped and are not visual evidence; ordinary
+Chromium screenshots above are the visual reference. These are prototype
+checks, not production verification.
+
+The separate Overview Balance Label R1 wireframe and matching card prototype
+are approved; see the
+[design index](../README.md#overview-balance-label-r1-2026-10-26).
+
+## Overview Allowance and Panel Labels R1 (2026-10-26)
+
+**Overview Allowance and Panel Labels R1 approved, 2026-10-26.** The user
+explicitly confirmed "approved" for the named current revision after the
+single-sentence wording and title-spacing refinements.
+Overview cards now distinguish an absent current allowance from an enabled
+next-month configuration. The latter shows one sentence:
+"{amount} monthly from {month}" / "{amount} monatlich ab {month}", with only
+the signed amount in green. This replaces the initial two-line presentation.
+The effective month/year is localized, not a claimed completed credit. For active
+accounts the current amount and execution status remain visible; future amount
+changes or disablement add a separate period-specific line. Fully disabled
+accounts retain the existing no-allowance state.
+
+On details, Transaction History now uses the same existing caption typography
+and secondary color as Balance and Monthly Allowance. Its semantic heading,
+spacing, ledger contents and financial behavior are unchanged. The previous
+Allowance Clarity R2 approval remains historical; this approved refinement
+authorizes the matching Angular changes.
+
+Sixteen standalone and sixteen separate integrated checks passed for
+Manager/Member, English/German, light/dark and 360x1000/1440x1000. Each verified
+the real Mia card's planned amount and start month, then navigated to details
+and back. The three labels had identical computed font size (12px), weight (400)
+and theme-specific color. Additional in-memory account projections checked
+scheduled amount changes, scheduled stops and preservation of current credit
+failure styling. There were no page errors or horizontal overflow. Clicks were
+forced because the integrated browser can be hidden; these are not native
+keyboard checks. Fictional account data was not mutated and saved preferences
+were restored. These were offline-prototype checks before Angular implementation.
+
+The single-sentence refinement passed eight focused standalone/integrated
+English/German checks at 360px/1440px: exact text, signed positive amount, no
+separate start-date line and no horizontal overflow. The wording request does
+not constitute approval of the complete current draft.
+
+Title-spacing refinement: the Monthly Allowance title-to-content gap is 16px
+(`--space-5`), increased from 8px without changing the internal content spacing.
+Eight standalone/integrated English/German checks at 360px/1440px measured the
+gap against the token and confirmed no horizontal overflow.
+
+The approved changes are now implemented in Angular. Separate production-image
+and localized layout evidence is recorded in the
+[development guide](../../development.md#overview-allowance-and-panel-labels-r1-2026-10-26).
+
 ## Prototype Settings R1 (2026-10-26)
 
 **Shared prototype settings R1 draft.** View state now uses a labelled native

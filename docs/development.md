@@ -32,6 +32,98 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Approved Balance Label and Profile Key Icon (2026-10-26)
+
+The user approved the current integrated prototype with "prototype approved",
+covering Overview Balance Label R1, User Action Icons R1 and Profile Key Icon R1.
+Angular overview cards now group the right-aligned Balance label directly above
+the amount rather than under the account name, using the existing spacing token.
+Profile's Change password uses the same local key-round icon as password reset.
+User-management actions already used the approved pencil/key icons. Money
+formatting, financial behavior, translations and password rules are unchanged.
+
+Angular and production-image builds, catalog checks and E2E typechecking passed.
+Four focused production-image E2E cases passed: desktop/mobile allowance-card
+workflows with label geometry assertions, and Manager/Member password changes
+with a rendered key glyph, keyboard activation, validation and failure recovery.
+
+Eight additional isolated production-image reviews covered English/German,
+light/dark and 360px/1440px. Positive, negative, zero and uninitialized accounts
+had the correct label grouping, right alignment and token gap. The profile key,
+keyboard dialog opening/cancellation, no overflow and no page errors passed.
+German dark screenshots are under ignored `.local/approved-layout-r1/`; phone
+overview and desktop profile were inspected. The disposable container, volume
+and login data were removed. This is focused verification, not a full regression
+or hosted CI run.
+
+```text
+npm --prefix web run build
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts specs/authentication/profile-password.spec.ts --grep "manager schedules allowance changes|changes their password" --workers 1
+```
+
+## Credit Runs Label Alignment (2026-10-26)
+
+Angular's Credit runs heading now uses the existing caption font, matching
+Balance, Monthly Allowance and Transaction History in size, regular weight
+and secondary color. The semantic heading and credit information are retained.
+This corrects an implementation mismatch with the prototype's existing font
+size; the separate card-layout and Profile icon drafts remain unimplemented.
+
+Angular and production-image builds, E2E typechecking and two focused
+production-image workflows passed. The regression now compares all four labels
+on desktop and phone. Separate read-only checks against the running development
+app also passed at 360px and 1440px. No full regression or hosted CI run is claimed.
+
+```text
+npm --prefix web run build
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts --grep "manager schedules allowance changes" --workers 1
+```
+
+## Overview Allowance and Panel Labels R1 (2026-10-26)
+
+The user explicitly approved the named current prototype revision, including its
+single-sentence scheduled allowance, Balance-sized titles and 16px gap. Angular
+overview cards now show a configured future amount as "{amount} monthly from
+{month}" rather than "No monthly allowance". Active accounts preserve their
+current amount and credit/failure status, with scheduled changes or stops on a
+separate line. The monthly amount alone is green in scheduled sentences; month
+and year follow the selected presentation locale.
+
+On account details, Monthly Allowance and Transaction History match Balance's
+caption font, regular weight and secondary color. Semantic headings are retained.
+Monthly Allowance has an exact 16px title-to-content gap; this is explicit in
+Angular because its rem spacing token scales with Taiga's root font. Other
+content spacing and global tokens are unchanged. No backend contracts, allowance
+period rules, ledger history or account-management table behavior changed.
+
+Angular and production-image builds, bilingual catalog validation, E2E types
+and all **11 focused production-image allowance checks** passed. New assertions
+cover scheduled card wording before/after hydration, positive amount styling,
+matching title styles, exact gap, future changes/stops and preservation of
+current credits. Existing Manager/Member, validation, retry, stale-edit and
+worker recovery/concurrency checks remain passing.
+
+Eight separate production-image layout reviews covered English/German,
+light/dark and 360px/1440px. Exact wording, positive colors, matching title
+size/weight/color, 16px geometry, no page errors and no overflow passed. German
+dark overview/detail screenshots are under ignored `.local/overview-r1-review/`;
+the phone overview and desktop details were inspected. The disposable review
+container, volume and login data were removed. This is focused verification,
+not a full regression or hosted CI run.
+
+```text
+npm --prefix web run build
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts specs/accounts/allowance-execution.spec.ts --workers 1
+```
+
 ## About Overview Link Alignment (2026-10-26)
 
 Angular's About overview now matches the existing click prototype: the repository

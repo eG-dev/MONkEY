@@ -36,14 +36,16 @@
   min-width: 0;
 }
 
-.card-title {
-  display: grid;
-  min-width: 0;
-}
-
 .card-name {
+  min-width: 0;
   font: var(--type-h2);
   overflow-wrap: anywhere;
+}
+
+.card-balance-group {
+  display: grid;
+  gap: var(--space-2);
+  text-align: end;
 }
 
 .card-balance {

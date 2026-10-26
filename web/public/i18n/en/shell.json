@@ -111,6 +111,8 @@
     "allowancePerMonth": "{amount} per month",
     "allowanceActive": "Automatic monthly allowance active",
     "allowanceScheduledTitle": "Automatic monthly allowance scheduled",
+    "allowanceScheduledMonthly": "{amount} monthly from {month}",
+    "allowanceScheduledStop": "Automatic allowance disabled from {month}",
     "allowanceStarts": "Credits are posted automatically from {month}.",
     "allowanceStops": "Automatic allowance will be disabled from {month}.",
     "allowanceCurrent": "This month's allowance is {amount}.",

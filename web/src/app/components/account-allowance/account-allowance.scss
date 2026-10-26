@@ -16,7 +16,7 @@
   justify-content: space-between;
   column-gap: var(--space-4);
   row-gap: var(--space-5);
-  margin-top: var(--space-3);
+  margin-top: 16px;
 }
 
 .allowance-description {
@@ -32,7 +32,9 @@
 }
 
 .panel-title {
-  margin-bottom: var(--space-3);
+  margin-bottom: 0;
+  font: var(--type-caption);
+  color: var(--text-secondary);
 }
 
 .allowance-state {
@@ -74,7 +76,7 @@ button {
   margin-top: var(--space-7);
 
   h3 {
-    font: var(--type-label);
+    font: var(--type-caption);
     margin: 0 0 var(--space-2);
   }
 

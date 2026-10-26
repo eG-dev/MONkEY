@@ -12,6 +12,7 @@
     .card:hover { background: var(--surface-card-hover); box-shadow: var(--shadow-1); color: var(--text-primary); }
     .card-head { display: flex; align-items: center; gap: var(--space-5); }
     .card-name { font: var(--type-h2); overflow-wrap: anywhere; }
+    .card-balance-group { display: grid; gap: var(--space-2); text-align: end; }
     .card-label { font: var(--type-caption); color: var(--text-secondary); }
     .card-balance { font: var(--type-h1); font-size: var(--fs-32); text-align: end; font-variant-numeric: tabular-nums; }
     .card-balance.muted { font: var(--type-body-lg); }
@@ -32,8 +33,16 @@
 
     function allowanceLine(account) {
       const status = PM.allowanceStatus(account);
+      const scheduled = account.allowanceScheduled;
+      const month = scheduled ? new Intl.DateTimeFormat(PM.prefs.language === 'de' ? 'de-DE' : 'en-US', {
+        month: 'long', year: 'numeric', timeZone: 'UTC'
+      }).format(new Date(`${scheduled.effectiveMonth ?? '2026-11'}-01T12:00:00Z`)) : '';
 
       if (!status.configured) {
+        if (scheduled?.enabled) {
+          return PM.t('scheduledMonthly', { amount: PM.amountHtml(scheduled.amount), month: PM.esc(month) });
+        }
+
         return PM.esc(PM.t('noAllowance'));
       }
 
@@ -42,7 +51,10 @@
       const state = status.credited ? PM.t('creditedOn', { date: PM.date(status.credited, false) })
         : failed ? PM.t('creditFailed')
         : PM.t('nextOn', { date: PM.date(status.next, false) });
-      return `${PM.t('perMonth', { amount })}<span class="allowance-execution${failed ? ' allowance-execution-failed' : ''}">${PM.esc(state)}</span>`;
+      const next = scheduled ? `<span class="allowance-execution">${scheduled.enabled
+        ? PM.t('scheduledAllowance', { month: PM.esc(month), amount: PM.amountHtml(scheduled.amount) })
+        : PM.esc(PM.t('stopsFrom', { month }))}</span>` : '';
+      return `${PM.t('perMonth', { amount })}<span class="allowance-execution${failed ? ' allowance-execution-failed' : ''}">${PM.esc(state)}</span>${next}`;
     }
 
     function render() {
@@ -71,8 +83,8 @@
       view.innerHTML = `${header}<ul class="cards">${accounts.map(account => {
         const balance = PM.money(PM.balance(account));
         return `<li><a class="card" href="../account-details/index.html?account=${account.id}">
-          <span class="card-head">${PM.avatar(account)}<span><span class="card-name">${PM.esc(account.name)}</span><br><span class="card-label">${PM.esc(PM.t('balance'))}</span></span></span>
-          <span class="card-balance ${balance.cls}">${PM.esc(balance.text)}</span>
+          <span class="card-head">${PM.avatar(account)}<span class="card-name">${PM.esc(account.name)}</span></span>
+          <span class="card-balance-group"><span class="card-label">${PM.esc(PM.t('balance'))}</span><span class="card-balance ${balance.cls}">${PM.esc(balance.text)}</span></span>
           <span class="card-allowance">${allowanceLine(account)}</span>
         </a></li>`;
       }).join('')}</ul>`;
@@ -84,8 +96,8 @@
       states: ['normal', 'loading', 'empty', 'error'],
       render,
       strings: {
-        en: { manageAccounts: 'Manage accounts', manage: 'Manage', balance: 'Balance', loading: 'Loading accounts', loadFailed: 'Accounts could not be loaded.', empty: 'No accounts yet', createFirst: 'Create the first account in Accounts', noAllowance: 'No monthly allowance', perMonth: '{amount} monthly', creditedOn: 'credited {date}', nextOn: 'next on {date}', creditFailed: 'credit failed' },
-        de: { manageAccounts: 'Konten verwalten', manage: 'Verwalten', balance: 'Kontostand', loading: 'Konten werden geladen', loadFailed: 'Die Konten konnten nicht geladen werden.', empty: 'Noch keine Konten', createFirst: 'Erstes Konto unter Konten anlegen', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} monatlich', creditedOn: 'gutgeschrieben am {date}', nextOn: 'nächste Gutschrift am {date}', creditFailed: 'Gutschrift fehlgeschlagen' }
+        en: { manageAccounts: 'Manage accounts', manage: 'Manage', balance: 'Balance', loading: 'Loading accounts', loadFailed: 'Accounts could not be loaded.', empty: 'No accounts yet', createFirst: 'Create the first account in Accounts', noAllowance: 'No monthly allowance', perMonth: '{amount} monthly', creditedOn: 'credited {date}', nextOn: 'next on {date}', creditFailed: 'credit failed', scheduledMonthly: '{amount} monthly from {month}', scheduledAllowance: 'From {month}: {amount} monthly', stopsFrom: 'Automatic allowance disabled from {month}' },
+        de: { manageAccounts: 'Konten verwalten', manage: 'Verwalten', balance: 'Kontostand', loading: 'Konten werden geladen', loadFailed: 'Die Konten konnten nicht geladen werden.', empty: 'Noch keine Konten', createFirst: 'Erstes Konto unter Konten anlegen', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} monatlich', creditedOn: 'gutgeschrieben am {date}', nextOn: 'nächste Gutschrift am {date}', creditFailed: 'Gutschrift fehlgeschlagen', scheduledMonthly: '{amount} monatlich ab {month}', scheduledAllowance: 'Ab {month}: {amount} monatlich', stopsFrom: 'Automatisches Taschengeld deaktiviert ab {month}' }
       }
     });
   </script>

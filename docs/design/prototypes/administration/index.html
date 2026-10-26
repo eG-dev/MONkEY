@@ -53,7 +53,7 @@
       return `<div class="profile">
         <section class="panel" aria-labelledby="account-title"><h2 class="panel-title" id="account-title">${PM.esc(PM.t('account'))}</h2>
           <dl class="facts"><dt>${PM.esc(PM.t('displayName'))}</dt><dd>${PM.esc(user.displayName)}</dd><dt>${PM.esc(PM.t('username'))}</dt><dd>${PM.esc(user.username)}</dd><dt>${PM.esc(PM.t('role'))}</dt><dd>${PM.esc(PM.t(user.role))}</dd></dl>
-          <button class="button button-secondary" type="button" id="change-password">${PM.icon('square-asterisk')}${PM.esc(PM.t('changePassword'))}</button>
+          <button class="button button-secondary" type="button" id="change-password">${PM.icon('key')}${PM.esc(PM.t('changePassword'))}</button>
         </section>
         <section class="panel" aria-labelledby="preferences-title"><h2 class="panel-title" id="preferences-title">${PM.esc(PM.t('preferences'))}</h2>
           <div class="form">
@@ -123,7 +123,7 @@
       const rows = [...PM.data.users].sort((a, b) => a.displayName.localeCompare(b.displayName)).map(user => `<tr>
         <td class="user-name">${PM.esc(user.displayName)}</td><td class="username">${PM.esc(user.username)}</td><td class="role">${PM.esc(PM.t(user.role))}</td>
         <td class="status-cell status-${user.status}">${PM.esc(statusLabel(user))}</td>
-        <td class="actions-cell"><span class="row-actions"><button class="button button-link" type="button" data-edit="${user.id}" aria-label="${PM.esc(PM.t('editNamed', { name: user.displayName }))}">${PM.esc(PM.t('edit'))}</button><button class="button button-link" type="button" data-reset="${user.id}" aria-label="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}">${PM.esc(PM.t('resetPassword'))}</button></span></td>
+        <td class="actions-cell"><span class="row-actions"><button class="icon-button" type="button" data-edit="${user.id}" aria-label="${PM.esc(PM.t('editNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('editNamed', { name: user.displayName }))}">${PM.icon('pencil')}</button><button class="icon-button" type="button" data-reset="${user.id}" aria-label="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}">${PM.icon('key')}</button></span></td>
       </tr>`).join('');
       return `<div class="page-header"><span></span><button class="button button-primary" type="button" id="create-user">${PM.icon('plus')}${PM.esc(PM.t('createUser'))}</button></div>
         <div class="table-wrap"><table class="table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('username'))}</th><th>${PM.esc(PM.t('role'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;

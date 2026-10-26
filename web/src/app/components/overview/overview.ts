@@ -54,6 +54,14 @@ export class Overview {
     }
   }
 
+  protected month(value: string): string {
+    return new Intl.DateTimeFormat(this.language.locale(), {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(new Date(`${value}-01T12:00:00Z`));
+  }
+
   protected creditDate(value: string, timezone: string): string {
     return new Intl.DateTimeFormat(this.language.locale(), {
       dateStyle: 'medium',

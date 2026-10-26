@@ -29,14 +29,15 @@
           <a class="card" data-testid="account-card" [routerLink]="['/accounts', account.id]" [attr.aria-label]="t('accounts.open', { name: account.name })">
             <span class="card-head">
               <app-account-avatar [name]="account.name" [imageUrl]="account.imageUrl" />
-              <span class="card-title">
-                <span class="card-name">{{ account.name }}</span>
-                <span class="label">{{ t('accounts.balance') }}</span>
+              <span class="card-name">{{ account.name }}</span>
+            </span>
+            <span class="card-balance-group">
+              <span class="label" data-testid="card-balance-label">{{ t('accounts.balance') }}</span>
+              <span class="card-balance" data-testid="card-balance" [class]="account.balance | amountTone">
+                {{ account.balance === null ? t('accounts.uninitialized') : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
               </span>
             </span>
-            <span class="card-balance" data-testid="card-balance" [class]="account.balance | amountTone">
-              {{ account.balance === null ? t('accounts.uninitialized') : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
-            </span>
+            @let scheduled = account.allowance.scheduled;
             <span class="card-allowance" data-testid="card-allowance">
               @if (account.allowance.current?.enabled && account.allowance.current?.amount; as amount) {
                 <span class="amount-positive">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}</span>
@@ -53,6 +54,23 @@
                     {{ t('accounts.nextCredit', { month: account.allowance.nextEffectiveMonth }) }}
                   </span>
                 }
+                @if (scheduled) {
+                  <span class="allowance-execution" data-testid="card-allowance-scheduled">
+                    @if (scheduled.enabled && scheduled.amount; as amount) {
+                      @let formattedAmount = amount | currencyAmount: language.locale() : account.currency : true;
+                      @let sentence = t('accounts.allowanceScheduled', { month: month(scheduled.effectiveMonth), amount: formattedAmount });
+                      @let amountStart = sentence.indexOf(formattedAmount);
+                      {{ sentence.slice(0, amountStart) }}<span class="amount-positive">{{ formattedAmount }}</span>{{ sentence.slice(amountStart + formattedAmount.length) }}
+                    } @else {
+                      {{ t('accounts.allowanceScheduledStop', { month: month(scheduled.effectiveMonth) }) }}
+                    }
+                  </span>
+                }
+              } @else if (scheduled?.enabled && scheduled?.amount; as amount) {
+                @let formattedAmount = amount | currencyAmount: language.locale() : account.currency : true;
+                @let sentence = t('accounts.allowanceScheduledMonthly', { amount: formattedAmount, month: month(scheduled.effectiveMonth) });
+                @let amountStart = sentence.indexOf(formattedAmount);
+                {{ sentence.slice(0, amountStart) }}<span class="amount-positive">{{ formattedAmount }}</span>{{ sentence.slice(amountStart + formattedAmount.length) }}
               } @else {
                 {{ t('accounts.noAllowance') }}
               }
