@@ -12,6 +12,23 @@ const YAML = require('yaml');
 const readWorkflow = filename => YAML.parse(fs.readFileSync(path.join(root, '.github/workflows', filename), 'utf8'), { uniqueKeys: true });
 const ci = readWorkflow('ci.yml');
 const release = readWorkflow('ghcr-prerelease.yml');
+const wikiAccess = readWorkflow('wiki-access-check.yml');
+
+assert.deepEqual(Object.keys(wikiAccess.on), ['workflow_dispatch']);
+assert.deepEqual(wikiAccess.permissions, {});
+assert.equal(wikiAccess.jobs.check.if, "github.ref == 'refs/heads/main' && github.repository == 'eG-dev/MONkEY'");
+assert.equal(wikiAccess.jobs.check['timeout-minutes'], 5);
+assert(wikiAccess.jobs.check.steps.every(step => !step.uses));
+const wikiProbe = wikiAccess.jobs.check.steps[0];
+assert.equal(wikiProbe.env.WIKI_PUBLISH_TOKEN, '${{ secrets.WIKI_PUBLISH_TOKEN }}');
+const wikiPushes = [...wikiProbe.run.matchAll(/^\s*git\s+.*\bpush\s+(.+)$/gm)];
+assert.equal(wikiPushes.length, 1);
+assert(wikiPushes.every(match => match[1].startsWith('--dry-run --porcelain ')));
+assert(wikiProbe.run.includes('commit --quiet --allow-empty'));
+assert(wikiProbe.run.includes('test "$before" = "$after"'));
+assert(wikiProbe.run.includes('GIT_TERMINAL_PROMPT=0'));
+assert(!wikiProbe.run.includes('set -x'));
+console.log('PASS: manual main-only Wiki credential probe with no token permissions or real pushes');
 
 function validateWorkflows(verification, publication) {
   assert.deepEqual(verification.permissions, { contents: 'read' });
@@ -99,6 +116,45 @@ assert(['synchronize', 'labeled', 'unlabeled'].every(activity => ci.on.pull_requ
 const bash = process.platform === 'win32'
   ? path.resolve(execFileSync('git', ['--exec-path'], { encoding: 'utf8' }).trim(), '../../../bin/bash.exe')
   : 'bash';
+const wikiFixtureRoot = fs.mkdtempSync(path.join(tmpdir(), 'pocket-monkey-wiki-access-'));
+try {
+  const remote = path.join(wikiFixtureRoot, 'remote.git');
+  const seed = path.join(wikiFixtureRoot, 'seed');
+  const summary = path.join(wikiFixtureRoot, 'summary.md');
+  const fixtureGit = args => execFileSync('git', ['-c', 'commit.gpgsign=false', ...args], {
+    encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  fixtureGit(['init', '--bare', '--initial-branch=wiki-test', remote]);
+  fixtureGit(['init', '--initial-branch=wiki-test', seed]);
+  fs.writeFileSync(path.join(seed, 'Home.md'), '# Wiki access fixture\n');
+  fixtureGit(['-C', seed, 'add', 'Home.md']);
+  fixtureGit(['-C', seed, '-c', 'user.name=Wiki fixture', '-c', 'user.email=wiki-fixture@example.invalid',
+    'commit', '--quiet', '-m', 'Initial Wiki fixture']);
+  fixtureGit(['-C', seed, 'push', '--quiet', remote, 'HEAD:refs/heads/wiki-test']);
+  const refs = () => fixtureGit(['-C', remote, 'for-each-ref', '--format=%(refname):%(objectname)']);
+  const before = refs();
+  for (const token of ['not-a-secret-fixture', '']) {
+    const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c', wikiProbe.run], {
+      cwd: wikiFixtureRoot,
+      encoding: 'utf8',
+      env: { ...process.env, WIKI_URL: remote.replaceAll('\\', '/'), WIKI_PUBLISH_TOKEN: token,
+        GITHUB_STEP_SUMMARY: summary.replaceAll('\\', '/') },
+    });
+    assert.ifError(result.error);
+    if (token) {
+      assert.equal(result.status, 0, result.stderr);
+      assert(fs.readFileSync(summary, 'utf8').includes('remote HEAD unchanged'));
+      assert(!`${result.stdout}${result.stderr}`.includes(token), 'Wiki credential probe exposed its credential');
+    } else {
+      assert.notEqual(result.status, 0, 'Missing Wiki credential unexpectedly passed');
+    }
+    assert.equal(refs(), before, 'Wiki credential probe changed a remote ref');
+  }
+} finally {
+  fs.rmSync(wikiFixtureRoot, { recursive: true, force: true });
+}
+console.log('PASS: actual Wiki probe leaves all disposable remote refs unchanged and rejects a missing credential');
+
 for (const [event, full, exported, tag, command] of [
   ['pull_request', 'false', 'false', '', 'run test:smoke'],
   ['pull_request', 'true', 'false', '', 'test'],

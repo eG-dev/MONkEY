@@ -1,7 +1,7 @@
 # ADR-0006 GitHub Delivery
 
 _Creation date_: 2026-10-04
-_Updated_: 2026-10-25
+_Updated_: 2026-10-26
 
 ## Context
 
@@ -76,7 +76,22 @@ only when an older version needs fixes independently of ongoing development.
 	`contents: write` permission, not a verification job or a reason to grant
 	verification jobs publishing privileges.
 
+### Project documentation
+
+- Maintain user, operator and developer guide Markdown in the application
+	repository as the authoritative source. Publish reader-facing views to the
+	GitHub Wiki rather than maintaining independent copies there.
+- Write the maintained guides in English. Automatically publish validated changes
+	from trusted `main` source; PR documentation checks remain read-only.
+- Keep architectural decisions, design sources and unfinished acceptance plans
+	authoritative in the application repository. The Wiki does not replace
+	release-specific deployment assets or establish production readiness.
+- Evaluate publication tooling and Wiki-write authentication separately. The
+	[documentation proposal](../../plans/migration/wiki-documentation.md) records
+	unresolved publishing choices and the proposed content extraction.
+
 ## Change History
 
+- 2026-10-26: Approved repository Markdown as the source for English Wiki documentation with automatic trusted-main publication; publishing tooling and authentication remain separately evaluated choices.
 - 2026-10-25: Approved an explicit owner-authorized exception for failed, unpublished release attempts so verification fixes can reuse a version without weakening published-version immutability.
 - 2026-10-19: Approved source-only public development before completion of third-party release preparation; public Docker images and versioned releases remain separately gated.

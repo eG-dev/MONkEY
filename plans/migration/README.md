@@ -53,6 +53,7 @@ See [testing](testing.md) for current coverage and commands.
 - [Builds and releases](builds-releases.md): hosted verification, approval, publication and artifact identity.
 - [Operations and cutover](04-operations-cutover.md): host rehearsal, backup/restore, upgrades and final acceptance.
 - [Testing](testing.md), [configuration](configuration.md) and [localization](localization.md): cross-cutting contracts and checks.
+- [Wiki documentation plan](wiki-documentation.md): approved structure, English sources and automatic main publication; initialization is complete and hosted authentication verification remains open.
 
 Real-host verification requires the published beta; do not make host rehearsal
 a circular prerequisite for obtaining it. Public beta distribution still requires
