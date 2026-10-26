@@ -104,7 +104,7 @@ standalone(
 
       expect(language).toBe("");
 
-      expect(docker("logs", name)).not.toContain('"event":"listening"');
+      expect(docker("logs", name)).toContain('"event":"listening"');
       expect(docker("logs", name)).not.toMatch(
         /"LogLevel":"(?:Trace|Debug|Information)","Category":"Microsoft\.EntityFrameworkCore/,
       );
