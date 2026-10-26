@@ -32,6 +32,31 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## About Overview Link Alignment (2026-10-26)
+
+Angular's About overview now matches the existing click prototype: the repository
+uses the bundled GitHub SVG and the version-source link uses the local info icon.
+Both overview links omit underlines while retaining hover color and keyboard
+focus outlines. The GitHub mask is shared with the existing header link, whose
+16px dimensions remain unchanged. Link destinations, build identity and
+unavailable-link behavior are unchanged; no design reference was revised.
+
+Angular and production-image builds, E2E typechecking and all four focused
+production-image About/shell checks passed. The checks cover both icon types,
+font-relative sizing, local mask, decoration, desktop/mobile About behavior and
+existing SSR/hydration boundaries. Separate German development-browser checks
+at 360px/1440px verified the disabled state and used a DOM-only enabled-anchor
+styling probe for hover, native keyboard focus and no overflow; they did not
+fabricate build metadata or verify release-source destinations. Both screenshots
+were inspected under ignored `.local/about-overview-review/`.
+
+```text
+npm --prefix web run build
+npm --prefix web run build:image
+npm --prefix tests/e2e run check
+npm --prefix tests/e2e test -- specs/shell/about.spec.ts specs/shell/rendering.spec.ts --workers 1
+```
+
 ## Allowance Clarity R2 (2026-10-26)
 
 The user approved the current account-details prototype with "okay, prototype

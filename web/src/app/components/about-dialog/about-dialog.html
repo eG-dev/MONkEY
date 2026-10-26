@@ -34,15 +34,15 @@
               <div class="about-links">
                 @if (build.repositoryUrl) {
                   <a id="about-github" [href]="build.repositoryUrl" target="_blank" rel="noopener"
-                    ><span class="icon icon-external-link" aria-hidden="true"></span>{{ t('about.repository') }}</a
+                    ><span class="icon icon-github" aria-hidden="true"></span>{{ t('about.repository') }}</a
                   >
                 } @else {
-                  <span role="link" id="about-github" aria-disabled="true"><span class="icon icon-external-link" aria-hidden="true"></span>{{ t('about.repository') }}</span>
+                  <span role="link" id="about-github" aria-disabled="true"><span class="icon icon-github" aria-hidden="true"></span>{{ t('about.repository') }}</span>
                 }
                 @if (build.sourceUrl) {
-                  <a id="about-source" [href]="build.sourceUrl" target="_blank" rel="noopener"><span class="icon icon-code" aria-hidden="true"></span>{{ t('about.source') }}</a>
+                  <a id="about-source" [href]="build.sourceUrl" target="_blank" rel="noopener"><span class="icon icon-info" aria-hidden="true"></span>{{ t('about.source') }}</a>
                 } @else {
-                  <span role="link" id="about-source" aria-disabled="true"><span class="icon icon-code" aria-hidden="true"></span>{{ t('about.source') }}</span>
+                  <span role="link" id="about-source" aria-disabled="true"><span class="icon icon-info" aria-hidden="true"></span>{{ t('about.source') }}</span>
                 }
               </div>
               @if (!build.repositoryUrl || !build.sourceUrl) {

@@ -61,6 +61,13 @@ a {
   flex-shrink: 0;
 }
 
+.icon-github {
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  mask: url('/images/github.svg') center / contain no-repeat;
+}
+
 .muted {
   color: var(--text-secondary);
 }

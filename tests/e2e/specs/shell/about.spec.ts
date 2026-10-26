@@ -98,12 +98,22 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
     "true",
   );
   for (const [selector, key] of [["#about-github", "repositoryUrl"], ["#about-source", "sourceUrl"]]) {
+    await expect(page.locator(selector)).toHaveCSS("text-decoration-line", "none");
+
     if (typeof metadata[key] === "string") {
       await expect(page.locator(selector)).toHaveAttribute("href", metadata[key]);
     } else {
       await expect(page.locator(selector)).toHaveAttribute("aria-disabled", "true");
     }
   }
+  await expect(page.locator("#about-github .icon")).toHaveClass(/icon-github/);
+  await expect(page.locator("#about-github .icon")).toHaveCSS("mask-image", /\/images\/github\.svg/);
+  await expect(page.locator("#about-source .icon")).toHaveClass(/icon-info/);
+
+  const iconSize = await page.locator("#about-source .icon").evaluate((element) => getComputedStyle(element).fontSize);
+
+  await expect(page.locator("#about-github .icon")).toHaveCSS("width", iconSize);
+  await expect(page.locator("#about-github .icon")).toHaveCSS("height", iconSize);
   expect(
     await dialog.evaluate(
       (element) => element.scrollWidth <= element.clientWidth,
