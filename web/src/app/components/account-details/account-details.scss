@@ -49,6 +49,29 @@
   margin-bottom: var(--space-5);
 }
 
+.delete-action {
+  color: var(--action-danger);
+}
+
+.delete-confirm {
+  background: var(--action-danger);
+  color: var(--action-danger-text);
+
+  &:hover:not(:disabled) {
+    background: var(--action-danger-hover);
+  }
+}
+
+.retired-banner {
+  margin-bottom: var(--space-7);
+  flex-wrap: wrap;
+  align-items: center;
+
+  > .message-body {
+    flex: 1 1 12rem;
+  }
+}
+
 .avatar-button {
   position: relative;
   padding: 0;

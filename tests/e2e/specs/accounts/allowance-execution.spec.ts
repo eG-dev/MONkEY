@@ -234,6 +234,97 @@ test('hosted allowance worker resumes interrupted credits after a crash without 
   expect(await (await request.get(`/api/accounts/${account.id}/transactions`)).json()).toEqual(before);
 });
 
+test('retirement pauses active allowance wording and retains completed credit history', async ({ page, request, instance }) => {
+  const manager = bootstrapManager(instance);
+
+  await login(request, manager);
+
+  const account = await createAccount(request, 'Retired active allowance');
+  const path = `/api/accounts/${account.id}`;
+
+  expect((await csrfWrite(request, 'POST', `${path}/opening`, { amount: '10', idempotencyKey: randomUUID() })).status()).toBe(200);
+
+  docker('kill', '--signal', 'KILL', instance.container);
+  configureFixture(instance, account.id, 'seed-interrupted');
+  await restart(instance);
+
+  await expect.poll(async () => (await (await request.get(path)).json()).balance).toBe('13.75');
+
+  await signIn(page, manager, `/accounts/${account.id}`);
+
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance active');
+  await expect(page.getByTestId('ledger-entry').filter({ hasText: 'Allowance' })).toHaveCount(3);
+
+  const lastCredit = await page.locator('#account-details-last-credit').innerText();
+  const configuration = await (await request.get(`${path}/allowance`)).json();
+
+  expect((await csrfWrite(request, 'DELETE', path, {})).status()).toBe(202);
+
+  await page.reload();
+
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance paused');
+  await expect(page.locator('#account-details-allowance-paused-reason')).toContainText('No automatic allowance credits are posted');
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveRole('status');
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveClass(/message-info/);
+  await expect(page.locator('#account-details-allowance-amount-display')).toHaveText('+1.25 € per month');
+  await expect(page.locator('#account-details-allowance-edit')).toHaveCount(0);
+  await expect(page.locator('#account-details-last-credit')).toHaveText(lastCredit);
+  await expect(page.getByTestId('ledger-entry').filter({ hasText: 'Allowance' })).toHaveCount(3);
+  expect(await (await request.get(`${path}/allowance`)).json()).toEqual(configuration);
+
+  expect((await csrfWrite(request, 'POST', `${path}/reactivate`, {})).status()).toBe(204);
+
+  await page.reload();
+
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance active');
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveCount(0);
+  await expect(page.locator('#account-details-last-credit')).toHaveText(lastCredit);
+});
+
+test('reactivation requires an explicit outstanding allowance policy @desktop', async ({ page, request, instance }) => {
+  const manager = bootstrapManager(instance);
+
+  await login(request, manager);
+
+  const account = await createAccount(request, 'Outstanding retirement');
+  const path = `/api/accounts/${account.id}`;
+
+  expect((await csrfWrite(request, 'POST', `${path}/opening`, { amount: '10', idempotencyKey: randomUUID() })).status()).toBe(200);
+
+  docker('kill', '--signal', 'KILL', instance.container);
+  configureFixture(instance, account.id, 'seed-active-failure');
+  await restart(instance);
+
+  await signIn(page, manager, `/accounts/${account.id}`);
+
+  await expect(page.locator('#account-details-credit-outstanding')).toContainText('failed');
+
+  await page.locator('#account-details-delete').click();
+  await page.locator('#account-details-lifecycle-confirm').click();
+
+  await expect(page).toHaveURL(/\/accounts$/);
+
+  await page.getByTestId('archived-account-link').click();
+  await page.locator('#account-details-reactivate').click();
+  await page.locator('#account-details-lifecycle-confirm').click();
+
+  await expect(page.locator('#account-details-lifecycle-error')).toHaveText('Choose what to do with outstanding allowance.');
+  await expect(page.locator('#account-details-missed-credit')).not.toBeChecked();
+  await expect(page.locator('#account-details-missed-drop')).not.toBeChecked();
+  expect((await (await request.get(path)).json()).purgeAtUtc).not.toBeNull();
+
+  await page.locator('#account-details-missed-drop').check();
+
+  const reactivated = page.waitForRequest((request) => request.url().endsWith(`${path}/reactivate`) && request.method() === 'POST');
+
+  await page.locator('#account-details-lifecycle-confirm').click();
+
+  expect((await reactivated).postDataJSON()).toEqual({ missedAllowancePolicy: 'drop' });
+  await expect(page.locator('#account-details-retired')).toHaveCount(0);
+  await expect(page.locator('#account-details-delete')).toBeEnabled();
+  await expect(page.locator('#account-details-credit-outstanding')).toHaveCount(0);
+});
+
 for (const activeAllowance of [false, true]) {
   const viewportTag = activeAllowance ? '' : ' @desktop';
 

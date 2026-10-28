@@ -6,6 +6,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { UserAccount } from '../../models/authentication/user-account';
 import { CreatedUser } from '../../models/authentication/created-user';
 import { TemporaryPassword } from '../../models/authentication/temporary-password';
+import { UserRole } from '../../models/authentication/user-role';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -16,11 +17,11 @@ export class UsersService {
     return firstValueFrom(this.http.get<UserAccount[]>('/api/users').pipe(timeout(5000)));
   }
 
-  create(username: string, displayName: string, role: 'Manager' | 'Member'): Promise<CreatedUser> {
+  create(username: string, displayName: string, role: UserRole): Promise<CreatedUser> {
     return this.auth.write<CreatedUser>('POST', '/api/users', { username, displayName, role });
   }
 
-  update(id: string, displayName: string, role: 'Manager' | 'Member', isActive: boolean): Promise<void> {
+  update(id: string, displayName: string, role: UserRole, isActive: boolean): Promise<void> {
     return this.auth.write('PUT', `/api/users/${encodeURIComponent(id)}`, { displayName, role, isActive });
   }
 

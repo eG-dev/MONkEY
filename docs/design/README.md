@@ -147,6 +147,43 @@ needed for these dialog and wording details. Earlier approvals remain history.
 R1's dialog refinements are included in the approved R2 above.
 See the [verification notes](prototypes/README.md#allowance-clarity-r1-2026-10-26).
 
+## Retired Account Allowance R2 (2026-10-28)
+
+**Account-details prototype R2 approved, 2026-10-28.** The user explicitly approved
+the current revision with "approved". The retirement explanation
+is now an info box directly below Monthly allowance, before the status and amount,
+using the existing info icon and theme-aware message styling. The English/German
+wording is unchanged and the former paragraph is removed. Active accounts are
+unchanged. This is a presentation refinement within the approved wireframe;
+no wireframe revision is needed. Earlier R1 approval remains historical.
+Angular implementation is complete; see the
+[delivery record](../development.md#retired-account-allowance-r2-2026-10-28).
+See the [preview](prototypes/account-details/index.html) and
+[verification notes](prototypes/README.md#retired-account-allowance-r2-2026-10-28).
+Review retired Alex through Accounts in the integrated prototype.
+
+## Retired Account Allowance R1 (2026-10-28)
+
+**Account-details prototype R1 approved, 2026-10-28.** The user approved the
+current wording and divider with "okay, now lets implement everything", then
+explicitly requested the shortened explanation in prototype and implementation.
+The
+[details prototype](prototypes/account-details/index.html) replaces active or
+scheduled allowance status with "Automatic monthly allowance paused" for
+accounts scheduled for deletion. A short explanation says automatic credits
+are suspended while deletion is scheduled, without describing saved settings.
+Future enabled revisions
+are described as saved settings, not promised automatic credits. Amounts,
+credit history, disabled states and active-account wording are preserved.
+English and German are included. This is a wording/state refinement within the
+approved wireframe structure; no wireframe change is needed. Angular
+implementation is complete, including the shortened explanation in both languages.
+A subtle full-width divider separates allowance configuration from Credit runs,
+using the existing border and spacing tokens.
+See the [delivery record](../development.md#retired-account-allowance-r1-2026-10-28).
+See the [verification notes](prototypes/README.md#retired-account-allowance-r1-2026-10-28).
+Earlier Account Deletion R2 approval remains historical for these changed texts.
+
 ## Account Deletion R2 (2026-10-28)
 
 **Account-details wireframe R2 approved, 2026-10-28.** The retired-state annotation now
@@ -163,6 +200,11 @@ current and scheduled allowance settings through retirement and reactivation.
 The revised dialog offers the missed-month choice only when applicable. See the
 [prototype verification](prototypes/README.md#account-deletion-r2-2026-10-28).
 The user explicitly approved the current click prototype.
+
+Angular implementation is complete: Manager delete confirmation, scheduled-deletion
+list, read-only retired details and reactivation. Missed-month choices appear only
+after the backend reports that an explicit policy is required; neither choice is
+preselected. See the [delivery and verification record](../development.md#account-lifecycle-ui-and-typed-roles-2026-10-28).
 
 ## Account Deletion R1 (2026-10-28)
 

@@ -57,6 +57,10 @@
   margin-top: var(--space-3);
 }
 
+#account-details-allowance-paused-reason {
+  margin-top: var(--space-4);
+}
+
 .allowance-settings:not([hidden]) {
   display: grid;
   gap: var(--space-5);
@@ -74,6 +78,8 @@ button {
 
 .allowance-execution {
   margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
 
   h3 {
     font: var(--type-caption);

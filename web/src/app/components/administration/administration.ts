@@ -21,7 +21,7 @@ import { AuthenticationService } from '../../services/authentication/authenticat
           [routerLinkActiveOptions]="{ exact: true }"
           >{{ t('shell.profile') }}</a
         >
-        @if (auth.user()?.role === 'Manager') {
+        @if (auth.isManager()) {
           <a id="administration-tab-users" routerLink="/administration/users" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('auth.users') }}</a>
         }
       </nav>

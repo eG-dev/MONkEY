@@ -102,7 +102,7 @@ export class AccountAllowance {
   protected open(): void {
     const state = this.state();
 
-    if (!state || this.auth.user()?.role !== 'Manager' || this.busy() || !this.interactive()) {
+    if (!state || this.account().purgeAtUtc || !this.auth.isManager() || this.busy() || !this.interactive()) {
       return;
     }
 
@@ -118,7 +118,7 @@ export class AccountAllowance {
   }
 
   protected async save(): Promise<void> {
-    if (this.busy() || !this.interactive() || this.auth.user()?.role !== 'Manager') {
+    if (this.account().purgeAtUtc || this.busy() || !this.interactive() || !this.auth.isManager()) {
       return;
     }
 

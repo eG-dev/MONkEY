@@ -1,8 +1,12 @@
 <section *transloco="let t" [attr.aria-labelledby]="'overview-title'" [attr.aria-busy]="loading()">
   <div class="page-header">
     <h1 class="page-title" id="overview-title">{{ t('shell.overview') }}</h1>
-    @if (auth.user()?.role === 'Manager') {
-      <a id="overview-manage-accounts" routerLink="/accounts">{{ t('overview.manage') }}<span class="icon icon-arrow-right" aria-hidden="true"></span></a>
+
+    @if (auth.isManager()) {
+      <a id="overview-manage-accounts" routerLink="/accounts">
+        {{ t('overview.manage') }}
+        <span class="icon icon-arrow-right" aria-hidden="true"></span>
+      </a>
     }
   </div>
 
@@ -37,10 +41,15 @@
                 {{ account.balance === null ? t('accounts.uninitialized') : (account.balance | currencyAmount: language.locale() : account.currency : true) }}
               </span>
             </span>
+
             @let scheduled = account.allowance.scheduled;
+
             <span class="card-allowance" data-testid="card-allowance">
               @if (account.allowance.current?.enabled && account.allowance.current?.amount; as amount) {
-                <span class="amount-positive">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}</span>
+                <span class="amount-positive">
+                  {{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}
+                </span>
+
                 @if (account.allowance.outstandingExecution; as execution) {
                   <span class="allowance-execution" data-testid="card-allowance-execution" [class.allowance-execution-failed]="execution.status === 'failed'">
                     {{ t(execution.status === 'failed' ? 'accounts.creditFailed' : 'accounts.creditPending', { month: execution.businessMonth }) }}
@@ -54,13 +63,16 @@
                     {{ t('accounts.nextCredit', { month: account.allowance.nextEffectiveMonth }) }}
                   </span>
                 }
+
                 @if (scheduled) {
                   <span class="allowance-execution" data-testid="card-allowance-scheduled">
                     @if (scheduled.enabled && scheduled.amount; as amount) {
                       @let formattedAmount = amount | currencyAmount: language.locale() : account.currency : true;
                       @let sentence = t('accounts.allowanceScheduled', { month: month(scheduled.effectiveMonth), amount: formattedAmount });
                       @let amountStart = sentence.indexOf(formattedAmount);
-                      {{ sentence.slice(0, amountStart) }}<span class="amount-positive">{{ formattedAmount }}</span>{{ sentence.slice(amountStart + formattedAmount.length) }}
+
+                      {{ sentence.slice(0, amountStart) }}<span class="amount-positive">{{ formattedAmount }}</span
+                      >{{ sentence.slice(amountStart + formattedAmount.length) }}
                     } @else {
                       {{ t('accounts.allowanceScheduledStop', { month: month(scheduled.effectiveMonth) }) }}
                     }
@@ -70,7 +82,9 @@
                 @let formattedAmount = amount | currencyAmount: language.locale() : account.currency : true;
                 @let sentence = t('accounts.allowanceScheduledMonthly', { amount: formattedAmount, month: month(scheduled.effectiveMonth) });
                 @let amountStart = sentence.indexOf(formattedAmount);
-                {{ sentence.slice(0, amountStart) }}<span class="amount-positive">{{ formattedAmount }}</span>{{ sentence.slice(amountStart + formattedAmount.length) }}
+
+                {{ sentence.slice(0, amountStart) }}<span class="amount-positive">{{ formattedAmount }}</span
+                >{{ sentence.slice(amountStart + formattedAmount.length) }}
               } @else {
                 {{ t('accounts.noAllowance') }}
               }
@@ -82,7 +96,8 @@
   } @else {
     <div class="empty" id="overview-empty">
       <strong>{{ t('accounts.empty') }}</strong>
-      @if (auth.user()?.role === 'Manager') {
+
+      @if (auth.isManager()) {
         <a id="overview-create-first" routerLink="/accounts">{{ t('overview.createFirst') }}</a>
       }
     </div>

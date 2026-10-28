@@ -5,6 +5,85 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Retired Account Allowance R2 (2026-10-28)
+
+**Account-details prototype R2 approved, 2026-10-28.** The user explicitly approved
+the current revision with "approved". The
+[account-details preview](account-details/index.html) places the
+unchanged retirement explanation in an info box directly below Monthly allowance,
+above the allowance status and amount. It uses the existing info icon, message
+colors and spacing tokens. The old description paragraph is removed; active
+accounts are unchanged. Earlier R1 approval remains historical. Angular now
+implements the approved info box, including its position and status semantics.
+
+To review the retired state, open the integrated entry and follow Accounts to
+the archived Alex account.
+
+The actual inline renderer passed 32 Node/JSDOM cases covering Manager/Member,
+English/German, active/retired accounts and present/absent current and scheduled
+settings. Checks assert one retirement notice immediately after the heading,
+info styling and semantics, no old nested paragraph and unchanged edit visibility.
+
+Standalone integrated-browser checks passed 16 combinations of both roles,
+English/German, light/dark and 360x1000/1440x1000 using the existing fictional
+retired Alex. The localized message appears once, with its info icon and a 12px
+token gap below the heading, before allowance content. No overlap or horizontal
+overflow was found; the dark phone allowance-panel screenshot was inspected.
+
+Through the [integrated entry](index.html), actual navigation from Overview to
+Accounts and the archived Alex link succeeded. A separate 16-case matrix at
+outer 360x1000/1440x1000 verified both roles, languages and themes, message order,
+no overlap, no inner/outer horizontal overflow and no page errors. Preferences
+were restored in memory after each matrix; account data was not changed or saved.
+These are prototype checks, not production E2E verification or design approval.
+
+After explicit approval, Angular and production-image builds, catalog validation
+and E2E typechecking passed. Four focused production-image retirement executions
+passed on desktop/mobile, covering current and scheduled allowances, Manager/Member
+info-box visibility, title adjacency, token spacing, fit, retained settings/history
+and removal on reactivation. Both production panel screenshots were inspected.
+See the [delivery record](../../development.md#retired-account-allowance-r2-2026-10-28).
+
+## Retired Account Allowance R1 (2026-10-28)
+
+**Account-details prototype R1 approved, 2026-10-28.** The user approved the
+current wording and divider for implementation, then requested the shorter
+explanation in both prototype and application. Retired accounts show
+a paused allowance status and an explanation that credits are suspended while
+the account is scheduled for deletion. The explanation does not discuss saved
+settings. Scheduled enabled amounts retain their
+effective month without promising credits. No financial rules or settings change.
+
+The actual inline renderer passed 24 Node VM checks across English/German,
+active/retired accounts, present/absent current settings and enabled/disabled/no
+scheduled revision. These assert that retirement removes active/scheduled
+status and automatic-start promises, while adding the suspension explanation.
+
+Standalone integrated-browser checks passed 16 combinations of Manager/Member,
+English/German, light/dark and 360x1000/1440x1000. Noah was temporarily retired
+in memory; checks confirmed paused status, explanation, retained credit history,
+hidden editing and no horizontal overflow or page errors. Fictional data and
+preferences were restored without saving account changes.
+
+Through the integrated entry, a separate 16-case matrix used the existing retired
+Alex fixture and confirmed paused status, explanation, hidden editing and no
+horizontal overflow. Preferences were restored and account data was unchanged.
+Hidden-tab navigation attempts did not reliably reach the intended Noah page;
+the integrated matrix therefore uses Alex rather than claiming that navigation
+flow passed. These checks cover prototypes only, not the Angular application.
+
+Approved follow-up refinement: a full-width subtle border separates allowance
+configuration from Credit runs, with existing spacing tokens above and below.
+Four integrated-browser checks at 360x1000 and 1440x1000 in light/dark themes
+confirmed a solid 1px theme-colored border, 16px inner spacing and no horizontal
+overflow. This divider refinement has not been separately checked standalone.
+
+The subsequently requested shorter English/German explanation is synchronized
+with the application catalogs. Five focused production-image retirement checks
+passed, including desktop/mobile current and scheduled allowances, unchanged
+settings/history, reactivation, the rendered divider and lifecycle permissions.
+See the [delivery record](../../development.md#retired-account-allowance-r1-2026-10-28).
+
 ## Overview Balance Label R1 (2026-10-26)
 
 **Wireframe and matching prototype approved, 2026-10-26.** The user explicitly approved

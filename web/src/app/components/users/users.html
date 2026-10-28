@@ -1,5 +1,5 @@
 <section *transloco="let t" [attr.aria-label]="t('auth.users')" [attr.aria-busy]="loading()">
-  @if (auth.user()?.role !== 'Manager') {
+  @if (!auth.isManager()) {
     <div class="message message-info" id="users-managers-only">
       <span class="icon icon-info" aria-hidden="true"></span>
       <div class="message-body">{{ t('users.managersOnly') }}</div>
@@ -7,7 +7,8 @@
   } @else {
     <div class="toolbar">
       <button tuiButton appearance="primary" size="m" type="button" id="users-create" [disabled]="busy() || !interactive()" (click)="openCreate()">
-        <span class="icon icon-plus" aria-hidden="true"></span>{{ t('auth.createUser') }}
+        <span class="icon icon-plus" aria-hidden="true"></span>
+        {{ t('auth.createUser') }}
       </button>
     </div>
 
@@ -67,6 +68,7 @@
                   >
                     <span class="icon icon-pencil" aria-hidden="true"></span>
                   </button>
+
                   <button
                     tuiButton
                     data-testid="user-row-reset"
@@ -96,8 +98,10 @@
             <div class="message-body">{{ t(dialogError()) }}</div>
           </div>
         }
+
         <div class="field">
           <label for="users-create-username">{{ t('auth.username') }}</label>
+
           <input
             class="input"
             id="users-create-username"
@@ -109,26 +113,36 @@
             aria-describedby="users-create-username-hint"
             [(ngModel)]="username"
           />
+
           <span class="hint" id="users-create-username-hint">{{ t('users.usernameHint') }}</span>
         </div>
+
         <div class="field">
           <label for="users-create-display-name">{{ t('auth.displayName') }}</label>
+
           <input class="input" id="users-create-display-name" name="displayName" required maxlength="100" [(ngModel)]="displayName" />
         </div>
+
         <fieldset class="field">
           <legend>{{ t('auth.role') }}</legend>
+
           <div class="segments">
-            <label
-              ><input type="radio" id="users-create-role-member" name="role" value="Member" [(ngModel)]="role" /><span>{{ t('auth.Member') }}</span></label
-            >
-            <label
-              ><input type="radio" id="users-create-role-manager" name="role" value="Manager" [(ngModel)]="role" /><span>{{ t('auth.Manager') }}</span></label
-            >
+            <label>
+              <input type="radio" id="users-create-role-member" name="role" [value]="userRoles.Member" [(ngModel)]="role" />
+              <span>{{ t('auth.Member') }}</span>
+            </label>
+
+            <label>
+              <input type="radio" id="users-create-role-manager" name="role" [value]="userRoles.Manager" [(ngModel)]="role" />
+              <span>{{ t('auth.Manager') }}</span>
+            </label>
           </div>
         </fieldset>
       </form>
+
       <ng-container dialog-actions>
         <button tuiButton appearance="secondary" size="m" type="button" id="users-create-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+
         <button tuiButton appearance="primary" size="m" type="submit" id="users-create-submit" form="users-create-form" [disabled]="busy()">{{ t('auth.createUser') }}</button>
       </ng-container>
     </app-modal-dialog>
@@ -141,29 +155,39 @@
             <div class="message-body">{{ t('users.lastManager', { name: selected()?.user?.displayName ?? '' }) }}</div>
           </div>
         }
+
         @if (dialogError()) {
           <div class="message message-danger" id="users-edit-error" role="alert">
             <span class="icon icon-circle-alert" aria-hidden="true"></span>
             <div class="message-body">{{ t(dialogError()) }}</div>
           </div>
         }
+
         <div class="field">
           <label for="users-edit-display-name">{{ t('auth.displayName') }}</label>
+
           <input class="input" id="users-edit-display-name" name="displayName" required maxlength="100" [(ngModel)]="displayName" />
         </div>
+
         <fieldset class="field">
           <legend>{{ t('auth.role') }}</legend>
+
           <div class="segments">
-            <label
-              ><input type="radio" id="users-edit-role-member" name="role" value="Member" [disabled]="lastManager()" [(ngModel)]="role" /><span>{{ t('auth.Member') }}</span></label
-            >
-            <label
-              ><input type="radio" id="users-edit-role-manager" name="role" value="Manager" [(ngModel)]="role" /><span>{{ t('auth.Manager') }}</span></label
-            >
+            <label>
+              <input type="radio" id="users-edit-role-member" name="role" [value]="userRoles.Member" [disabled]="lastManager()" [(ngModel)]="role" />
+              <span>{{ t('auth.Member') }}</span>
+            </label>
+
+            <label>
+              <input type="radio" id="users-edit-role-manager" name="role" [value]="userRoles.Manager" [(ngModel)]="role" />
+              <span>{{ t('auth.Manager') }}</span>
+            </label>
           </div>
         </fieldset>
+
         <div class="switch-row">
           <span class="field-label" id="users-edit-active-label">{{ t('auth.active') }}</span>
+
           <button
             class="switch"
             id="users-edit-active"
@@ -175,13 +199,16 @@
             (click)="toggleActive()"
           ></button>
         </div>
+
         <div class="message message-warning" id="users-edit-sessions-revoked">
           <span class="icon icon-triangle-alert" aria-hidden="true"></span>
           <div class="message-body">{{ t('users.sessionsRevoked') }}</div>
         </div>
       </form>
+
       <ng-container dialog-actions>
         <button tuiButton appearance="secondary" size="m" type="button" id="users-edit-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+
         <button tuiButton appearance="primary" size="m" type="submit" id="users-edit-save" form="users-edit-form" [disabled]="busy()">{{ t('auth.save') }}</button>
       </ng-container>
     </app-modal-dialog>
@@ -194,24 +221,31 @@
         </div>
       }
       <p>{{ t('users.resetConfirm', { name: selected()?.user?.displayName ?? '' }) }}</p>
+
       <ng-container dialog-actions>
         <button tuiButton appearance="secondary" size="m" type="button" id="users-reset-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+
         <button tuiButton appearance="primary" size="m" type="button" id="users-reset-submit" [disabled]="busy()" (click)="reset()">{{ t('auth.resetPassword') }}</button>
       </ng-container>
     </app-modal-dialog>
 
     <app-modal-dialog dialogId="users-password-dialog" [open]="dialog() === 'password'" [heading]="t('auth.temporaryPassword')" [dismissible]="false" (closed)="finishPassword()">
       <p>{{ t('users.temporaryFor', { name: selected()?.user?.displayName ?? '' }) }}</p>
+
       <div class="temporary-password">
         <code id="users-temporary-password">{{ temporaryPassword() }}</code>
+
         <button tuiButton appearance="secondary" size="m" type="button" id="users-temporary-password-copy" (click)="copyPassword()">
-          <span class="icon icon-copy" aria-hidden="true"></span>{{ t(copied() ? 'users.copied' : 'users.copy') }}
+          <span class="icon icon-copy" aria-hidden="true"></span>
+          {{ t(copied() ? 'users.copied' : 'users.copy') }}
         </button>
       </div>
+
       <div class="message message-warning">
         <span class="icon icon-triangle-alert" aria-hidden="true"></span>
         <div class="message-body">{{ t('users.temporaryOnce', { name: selected()?.user?.displayName ?? '' }) }}</div>
       </div>
+
       <ng-container dialog-actions>
         <button tuiButton appearance="primary" size="m" type="button" id="users-password-done" (click)="finishPassword()">{{ t('users.done') }}</button>
       </ng-container>

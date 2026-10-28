@@ -32,6 +32,98 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Account Lifecycle UI and Typed Roles (2026-10-28)
+
+The approved Account Deletion R2 flow is implemented in Angular: Managers get
+the delete icon and confirmation, scheduled-deletion list, read-only retirement
+notice and reactivation action. Members retain read-only access to retired
+account details. Cancellation restores focus; failed deletion remains retryable.
+English and German are included. Backend lifecycle and authorization rules are
+unchanged.
+
+Reactivation first submits without a missed-month policy. If the backend reports
+`missed_allowance_policy_required`, the dialog presents Credit and Drop with no
+default selection. The account stays retired until explicit confirmation succeeds;
+the frontend does not guess whether missed months exist.
+
+Named `UserRole` and `MissedAllowancePolicy` string enums preserve the existing
+wire values. Role guards use the enum-backed `AuthenticationService.isManager`.
+Session responses remain runtime-validated; these frontend types do not generate
+or synchronize backend contracts.
+
+Angular and production-image builds, catalogs and E2E typechecking passed.
+Twelve focused production-image executions passed across lifecycle UI, existing
+account/authentication workflows, explicit missed-month choice and lifecycle API
+permissions. After the final destructive-button styling correction, all four
+desktop/mobile lifecycle executions passed again, including rendered light/dark
+button colors. Manager-header, confirmation and retired-phone screenshots were
+inspected. German catalogs passed; no separate German browser review, full
+regression or hosted CI run is claimed.
+
+```text
+npm --prefix web run build
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/lifecycle-workflows.spec.ts specs/accounts/workflows.spec.ts specs/authentication/workflows.spec.ts --workers 1
+npm --prefix tests/e2e test -- specs/accounts/allowance-execution.spec.ts specs/accounts/api.spec.ts --grep "reactivation requires an explicit|account retirement preserves" --workers 1
+npm --prefix tests/e2e test -- specs/accounts/lifecycle-workflows.spec.ts --workers 1
+```
+
+## Retired Account Allowance R2 (2026-10-28)
+
+The user explicitly approved the current R2 prototype. Angular now places the
+retirement explanation in an info box directly below Monthly allowance, before
+the status and amount. It reuses the existing info icon, theme-aware message
+styles and 12px token spacing. The former description paragraph is removed.
+English/German wording, active accounts and financial behavior are unchanged.
+
+Angular and production-image builds, catalogs and E2E typechecking passed.
+Four focused production-image executions passed: current and scheduled allowance
+retirement on desktop/mobile, Manager/Member visibility, info styling and status
+semantics, title adjacency, spacing and fit, preserved settings/history and removal
+on reactivation. Desktop and phone panel screenshots were inspected. Prototype
+verification separately covers both languages and themes. No full regression or
+hosted CI run is claimed.
+
+```text
+npm --prefix web run build
+npm --prefix tests/e2e run check
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts specs/accounts/allowance-execution.spec.ts --grep "retired accounts pause|retirement pauses active" --workers 1
+npm --prefix web run check:catalogs
+```
+
+## Retired Account Allowance R1 (2026-10-28)
+
+The user approved the allowance status and divider prototype for implementation,
+then requested a shorter explanation in both prototype and application.
+Retired accounts now show a paused allowance status rather than active or
+scheduled credits. The explanation only states that automatic credits are not
+posted while deletion is scheduled. Future revisions remain visible as saved
+settings, allowance editing is hidden during retirement, and a subtle divider
+separates configuration from Credit runs. English and German are included.
+Amounts, history and backend allowance rules are unchanged.
+
+The frontend declares the existing `purgeAtUtc` response field. The BFF now
+forwards existing account DELETE and reactivation POST endpoints; previously
+its allowlist returned 404 before those requests reached backend authorization.
+
+Catalog validation, E2E typechecking, the Release runtime-probe build and the
+production-image build passed. Eleven existing allowance cases passed before
+the BFF transport fix. On the final image, five focused retirement cases passed:
+desktop/mobile scheduled and current allowances, Manager/Member visibility,
+preserved settings/history, reactivation, visible divider and lifecycle API
+permissions. No full regression or hosted CI run is claimed.
+
+```text
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+dotnet build tests/integration/RuntimeChecks/RuntimeChecks.csproj --configuration Release -p:RestoreLockedMode=true
+npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts specs/accounts/allowance-execution.spec.ts specs/accounts/api.spec.ts --grep "retired accounts pause|retirement pauses active|account retirement preserves" --workers 1
+```
+
 ## Approved Balance Label and Profile Key Icon (2026-10-26)
 
 The user approved the current integrated prototype with "prototype approved",
