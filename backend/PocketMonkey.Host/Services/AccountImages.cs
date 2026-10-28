@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using PocketMonkey.Host.Configuration;
 using PocketMonkey.Storage.Entities;
@@ -29,6 +30,11 @@ public sealed class AccountImages
         if (account is null)
         {
             return "not_found";
+        }
+
+        if (account.RetiredAtUtc is not null)
+        {
+            return "account_retired";
         }
 
         using var input = new MemoryStream();
@@ -120,9 +126,19 @@ public sealed class AccountImages
                 output.Flush(true);
             }
 
+            await using var transaction = await database.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+            await database.Entry(account).ReloadAsync(cancellationToken);
+
+            if (database.Entry(account).State == EntityState.Detached || account.RetiredAtUtc is not null)
+            {
+                File.Delete(path);
+                return database.Entry(account).State == EntityState.Detached ? "not_found" : "account_retired";
+            }
+
             account.ImageKey = key;
             AddAudit(id, actor, "account_image_replaced");
             await database.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
             return null;
         }
@@ -135,11 +151,17 @@ public sealed class AccountImages
 
     public async Task<string?> RemoveAsync(string id, string actor, CancellationToken cancellationToken)
     {
+        await using var transaction = await database.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         var account = await database.Accounts.SingleOrDefaultAsync(account => account.Id == id, cancellationToken);
 
         if (account is null)
         {
             return "not_found";
+        }
+
+        if (account.RetiredAtUtc is not null)
+        {
+            return "account_retired";
         }
 
         if (account.ImageKey is null)
@@ -150,6 +172,7 @@ public sealed class AccountImages
         account.ImageKey = null;
         AddAudit(id, actor, "account_image_removed");
         await database.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return null;
     }
@@ -174,6 +197,30 @@ public sealed class AccountImages
         {
             logger.LogWarning(failure, "Account image unavailable for {AccountId}", id);
             return null;
+        }
+    }
+
+    public async Task CollectPendingAsync(CancellationToken cancellationToken)
+    {
+        var pending = await database.PendingImageDeletions.AsNoTracking().ToListAsync(cancellationToken);
+
+        foreach (var item in pending)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (!IsGeneratedKey(item.ImageKey))
+            {
+                throw new InvalidDataException("Invalid pending account image key.");
+            }
+
+            if (await database.Accounts.AnyAsync(account => account.ImageKey == item.ImageKey, cancellationToken))
+            {
+                continue;
+            }
+
+            File.Delete(Path.Combine(settings.ImagesPath, item.ImageKey));
+            await database.PendingImageDeletions.Where(candidate => candidate.ImageKey == item.ImageKey)
+                .ExecuteDeleteAsync(cancellationToken);
         }
     }
 

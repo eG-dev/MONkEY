@@ -56,8 +56,8 @@ internal static class FinancialScenarioFixtures
             Accounts = [Account(AccountId, "Retained history", "100.00")],
             LedgerEntries = new[] { opening }.Concat(Enumerable.Range(21, 25)
                 .Select(sequence => Entry(sequence, "deposit", "1.00"))).ToArray(),
-            RetiredLedgerKeys = [new SnapshotRetiredLedgerKey { IdempotencyKey = Key(2), RetiredAtUtc = ReferenceTime },
-                new SnapshotRetiredLedgerKey { IdempotencyKey = Key(3), RetiredAtUtc = ReferenceTime }],
+            RetiredLedgerKeys = [new SnapshotRetiredLedgerKey { IdempotencyKey = Key(2), AccountId = null, RetiredAtUtc = ReferenceTime },
+                new SnapshotRetiredLedgerKey { IdempotencyKey = Key(3), AccountId = null, RetiredAtUtc = ReferenceTime }],
             LedgerMaintenanceState = State(50, 1)
         };
         var revision = new SnapshotAllowanceRevision
@@ -82,6 +82,7 @@ internal static class FinancialScenarioFixtures
             Attempts = 1,
             LastAttemptAtUtc = ReferenceTime,
             CreditedAtUtc = ReferenceTime,
+            DroppedAtUtc = null,
             ErrorCode = null
         };
         var allowance = empty with
@@ -122,7 +123,7 @@ internal static class FinancialScenarioFixtures
 
     private static SnapshotAccount Account(string id, string name, string balance)
     {
-        return new SnapshotAccount { Id = id, Name = name, NormalizedName = name.ToUpperInvariant(), Balance = balance };
+        return new SnapshotAccount { Id = id, Name = name, NormalizedName = name.ToUpperInvariant(), Balance = balance, RetiredAtUtc = null };
     }
 
     private static SnapshotLedgerEntry Entry(int sequence, string source, string amount)

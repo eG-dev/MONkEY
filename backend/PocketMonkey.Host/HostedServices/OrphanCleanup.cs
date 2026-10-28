@@ -2,12 +2,12 @@ using PocketMonkey.Host.Services;
 
 namespace PocketMonkey.Host.HostedServices;
 
-public sealed class ImageCleanup : BackgroundService
+public sealed class OrphanCleanup : BackgroundService
 {
     private readonly IServiceScopeFactory scopes;
-    private readonly ILogger<ImageCleanup> logger;
+    private readonly ILogger<OrphanCleanup> logger;
 
-    public ImageCleanup(IServiceScopeFactory scopes, ILogger<ImageCleanup> logger)
+    public OrphanCleanup(IServiceScopeFactory scopes, ILogger<OrphanCleanup> logger)
     {
         this.scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -22,11 +22,15 @@ public sealed class ImageCleanup : BackgroundService
             try
             {
                 using var scope = scopes.CreateScope();
-                await scope.ServiceProvider.GetRequiredService<AccountImages>().CollectAsync(stoppingToken);
+                await scope.ServiceProvider.GetRequiredService<AccountAdministration>().PurgeDueAsync(stoppingToken);
+                
+                var images = scope.ServiceProvider.GetRequiredService<AccountImages>();
+                await images.CollectPendingAsync(stoppingToken);
+                await images.CollectAsync(stoppingToken);
             }
             catch (Exception failure) when (failure is not OperationCanceledException)
             {
-                logger.LogError(failure, "Image orphan cleanup failed; it will be retried");
+                logger.LogError(failure, "Orphan cleanup failed; it will be retried");
             }
         }
         while (await timer.WaitForNextTickAsync(stoppingToken));

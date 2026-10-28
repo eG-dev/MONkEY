@@ -8,10 +8,10 @@ guide describes the supported procedure, not a completed host rehearsal.
 
 ## Choose the Recovery Source
 
-| Recovery source | Includes | Does not provide |
-| --- | --- | --- |
-| Complete stopped-instance data backup, plus deployment configuration | Database and its accompanying SQLite files, account images, users, password records and authentication keys | Writes made after the backup, or an automatic database downgrade |
-| Financial JSON snapshot | Accounts, exact stored balances, retained ledger details, historical attribution, allowance revisions/executions and permanent retry/maintenance records | Login users, passwords, sessions, authentication keys, images, later writes or already-pruned transaction details |
+| Recovery source                                                      | Includes                                                                                                                                                 | Does not provide                                                                                                  |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Complete stopped-instance data backup, plus deployment configuration | Database and its accompanying SQLite files, account images, users, password records and authentication keys                                              | Writes made after the backup, or an automatic database downgrade                                                  |
+| Financial JSON snapshot                                              | Accounts, exact stored balances, retained ledger details, historical attribution, allowance revisions/executions and permanent retry/maintenance records | Login users, passwords, sessions, authentication keys, images, later writes or already-pruned transaction details |
 
 A separate directory on the same disk is not off-host disaster protection.
 Choose backup frequency, retention, encryption and private off-host storage to
@@ -145,8 +145,9 @@ docker compose -f compose.yaml run --rm --no-deps --entrypoint dotnet --volume /
 
 Proceed only after `financial_import_success`. The importer has no merge, wipe or
 reset option. It rejects existing financial state, incompatible format or
-configuration, invalid references and busy storage. Format version 1 rejects
-unknown fields and files larger than 256 MiB. Financial inserts are atomic;
+configuration, invalid references and busy storage. Format version 2 rejects
+unknown fields and files larger than 256 MiB; unsupported formats, including
+version 1, are rejected. Financial inserts are atomic;
 a failed import cannot leave partially recovered financial records.
 
 Do not delete existing data or edit the snapshot to bypass an error. Diagnostics

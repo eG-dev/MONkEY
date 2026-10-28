@@ -73,6 +73,8 @@ public static class TransactionEndpoints
 
         LedgerError.NotFound => Failure("not_found", StatusCodes.Status404NotFound),
 
+        LedgerError.AccountRetired => Failure("account_retired", StatusCodes.Status409Conflict),
+
         LedgerError.NotInitialized => Failure("not_initialized", StatusCodes.Status409Conflict),
 
         LedgerError.IdempotencyConflict => Failure("idempotency_conflict", StatusCodes.Status409Conflict),

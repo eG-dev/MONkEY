@@ -21,6 +21,7 @@
     plus: '<path d="M5 12h14M12 5v14"/>',
     github: '<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 19 4.77 5.07 5.07 0 0 0 18.91 1S17.73.65 15 2.48a13.38 13.38 0 0 0-7 0C5.27.65 4.09 1 4.09 1A5.07 5.07 0 0 0 4 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 8 18.13V22"/>',
     minus: '<path d="M5 12h14"/>',
+    delete: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6m5 4v7m4-7v7"/>',
     pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
     back: '<path d="m12 19-7-7 7-7M19 12H5"/>',
     forward: '<path d="M5 12h14m-7-7 7 7-7 7"/>',
@@ -126,7 +127,8 @@
   const currentUser = () => data.users.find(user => user.id === prefs.user) ?? data.users[0];
   const isManager = () => currentUser().role === 'Manager';
   const account = id => data.accounts.find(item => item.id === id);
-  const accountsByName = () => [...data.accounts].sort((a, b) => a.name.localeCompare(b.name, locale()));
+  const accountsByName = () => data.accounts.filter(item => !item.purgeAtUtc).sort((a, b) => a.name.localeCompare(b.name, locale()));
+  const archivedAccountsByName = () => data.accounts.filter(item => item.purgeAtUtc).sort((a, b) => a.name.localeCompare(b.name, locale()));
 
   function allowanceStatus(item) {
     if (!item.allowance.enabled || item.allowance.amount <= 0) {
@@ -134,7 +136,7 @@
     }
 
     const month = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', timeZone: TIME_ZONE }).format(TODAY).slice(0, 7);
-    const credited = item.history.find(entry => entry.type === 'allowance' && new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', timeZone: TIME_ZONE }).format(new Date(entry.at)).slice(0, 7) === month);
+    const credited = item.history.find(entry => entry.type === 'allowance' && (entry.allowanceMonth ?? businessMonth(entry.at)) === month);
     const next = new Date('2026-11-01T00:00:00+01:00');
     return { configured: true, amount: item.allowance.amount, credited: credited?.at, failed: item.allowance.failedPeriod === month, next: next.toISOString() };
   }
@@ -470,6 +472,6 @@
 
   window.PM = {
     init, t, esc, icon, avatar, money, amountHtml, parseAmount, date, businessMonth, balance, allowanceStatus, request, toast, dialog, fieldError, openAbout,
-    get prefs() { return prefs; }, savePrefs, get data() { return data; }, saveData, currentUser, isManager, account, accountsByName, render
+    get prefs() { return prefs; }, savePrefs, get data() { return data; }, saveData, currentUser, isManager, account, accountsByName, archivedAccountsByName, now: () => new Date(TODAY), render
   };
 })();

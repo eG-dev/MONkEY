@@ -12,6 +12,7 @@
     .account-identity { min-width: 0; }
     .name-cell .avatar { flex-shrink: 0; }
     .mobile-status { display: none; }
+    .archived-heading { margin-top: var(--space-7); }
     @media (min-width: 600px) {
       .table { table-layout: fixed; }
       .name-column { width: var(--account-name-column-width); }
@@ -35,6 +36,7 @@
       .table td.numeric { grid-column: 2; grid-row: 1; overflow-wrap: anywhere; white-space: normal; }
       .table td.allowance { grid-row: 2; align-self: start; font: var(--type-caption); }
       .table td.status, .table td.actions-cell { display: none; }
+      .archived-table td.archive-date { grid-column: 2; grid-row: 1; text-align: end; overflow-wrap: anywhere; }
     }
   </style>
 </head>
@@ -62,8 +64,14 @@
           <td class="actions-cell"><a class="icon-button" href="../account-details/index.html?account=${account.id}" aria-label="${PM.esc(PM.t('openNamed', { name: account.name }))}" title="${PM.esc(PM.t('openNamed', { name: account.name }))}">${PM.icon('right')}</a></td>
         </tr>`;
       }).join('');
+      const archived = PM.archivedAccountsByName().map(account => `<tr class="clickable" data-account="${account.id}">
+        <td><span class="name-cell"><a href="../account-details/index.html?account=${account.id}">${PM.avatar(account, true)}<span class="account-name">${PM.esc(account.name)}</span></a></span></td>
+        <td class="archive-date">${PM.esc(PM.date(account.purgeAtUtc, false))}</td>
+        <td class="actions-cell"><a class="icon-button" href="../account-details/index.html?account=${account.id}" aria-label="${PM.esc(PM.t('openNamed', { name: account.name }))}" title="${PM.esc(PM.t('openNamed', { name: account.name }))}">${PM.icon('right')}</a></td>
+      </tr>`).join('');
       view.innerHTML = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('accounts'))}</h1><button class="button button-primary" type="button" id="create">${PM.icon('plus')}${PM.esc(PM.t('create'))}</button></div>
-        <div class="table-wrap"><table class="table"><colgroup><col class="name-column"><col class="balance-column"><col class="allowance-column"><col><col class="actions-column"></colgroup><thead><tr><th>${PM.esc(PM.t('name'))}</th><th class="numeric">${PM.esc(PM.t('balance'))}</th><th class="numeric">${PM.esc(PM.t('allowance'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        <div class="table-wrap"><table class="table"><colgroup><col class="name-column"><col class="balance-column"><col class="allowance-column"><col><col class="actions-column"></colgroup><thead><tr><th>${PM.esc(PM.t('name'))}</th><th class="numeric">${PM.esc(PM.t('balance'))}</th><th class="numeric">${PM.esc(PM.t('allowance'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>
+        ${archived ? `<h2 class="archived-heading">${PM.esc(PM.t('scheduledDeletion'))}</h2><div class="table-wrap"><table class="table archived-table"><colgroup><col class="name-column"><col><col class="actions-column"></colgroup><thead><tr><th>${PM.esc(PM.t('name'))}</th><th>${PM.esc(PM.t('deletionDate'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${archived}</tbody></table></div>` : ''}`;
       document.getElementById('create').addEventListener('click', () => openEditor());
       view.querySelectorAll('tr[data-account]').forEach(row => row.addEventListener('click', event => {
         if (!event.target.closest('a, button')) {
@@ -119,8 +127,8 @@
       title: 'accounts',
       render,
       strings: {
-        en: { openNamed: 'Open account {name}', managersOnly: 'Only Managers can manage accounts.', toOverview: 'Go to the overview', create: 'Create account', name: 'Name', balance: 'Balance', allowance: 'Allowance', perMonth: '{amount} monthly', noAllowance: 'No monthly allowance', status: 'Status', actions: 'Actions', active: 'Active', edit: 'Edit', editNamed: 'Edit {name}', nameHint: '1–40 characters, unique', nameInvalid: 'Enter a name with 1–40 characters.', nameTaken: 'An account with this name already exists.', created: 'Account {name} created.', saved: 'Account {name} saved.' },
-        de: { openNamed: 'Konto {name} öffnen', managersOnly: 'Nur Manager können Konten verwalten.', toOverview: 'Zur Übersicht', create: 'Konto anlegen', name: 'Name', balance: 'Kontostand', allowance: 'Taschengeld', perMonth: '{amount} monatlich', noAllowance: 'Kein monatliches Taschengeld', status: 'Status', actions: 'Aktionen', active: 'Aktiv', edit: 'Bearbeiten', editNamed: '{name} bearbeiten', nameHint: '1–40 Zeichen, eindeutig', nameInvalid: 'Einen Namen mit 1–40 Zeichen eingeben.', nameTaken: 'Ein Konto mit diesem Namen existiert bereits.', created: 'Konto {name} angelegt.', saved: 'Konto {name} gespeichert.' }
+        en: { scheduledDeletion: 'Scheduled for deletion', deletionDate: 'Deletion date', openNamed: 'Open account {name}', managersOnly: 'Only Managers can manage accounts.', toOverview: 'Go to the overview', create: 'Create account', name: 'Name', balance: 'Balance', allowance: 'Allowance', perMonth: '{amount} monthly', noAllowance: 'No monthly allowance', status: 'Status', actions: 'Actions', active: 'Active', edit: 'Edit', editNamed: 'Edit {name}', nameHint: '1–40 characters, unique', nameInvalid: 'Enter a name with 1–40 characters.', nameTaken: 'An account with this name already exists.', created: 'Account {name} created.', saved: 'Account {name} saved.' },
+        de: { scheduledDeletion: 'Zur Löschung vorgemerkt', deletionDate: 'Löschdatum', openNamed: 'Konto {name} öffnen', managersOnly: 'Nur Manager können Konten verwalten.', toOverview: 'Zur Übersicht', create: 'Konto anlegen', name: 'Name', balance: 'Kontostand', allowance: 'Taschengeld', perMonth: '{amount} monatlich', noAllowance: 'Kein monatliches Taschengeld', status: 'Status', actions: 'Aktionen', active: 'Aktiv', edit: 'Bearbeiten', editNamed: '{name} bearbeiten', nameHint: '1–40 Zeichen, eindeutig', nameInvalid: 'Einen Namen mit 1–40 Zeichen eingeben.', nameTaken: 'Ein Konto mit diesem Namen existiert bereits.', created: 'Konto {name} angelegt.', saved: 'Konto {name} gespeichert.' }
       }
     });
   </script>

@@ -58,6 +58,11 @@ public sealed class AllowanceAdministration
             return (null, "not_found");
         }
 
+        if (account.RetiredAtUtc is not null)
+        {
+            return (null, "account_retired");
+        }
+
         if (request.Enabled && account.BalanceMinorUnits is null)
         {
             return (null, "not_initialized");
@@ -129,7 +134,7 @@ public sealed class AllowanceAdministration
             .OrderByDescending(execution => execution.BusinessMonth)
             .FirstOrDefaultAsync(cancellationToken);
         var outstandingExecution = await executions
-            .Where(execution => execution.CreditedAtUtc == null)
+            .Where(execution => execution.CreditedAtUtc == null && execution.DroppedAtUtc == null)
             .OrderBy(execution => execution.BusinessMonth)
             .FirstOrDefaultAsync(cancellationToken);
 

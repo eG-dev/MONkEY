@@ -7,6 +7,7 @@ public enum LedgerError
     InvalidIdempotencyKey,
     InvalidSource,
     NotFound,
+    AccountRetired,
     AlreadyInitialized,
     NotInitialized,
     IdempotencyConflict,

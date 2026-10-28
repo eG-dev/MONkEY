@@ -22,7 +22,26 @@ public static partial class FinancialSnapshotJson
             throw new InvalidDataException("snapshot_invalid");
         }
 
-        return await JsonSerializer.DeserializeAsync<FinancialSnapshot>(stream, Options, cancellationToken)
+        using var document = await JsonDocument.ParseAsync(stream, new JsonDocumentOptions
+        {
+            AllowDuplicateProperties = false,
+            MaxDepth = 32
+        }, cancellationToken);
+
+        if (document.RootElement.ValueKind != JsonValueKind.Object
+            || !document.RootElement.TryGetProperty("formatVersion", out var version)
+            || version.ValueKind != JsonValueKind.Number
+            || !version.TryGetInt32(out var formatVersion))
+        {
+            throw new InvalidDataException("snapshot_invalid");
+        }
+
+        if (formatVersion != FinancialSnapshotValidation.CurrentFormatVersion)
+        {
+            throw new InvalidDataException("snapshot_version_unsupported");
+        }
+
+        return document.RootElement.Deserialize<FinancialSnapshot>(Options)
             ?? throw new InvalidDataException("snapshot_invalid");
     }
 

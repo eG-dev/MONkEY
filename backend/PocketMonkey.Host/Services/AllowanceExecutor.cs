@@ -29,7 +29,8 @@ public sealed class AllowanceExecutor
         var local = TimeZoneInfo.ConvertTime(clock.GetUtcNow(), TimeZoneInfo.FindSystemTimeZoneById(settings.Timezone));
         var dueMonth = local.Year * 100 + local.Month;
         var accounts = await database.AllowanceRevisions.AsNoTracking()
-            .Where(revision => revision.EffectiveMonth <= dueMonth)
+            .Where(revision => revision.EffectiveMonth <= dueMonth && database.Accounts.Any(account =>
+                account.Id == revision.AccountId && account.RetiredAtUtc == null))
             .Select(revision => revision.AccountId)
             .Distinct()
             .ToListAsync(cancellationToken);
@@ -41,10 +42,16 @@ public sealed class AllowanceExecutor
                 .OrderBy(revision => revision.SequenceNumber)
                 .ToListAsync(cancellationToken);
             var completed = await database.AllowanceExecutions.AsNoTracking()
-                .Where(execution => execution.AccountId == accountId && execution.CreditedAtUtc != null)
+                .Where(execution => execution.AccountId == accountId &&
+                    (execution.CreditedAtUtc != null || execution.DroppedAtUtc != null))
                 .Select(execution => execution.BusinessMonth)
                 .ToListAsync(cancellationToken);
             var creditedMonths = completed.ToHashSet();
+
+            if (revisions.Count == 0)
+            {
+                continue;
+            }
 
             for (var month = revisions.Min(revision => revision.EffectiveMonth); month <= dueMonth; month = NextMonth(month))
             {
@@ -72,6 +79,11 @@ public sealed class AllowanceExecutor
 
         await using (var transaction = await database.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken))
         {
+            if (!await database.Accounts.AnyAsync(account => account.Id == accountId && account.RetiredAtUtc == null, cancellationToken))
+            {
+                return false;
+            }
+
             execution = await database.AllowanceExecutions.SingleOrDefaultAsync(
                 candidate => candidate.AccountId == accountId && candidate.BusinessMonth == month, cancellationToken)
                 ?? new AllowanceExecution
@@ -82,7 +94,7 @@ public sealed class AllowanceExecutor
                     IdempotencyKey = Guid.NewGuid().ToString()
                 };
 
-            if (execution.CreditedAtUtc is not null)
+            if (execution.CreditedAtUtc is not null || execution.DroppedAtUtc is not null)
             {
                 return true;
             }
@@ -122,7 +134,8 @@ public sealed class AllowanceExecutor
 
         database.ChangeTracker.Clear();
         await database.AllowanceExecutions
-            .Where(candidate => candidate.Id == execution.Id && candidate.CreditedAtUtc == null)
+            .Where(candidate => candidate.Id == execution.Id && candidate.CreditedAtUtc == null && candidate.DroppedAtUtc == null &&
+                database.Accounts.Any(account => account.Id == candidate.AccountId && account.RetiredAtUtc == null))
             .ExecuteUpdateAsync(update => update.SetProperty(candidate => candidate.ErrorCode, error), cancellationToken);
 
         return false;

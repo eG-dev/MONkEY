@@ -192,8 +192,7 @@ npm --prefix tests/e2e test -- specs/accounts/allowance-workflows.spec.ts specs/
 
 The E2E HTTPS fixture takes its outgoing hostname and port only from the
 container origin. It passes incoming origin-form paths separately and rejects
-absolute, protocol-relative and backslash-containing request targets with HTTP
-400. Retry still rediscovers the container's published loopback port.
+absolute, protocol-relative and backslash-containing request targets with HTTP 400. Retry still rediscovers the container's published loopback port.
 Upstream failure diagnostics use a constant console message and omit request
 URLs, including potentially sensitive query strings.
 
@@ -1043,8 +1042,9 @@ checks, including unchanged days. Files retain UTC timestamps.
 
 Publication uses a flushed temporary file and atomic rename. Failed writes leave
 earlier completed snapshots intact. Only matching application export files are
-pruned, after a successful new publication; unchanged days do not prune. Lowering
-the count takes effect at the next publication. An invalid latest snapshot is
+pruned, after a successful new publication; unchanged days do not prune. Older
+unsupported snapshot formats are preserved and do not count toward current-format
+retention. Lowering the count takes effect at the next publication. An invalid latest snapshot is
 reported as a failure, never silently treated as unchanged. Failures are logged
 without data payloads and retried independently of financial posting/readiness.
 
@@ -1055,7 +1055,8 @@ metadata, allowance revisions/executions, retired retry keys and maintenance
 counters. They exclude login identities/passwords, sessions, authentication keys
 and images; accounts recover with the default image. Historical actors remain
 historical attribution, not new login users. Amounts and 64-bit counters use
-exact strings; format version 1 rejects unknown fields and files over 256 MiB.
+exact strings; format version 2 rejects unknown fields and files over 256 MiB.
+Unsupported snapshot formats, including version 1, are rejected.
 
 Stop the application and use a fresh volume. Set the snapshot's currency,
 business timezone and transaction-retention configuration deliberately before
@@ -1125,16 +1126,16 @@ the unset default). Existing personal language IDs remain `en` and `de`.
 `en-GB` is no longer a supported value for this setting. This does not change
 the configured currency or business timezone.
 
-| Component | Verified version |
-| --- | --- |
-| .NET SDK / runtime / EF Core | 10.0.403 / 10.0.14 / 10.0.14 |
-| Node / Angular framework / SSR and CLI | 24.22.1 / 22.2.3 / 22.2.4 |
-| npm / TypeScript | 12.2.1 / 6.0.3 |
-| Taiga / universal Web APIs | 5.29.0 / 5.4.0 |
-| Transloco / MessageFormat integration | 8.4.0 / 8.4.0 |
-| Lucide static font | 1.61.0 |
-| Playwright | 1.63.0 |
-| Container platform | Linux x86-64 only |
+| Component                              | Verified version             |
+| -------------------------------------- | ---------------------------- |
+| .NET SDK / runtime / EF Core           | 10.0.403 / 10.0.14 / 10.0.14 |
+| Node / Angular framework / SSR and CLI | 24.22.1 / 22.2.3 / 22.2.4    |
+| npm / TypeScript                       | 12.2.1 / 6.0.3               |
+| Taiga / universal Web APIs             | 5.29.0 / 5.4.0               |
+| Transloco / MessageFormat integration  | 8.4.0 / 8.4.0                |
+| Lucide static font                     | 1.61.0                       |
+| Playwright                             | 1.63.0                       |
+| Container platform                     | Linux x86-64 only            |
 
 Patch versions are locked in the manifests/lockfiles. The ICU compiler uses
 CommonJS and adds approximately 77 KB to the initial browser bundle; the explicit
@@ -1246,20 +1247,20 @@ never the reverse. Both run in the same backend process. Follow
 [ADR-0017](ADR/ADR-0017-backend-project-boundaries.md).
 Namespaces follow the project and folder boundaries:
 
-| Project / Folder | Responsibility |
-| --- | --- |
-| Storage / Entities | Persisted domain and Identity entities, not API payloads; ledger source enum and its existing serialization metadata |
-| Storage / PocketMonkeyDbContext | EF context and model mappings |
-| Storage / Migrations | All generated EF migration implementations, designer metadata, and the single model snapshot |
-| Host / Contracts/Authentication, Contracts/Users, Contracts/Accounts | Request/response models grouped by API feature |
-| Host / Endpoints | Feature-specific HTTP routing, policies, and response mapping |
-| Host / Services | Application behavior, transactional user/account administration, and typed error outcomes |
-| Host / HostedServices | Host-managed background workers and scheduling; delegates scoped business behavior to Services |
-| Host / Identity | Identity registration, role enum, cookie validation, policies, and claims |
-| Host / Operations | Host-only manager bootstrap and recovery commands |
-| Host / Startup | Migration execution, role initialization, and Data Protection validation |
-| Host / Health | Database and filesystem readiness |
-| Host / Configuration | Runtime options and validation |
+| Project / Folder                                                     | Responsibility                                                                                                       |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Storage / Entities                                                   | Persisted domain and Identity entities, not API payloads; ledger source enum and its existing serialization metadata |
+| Storage / PocketMonkeyDbContext                                      | EF context and model mappings                                                                                        |
+| Storage / Migrations                                                 | All generated EF migration implementations, designer metadata, and the single model snapshot                         |
+| Host / Contracts/Authentication, Contracts/Users, Contracts/Accounts | Request/response models grouped by API feature                                                                       |
+| Host / Endpoints                                                     | Feature-specific HTTP routing, policies, and response mapping                                                        |
+| Host / Services                                                      | Application behavior, transactional user/account administration, and typed error outcomes                            |
+| Host / HostedServices                                                | Host-managed background workers and scheduling; delegates scoped business behavior to Services                       |
+| Host / Identity                                                      | Identity registration, role enum, cookie validation, policies, and claims                                            |
+| Host / Operations                                                    | Host-only manager bootstrap and recovery commands                                                                    |
+| Host / Startup                                                       | Migration execution, role initialization, and Data Protection validation                                             |
+| Host / Health                                                        | Database and filesystem readiness                                                                                    |
+| Host / Configuration                                                 | Runtime options and validation                                                                                       |
 
 Endpoints use contracts at the HTTP boundary; services operate on entities.
 Moving types between folders does not change routes, JSON contracts, or the schema.
@@ -1816,21 +1817,20 @@ through the wrapper after source changes, then run `up` again.
 ### Service, Ports and Storage
 
 - `app` is the Compose service name used by `exec`, logs and operator commands.
-	The backend remains internal; only the Web-BFF is published.
-- `127.0.0.1:8080:8080` means host loopback port 8080 forwards to container port
-	8080. A host reverse proxy connects to that host port. To use host port 4181,
-	change the mapping to `127.0.0.1:4181:8080` in your deployment copy and update
-	the proxy upstream. Do not expose the backend port.
+  The backend remains internal; only the Web-BFF is published.
+- `127.0.0.1:8080:8080` means host loopback port 8080 forwards to container port 8080. A host reverse proxy connects to that host port. To use host port 4181,
+  change the mapping to `127.0.0.1:4181:8080` in your deployment copy and update
+  the proxy upstream. Do not expose the backend port.
 - `monkey-data:/data` is persistent named-volume storage, not a directory beside
-	the source. It holds SQLite, images and authentication keys. Ordinary
-	recreation and `down` keep it; `down --volumes` deletes it.
+  the source. It holds SQLite, images and authentication keys. Ordinary
+  recreation and `down` keep it; `down --volumes` deletes it.
 - Compose prefixes volume/container names with its project name. Keep the same
-	project name and first Compose file for subsequent commands. Changing
-	`--project-name` or `COMPOSE_PROJECT_NAME` selects different named storage;
-	it does not migrate your existing data.
+  project name and first Compose file for subsequent commands. Changing
+  `--project-name` or `COMPOSE_PROJECT_NAME` selects different named storage;
+  it does not migrate your existing data.
 - `restart: on-failure` restarts a failed application container. It is not a
-	substitute for monitoring or backups. `stop_grace_period: 25s` allows a bounded
-	graceful shutdown before Docker forces termination.
+  substitute for monitoring or backups. `stop_grace_period: 25s` allows a bounded
+  graceful shutdown before Docker forces termination.
 
 Use named storage by default. If adapting the data mount to a host directory,
 pre-create private local-disk storage owned by UID/GID 10001, with Linux mode

@@ -40,7 +40,7 @@ public sealed class FinancialSnapshotService
 
         return new FinancialSnapshot
         {
-            FormatVersion = 1,
+            FormatVersion = FinancialSnapshotValidation.CurrentFormatVersion,
             SnapshotId = Guid.NewGuid().ToString(),
             CapturedAtUtc = capturedAt,
             ApplicationVersion = Environment.GetEnvironmentVariable("MONKEY_BUILD_VERSION") ?? "development",
@@ -54,7 +54,8 @@ public sealed class FinancialSnapshotService
                 Id = account.Id,
                 Name = account.Name,
                 NormalizedName = account.NormalizedName,
-                Balance = account.BalanceMinorUnits is { } balance ? FinancialSnapshotJson.Money(balance) : null
+                Balance = account.BalanceMinorUnits is { } balance ? FinancialSnapshotJson.Money(balance) : null,
+                RetiredAtUtc = account.RetiredAtUtc
             }).ToArray(),
 
             LedgerEntries = entries.Select(entry => new SnapshotLedgerEntry
@@ -109,12 +110,14 @@ public sealed class FinancialSnapshotService
                 Attempts = execution.Attempts,
                 LastAttemptAtUtc = execution.LastAttemptAtUtc,
                 CreditedAtUtc = execution.CreditedAtUtc,
+                DroppedAtUtc = execution.DroppedAtUtc,
                 ErrorCode = execution.ErrorCode
             }).ToArray(),
 
             RetiredLedgerKeys = keys.Select(key => new SnapshotRetiredLedgerKey
             {
                 IdempotencyKey = key.IdempotencyKey,
+                AccountId = key.AccountId,
                 RetiredAtUtc = key.RetiredAtUtc
             }).ToArray(),
 
@@ -154,7 +157,8 @@ public sealed class FinancialSnapshotService
             Id = account.Id,
             Name = account.Name,
             NormalizedName = account.NormalizedName,
-            BalanceMinorUnits = account.Balance is null ? null : FinancialSnapshotJson.ParseMoney(account.Balance)
+            BalanceMinorUnits = account.Balance is null ? null : FinancialSnapshotJson.ParseMoney(account.Balance),
+            RetiredAtUtc = account.RetiredAtUtc
         }));
 
         await database.SaveChangesAsync(cancellationToken);
@@ -187,6 +191,7 @@ public sealed class FinancialSnapshotService
             Attempts = execution.Attempts,
             LastAttemptAtUtc = execution.LastAttemptAtUtc,
             CreditedAtUtc = execution.CreditedAtUtc,
+            DroppedAtUtc = execution.DroppedAtUtc,
             ErrorCode = execution.ErrorCode
         }));
 
@@ -210,6 +215,7 @@ public sealed class FinancialSnapshotService
         database.RetiredLedgerKeys.AddRange(snapshot.RetiredLedgerKeys.Select(key => new RetiredLedgerKey
         {
             IdempotencyKey = key.IdempotencyKey,
+            AccountId = key.AccountId,
             RetiredAtUtc = key.RetiredAtUtc
         }));
 

@@ -68,7 +68,7 @@ if (!isOperatorCommand && settings.ExportPath is { } exportPath)
 
 if (!isOperatorCommand)
 {
-	builder.Services.AddHostedService<ImageCleanup>();
+	builder.Services.AddHostedService<OrphanCleanup>();
 	builder.Services.AddHostedService<AllowanceWorker>();
 	builder.Services.AddHostedService<TransactionRetentionWorker>();
 }

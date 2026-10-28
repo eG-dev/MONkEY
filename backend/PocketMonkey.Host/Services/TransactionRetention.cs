@@ -96,6 +96,7 @@ public sealed class TransactionRetention
             database.RetiredLedgerKeys.AddRange(candidates.Select(entry => new RetiredLedgerKey
             {
                 IdempotencyKey = entry.IdempotencyKey,
+                AccountId = entry.AccountId,
                 RetiredAtUtc = now
             }));
             database.LedgerEntries.RemoveRange(candidates);

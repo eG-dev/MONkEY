@@ -5,11 +5,13 @@ namespace PocketMonkey.Host.Services;
 
 public static class FinancialSnapshotValidation
 {
+    public const int CurrentFormatVersion = 2;
+
     public static void Validate(FinancialSnapshot snapshot)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
 
-        if (snapshot.FormatVersion != 1)
+        if (snapshot.FormatVersion != CurrentFormatVersion)
         {
             throw new InvalidDataException("snapshot_version_unsupported");
         }
@@ -58,6 +60,7 @@ public static class FinancialSnapshotValidation
         {
             Id(key.IdempotencyKey);
             Require(key.RetiredAtUtc.Offset == TimeSpan.Zero);
+            Require(key.AccountId is null || accounts.ContainsKey(key.AccountId));
         }
 
         foreach (var account in accounts.Values)
@@ -65,6 +68,7 @@ public static class FinancialSnapshotValidation
             Id(account.Id);
             Text(account.Name, 40);
             Require(account.Name == account.Name.Trim() && account.NormalizedName == account.Name.ToUpperInvariant());
+            Require(account.RetiredAtUtc is null || account.RetiredAtUtc.Value.Offset == TimeSpan.Zero);
 
             var ledger = accountEntries[account.Id].ToArray();
 
@@ -164,6 +168,8 @@ public static class FinancialSnapshotValidation
 
             Require(execution.LastAttemptAtUtc is null || execution.LastAttemptAtUtc.Value.Offset == TimeSpan.Zero);
             Require(execution.CreditedAtUtc is null || execution.CreditedAtUtc.Value.Offset == TimeSpan.Zero);
+            Require(execution.DroppedAtUtc is null || execution.DroppedAtUtc.Value.Offset == TimeSpan.Zero);
+            Require(execution.DroppedAtUtc is null || execution.CreditedAtUtc is null && execution.ErrorCode is null);
 
             Require(execution.ErrorCode is null or "balance_overflow" or "execution_failed");
 

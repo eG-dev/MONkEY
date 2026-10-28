@@ -4,5 +4,6 @@ public enum AccountError
 {
     InvalidName,
     DuplicateName,
-    NotFound
+    NotFound,
+    Retired
 }

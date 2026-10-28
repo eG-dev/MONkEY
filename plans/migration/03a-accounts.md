@@ -18,5 +18,8 @@ Status: implemented and locally verified. Follow
 - [x] Persisted account state and private SSR isolation survive restart without cross-user leakage.
 
 Images, money and allowances are delivered in their respective slices, not
-deferred features. Account archival/deletion is outside scope. Current commands
-and release gates are in [testing](testing.md) and the [finish-line plan](README.md).
+deferred features. Account archival/deletion is outside the approved implemented
+scope; the pending design review is in
+[lifecycle completion](03h-lifecycle.md#account-deletion-proposal-r4).
+Current commands and release gates are in [testing](testing.md) and the
+[finish-line plan](README.md).

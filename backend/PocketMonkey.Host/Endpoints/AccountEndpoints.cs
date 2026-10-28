@@ -22,6 +22,14 @@ public static class AccountEndpoints
             TypedResults.Ok(await administration.ListAsync(cancellationToken)))
             .WithName("ListAccounts");
 
+        accounts.MapGet("/archived", async (
+            AccountAdministration administration,
+            CancellationToken cancellationToken) =>
+            TypedResults.Ok(await administration.ListRetiredAsync(cancellationToken)))
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
+            .WithName("ListRetiredAccounts")
+            .Produces<List<AccountResponse>>();
+
         accounts.MapGet("/{id}", async Task<IResult> (
             string id,
             AccountAdministration administration,
@@ -81,7 +89,50 @@ public static class AccountEndpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict);
+
+        accounts.MapDelete("/{id}", async Task<IResult> (
+            string id, ClaimsPrincipal principal, AccountAdministration administration, CancellationToken cancellationToken) =>
+            {
+                var result = await administration.DeleteAsync(id,
+                    principal.FindFirstValue(ClaimTypes.NameIdentifier)!, cancellationToken);
+
+                return result.Error is not null
+                    ? LifecycleError(result.Error)
+                    : result.PurgeAtUtc is { } purgeAtUtc
+                        ? TypedResults.Accepted(uri: (string?)null, value: new { purgeAtUtc })
+                        : TypedResults.NoContent();
+            })
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
+            .WithName("DeleteAccount")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status202Accepted)
+            .Produces(StatusCodes.Status404NotFound);
+
+        accounts.MapPost("/{id}/reactivate", async Task<IResult> (
+            string id, ReactivateAccountRequest? request, ClaimsPrincipal principal,
+            AccountAdministration administration, CancellationToken cancellationToken) =>
+            {
+                var error = await administration.ReactivateAsync(id, request?.MissedAllowancePolicy,
+                    principal.FindFirstValue(ClaimTypes.NameIdentifier)!, cancellationToken);
+
+                return error is null ? TypedResults.NoContent() : LifecycleError(error);
+            })
+            .RequireAuthorization(UserRole.Manager.ToIdentityName())
+            .WithName("ReactivateAccount")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status409Conflict);
     }
+
+    private static IResult LifecycleError(string code) => TypedResults.Json(new { code }, statusCode: code switch
+    {
+        "not_found" => StatusCodes.Status404NotFound,
+
+        "account_deletion_expired" => StatusCodes.Status409Conflict,
+
+        _ => StatusCodes.Status400BadRequest
+    });
 
     private static IResult ToResult(AccountError error) => error switch
     {
@@ -93,6 +144,9 @@ public static class AccountEndpoints
 
         AccountError.NotFound => TypedResults.Json(
             new { code = "not_found" }, statusCode: StatusCodes.Status404NotFound),
+
+        AccountError.Retired => TypedResults.Json(
+            new { code = "account_retired" }, statusCode: StatusCodes.Status409Conflict),
 
         _ => throw new ArgumentOutOfRangeException(nameof(error), error, "Unsupported account error.")
     };

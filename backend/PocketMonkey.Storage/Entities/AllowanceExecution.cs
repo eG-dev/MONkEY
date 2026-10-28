@@ -18,5 +18,7 @@ public sealed class AllowanceExecution
 
     public DateTimeOffset? CreditedAtUtc { get; set; }
 
+    public DateTimeOffset? DroppedAtUtc { get; set; }
+
     public string? ErrorCode { get; set; }
 }

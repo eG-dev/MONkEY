@@ -273,6 +273,67 @@ The scheduled-credit sentence now explicitly says "automatic credit" /
 "automatische Gutschrift". Four standalone/integrated English/German browser
 checks confirmed the revised wording and the signed positive amount.
 
+## Account Deletion R2 (2026-10-28)
+
+**Account-details and shared account-state prototype R2 approved, 2026-10-28.**
+The user approved the revised wireframe and click prototype. Retirement preserves current
+and scheduled allowance settings; reactivation retains them. Outstanding
+eligible months still require a credit/drop choice. A dropped or previously
+credited month is not offered again, and a failed credit's automatic retry is
+described as paused while retired. The fixed-clock offline prototype does not
+run scheduled credits or automatic purge. Reset prototype data in Prototype
+settings to load the updated Alex fixture when older fictional data is stored.
+
+Standalone browser checks covered 16 Manager/Member, English/German, light/dark
+and 1440x1000/360x1000 combinations. They checked read-only retired details,
+role restrictions, localized dialog text, required choice and overflow.
+Additional standalone flows checked enabled, disabled and scheduled settings,
+credit/drop, failed requests and retained choices, paused failures, repeated
+retirement, resolved months and historical catch-up credit identities.
+
+A separate integrated pass covered the same 16 outer-viewport combinations
+through Overview, Accounts and account details; Members used a direct retired
+account URL. Additional integrated flows navigated through retirement and both
+reactivation choices, including failed saves and retry, and checked settings
+and Overview after reactivation. Neither pass reported page or console errors.
+The standalone German/dark phone dialog was visually inspected; desktop screenshot
+capture was unavailable. Browser interactions included DOM-dispatched clicks,
+not additional native keyboard evidence. Prototype approval is not application
+verification.
+
+## Account Deletion R1 (2026-10-28)
+
+**Overview shared state, Accounts and account-details prototypes R1 draft.**
+The account-details reactivation behavior is superseded by R2 and the approved
+R7 policy. The following evidence describes the earlier revision.
+Retired accounts are excluded from Overview and active Accounts. Managers can
+open the scheduled-deletion list, delete accounts from details and reactivate
+retired accounts there. Both roles can read retired details via direct links.
+Reactivation requires a credit/drop choice when the fictional fixture has
+outstanding months and leaves future allowance disabled. The offline prototype
+uses a fixed fictional clock; it does not run an automatic purge. Reset prototype
+data in Prototype settings to load the new retired Alex fixture when older
+fictional data is already stored.
+
+Standalone browser checks covered 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. They checked the list,
+read-only retired details, role restrictions and horizontal overflow. Separate
+flow checks covered immediate and opening-only deletion, retirement, failed
+save and retry, required choice, credit and drop, retained choice on failure,
+and disabled future allowance. The fixed-clock deadline was checked as 30 days.
+
+An independent integrated pass covered the same 16 outer-viewport combinations
+through Overview, Accounts and account details. Managers navigated through the
+scheduled list; Members used a direct retired-account URL. Additional integrated
+checks covered retirement, reactivation without outstanding months, validation,
+failed save and retry, credit and deadline rejection. Loading, error/retry and
+the existing credit review states were checked separately. No page errors were
+reported; the review-state pass also reported no console errors. Integrated
+desktop Accounts and German/dark phone account details were visually inspected.
+Some integrated interactions used DOM-dispatched clicks rather than native
+keyboard input. This is prototype evidence, not application verification or
+prototype approval.
+
 ## Password Sampling R1 (2026-10-26)
 
 **Administration Users prototype R1 draft.** Temporary fictional passwords use

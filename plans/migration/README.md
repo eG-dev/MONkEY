@@ -8,13 +8,13 @@ This is the authoritative remaining-work checklist. Decisions live in the
 
 ## Remaining Work
 
-| Order | Next Outcome | Completion Evidence |
-| --- | --- | --- |
-| 1 | Publish the verified beta | Full hosted CI passes; reviewed draft, same tested image, digest-pinned assets and anonymous image pull succeed |
-| 2 | Rehearse on the home server | Ubuntu Docker VM verifies HTTPS/proxy, private storage, bootstrap, core workflows, restart and jobs |
-| 3 | Prove recovery and upgrade procedures | Disposable full-volume backup/restore and upgrade-failure recovery succeed; recovery objectives and backup policy are agreed |
-| 4 | Complete final acceptance | Application-wide design and German/English review, translation contribution guidance, fork-safe CI and operational/security checks are closed |
-| 5 | Approve production cutover | The [release gate](04-operations-cutover.md#release-gate) passes; limitations and the production scope are accepted |
+| Order | Next Outcome                          | Completion Evidence                                                                                                                           |
+| ----- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Publish the verified beta             | Full hosted CI passes; reviewed draft, same tested image, digest-pinned assets and anonymous image pull succeed                               |
+| 2     | Rehearse on the home server           | Ubuntu Docker VM verifies HTTPS/proxy, private storage, bootstrap, core workflows, restart and jobs                                           |
+| 3     | Prove recovery and upgrade procedures | Disposable full-volume backup/restore and upgrade-failure recovery succeed; recovery objectives and backup policy are agreed                  |
+| 4     | Complete final acceptance             | Application-wide design and German/English review, translation contribution guidance, fork-safe CI and operational/security checks are closed |
+| 5     | Approve production cutover            | The [release gate](04-operations-cutover.md#release-gate) passes; limitations and the production scope are accepted                           |
 
 The beta.1 retry has failed again; the reported hosted blocker is .NET
 installation/download availability. Recheck the failure before retrying. Do not
@@ -40,7 +40,7 @@ See [testing](testing.md) for current coverage and commands.
 ## Product Boundaries
 
 - One shared instance; Members read all accounts, Managers perform business writes. Backend authorization is authoritative.
-- No tenancy, email/SMTP, monthly reports, Azure data import, account archival or user deletion/anonymization.
+- No tenancy, email/SMTP, monthly reports, Azure data import, or user deletion/anonymization. Account deletion has focused backend implementation, with UI and production-image lifecycle verification pending; see [lifecycle completion](03h-lifecycle.md#allowance-configuration-on-reactivation-r7).
 - Dedicated transaction reversals are deferred beyond the first release.
 - No required external identity provider, runtime CDN, Redis or separate database server.
 - SQLite uses local disk and a single application instance; do not advertise multi-replica support.
@@ -63,14 +63,14 @@ GitHub dependency reporting and targeted distribution review replace ORT under
 
 ## Completed Milestones
 
-| Milestone | Reference | Current State |
-| --- | --- | --- |
-| 0 | [Guardrails](00-guardrails.md) | Implemented; focused workflow/EF checks and change-scoped documentation validation |
-| 1 | [Runtime stack](01-runtime-stack.md) | Implemented and locally verified |
-| 2A | [Authentication](02-authentication-authorization.md) | Implemented and locally verified |
-| 2B | [UX/UI design](02b-ux-ui-design.md) | Representative design accepted; application-wide review remains |
-| 3 | [Business features](03-ui-business-logic.md) | Agreed first-release feature scope implemented |
-| 4 | [Operations](04-operations-cutover.md) | Financial recovery implemented; release and real-host acceptance remain |
+| Milestone | Reference                                            | Current State                                                                      |
+| --------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 0         | [Guardrails](00-guardrails.md)                       | Implemented; focused workflow/EF checks and change-scoped documentation validation |
+| 1         | [Runtime stack](01-runtime-stack.md)                 | Implemented and locally verified                                                   |
+| 2A        | [Authentication](02-authentication-authorization.md) | Implemented and locally verified                                                   |
+| 2B        | [UX/UI design](02b-ux-ui-design.md)                  | Representative design accepted; application-wide review remains                    |
+| 3         | [Business features](03-ui-business-logic.md)         | Agreed first-release feature scope implemented                                     |
+| 4         | [Operations](04-operations-cutover.md)               | Financial recovery implemented; release and real-host acceptance remain            |
 
 ## Repository and Cutover
 

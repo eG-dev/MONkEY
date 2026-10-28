@@ -1,5 +1,19 @@
 using RuntimeChecks.Tests;
 
+if (args is ["account-lifecycle"])
+{
+    await AccountPersistenceCheck.RunLifecycleAsync();
+
+    return;
+}
+
+if (args is ["snapshot-version"])
+{
+    await FinancialRecoveryCheck.CheckSnapshotVersionsAsync();
+
+    return;
+}
+
 if (args is ["financial-fixtures", var fixtureDirectory])
 {
     await FinancialScenarioFixtures.WriteAsync(fixtureDirectory);

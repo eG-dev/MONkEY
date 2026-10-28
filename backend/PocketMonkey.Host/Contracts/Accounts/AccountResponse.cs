@@ -13,5 +13,7 @@ public sealed record AccountResponse
 
     public string? ImageUrl { get; init; }
 
+    public DateTimeOffset? PurgeAtUtc { get; init; }
+
     public LedgerEntryResponse? OpeningEntry { get; init; }
 }

@@ -43,6 +43,8 @@ public static class OpeningBalanceEndpoints
 
         LedgerError.NotFound => Failure("not_found", StatusCodes.Status404NotFound),
 
+        LedgerError.AccountRetired => Failure("account_retired", StatusCodes.Status409Conflict),
+
         LedgerError.AlreadyInitialized => Failure("already_initialized", StatusCodes.Status409Conflict),
 
         LedgerError.IdempotencyConflict => Failure("idempotency_conflict", StatusCodes.Status409Conflict),

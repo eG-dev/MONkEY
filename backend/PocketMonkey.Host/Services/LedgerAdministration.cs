@@ -173,6 +173,27 @@ public sealed class LedgerAdministration
         var key = requestId.ToString();
 
         await using var transaction = await database.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        var account = await database.Accounts.SingleOrDefaultAsync(account => account.Id == accountId, cancellationToken);
+
+        if (account is null)
+        {
+            return (null, LedgerError.NotFound);
+        }
+
+        if (account.RetiredAtUtc is not null)
+        {
+            return (null, LedgerError.AccountRetired);
+        }
+
+        if (execution is not null)
+        {
+            await database.Entry(execution).ReloadAsync(cancellationToken);
+
+            if (database.Entry(execution).State == EntityState.Detached || execution.DroppedAtUtc is not null)
+            {
+                return (null, LedgerError.AccountRetired);
+            }
+        }
 
         if (await database.RetiredLedgerKeys.AnyAsync(entry => entry.IdempotencyKey == key, cancellationToken))
         {
@@ -187,13 +208,6 @@ public sealed class LedgerAdministration
                 existing.AmountMinorUnits == delta && existing.Comment == comment
                 ? (Describe(existing, settings.Currency), null)
                 : (null, LedgerError.IdempotencyConflict);
-        }
-
-        var account = await database.Accounts.SingleOrDefaultAsync(account => account.Id == accountId, cancellationToken);
-
-        if (account is null)
-        {
-            return (null, LedgerError.NotFound);
         }
 
         if (source == LedgerEntrySource.Opening && account.BalanceMinorUnits.HasValue)

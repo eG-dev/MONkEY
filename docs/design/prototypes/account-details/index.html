@@ -15,6 +15,10 @@
     .view-actions { display: flex; align-items: center; justify-content: end; gap: var(--space-3); max-width: 100%; }
     .view-actions > .icon-button { flex-shrink: 0; }
     .view-actions > .button { white-space: normal; }
+    .delete-action { color: var(--action-danger); border-color: var(--action-danger); }
+    .retired-banner { margin-bottom: var(--space-7); align-items: center; }
+    .retired-banner .message-body { flex: 1; }
+    .retired-banner .button { margin-inline-start: auto; }
     .avatar-button { position: relative; padding: 0; border: 0; border-radius: 50%; background: none; }
     .avatar-button:hover .avatar { outline: 2px solid var(--border-strong); }
     .avatar-badge { position: absolute; inset-inline-end: -2px; inset-block-end: -2px; display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--surface-panel); color: var(--icon-default); }
@@ -76,6 +80,7 @@
     const view = document.getElementById('view');
     const id = new URLSearchParams(location.search).get('account') ?? 'noah';
     const PAGE_SIZE = 20;
+    const PROTOTYPE_NOW = PM.now();
     let page = 0;
     let draft = { type: 'deposit', amount: '', comment: '' };
 
@@ -126,8 +131,12 @@
 
       const balance = PM.balance(account);
       const money = PM.money(balance);
+      const retired = Boolean(account.purgeAtUtc);
+      const manager = PM.isManager();
+      const editable = manager && !retired;
       view.innerHTML = `${back()}
-        <div class="details-head">${PM.isManager() ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1>${PM.isManager() ? `<button class="icon-button" type="button" id="edit-name" aria-label="${PM.esc(PM.t('editNamed', { name: account.name }))}" title="${PM.esc(PM.t('editNamed', { name: account.name }))}">${PM.icon('pencil')}</button>` : ''}<div class="view-actions"><button class="icon-button" type="button" id="refresh-view" aria-label="${PM.esc(PM.t('refresh'))}" title="${PM.esc(PM.t('refresh'))}">${PM.icon('refresh')}</button>${PM.isManager() && balance !== null ? `<button class="button button-primary" type="button" id="record-transaction">${PM.icon('plus')}${PM.esc(PM.t('recordTransaction'))}</button>` : ''}</div></div>
+        <div class="details-head">${editable ? `<button class="avatar-button" type="button" id="edit-image" aria-label="${PM.esc(PM.t('changeImage', { name: account.name }))}" title="${PM.esc(PM.t('changeImage', { name: account.name }))}">${PM.avatar(account)}<span class="avatar-badge" aria-hidden="true">${PM.icon('pencil')}</span></button>` : PM.avatar(account)}<h1 class="page-title">${PM.esc(account.name)}</h1>${editable ? `<button class="icon-button" type="button" id="edit-name" aria-label="${PM.esc(PM.t('editNamed', { name: account.name }))}" title="${PM.esc(PM.t('editNamed', { name: account.name }))}">${PM.icon('pencil')}</button>` : ''}<div class="view-actions">${editable ? `<button class="icon-button delete-action" type="button" id="delete-account" aria-label="${PM.esc(PM.t('deleteAccount'))}" title="${PM.esc(PM.t('deleteAccount'))}">${PM.icon('delete')}</button>` : ''}<button class="icon-button" type="button" id="refresh-view" aria-label="${PM.esc(PM.t('refresh'))}" title="${PM.esc(PM.t('refresh'))}">${PM.icon('refresh')}</button>${editable && balance !== null ? `<button class="button button-primary" type="button" id="record-transaction">${PM.icon('plus')}${PM.esc(PM.t('recordTransaction'))}</button>` : ''}</div></div>
+        ${retired ? `<div class="message message-warning retired-banner" role="status">${PM.icon('warning')}<div class="message-body">${PM.esc(PM.t('scheduledForDeletion', { date: PM.date(account.purgeAtUtc, false) }))}</div>${manager ? `<button class="button button-secondary" type="button" id="reactivate-account">${PM.esc(PM.t('reactivate'))}</button>` : ''}</div>` : ''}
         <div class="layout">
           <div class="side">
             <section class="panel" aria-labelledby="balance-label"><div class="label" id="balance-label">${PM.esc(PM.t('balance'))}</div><div class="balance ${money.cls}">${PM.esc(money.text)}</div></section>
@@ -138,7 +147,113 @@
         </div>`;
       bind(account, balance);
       document.getElementById('edit-name')?.addEventListener('click', () => renameAccount(account));
+      document.getElementById('delete-account')?.addEventListener('click', () => deleteAccount(account));
+      document.getElementById('reactivate-account')?.addEventListener('click', () => reactivateAccount(account));
       document.getElementById('refresh-view').addEventListener('click', render);
+    }
+
+    function deleteAccount(account) {
+      const confirm = PM.dialog({
+        title: PM.t('deleteAccount'),
+        body: `<p>${PM.esc(PM.t('deleteExplanation', { name: account.name }))}</p>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-danger" type="button" id="confirm-delete">${PM.esc(PM.t('deleteAccount'))}</button>`
+      });
+      const button = confirm.querySelector('#confirm-delete');
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        button.textContent = PM.t('saving');
+        confirm.querySelector('.message-error')?.remove();
+
+        try {
+          await PM.request();
+          const hasActivity = account.history.some(entry => ['deposit', 'withdrawal', 'allowance'].includes(entry.type));
+
+          if (hasActivity) {
+            account.purgeAtUtc = new Date(PROTOTYPE_NOW.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+            const status = PM.allowanceStatus(account);
+            const currentMonth = PM.businessMonth(PROTOTYPE_NOW);
+            const completedMonths = new Set([
+              ...(account.droppedAllowanceMonths ?? []),
+              ...account.history.filter(entry => entry.type === 'allowance').map(entry => entry.allowanceMonth ?? PM.businessMonth(entry.at))
+            ]);
+            const failedPeriod = account.allowance.failedPeriod;
+            const missedMonths = failedPeriod && !completedMonths.has(failedPeriod) ? [failedPeriod] : [];
+
+            if (status.configured && !status.credited && !completedMonths.has(currentMonth) && !missedMonths.includes(currentMonth)) {
+              missedMonths.push(currentMonth);
+            }
+
+            account.missedAllowanceMonths = missedMonths.map(month => ({ month, amount: account.allowance.amount }));
+          } else {
+            PM.data.accounts = PM.data.accounts.filter(item => item.id !== account.id);
+          }
+
+          PM.saveData();
+          confirm.close();
+          location.href = '../accounts/index.html';
+        } catch {
+          confirm.querySelector('.dialog-body').insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+          button.disabled = false;
+          button.textContent = PM.t('deleteAccount');
+        }
+      });
+    }
+
+    function reactivateAccount(account) {
+      const outstanding = account.missedAllowanceMonths ?? [];
+      const expired = new Date(account.purgeAtUtc) <= PROTOTYPE_NOW;
+      const choices = outstanding.length ? `<fieldset class="field"><legend>${PM.esc(PM.t('missedAllowance'))}</legend><div class="segments segments-block"><label><input id="credit-missed" type="radio" name="missed-policy" value="credit"><span>${PM.esc(PM.t('creditMissed'))}</span></label><label><input type="radio" name="missed-policy" value="drop"><span>${PM.esc(PM.t('dropMissed'))}</span></label></div></fieldset>` : '';
+      const confirm = PM.dialog({
+        title: PM.t('reactivate'),
+        body: `<form id="reactivate-form" class="form" novalidate><p>${PM.esc(PM.t(expired ? 'reactivationExpired' : 'reactivateExplanation', { name: account.name }))}</p>${expired ? '' : choices}</form>`,
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button>${expired ? '' : `<button class="button button-primary" type="submit" form="reactivate-form" id="confirm-reactivate">${PM.esc(PM.t('reactivate'))}</button>`}`
+      });
+      const form = confirm.querySelector('#reactivate-form');
+      const button = confirm.querySelector('#confirm-reactivate');
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const policy = form.querySelector('[name="missed-policy"]:checked')?.value;
+
+        if (outstanding.length && !PM.fieldError(form.querySelector('#credit-missed'), policy ? '' : PM.t('chooseMissed'))) {
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = PM.t('saving');
+        form.querySelector('.message-error')?.remove();
+
+        try {
+          await PM.request();
+
+          if (policy === 'credit') {
+            outstanding.forEach(item => account.history.push({ at: PROTOTYPE_NOW.toISOString(), type: 'allowance', amount: item.amount, allowanceMonth: item.month, by: 'automatic' }));
+          } else if (policy === 'drop') {
+            account.droppedAllowanceMonths = [...new Set([...(account.droppedAllowanceMonths ?? []), ...outstanding.map(item => item.month)])];
+          }
+
+          const failedPeriod = account.allowance.failedPeriod;
+          const failedPeriodResolved = failedPeriod && (
+            outstanding.some(item => item.month === failedPeriod) ||
+            (account.droppedAllowanceMonths ?? []).includes(failedPeriod) ||
+            account.history.some(entry => entry.type === 'allowance' && (entry.allowanceMonth ?? PM.businessMonth(entry.at)) === failedPeriod)
+          );
+
+          if (failedPeriodResolved) {
+            delete account.allowance.failedPeriod;
+          }
+
+          delete account.purgeAtUtc;
+          delete account.missedAllowanceMonths;
+          PM.saveData();
+          confirm.close();
+          render();
+          PM.toast(PM.t('reactivated', { name: account.name }));
+        } catch {
+          form.insertAdjacentHTML('afterbegin', `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body">${PM.esc(PM.t('saveFailed'))}</div></div>`);
+          button.disabled = false;
+          button.textContent = PM.t('reactivate');
+        }
+      });
     }
 
     function renameAccount(account) {
@@ -213,13 +328,19 @@
       if (fixtureFailed || reviewState === 'credit-pending' || reviewState === 'credit-failed' || reviewState === 'credit-failure-detail') {
         const failed = reviewState !== 'credit-pending';
         const month = fixtureFailed ? account.allowance.failedPeriod : '2026-11';
-        execution += `<div class="message ${failed ? 'message-error allowance-failed' : 'message-info'}" id="allowance-outstanding" role="status">${PM.icon(failed ? 'error' : 'info')}<div class="message-body"><span>${PM.esc(PM.t(failed ? 'creditFailed' : 'creditPending', { month }))}</span>${PM.isManager() ? `<p id="allowance-attempt-details">${PM.esc(PM.t('creditAttempt', { date: PM.date(`${month}-01T00:03:00Z`), attempts: 2 }))}</p>${failed ? `<p id="allowance-failure-reason">${PM.esc(PM.t(reviewState === 'credit-failure-detail' ? 'creditFailureExample' : 'creditStorageFailed'))}</p>` : ''}` : ''}</div></div>`;
+        const statusKey = account.purgeAtUtc ? (failed ? 'creditFailedPaused' : 'creditPendingPaused') : (failed ? 'creditFailed' : 'creditPending');
+        const reasonKey = reviewState === 'credit-failure-detail' ? 'creditFailureExample' : account.purgeAtUtc ? 'creditStoragePaused' : 'creditStorageFailed';
+        execution += `<div class="message ${failed ? 'message-error allowance-failed' : 'message-info'}" id="allowance-outstanding" role="status">${PM.icon(failed ? 'error' : 'info')}<div class="message-body"><span>${PM.esc(PM.t(statusKey, { month }))}</span>${PM.isManager() ? `<p id="allowance-attempt-details">${PM.esc(PM.t('creditAttempt', { date: PM.date(`${month}-01T00:03:00Z`), attempts: 2 }))}</p>${failed ? `<p id="allowance-failure-reason">${PM.esc(PM.t(reasonKey))}</p>` : ''}` : ''}</div></div>`;
       }
 
-      return `<div class="label" id="allowance-label">${PM.esc(PM.t('monthlyAllowance'))}</div><div class="allowance"><div>${text}</div>${PM.isManager() ? `<button class="button button-secondary" type="button" id="set-allowance">${PM.icon('calendar')}${PM.esc(PM.t('setAllowance'))}</button>` : ''}</div><div class="allowance-execution" aria-labelledby="allowance-execution-title"><h3 id="allowance-execution-title">${PM.esc(PM.t('creditRuns'))}</h3>${execution}</div>`;
+      return `<div class="label" id="allowance-label">${PM.esc(PM.t('monthlyAllowance'))}</div><div class="allowance"><div>${text}</div>${PM.isManager() && !account.purgeAtUtc ? `<button class="button button-secondary" type="button" id="set-allowance">${PM.icon('calendar')}${PM.esc(PM.t('setAllowance'))}</button>` : ''}</div><div class="allowance-execution" aria-labelledby="allowance-execution-title"><h3 id="allowance-execution-title">${PM.esc(PM.t('creditRuns'))}</h3>${execution}</div>`;
     }
 
     function formSection(account, balance) {
+      if (account.purgeAtUtc) {
+        return '';
+      }
+
       if (!PM.isManager()) {
         return balance === null ? `<div class="message message-info">${PM.icon('info')}<div class="message-body">${PM.esc(PM.t('noOpeningMember'))}</div></div>` : '';
       }
@@ -474,6 +595,7 @@
       render,
       strings: {
         en: {
+          deleteAccount: 'Delete account', deleteExplanation: 'Delete {name}? Accounts without deposits, withdrawals, or credited allowances are deleted immediately. Otherwise, deletion is scheduled in 30 days.', scheduledForDeletion: 'Scheduled for deletion on {date}', reactivate: 'Reactivate', reactivateExplanation: 'Reactivate {name}? Allowance settings remain unchanged.', reactivationExpired: 'The deletion deadline has passed. This account can no longer be reactivated.', missedAllowance: 'Outstanding allowance', creditMissed: 'Credit outstanding', dropMissed: 'Drop permanently', chooseMissed: 'Choose what to do with outstanding allowance.', reactivated: 'Account {name} reactivated.',
           refresh: 'Refresh',
           name: 'Name', editNamed: 'Edit {name}', nameHint: '1–40 characters, unique', nameInvalid: 'Enter a name with 1–40 characters.', nameTaken: 'An account with this name already exists.', nameSaved: 'Account {name} saved.',
           accountDetails: 'Account details', changeImage: 'Change image of {name}', accountImage: 'Account image', upload: 'Upload image', removeImage: 'Remove image', imageHint: 'PNG, JPEG, or WebP. Maximum 512 x 512 pixels and 2 MiB. Without an image, the first letter of the name is shown.', imageSaved: 'Image of {name} saved.', balance: 'Balance', loadFailed: 'The account could not be loaded.', notFound: 'This account does not exist.',
@@ -482,7 +604,7 @@
           allowanceDisabled: 'Automatic allowance disabled.',
           allowanceStops: 'Automatic allowance will be disabled from {month}.',
           creditRuns: 'Credit runs', latestCredit: 'Last credit: {date}', creditForMonth: '(for {month})', noCredits: 'No allowance credits yet.', creditPending: 'Credit for {month} pending.',
-          creditFailed: 'Credit for {month} failed. Automatic retry pending.', creditAttempt: 'Last attempt: {date}. Attempts: {attempts}.', creditFailureExample: 'Example failure reason.', creditStorageFailed: 'The credit could not be saved. Automatic retry pending.',
+          creditFailed: 'Credit for {month} failed. Automatic retry pending.', creditFailedPaused: 'Credit for {month} failed. Automatic retry is paused.', creditPendingPaused: 'Credit for {month} is pending. Automatic retry is paused.', creditAttempt: 'Last attempt: {date}. Attempts: {attempts}.', creditFailureExample: 'Example failure reason.', creditStorageFailed: 'The credit could not be saved. Automatic retry pending.', creditStoragePaused: 'The credit could not be saved. Automatic retry is paused.',
           setAllowance: 'Set allowance', allowanceEnabled: 'Monthly allowance', amountPerMonth: 'Amount per month',
           allowanceHint: 'Positive, at most two decimal places', allowanceInfo: 'Changes apply from next month. Monthly credits are due on the first day in the business timezone. Saving does not book any money.', allowanceInvalid: 'Enter a positive amount with at most two decimal places.',
           allowanceSaved: 'Monthly allowance for {name} saved.', allowanceOff: 'Monthly allowance for {name} is disabled from next month.', allowanceScheduled: 'At the next scheduled monthly run ({month}), this account is due to receive an automatic credit of {amount}.', allowanceDisabledFrom: 'No monthly allowance from {month}', allowanceRetained: 'Retained amount: {amount}',
@@ -495,6 +617,7 @@
           transactions: 'Transactions', commentHeader: 'Comment', allowanceComment: 'Monthly allowance', noTransactions: 'No transactions yet', date: 'Date', postedBy: 'Recorded by', pages: 'Transaction pages', previous: 'Previous', next: 'Next', pageOf: 'Page {page} of {pages}'
         },
         de: {
+          deleteAccount: 'Konto löschen', deleteExplanation: '{name} löschen? Konten ohne Einzahlungen, Abhebungen oder gutgeschriebenes Taschengeld werden sofort gelöscht. Andernfalls erfolgt die Löschung in 30 Tagen.', scheduledForDeletion: 'Zur Löschung am {date} vorgemerkt', reactivate: 'Reaktivieren', reactivateExplanation: '{name} reaktivieren? Die Taschengeldeinstellungen bleiben unverändert.', reactivationExpired: 'Der Löschzeitpunkt ist erreicht. Dieses Konto kann nicht mehr reaktiviert werden.', missedAllowance: 'Ausstehendes Taschengeld', creditMissed: 'Nachzahlen', dropMissed: 'Dauerhaft verfallen lassen', chooseMissed: 'Wähle, was mit dem ausstehenden Taschengeld geschehen soll.', reactivated: 'Konto {name} reaktiviert.',
           refresh: 'Aktualisieren',
           name: 'Name', editNamed: '{name} bearbeiten', nameHint: '1–40 Zeichen, eindeutig', nameInvalid: 'Einen Namen mit 1–40 Zeichen eingeben.', nameTaken: 'Ein Konto mit diesem Namen existiert bereits.', nameSaved: 'Konto {name} gespeichert.',
           accountDetails: 'Kontodetails', changeImage: 'Bild von {name} ändern', accountImage: 'Kontobild', upload: 'Bild hochladen', removeImage: 'Bild entfernen', imageHint: 'PNG, JPEG oder WebP. Maximal 512 x 512 Pixel und 2 MiB. Ohne Bild wird der erste Buchstabe des Namens angezeigt.', imageSaved: 'Bild von {name} gespeichert.', balance: 'Kontostand', loadFailed: 'Das Konto konnte nicht geladen werden.', notFound: 'Dieses Konto existiert nicht.',
@@ -503,7 +626,7 @@
           allowanceDisabled: 'Automatisches Taschengeld deaktiviert.',
           allowanceStops: 'Ab {month} ist das automatische Taschengeld deaktiviert.',
           creditRuns: 'Gutschriften', latestCredit: 'Letzte Gutschrift: {date}', creditForMonth: '(für {month})', noCredits: 'Noch keine Taschengeldgutschriften.', creditPending: 'Gutschrift für {month} ausstehend.',
-          creditFailed: 'Gutschrift für {month} fehlgeschlagen. Automatischer Wiederholungsversuch ausstehend.', creditAttempt: 'Letzter Versuch: {date}. Versuche: {attempts}.', creditFailureExample: 'Beispiel für eine Fehlermeldung.', creditStorageFailed: 'Die Gutschrift konnte nicht gespeichert werden. Automatischer Wiederholungsversuch ausstehend.',
+          creditFailed: 'Gutschrift für {month} fehlgeschlagen. Automatischer Wiederholungsversuch ausstehend.', creditFailedPaused: 'Gutschrift für {month} fehlgeschlagen. Der automatische Wiederholungsversuch ist pausiert.', creditPendingPaused: 'Gutschrift für {month} ausstehend. Der automatische Wiederholungsversuch ist pausiert.', creditAttempt: 'Letzter Versuch: {date}. Versuche: {attempts}.', creditFailureExample: 'Beispiel für eine Fehlermeldung.', creditStorageFailed: 'Die Gutschrift konnte nicht gespeichert werden. Automatischer Wiederholungsversuch ausstehend.', creditStoragePaused: 'Die Gutschrift konnte nicht gespeichert werden. Der automatische Wiederholungsversuch ist pausiert.',
           setAllowance: 'Taschengeld festlegen', allowanceEnabled: 'Monatliches Taschengeld', amountPerMonth: 'Betrag pro Monat',
           allowanceHint: 'Positiv, höchstens zwei Nachkommastellen', allowanceInfo: 'Änderungen gelten ab dem nächsten Monat. Monatliche Gutschriften sind am ersten Tag in der Geschäftszeitzone fällig. Das Speichern bucht kein Geld.', allowanceInvalid: 'Einen positiven Betrag mit höchstens zwei Nachkommastellen eingeben.',
           allowanceSaved: 'Monatliches Taschengeld für {name} gespeichert.', allowanceOff: 'Monatliches Taschengeld für {name} ist ab dem nächsten Monat deaktiviert.', allowanceScheduled: 'Beim nächsten planmäßigen Monatslauf ({month}) ist für dieses Konto eine automatische Gutschrift von {amount} vorgesehen.', allowanceDisabledFrom: 'Kein monatliches Taschengeld ab {month}', allowanceRetained: 'Gespeicherter Betrag: {amount}',

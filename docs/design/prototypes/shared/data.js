@@ -16,6 +16,11 @@ window.PM_SEED = () => {
 
   return {
     accounts: [
+      {
+        id: 'alex', name: 'Alex', allowance: { enabled: true, amount: 500 },
+        purgeAtUtc: '2026-11-09T11:00:00+01:00', missedAllowanceMonths: [{ month: '2026-10', amount: 500 }],
+        history: [entry('2026-09-01T10:00:00+02:00', 'opening', 1000), entry('2026-09-15T10:00:00+02:00', 'deposit', 500)]
+      },
       { id: 'ben', name: 'Ben', allowance: { enabled: false, amount: 0 }, history: [] },
       { id: 'emma', name: 'Emma', allowance: { enabled: true, amount: 500 }, history: emma },
       {

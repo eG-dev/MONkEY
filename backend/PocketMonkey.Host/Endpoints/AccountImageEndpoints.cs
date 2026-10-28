@@ -60,6 +60,8 @@ public static class AccountImageEndpoints
 
         "image_unavailable" => StatusCodes.Status503ServiceUnavailable,
 
+        "account_retired" => StatusCodes.Status409Conflict,
+
         _ => StatusCodes.Status400BadRequest
     });
 }
