@@ -1,5 +1,5 @@
 <section *transloco="let t" aria-labelledby="accounts-title" [attr.aria-busy]="loading()">
-  @if (auth.user()?.role !== 'Manager') {
+  @if (!auth.isManager()) {
     <div class="message message-info" id="accounts-managers-only">
       <span class="icon icon-info" aria-hidden="true"></span>
       <div class="message-body">
@@ -10,8 +10,10 @@
   } @else {
     <div class="page-header">
       <h1 class="page-title" id="accounts-title">{{ t('accounts.title') }}</h1>
+
       <button tuiButton appearance="primary" size="m" type="button" id="accounts-create" [disabled]="busy() || !interactive()" (click)="open('new')">
-        <span class="icon icon-plus" aria-hidden="true"></span>{{ t('accounts.create') }}
+        <span class="icon icon-plus" aria-hidden="true"></span>
+        {{ t('accounts.create') }}
       </button>
     </div>
 
@@ -74,7 +76,9 @@
                 </td>
                 <td class="numeric allowance" data-testid="account-row-allowance">
                   @if (account.allowance.current?.enabled && account.allowance.current?.amount; as amount) {
-                    <span class="amount-positive">{{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}</span>
+                    <span class="amount-positive">
+                      {{ t('accounts.allowancePerMonth', { amount: amount | currencyAmount: language.locale() : account.currency : true }) }}
+                    </span>
                   } @else {
                     {{ t('accounts.noAllowance') }}
                   }
@@ -104,6 +108,62 @@
       </div>
     }
 
+    @if (archivedLoading() || archivedError() || archivedAccounts().length) {
+      <section class="archived-accounts" aria-labelledby="accounts-archived-title">
+        <h2 class="panel-title" id="accounts-archived-title">{{ t('accounts.scheduledDeletions') }}</h2>
+
+        @if (archivedLoading()) {
+          <p class="muted" id="accounts-archived-loading" role="status">{{ t('accounts.loading') }}</p>
+        } @else if (archivedError()) {
+          <div class="message message-danger" id="accounts-archived-error" role="alert">{{ t(archivedError()) }}</div>
+
+          <button tuiButton appearance="secondary" size="s" type="button" id="accounts-archived-retry" (click)="loadArchived()">{{ t('tryAgain') }}</button>
+        } @else {
+          <div class="table-wrap">
+            <table class="table stack-table" id="accounts-archived-table">
+              <thead>
+                <tr>
+                  <th>{{ t('accounts.name') }}</th>
+                  <th>{{ t('accounts.deletionDate') }}</th>
+                  <th>
+                    <span class="visually-hidden">{{ t('accounts.actions') }}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (account of archivedAccounts(); track account.id) {
+                  <tr data-testid="archived-account-row">
+                    <td class="name">
+                      <span class="name-cell">
+                        <a data-testid="archived-account-link" [routerLink]="['/accounts', account.id]">
+                          <app-account-avatar [name]="account.name" [imageUrl]="account.imageUrl" [small]="true" />
+                          <span class="account-name">{{ account.name }}</span>
+                        </a>
+                      </span>
+                    </td>
+                    <td>{{ deletionDate(account) }}</td>
+                    <td class="row-actions">
+                      <a
+                        tuiButton
+                        appearance="flat"
+                        size="s"
+                        data-testid="archived-account-open"
+                        [routerLink]="['/accounts', account.id]"
+                        [attr.aria-label]="t('accounts.open', { name: account.name })"
+                        [title]="t('accounts.open', { name: account.name })"
+                      >
+                        <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+
     <app-modal-dialog dialogId="accounts-create-dialog" [open]="editing() !== null" [heading]="t('accounts.create')" (closed)="close()">
       <form class="form" id="accounts-create-form" (ngSubmit)="save()">
         @if (dialogError()) {
@@ -112,8 +172,10 @@
             <div class="message-body">{{ t(dialogError()) }}</div>
           </div>
         }
+
         <div class="field">
           <label for="accounts-create-name">{{ t('accounts.name') }}</label>
+
           <input
             class="input"
             id="accounts-create-name"
@@ -125,11 +187,14 @@
             [attr.aria-invalid]="dialogError() ? 'true' : null"
             [(ngModel)]="name"
           />
+
           <span class="hint" id="accounts-create-name-hint">{{ t('accounts.nameHint') }}</span>
         </div>
       </form>
+
       <ng-container dialog-actions>
         <button tuiButton appearance="secondary" size="m" type="button" id="accounts-create-cancel" [disabled]="busy()" (click)="close()">{{ t('accounts.cancel') }}</button>
+
         <button tuiButton appearance="primary" size="m" type="submit" id="accounts-create-submit" form="accounts-create-form" [disabled]="busy()">
           {{ t('accounts.create') }}
         </button>

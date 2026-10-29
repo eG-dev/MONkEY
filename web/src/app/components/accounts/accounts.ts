@@ -26,6 +26,9 @@ export class Accounts {
   private readonly router = inject(Router);
 
   protected readonly accounts = signal<AccountSummary[]>([]);
+  protected readonly archivedAccounts = signal<AccountSummary[]>([]);
+  protected readonly archivedLoading = signal(true);
+  protected readonly archivedError = signal('');
   protected readonly loading = signal(false);
   protected readonly busy = signal(false);
   protected readonly interactive = signal(false);
@@ -42,11 +45,38 @@ export class Accounts {
     if (initial) {
       this.accounts.set(this.sorted(initial.accounts));
       this.error.set(initial.error);
-    } else if (this.auth.user()?.role === 'Manager') {
+    } else if (this.auth.isManager()) {
       void this.load();
     }
 
-    afterNextRender(() => this.interactive.set(true));
+    afterNextRender(() => {
+      this.interactive.set(true);
+
+      if (this.auth.isManager()) {
+        void this.loadArchived();
+      }
+    });
+  }
+
+  protected async loadArchived(): Promise<void> {
+    this.archivedLoading.set(true);
+    this.archivedError.set('');
+
+    try {
+      this.archivedAccounts.set(this.sorted(await this.service.archived()));
+    } catch (failure: unknown) {
+      this.archivedError.set(this.service.errorKey(failure));
+    } finally {
+      this.archivedLoading.set(false);
+    }
+  }
+
+  protected deletionDate(account: AccountSummary): string {
+    return account.purgeAtUtc
+      ? new Intl.DateTimeFormat(this.language.locale(), { dateStyle: 'medium', timeZone: account.allowance.timezone }).format(
+          new Date(account.purgeAtUtc),
+        )
+      : '';
   }
 
   protected async load(): Promise<void> {

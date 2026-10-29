@@ -4,6 +4,15 @@ Status: application lifecycle and portable financial recovery are implemented an
 locally verified. Successful beta publication, real-host rehearsal and production
 acceptance remain open. Follow the ordered [finish-line checklist](README.md).
 
+## Prerelease Schema Reset (R1)
+
+Before 1.0, unsupported snapshot format versions are rejected rather than
+requiring backwards compatibility. Incompatible snapshots must not be published
+or imported as complete; see
+[ADR-0021](../../docs/ADR/ADR-0021-portable-financial-recovery.md). Recovery
+scenarios remain deferred unless requested or needed for 1.0. Account deletion
+implementation and any necessary recovery-contract changes remain pending.
+
 ## Real-Host Rehearsal
 
 The target is the home server's Ubuntu Docker VM. It needs a published beta from

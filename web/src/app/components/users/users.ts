@@ -6,6 +6,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { UsersService } from '../../services/users/users.service';
 import { UserAccount } from '../../models/authentication/user-account';
+import { UserRole } from '../../models/authentication/user-role';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
 
 type Dialog = 'create' | 'edit' | 'reset' | 'password' | null;
@@ -33,21 +34,22 @@ export class Users {
   protected readonly copied = signal(false);
   protected readonly lastManager = computed(() => {
     const account = this.selected();
-    const activeManagers = this.accounts().filter((entry) => entry.user.role === 'Manager' && entry.isActive).length;
+    const activeManagers = this.accounts().filter((entry) => entry.user.role === UserRole.Manager && entry.isActive).length;
 
-    return Boolean(account && account.user.role === 'Manager' && account.isActive && activeManagers <= 1);
+    return Boolean(account && account.user.role === UserRole.Manager && account.isActive && activeManagers <= 1);
   });
 
   protected username = '';
   protected displayName = '';
-  protected role: 'Manager' | 'Member' = 'Member';
+  protected readonly userRoles = UserRole;
+  protected role = UserRole.Member;
   protected active = true;
 
   constructor() {
     afterNextRender(() => {
       this.interactive.set(true);
 
-      if (this.auth.user()?.role === 'Manager') {
+      if (this.auth.isManager()) {
         void this.load();
       }
     });
@@ -70,7 +72,7 @@ export class Users {
   protected openCreate(): void {
     this.username = '';
     this.displayName = '';
-    this.role = 'Member';
+    this.role = UserRole.Member;
     this.selected.set(null);
     this.open('create');
   }

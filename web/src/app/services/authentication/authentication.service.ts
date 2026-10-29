@@ -1,8 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, inject, makeStateKey, REQUEST_CONTEXT, signal, TransferState } from '@angular/core';
+import { computed, Injectable, inject, makeStateKey, REQUEST_CONTEXT, signal, TransferState } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
 
 import { SessionUser } from '../../models/authentication/session-user';
+import { UserRole } from '../../models/authentication/user-role';
 
 const sessionKey = makeStateKey<SessionUser | null>('monkey-session-profile');
 
@@ -13,6 +14,7 @@ export class AuthenticationService {
   private readonly context = inject(REQUEST_CONTEXT, { optional: true }) as { session?: SessionUser | null } | null;
 
   readonly user = signal<SessionUser | null>(null);
+  readonly isManager = computed(() => this.user()?.role === UserRole.Manager);
   readonly expired = signal(false);
   readonly notice = signal('');
 

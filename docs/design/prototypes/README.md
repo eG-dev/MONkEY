@@ -5,6 +5,85 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Retired Account Allowance R2 (2026-10-28)
+
+**Account-details prototype R2 approved, 2026-10-28.** The user explicitly approved
+the current revision with "approved". The
+[account-details preview](account-details/index.html) places the
+unchanged retirement explanation in an info box directly below Monthly allowance,
+above the allowance status and amount. It uses the existing info icon, message
+colors and spacing tokens. The old description paragraph is removed; active
+accounts are unchanged. Earlier R1 approval remains historical. Angular now
+implements the approved info box, including its position and status semantics.
+
+To review the retired state, open the integrated entry and follow Accounts to
+the archived Alex account.
+
+The actual inline renderer passed 32 Node/JSDOM cases covering Manager/Member,
+English/German, active/retired accounts and present/absent current and scheduled
+settings. Checks assert one retirement notice immediately after the heading,
+info styling and semantics, no old nested paragraph and unchanged edit visibility.
+
+Standalone integrated-browser checks passed 16 combinations of both roles,
+English/German, light/dark and 360x1000/1440x1000 using the existing fictional
+retired Alex. The localized message appears once, with its info icon and a 12px
+token gap below the heading, before allowance content. No overlap or horizontal
+overflow was found; the dark phone allowance-panel screenshot was inspected.
+
+Through the [integrated entry](index.html), actual navigation from Overview to
+Accounts and the archived Alex link succeeded. A separate 16-case matrix at
+outer 360x1000/1440x1000 verified both roles, languages and themes, message order,
+no overlap, no inner/outer horizontal overflow and no page errors. Preferences
+were restored in memory after each matrix; account data was not changed or saved.
+These are prototype checks, not production E2E verification or design approval.
+
+After explicit approval, Angular and production-image builds, catalog validation
+and E2E typechecking passed. Four focused production-image retirement executions
+passed on desktop/mobile, covering current and scheduled allowances, Manager/Member
+info-box visibility, title adjacency, token spacing, fit, retained settings/history
+and removal on reactivation. Both production panel screenshots were inspected.
+See the [delivery record](../../development.md#retired-account-allowance-r2-2026-10-28).
+
+## Retired Account Allowance R1 (2026-10-28)
+
+**Account-details prototype R1 approved, 2026-10-28.** The user approved the
+current wording and divider for implementation, then requested the shorter
+explanation in both prototype and application. Retired accounts show
+a paused allowance status and an explanation that credits are suspended while
+the account is scheduled for deletion. The explanation does not discuss saved
+settings. Scheduled enabled amounts retain their
+effective month without promising credits. No financial rules or settings change.
+
+The actual inline renderer passed 24 Node VM checks across English/German,
+active/retired accounts, present/absent current settings and enabled/disabled/no
+scheduled revision. These assert that retirement removes active/scheduled
+status and automatic-start promises, while adding the suspension explanation.
+
+Standalone integrated-browser checks passed 16 combinations of Manager/Member,
+English/German, light/dark and 360x1000/1440x1000. Noah was temporarily retired
+in memory; checks confirmed paused status, explanation, retained credit history,
+hidden editing and no horizontal overflow or page errors. Fictional data and
+preferences were restored without saving account changes.
+
+Through the integrated entry, a separate 16-case matrix used the existing retired
+Alex fixture and confirmed paused status, explanation, hidden editing and no
+horizontal overflow. Preferences were restored and account data was unchanged.
+Hidden-tab navigation attempts did not reliably reach the intended Noah page;
+the integrated matrix therefore uses Alex rather than claiming that navigation
+flow passed. These checks cover prototypes only, not the Angular application.
+
+Approved follow-up refinement: a full-width subtle border separates allowance
+configuration from Credit runs, with existing spacing tokens above and below.
+Four integrated-browser checks at 360x1000 and 1440x1000 in light/dark themes
+confirmed a solid 1px theme-colored border, 16px inner spacing and no horizontal
+overflow. This divider refinement has not been separately checked standalone.
+
+The subsequently requested shorter English/German explanation is synchronized
+with the application catalogs. Five focused production-image retirement checks
+passed, including desktop/mobile current and scheduled allowances, unchanged
+settings/history, reactivation, the rendered divider and lifecycle permissions.
+See the [delivery record](../../development.md#retired-account-allowance-r1-2026-10-28).
+
 ## Overview Balance Label R1 (2026-10-26)
 
 **Wireframe and matching prototype approved, 2026-10-26.** The user explicitly approved
@@ -272,6 +351,67 @@ remaining explanation that saving does not book money.
 The scheduled-credit sentence now explicitly says "automatic credit" /
 "automatische Gutschrift". Four standalone/integrated English/German browser
 checks confirmed the revised wording and the signed positive amount.
+
+## Account Deletion R2 (2026-10-28)
+
+**Account-details and shared account-state prototype R2 approved, 2026-10-28.**
+The user approved the revised wireframe and click prototype. Retirement preserves current
+and scheduled allowance settings; reactivation retains them. Outstanding
+eligible months still require a credit/drop choice. A dropped or previously
+credited month is not offered again, and a failed credit's automatic retry is
+described as paused while retired. The fixed-clock offline prototype does not
+run scheduled credits or automatic purge. Reset prototype data in Prototype
+settings to load the updated Alex fixture when older fictional data is stored.
+
+Standalone browser checks covered 16 Manager/Member, English/German, light/dark
+and 1440x1000/360x1000 combinations. They checked read-only retired details,
+role restrictions, localized dialog text, required choice and overflow.
+Additional standalone flows checked enabled, disabled and scheduled settings,
+credit/drop, failed requests and retained choices, paused failures, repeated
+retirement, resolved months and historical catch-up credit identities.
+
+A separate integrated pass covered the same 16 outer-viewport combinations
+through Overview, Accounts and account details; Members used a direct retired
+account URL. Additional integrated flows navigated through retirement and both
+reactivation choices, including failed saves and retry, and checked settings
+and Overview after reactivation. Neither pass reported page or console errors.
+The standalone German/dark phone dialog was visually inspected; desktop screenshot
+capture was unavailable. Browser interactions included DOM-dispatched clicks,
+not additional native keyboard evidence. Prototype approval is not application
+verification.
+
+## Account Deletion R1 (2026-10-28)
+
+**Overview shared state, Accounts and account-details prototypes R1 draft.**
+The account-details reactivation behavior is superseded by R2 and the approved
+R7 policy. The following evidence describes the earlier revision.
+Retired accounts are excluded from Overview and active Accounts. Managers can
+open the scheduled-deletion list, delete accounts from details and reactivate
+retired accounts there. Both roles can read retired details via direct links.
+Reactivation requires a credit/drop choice when the fictional fixture has
+outstanding months and leaves future allowance disabled. The offline prototype
+uses a fixed fictional clock; it does not run an automatic purge. Reset prototype
+data in Prototype settings to load the new retired Alex fixture when older
+fictional data is already stored.
+
+Standalone browser checks covered 16 combinations of Manager/Member,
+English/German, light/dark and 1440x1000/360x1000. They checked the list,
+read-only retired details, role restrictions and horizontal overflow. Separate
+flow checks covered immediate and opening-only deletion, retirement, failed
+save and retry, required choice, credit and drop, retained choice on failure,
+and disabled future allowance. The fixed-clock deadline was checked as 30 days.
+
+An independent integrated pass covered the same 16 outer-viewport combinations
+through Overview, Accounts and account details. Managers navigated through the
+scheduled list; Members used a direct retired-account URL. Additional integrated
+checks covered retirement, reactivation without outstanding months, validation,
+failed save and retry, credit and deadline rejection. Loading, error/retry and
+the existing credit review states were checked separately. No page errors were
+reported; the review-state pass also reported no console errors. Integrated
+desktop Accounts and German/dark phone account details were visually inspected.
+Some integrated interactions used DOM-dispatched clicks rather than native
+keyboard input. This is prototype evidence, not application verification or
+prototype approval.
 
 ## Password Sampling R1 (2026-10-26)
 

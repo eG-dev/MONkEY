@@ -1,5 +1,5 @@
 {
-  "formatVersion": 1,
+  "formatVersion": 2,
   "snapshotId": "90000000-0000-0000-0000-000000000004",
   "capturedAtUtc": "2026-06-15T12:00:00.0000000Z",
   "applicationVersion": "fixture",
@@ -11,7 +11,8 @@
       "id": "10000000-0000-0000-0000-000000000001",
       "name": "Allowance recovery",
       "normalizedName": "ALLOWANCE RECOVERY",
-      "balance": "12.50"
+      "balance": "12.50",
+      "retiredAtUtc": null
     }
   ],
   "ledgerEntries": [
@@ -77,6 +78,7 @@
       "attempts": 1,
       "lastAttemptAtUtc": "2026-06-15T12:00:00.0000000Z",
       "creditedAtUtc": "2026-06-15T12:00:00.0000000Z",
+      "droppedAtUtc": null,
       "errorCode": null
     },
     {
@@ -88,6 +90,7 @@
       "attempts": 1,
       "lastAttemptAtUtc": "2026-07-15T12:00:00.0000000Z",
       "creditedAtUtc": null,
+      "droppedAtUtc": null,
       "errorCode": null
     }
   ],

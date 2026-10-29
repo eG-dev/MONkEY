@@ -2,12 +2,14 @@
 description: "Use when creating or changing wireframes, click prototypes, design-system tokens, specimens, or design references under docs/design."
 applyTo: "docs/design/**"
 ---
+
 # Design References
 
 - Follow [ADR-0013](../../docs/ADR/ADR-0013-wireframes-and-click-prototypes.md): rough wireframe first, then a detailed click prototype, then the Angular implementation. Use the [ui-ux-design skill](../skills/ui-ux-design/SKILL.md) for the step-by-step workflow.
 - Keep the [design index](../../docs/design/README.md) current: every wireframe and prototype is linked with its status. A change to an approved reference makes it a draft again until it is re-approved.
 - Require explicit approval of the current wireframe revision before advancing to its click prototype, and explicit approval of the current prototype revision before Angular implementation. Feedback, correction requests, annotation-placement readiness, policy acceptance, "proceed", and passing checks are not approval. Keep earlier approvals as history; do not mark changed artifacts approved by inference. When flaws are raised, correct and verify the drafts, then wait for review without repeatedly requesting approval.
 - Wireframes: one `<view>/<view>-wireframe.drawio` with one desktop viewport showing only the main content container (no shell). Mark the viewport with a dashed border. Place yellow note shapes (`shape=note`, not callouts) outside it, around the viewport, and connect each note to its relevant area/component with a directed arrow. Keep notes and their text entirely outside the viewport; avoid overlapping notes, controls, and connector labels. Route connectors through empty space where possible. The drawing/export includes both viewport and surrounding notes. Re-export and inspect the PNG after every change.
+- In wireframes, text in square brackets such as `[delete]` represents an icon placeholder, not a literal text label.
 - Do not regenerate or overwrite a `.drawio` source the user has edited by hand; edit it in place and keep their changes.
 - Merge notes targeting the same area/component into one note and one arrow. Use straight connectors (`edgeStyle=none;curved=0`) with a 3px stroke (`strokeWidth=3`), without intermediate waypoints.
 - During review, mark changed annotations visually rather than adding revision labels to their prose: prefer light-blue notes (`fillColor=#dae8fc;strokeColor=#6c8ebf`), with optional blue text/arrows (`#0078D4`). After explicit approval, restore yellow notes (`#fff2cc`/`#d6b656`) and black text/arrows if the user has not done so, remove obsolete revision/draft prefixes, and re-export/inspect the PNG. Preserve annotation meaning, user placement and all other edits. Marker cleanup is approval housekeeping, not a new review gate; keep revision/approval history in the design index.

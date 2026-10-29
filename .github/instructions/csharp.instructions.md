@@ -2,6 +2,7 @@
 description: "Use when writing replacement C# backend or integration code: explicit properties, null validation, lambda naming, and readable method chains."
 applyTo: "backend/**/*.cs,tests/integration/**/*.cs"
 ---
+
 # C# Style
 
 - Follow Microsoft C# conventions and the repository EditorConfig. Keep these rules scoped to the replacement; do not retrofit legacy projects incidentally.
@@ -23,6 +24,7 @@ var result = condition
 - Use `ArgumentNullException.ThrowIfNull` for null parameter validation and the appropriate `ArgumentException.ThrowIfNullOrEmpty` / `ThrowIfNullOrWhiteSpace` helper for strings. When assigning a constructor parameter, use `this.parameter = parameter ?? throw new ArgumentNullException(nameof(parameter))`.
 - Use descriptive lambda parameter names for entity configuration builders, configuration callbacks, dependencies, and complex or nested lambdas. Use `stateEntity` for the EF entity configuration builder and `table` for table configuration; prefer `options`, `context`, and `policy` over cryptic abbreviations. For simple entity key/property selectors, use `x`, such as `HasKey(x => x.Id)` and `Property(x => x.SampleId)`; the builder name supplies the surrounding context.
 - Keep single method calls inline when they fit; a lambda argument alone is not a reason to isolate the receiver on its own line. For actual fluent chains, put each chained operation on a separate line and align continuation dots. When a call with a block lambda is followed by further fluent calls, indent its braces and closing `})` one level beneath the starting call, aligned with the continuation dots; indent the body one further level. For standalone configuration calls, keep block-lambda braces aligned with the containing call and indent the body one level. Separate independent configuration groups with blank lines.
+- For EF entity-builder property, key, index, and relationship configuration, put the builder on its own line and each fluent operation on its own aligned continuation line, even for a single operation. Separate each entity configuration statement or logical group with a blank line; related table constraints may remain grouped together. Keep standalone `ToTable` calls inline with the builder.
 - For minimal API registrations, keep the receiver and `MapGet`/`MapPost`/other mapping call together to make endpoint declarations easy to scan. Indent handler-lambda braces and the closing `})` one level beneath the declaration, with the handler body one further level. Align subsequent authorization, rate-limiting, tags, names, and response-metadata calls at that same continuation indentation, one call per line; never append them directly to `})`. Wrap long handler parameter lists and separate endpoint registrations with blank lines. This endpoint layout is distinct from compact EF configuration callbacks.
 
 ```csharp
@@ -44,7 +46,8 @@ auth.MapGet("/me", async Task<IResult> (
 ```csharp
 modelBuilder.Entity<Account>(accountEntity =>
 {
-	accountEntity.HasKey(x => x.Id);
+	accountEntity
+		.HasKey(x => x.Id);
 
 	accountEntity
 		.Property(x => x.Name)

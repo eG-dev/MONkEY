@@ -1,7 +1,14 @@
 <div class="page" *transloco="let t">
   <div class="languages" role="group" [attr.aria-label]="t('language')">
     @for (entry of languages; track entry.id) {
-      <button type="button" [id]="'login-language-' + entry.id" [attr.lang]="entry.id" [attr.aria-pressed]="language.current() === entry.id" [disabled]="!interactive()" (click)="chooseLanguage(entry.id)">
+      <button
+        type="button"
+        [id]="'login-language-' + entry.id"
+        [attr.lang]="entry.id"
+        [attr.aria-pressed]="language.current() === entry.id"
+        [disabled]="!interactive()"
+        (click)="chooseLanguage(entry.id)"
+      >
         {{ entry.name }}
       </button>
     }
@@ -10,21 +17,26 @@
   <div class="column">
     <main class="card" [attr.aria-busy]="busy()">
       <img class="card-logo" src="/images/monkey.png" alt="POCKET MONkEY" width="260" height="47" />
+
       @if (auth.user()?.mustChangePassword) {
         <h1 id="login-title">{{ t('auth.changeTitle') }}</h1>
+
         <div class="message message-info" id="login-must-change" role="status">
           <span class="icon icon-info" aria-hidden="true"></span>
           <div class="message-body">{{ t('auth.mustChange') }}</div>
         </div>
+
         @if (error()) {
           <div class="message message-danger" id="login-error" role="alert">
             <span class="icon icon-circle-alert" aria-hidden="true"></span>
             <div class="message-body">{{ t(error()) }}</div>
           </div>
         }
+
         <form class="form" id="login-change-password-form" (ngSubmit)="changePassword()">
           <div class="field">
             <label for="login-current-password">{{ t('auth.currentPassword') }}</label>
+
             <input
               class="input"
               id="login-current-password"
@@ -36,8 +48,10 @@
               [(ngModel)]="currentPassword"
             />
           </div>
+
           <div class="field">
             <label for="login-new-password">{{ t('auth.newPassword') }}</label>
+
             <input
               class="input"
               id="login-new-password"
@@ -50,46 +64,57 @@
               aria-describedby="login-new-password-hint"
               [(ngModel)]="newPassword"
             />
+
             <span class="hint" id="login-new-password-hint">{{ t('auth.passwordHint') }}</span>
           </div>
+
           <button tuiButton appearance="primary" size="m" type="submit" id="login-change-password-submit" [disabled]="busy() || !interactive()">
             {{ t('auth.changePassword') }}
           </button>
         </form>
+
         <button class="sign-out" id="login-change-password-logout" type="button" [disabled]="busy() || !interactive()" (click)="logout()">{{ t('auth.logout') }}</button>
       } @else {
         <h1 id="login-title">{{ t('auth.login') }}</h1>
+
         @if (notice()) {
           <div class="message message-info" id="login-notice" role="status">
             <span class="icon icon-info" aria-hidden="true"></span>
             <div class="message-body">{{ t(notice()) }}</div>
           </div>
         }
+
         @if (error()) {
           <div class="message message-danger" id="login-error" role="alert">
             <span class="icon icon-circle-alert" aria-hidden="true"></span>
             <div class="message-body">{{ t(error()) }}</div>
           </div>
         }
+
         <form class="form" id="login-form" (ngSubmit)="login()">
           <div class="field">
             <label for="login-username">{{ t('auth.username') }}</label>
+
             <input class="input" id="login-username" name="username" autocomplete="username" autocapitalize="none" required maxlength="100" [(ngModel)]="username" />
           </div>
+
           <div class="field">
             <label for="login-password">{{ t('auth.password') }}</label>
+
             <input class="input" id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="256" [(ngModel)]="password" />
           </div>
+
           <button tuiButton appearance="primary" size="m" type="submit" id="login-submit" [disabled]="busy() || !interactive()">{{ t('auth.login') }}</button>
         </form>
+
         <p class="hint forgot">{{ t('auth.forgot') }}</p>
       }
     </main>
-
   </div>
   <footer class="login-footer">
     <span id="login-version">{{ t('shell.version', { version }) }}</span>
     <span aria-hidden="true">|</span>
+
     <button id="login-about" type="button" [disabled]="!interactive()" (click)="about.open()">{{ t('about.title') }}</button>
   </footer>
 </div>

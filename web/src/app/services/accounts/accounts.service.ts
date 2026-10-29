@@ -10,6 +10,7 @@ import { OpeningEntry } from '../../models/accounts/opening-entry';
 import { LedgerEntry } from '../../models/accounts/ledger-entry';
 import { LedgerHistory } from '../../models/accounts/ledger-history';
 import { AllowanceState } from '../../models/accounts/allowance-state';
+import { MissedAllowancePolicy } from '../../models/accounts/missed-allowance-policy';
 
 const accountPageKey = makeStateKey<AccountPageState | null>('monkey-account-page');
 
@@ -76,8 +77,10 @@ export class AccountsService {
   }
 
   async listSummaries(): Promise<AccountSummary[]> {
-    const accounts = await this.list();
+    return this.summaries(await this.list());
+  }
 
+  private summaries(accounts: SharedAccount[]): Promise<AccountSummary[]> {
     return Promise.all(
       accounts.map(async (account) => ({
         ...account,
@@ -88,6 +91,18 @@ export class AccountsService {
 
   find(id: string): Promise<SharedAccount> {
     return this.read<SharedAccount>(`/api/accounts/${encodeURIComponent(id)}`);
+  }
+
+  async archived(): Promise<AccountSummary[]> {
+    return this.summaries(await this.read<SharedAccount[]>('/api/accounts/archived'));
+  }
+
+  remove(id: string): Promise<void> {
+    return this.auth.write('DELETE', `/api/accounts/${encodeURIComponent(id)}`, {});
+  }
+
+  reactivate(id: string, missedAllowancePolicy: MissedAllowancePolicy | null): Promise<void> {
+    return this.auth.write('POST', `/api/accounts/${encodeURIComponent(id)}/reactivate`, { missedAllowancePolicy });
   }
 
   create(name: string): Promise<SharedAccount> {
@@ -180,6 +195,10 @@ export class AccountsService {
     return typeof code === 'string' &&
       [
         'invalid_account_name',
+        'account_retired',
+        'account_deletion_expired',
+        'missed_allowance_policy_required',
+        'invalid_missed_allowance_policy',
         'invalid_allowance_amount',
         'allowance_conflict',
         'invalid_image',

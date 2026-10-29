@@ -1,17 +1,17 @@
 # Financial Scenario Exports
 
-Synthetic format-version-1 JSON, shared by real-image E2E, SQLite integration
+Synthetic format-version-2 JSON, shared by real-image E2E, SQLite integration
 checks and manual testing. No household data, credentials or images are included.
 All scenarios use EUR, `TZ=UTC`, transaction retention 24 months and a reference
 capture time of 2026-06-15T12:00:00Z. IDs are stable and historical attribution
 does not create login users.
 
-| Scenario | Expected imported state |
-| --- | --- |
-| `uninitialized` | One account named Uninitialized, no balance or ledger entries. |
-| `signed-balances` | Positive 12.50 (opening 10.00, deposit 5.00, withdrawal 2.50), Negative -5.00, Zero 0.00; five ledger entries total. |
-| `retained-history` | One account with stored balance 100.00, permanent opening 10.00 and 25 retained deposits of 1.00; two retired keys, sequence high-water 50, retention revision 1. Remaining entries deliberately do not sum to the balance. |
-| `allowance-recovery` | One account 12.50, opening 10.00 and credited June 2026 allowance 2.50. July execution is pending; configuration disables allowance from August 2026. |
+| Scenario             | Expected imported state                                                                                                                                                                                                     |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uninitialized`      | One account named Uninitialized, no balance or ledger entries.                                                                                                                                                              |
+| `signed-balances`    | Positive 12.50 (opening 10.00, deposit 5.00, withdrawal 2.50), Negative -5.00, Zero 0.00; five ledger entries total.                                                                                                        |
+| `retained-history`   | One account with stored balance 100.00, permanent opening 10.00 and 25 retained deposits of 1.00; two retired keys, sequence high-water 50, retention revision 1. Remaining entries deliberately do not sum to the balance. |
+| `allowance-recovery` | One account 12.50, opening 10.00 and credited June 2026 allowance 2.50. July execution is pending; configuration disables allowance from August 2026.                                                                       |
 
 Manual startup uses real time, not the reference clock. For `allowance-recovery`,
 July catch-up raises the balance to 15.00 once; later months remain disabled.

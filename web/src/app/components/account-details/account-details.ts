@@ -2,7 +2,7 @@ import { afterNextRender, Component, DestroyRef, effect, inject, signal } from '
 import { NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
@@ -12,6 +12,7 @@ import { LanguageService } from '../../services/language/language.service';
 import { SharedAccount } from '../../models/accounts/shared-account';
 import { LedgerEntry } from '../../models/accounts/ledger-entry';
 import { LedgerHistory } from '../../models/accounts/ledger-history';
+import { MissedAllowancePolicy } from '../../models/accounts/missed-allowance-policy';
 import { CurrencyAmountPipe } from '../../pipes/currency-amount/currency-amount.pipe';
 import { AmountTonePipe } from '../../pipes/amount-tone/amount-tone.pipe';
 import { ModalDialog } from '../modal-dialog/modal-dialog';
@@ -40,6 +41,7 @@ export class AccountDetails {
   protected readonly language = inject(LanguageService);
   private readonly service = inject(AccountsService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly parameters = toSignal(this.route.paramMap);
 
   protected readonly account = signal<SharedAccount | null>(null);
@@ -49,6 +51,11 @@ export class AccountDetails {
   protected readonly error = signal('');
   protected readonly formError = signal('');
   protected readonly saved = signal('');
+  protected readonly lifecycleDialog = signal<'delete' | 'reactivate' | null>(null);
+  protected readonly lifecycleError = signal('');
+  protected readonly missedPolicyRequired = signal(false);
+  protected readonly missedPolicies = MissedAllowancePolicy;
+  protected missedAllowancePolicy: MissedAllowancePolicy | null = null;
   protected readonly renaming = signal(false);
   protected readonly renameError = signal('');
   protected readonly imageDialog = signal(false);
@@ -107,10 +114,67 @@ export class AccountDetails {
     });
   }
 
+  protected openLifecycle(action: 'delete' | 'reactivate'): void {
+    const account = this.account();
+
+    if (!account || !this.auth.isManager() || !this.interactive() || this.busy()) {
+      return;
+    }
+
+    if ((action === 'delete' && account.purgeAtUtc) || (action === 'reactivate' && !account.purgeAtUtc)) {
+      return;
+    }
+
+    this.lifecycleError.set('');
+    this.missedPolicyRequired.set(false);
+    this.missedAllowancePolicy = null;
+    this.lifecycleDialog.set(action);
+  }
+
+  protected async confirmLifecycle(): Promise<void> {
+    const account = this.account();
+    const action = this.lifecycleDialog();
+
+    if (!account || !action || !this.auth.isManager() || !this.interactive() || this.busy()) {
+      return;
+    }
+
+    if (action === 'reactivate' && this.missedPolicyRequired() && !this.missedAllowancePolicy) {
+      this.lifecycleError.set('accounts.errors.missed_allowance_policy_required');
+      return;
+    }
+
+    this.busy.set(true);
+    this.lifecycleError.set('');
+
+    try {
+      if (action === 'delete') {
+        await this.service.remove(account.id);
+        this.lifecycleDialog.set(null);
+        await this.router.navigate(['/accounts']);
+      } else {
+        await this.service.reactivate(account.id, this.missedAllowancePolicy);
+        this.lifecycleDialog.set(null);
+        await this.reload();
+        this.saved.set('accounts.reactivated');
+      }
+    } catch (failure: unknown) {
+      const error = this.service.errorKey(failure);
+
+      if (error === 'accounts.errors.missed_allowance_policy_required') {
+        this.missedPolicyRequired.set(true);
+      }
+
+      this.lifecycleError.set(error);
+    } finally {
+      this.busy.set(false);
+    }
+  }
+
   protected openRename(): void {
     const account = this.account();
 
-    if (!account || this.auth.user()?.role !== 'Manager' || this.busy() || !this.interactive()) {
+    if (!account || !this.auth.isManager() || account.purgeAtUtc || this.busy() || !this.interactive()) {
       return;
     }
 
@@ -122,7 +186,7 @@ export class AccountDetails {
   protected openImage(): void {
     const account = this.account();
 
-    if (!account || this.auth.user()?.role !== 'Manager' || this.busy() || !this.interactive()) {
+    if (!account || !this.auth.isManager() || account.purgeAtUtc || this.busy() || !this.interactive()) {
       return;
     }
 
@@ -198,7 +262,7 @@ export class AccountDetails {
   protected async saveImage(): Promise<void> {
     const account = this.account();
 
-    if (!account || !this.imageDirty() || this.busy() || !this.interactive() || this.auth.user()?.role !== 'Manager') {
+    if (!account || account.purgeAtUtc || !this.imageDirty() || this.busy() || !this.interactive() || !this.auth.isManager()) {
       return;
     }
 
@@ -237,7 +301,7 @@ export class AccountDetails {
     const account = this.account();
     const name = this.name.trim();
 
-    if (!account || !this.renaming() || this.auth.user()?.role !== 'Manager' || this.busy() || !this.interactive()) {
+    if (!account || account.purgeAtUtc || !this.renaming() || !this.auth.isManager() || this.busy() || !this.interactive()) {
       return;
     }
 
@@ -272,7 +336,7 @@ export class AccountDetails {
     const account = this.account();
     const source = this.source();
 
-    if (!account || account.balance === null || this.busy() || !this.interactive()) {
+    if (!account || account.purgeAtUtc || !this.auth.isManager() || account.balance === null || this.busy() || !this.interactive()) {
       return;
     }
 
@@ -319,6 +383,10 @@ export class AccountDetails {
   }
 
   protected confirmOpening(): void {
+    if (!this.auth.isManager() || this.account()?.purgeAtUtc || this.busy() || !this.interactive()) {
+      return;
+    }
+
     if (this.canonicalAmount(this.amount, true) === null) {
       this.formError.set('accounts.errors.invalid_opening_amount');
       return;
@@ -336,7 +404,7 @@ export class AccountDetails {
     const account = this.account();
     const amount = this.canonicalAmount(this.amount, true);
 
-    if (!account || account.balance !== null || amount === null || this.busy() || !this.interactive()) {
+    if (!account || account.purgeAtUtc || !this.auth.isManager() || account.balance !== null || amount === null || this.busy() || !this.interactive()) {
       return;
     }
 

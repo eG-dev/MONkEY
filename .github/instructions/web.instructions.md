@@ -16,3 +16,12 @@ applyTo: "web/**"
 - Give unique controls, forms, messages, and dialogs document-unique `<scope>-<purpose>` IDs per [ADR-0005](../../docs/ADR/ADR-0005-e2e-first-verification.md#browser-selectors); every `app-modal-dialog` needs a `dialogId`. Use item-scoped `data-testid` values in repeated rows/cards. Keep controls disabled until hydration (and, for shell controls reset by `NavigationEnd`, initial navigation) completes.
 - Follow the [localization plan](../../plans/migration/localization.md): German/English text, accessibility labels, Taiga resources, and formatting are part of each feature. The registry owns language/catalog/Taiga mappings; do not duplicate language conditionals across components.
 - Verify affected workflows through the real-image [E2E strategy](../../plans/migration/testing.md), including SSR/hydration and relevant language/viewport combinations. Run the documented build/catalog/E2E commands; a successful compile alone does not verify hydration or request isolation.
+
+## Angular HTML Readability
+
+- Use two-space indentation. Separate logical sections, independent controls, and sibling control-flow blocks with blank lines; do not insert a blank line after every element.
+- Keep related `@let` declarations together, then leave a blank line before the markup or interpolation that uses them. Separate preparation, content, status messages, and dialog actions into readable groups.
+- Keep short, simple elements inline when readable. For long opening tags, put each attribute or binding on its own indented line, with the closing `>` on a separate line. Put long element contents on their own lines rather than packing tags and expressions together.
+- Put adjacent sibling elements on separate lines, including icons and their text. Preserve intentional inline adjacency inside translated sentences and other whitespace-sensitive content; readability edits must not change rendered spacing, text, bindings, conditions, IDs, or accessibility relationships.
+- Keep nested `@if`, `@else`, `@for`, and `@switch` bodies clearly indented. Preserve the existing control flow; formatting alone does not authorize refactoring or moving template logic.
+- Use [the allowance template](../../web/src/app/components/account-allowance/account-allowance.html) as the approved formatting example. Apply these rules to Angular templates, not unrelated offline design documents or generated HTML.

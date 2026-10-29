@@ -2,7 +2,7 @@
 
 _Creation date_: 2026-10-12
 
-_Updated_: 2026-10-18
+_Updated_: 2026-10-28
 
 ## Context
 
@@ -12,7 +12,7 @@ Business-timezone changes must not rewrite financial history.
 
 ## Decision
 
-- Credit every missed eligible business month, using that month's historical configuration resolved according to [ADR-0015](ADR-0015-monthly-allowance-configuration.md). Do not use the latest amount for all missed months.
+- Credit missed eligible business months using each month's historical configuration resolved according to [ADR-0015](ADR-0015-monthly-allowance-configuration.md), except months explicitly dropped by a Manager on account reactivation. Do not use the latest amount for all missed months.
 - Skip months whose effective configuration is disabled or absent. Later enabling does not make those months eligible retroactively.
 - Automatically retry failed execution and resume outstanding work after restart. Enforce a durable unique account/business-month credit identity and atomic financial writes so retries and concurrent execution cannot duplicate credits or leave partial postings.
 - After a configured `TZ` change, preserve already credited business-month identities, selected revisions, credited timestamps and retained posting history. Use the new timezone to determine outstanding scheduling; never rename or replay an already credited month because its UTC boundary changed. Eligible ledger details may expire only under [ADR-0012](ADR-0012-manual-transactions-and-signed-balances.md); their removal does not make the month uncredited.
@@ -24,8 +24,11 @@ Business-timezone changes must not rewrite financial history.
 - Resolve historical configuration by immutable save order among revisions effective for the month. Process eligible months oldest first; a failure blocks later months for that account, not other accounts.
 - Persist each account/month attempt with its selected revision and a stable posting idempotency key before posting. Enforce unique account/month execution and ledger identities in SQLite. Commit the ledger entry, exact balance, financial audit, and credited execution outcome in one transaction.
 - Resume unfinished attempts after interruption and automatically retry safe failures. Persist stable error codes, never internal exception messages; expose attempt details and failure reasons only to authenticated Managers while Members retain credit status/history access.
-- Retain allowance revisions, execution records and their unique account/month/posting-key identities independently of transaction-detail retention. Cleanup may prune a credited ledger row only when its account, month and key match a durable credited execution. Never recreate credited execution state from the remaining visible ledger or re-credit an expired row.
+- Retain allowance revisions, execution records and their unique account/month/posting-key identities independently of transaction-detail retention, until account deletion under [ADR-0009](ADR-0009-shared-accounts.md). Cleanup may prune a credited ledger row only when its account, month and key match a durable credited execution. Never recreate credited execution state from the remaining visible ledger or re-credit an expired row.
+- While an account is retired, suppress allowance credits without changing its configuration. On reactivation, require a Manager to choose whether to credit or permanently drop all currently due eligible uncredited months. Persist the choice and account/month outcomes durably so dropped months cannot be credited later and selected credits resume safely after failure. No choice is required when none are outstanding. Future eligible months follow the preserved configuration.
 
 ## Change History
 
+- 2026-10-28: Retirement leaves allowance revisions unchanged; account status suppresses credits until reactivation, after which normal scheduling resumes.
+- 2026-10-28: Retirement suspends credits; reactivation offers a durable credit-or-drop choice, and account deletion removes linked allowance identities.
 - 2026-10-18: Approved retention R1 preserves allowance configuration and credited execution records permanently while permitting eligible ledger-detail pruning under ADR-0012. A missing old ledger row must not release a business-month identity or cause duplicate credits after restart or timezone changes.

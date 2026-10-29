@@ -65,6 +65,7 @@ public sealed partial class FinancialExportStore
         RejectLinks(directory);
         RejectLinks(statePath);
         var latestPath = CompletedFiles().FirstOrDefault();
+        var previous = latestPath is null ? null : await ReadCompatibleAsync(latestPath, cancellationToken);
         ExportState? state = null;
 
         if (File.Exists(statePath))
@@ -82,7 +83,7 @@ public sealed partial class FinancialExportStore
             }
         }
 
-        if (state is { Version: 1 } && state.SlotUtc == slot && state.Timezone == timezone
+        if (previous is not null && state is { Version: 1 } && state.SlotUtc == slot && state.Timezone == timezone
             && latestPath is not null && state.Baseline == Path.GetFileName(latestPath))
         {
             return false;
@@ -92,12 +93,8 @@ public sealed partial class FinancialExportStore
         FinancialSnapshotValidation.Validate(current);
         var publish = true;
 
-        if (latestPath is not null)
+        if (previous is not null)
         {
-            RejectLinks(latestPath);
-            RequirePrivate(latestPath);
-            var previous = await FinancialSnapshotJson.ReadAsync(latestPath, cancellationToken);
-            FinancialSnapshotValidation.Validate(previous);
             publish = ContentHash(previous) != ContentHash(current);
         }
 
@@ -116,10 +113,14 @@ public sealed partial class FinancialExportStore
 
             if (keepCount > 0)
             {
-                foreach (var old in CompletedFiles().Skip(keepCount))
+                var compatibleCount = 0;
+
+                foreach (var old in CompletedFiles())
                 {
-                    RejectLinks(old);
-                    File.Delete(old);
+                    if (await ReadCompatibleAsync(old, cancellationToken) is not null && ++compatibleCount > keepCount)
+                    {
+                        File.Delete(old);
+                    }
                 }
             }
         }
@@ -210,6 +211,24 @@ public sealed partial class FinancialExportStore
             .Where(path => CompletedName().IsMatch(Path.GetFileName(path)))
             .OrderDescending(StringComparer.Ordinal)
             .ToArray();
+    }
+
+    private static async Task<FinancialSnapshot?> ReadCompatibleAsync(string path, CancellationToken cancellationToken)
+    {
+        RejectLinks(path);
+        RequirePrivate(path);
+
+        try
+        {
+            var snapshot = await FinancialSnapshotJson.ReadAsync(path, cancellationToken);
+            FinancialSnapshotValidation.Validate(snapshot);
+
+            return snapshot;
+        }
+        catch (InvalidDataException failure) when (failure.Message == "snapshot_version_unsupported")
+        {
+            return null;
+        }
     }
 
     private static void RequirePrivate(string path)

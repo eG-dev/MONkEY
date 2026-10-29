@@ -2,6 +2,8 @@
 
 _Creation date_: 2026-10-25
 
+_Updated_: 2026-10-28
+
 ## Context
 
 An operator needs portable financial recovery information independent of SQLite
@@ -10,6 +12,7 @@ manual test scenarios. This does not replace a complete installation backup.
 
 ## Decision
 
+- Before 1.0, compatibility with older or newer snapshot formats is not guaranteed. Reject an unsupported format rather than guessing or importing incomplete state. Do not publish a snapshot that cannot represent the current financial state; suspend incompatible import and export with a clear operator-facing reason until the contract supports it. Preserve existing snapshot files. Recovery scenarios remain deferred until requested or needed for 1.0. The requirements below apply when compatible recovery is enabled.
 - Export one versioned JSON snapshot of accounts, exact stored balances, retained
   ledger details, audit metadata, allowance revisions/executions, retired posting
   keys and ledger maintenance counters. Preserve historical attribution. Exclude
@@ -57,3 +60,8 @@ the durable allowance identities in [ADR-0016](ADR-0016-monthly-allowance-execut
   images are excluded. SQLite copies remain a separate complete-backup procedure.
 - A web import or production replacement flag unnecessarily exposes destructive
   operations. Test-only reset keeps that privilege outside runtime delivery.
+
+## Change History
+
+- 2026-10-28: Clarified that prerelease imports need not support incompatible snapshot versions; unsupported formats are rejected.
+- 2026-10-28: Incompatible prerelease recovery is suspended rather than allowed to silently lose state; recovery work is deferred until requested or required for 1.0.

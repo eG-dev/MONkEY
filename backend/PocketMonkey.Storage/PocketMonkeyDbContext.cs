@@ -24,14 +24,21 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<RetiredLedgerKey> RetiredLedgerKeys => Set<RetiredLedgerKey>();
 
+    public DbSet<PendingImageDeletion> PendingImageDeletions => Set<PendingImageDeletion>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<LedgerMaintenanceState>(stateEntity =>
         {
-            stateEntity.HasKey(x => x.Id);
-            stateEntity.Property(x => x.Id).ValueGeneratedNever();
+            stateEntity
+                .HasKey(x => x.Id);
+
+            stateEntity
+                .Property(x => x.Id)
+                .ValueGeneratedNever();
+
             stateEntity.ToTable("LedgerMaintenanceStates", table =>
             {
                 table.HasCheckConstraint("CK_LedgerMaintenanceStates_Singleton", "Id = 1");
@@ -42,34 +49,91 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<RetiredLedgerKey>(stateEntity =>
         {
-            stateEntity.HasKey(x => x.IdempotencyKey);
-            stateEntity.Property(x => x.IdempotencyKey).HasMaxLength(36).IsRequired();
+            stateEntity
+                .HasKey(x => x.IdempotencyKey);
+
+            stateEntity
+                .Property(x => x.IdempotencyKey)
+                .HasMaxLength(36)
+                .IsRequired();
+
+            stateEntity
+                .HasOne<Account>()
+                .WithMany()
+                .HasForeignKey(x => x.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             stateEntity.ToTable("RetiredLedgerKeys", table =>
                 table.HasCheckConstraint("CK_RetiredLedgerKeys_Key", "length(IdempotencyKey) = 36"));
         });
 
+        modelBuilder.Entity<PendingImageDeletion>(stateEntity =>
+        {
+            stateEntity
+                .HasKey(x => x.ImageKey);
+
+            stateEntity
+                .Property(x => x.ImageKey)
+                .HasMaxLength(36);
+        });
+
         modelBuilder.Entity<AllowanceExecution>(stateEntity =>
         {
-            stateEntity.HasKey(execution => execution.Id);
-            stateEntity.HasIndex(execution => new { execution.AccountId, execution.BusinessMonth }).IsUnique();
-            stateEntity.HasIndex(execution => execution.IdempotencyKey).IsUnique();
-            stateEntity.HasOne<Account>().WithMany().HasForeignKey(execution => execution.AccountId).OnDelete(DeleteBehavior.Restrict);
-            stateEntity.HasOne<AllowanceRevision>().WithMany().HasForeignKey(execution => execution.RevisionId)
-                .HasPrincipalKey(revision => revision.Id).OnDelete(DeleteBehavior.Restrict);
+            stateEntity
+                .HasKey(execution => execution.Id);
+
+            stateEntity
+                .HasIndex(execution => new { execution.AccountId, execution.BusinessMonth })
+                .IsUnique();
+
+            stateEntity
+                .HasIndex(execution => execution.IdempotencyKey)
+                .IsUnique();
+
+            stateEntity
+                .HasOne<Account>()
+                .WithMany()
+                .HasForeignKey(execution => execution.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            stateEntity
+                .HasOne<AllowanceRevision>()
+                .WithMany()
+                .HasForeignKey(execution => execution.RevisionId)
+                .HasPrincipalKey(revision => revision.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
             stateEntity.ToTable("AllowanceExecutions", table =>
             {
                 table.HasCheckConstraint("CK_AllowanceExecutions_Month", "BusinessMonth BETWEEN 101 AND 999912 AND BusinessMonth % 100 BETWEEN 1 AND 12");
                 table.HasCheckConstraint("CK_AllowanceExecutions_Attempts", "Attempts >= 0");
+                table.HasCheckConstraint("CK_AllowanceExecutions_Outcome", "CreditedAtUtc IS NULL OR DroppedAtUtc IS NULL");
             });
         });
 
         modelBuilder.Entity<AllowanceRevision>(revisionEntity =>
         {
-            revisionEntity.HasKey(x => x.SequenceNumber);
-            revisionEntity.Property(x => x.SequenceNumber).ValueGeneratedOnAdd();
-            revisionEntity.HasIndex(x => x.Id).IsUnique();
-            revisionEntity.HasIndex(revision => new { revision.AccountId, revision.PreviousRevisionId }).IsUnique();
-            revisionEntity.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
+            revisionEntity
+                .HasKey(x => x.SequenceNumber);
+
+            revisionEntity
+                .Property(x => x.SequenceNumber)
+                .ValueGeneratedOnAdd();
+
+            revisionEntity
+                .HasIndex(x => x.Id)
+                .IsUnique();
+
+            revisionEntity
+                .HasIndex(revision => new { revision.AccountId, revision.PreviousRevisionId })
+                .IsUnique();
+
+            revisionEntity
+                .HasOne<Account>()
+                .WithMany()
+                .HasForeignKey(x => x.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             revisionEntity.ToTable("AllowanceRevisions", table =>
             {
                 table.HasCheckConstraint("CK_AllowanceRevisions_Amount", "(AmountMinorUnits IS NULL AND Enabled = 0) OR (typeof(AmountMinorUnits) = 'integer' AND AmountMinorUnits > 0)");
@@ -91,7 +155,8 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<Account>(accountEntity =>
         {
-            accountEntity.HasKey(x => x.Id);
+            accountEntity
+                .HasKey(x => x.Id);
 
             accountEntity
                 .Property(x => x.Id)
@@ -107,7 +172,15 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
                 .HasMaxLength(40)
                 .IsRequired();
 
-            accountEntity.Property(x => x.ImageKey).HasMaxLength(36);
+            accountEntity
+                .Property(x => x.ImageKey)
+                .HasMaxLength(36);
+
+            accountEntity
+                .Property(x => x.RetiredAtUtc)
+                .HasConversion(
+                    value => value.HasValue ? value.Value.UtcDateTime : (DateTime?)null,
+                    value => value.HasValue ? new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)) : null);
 
             accountEntity
                 .HasIndex(x => x.NormalizedName)
@@ -122,9 +195,11 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<LedgerEntry>(entryEntity =>
         {
-            entryEntity.HasKey(x => x.Id);
+            entryEntity
+                .HasKey(x => x.Id);
 
-            entryEntity.HasIndex(entry => new { entry.OccurredAtUtc, entry.SequenceNumber });
+            entryEntity
+                .HasIndex(entry => new { entry.OccurredAtUtc, entry.SequenceNumber });
 
             entryEntity
                 .Property(x => x.OccurredAtUtc)
@@ -142,8 +217,10 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
                 .HasIndex(x => x.IdempotencyKey)
                 .IsUnique();
 
-            entryEntity.HasIndex(entry => new { entry.AccountId, entry.AllowanceMonth })
-                .HasFilter("AllowanceMonth IS NOT NULL").IsUnique();
+            entryEntity
+                .HasIndex(entry => new { entry.AccountId, entry.AllowanceMonth })
+                .HasFilter("AllowanceMonth IS NOT NULL")
+                .IsUnique();
 
             entryEntity
                 .HasIndex(x => x.SequenceNumber)

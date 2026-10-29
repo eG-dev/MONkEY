@@ -13,8 +13,11 @@
     >
       <span class="icon icon-menu" aria-hidden="true"></span>
     </button>
-    <a class="logo-link" id="shell-home" routerLink="/"><img class="logo" src="/images/monkey.png" alt="POCKET MONkEY" width="177" height="32" /></a>
+    <a class="logo-link" id="shell-home" routerLink="/">
+      <img class="logo" src="/images/monkey.png" alt="POCKET MONkEY" width="177" height="32" />
+    </a>
     <span class="spacer"></span>
+
     @if (auth.user(); as user) {
       <button
         class="header-button"
@@ -34,11 +37,21 @@
           <span class="menu-user-role">{{ t('auth.' + user.role) }}</span>
         </div>
         <div class="menu-divider" role="separator"></div>
-        <a class="menu-item" id="shell-user-menu-profile" role="menuitem" routerLink="/administration"><span class="icon icon-user" aria-hidden="true"></span>{{ t('shell.profile') }}</a>
+        <a class="menu-item" id="shell-user-menu-profile" role="menuitem" routerLink="/administration">
+          <span class="icon icon-user" aria-hidden="true"></span>
+          {{ t('shell.profile') }}
+        </a>
+
         <button class="menu-item" id="shell-user-menu-dark-mode" type="button" role="menuitemcheckbox" [attr.aria-checked]="theme.dark()" (click)="toggleDark()">
-          <span class="icon icon-moon" aria-hidden="true"></span>{{ t('shell.darkMode') }}<span class="switch" aria-hidden="true" [attr.aria-checked]="theme.dark()"></span>
+          <span class="icon icon-moon" aria-hidden="true"></span>
+          {{ t('shell.darkMode') }}
+          <span class="switch" aria-hidden="true" [attr.aria-checked]="theme.dark()"></span>
         </button>
-        <button class="menu-item" id="shell-user-menu-logout" type="button" role="menuitem" (click)="logout()"><span class="icon icon-log-out" aria-hidden="true"></span>{{ t('auth.logout') }}</button>
+
+        <button class="menu-item" id="shell-user-menu-logout" type="button" role="menuitem" (click)="logout()">
+          <span class="icon icon-log-out" aria-hidden="true"></span>
+          {{ t('auth.logout') }}
+        </button>
       </div>
     }
   </header>
@@ -49,18 +62,27 @@
 
   <aside class="drawer" id="shell-navigation" [attr.aria-label]="t('shell.navigation')" [hidden]="!navigationVisible()">
     <nav class="navigation" [attr.aria-label]="t('shell.mainNavigation')">
-      <a id="shell-navigation-overview" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }"
-        ><span class="icon icon-layout-dashboard" aria-hidden="true"></span>{{ t('shell.overview') }}</a
-      >
-      @if (auth.user()?.role === 'Manager') {
-        <a id="shell-navigation-accounts" routerLink="/accounts" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: false }"
-          ><span class="icon icon-wallet" aria-hidden="true"></span>{{ t('accounts.title') }}</a
-        >
+      <a id="shell-navigation-overview" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="icon icon-layout-dashboard" aria-hidden="true"></span>
+        {{ t('shell.overview') }}
+      </a>
+
+      @if (auth.isManager()) {
+        <a id="shell-navigation-accounts" routerLink="/accounts" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: false }">
+          <span class="icon icon-wallet" aria-hidden="true"></span>
+          {{ t('accounts.title') }}
+        </a>
       }
-      <a id="shell-navigation-administration" routerLink="/administration" routerLinkActive="active" ariaCurrentWhenActive="page"
-        ><span class="icon icon-wrench" aria-hidden="true"></span>{{ t('shell.administration') }}</a
-      >
-      <button class="about-button" id="shell-navigation-about" type="button" [disabled]="!interactive()" (click)="about.open()"><span class="icon icon-info" aria-hidden="true"></span>{{ t('about.title') }}</button>
+
+      <a id="shell-navigation-administration" routerLink="/administration" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <span class="icon icon-wrench" aria-hidden="true"></span>
+        {{ t('shell.administration') }}
+      </a>
+
+      <button class="about-button" id="shell-navigation-about" type="button" [disabled]="!interactive()" (click)="about.open()">
+        <span class="icon icon-info" aria-hidden="true"></span>
+        {{ t('about.title') }}
+      </button>
     </nav>
     <div class="application-info">
       <span class="application-name">POCKET MONkEY</span>

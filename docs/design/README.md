@@ -147,6 +147,92 @@ needed for these dialog and wording details. Earlier approvals remain history.
 R1's dialog refinements are included in the approved R2 above.
 See the [verification notes](prototypes/README.md#allowance-clarity-r1-2026-10-26).
 
+## Retired Account Allowance R2 (2026-10-28)
+
+**Account-details prototype R2 approved, 2026-10-28.** The user explicitly approved
+the current revision with "approved". The retirement explanation
+is now an info box directly below Monthly allowance, before the status and amount,
+using the existing info icon and theme-aware message styling. The English/German
+wording is unchanged and the former paragraph is removed. Active accounts are
+unchanged. This is a presentation refinement within the approved wireframe;
+no wireframe revision is needed. Earlier R1 approval remains historical.
+Angular implementation is complete; see the
+[delivery record](../development.md#retired-account-allowance-r2-2026-10-28).
+See the [preview](prototypes/account-details/index.html) and
+[verification notes](prototypes/README.md#retired-account-allowance-r2-2026-10-28).
+Review retired Alex through Accounts in the integrated prototype.
+
+## Retired Account Allowance R1 (2026-10-28)
+
+**Account-details prototype R1 approved, 2026-10-28.** The user approved the
+current wording and divider with "okay, now lets implement everything", then
+explicitly requested the shortened explanation in prototype and implementation.
+The
+[details prototype](prototypes/account-details/index.html) replaces active or
+scheduled allowance status with "Automatic monthly allowance paused" for
+accounts scheduled for deletion. A short explanation says automatic credits
+are suspended while deletion is scheduled, without describing saved settings.
+Future enabled revisions
+are described as saved settings, not promised automatic credits. Amounts,
+credit history, disabled states and active-account wording are preserved.
+English and German are included. This is a wording/state refinement within the
+approved wireframe structure; no wireframe change is needed. Angular
+implementation is complete, including the shortened explanation in both languages.
+A subtle full-width divider separates allowance configuration from Credit runs,
+using the existing border and spacing tokens.
+See the [delivery record](../development.md#retired-account-allowance-r1-2026-10-28).
+See the [verification notes](prototypes/README.md#retired-account-allowance-r1-2026-10-28).
+Earlier Account Deletion R2 approval remains historical for these changed texts.
+
+## Account Deletion R2 (2026-10-28)
+
+**Account-details wireframe R2 approved, 2026-10-28.** The retired-state annotation now
+preserves allowance settings across retirement and reactivation, as approved in
+[R7](../../plans/migration/03h-lifecycle.md#allowance-configuration-on-reactivation-r7).
+The user explicitly approved the R2 wireframe. The note was restored to yellow,
+and the [R2 preview](wireframes/account-details/account-details-wireframe.png)
+was re-exported and inspected; placement and routing are unchanged.
+
+**Account Deletion R2 click prototype approved, 2026-10-28.** The
+[integrated prototype](prototypes/index.html) and
+[account-details prototype](prototypes/account-details/index.html) preserve
+current and scheduled allowance settings through retirement and reactivation.
+The revised dialog offers the missed-month choice only when applicable. See the
+[prototype verification](prototypes/README.md#account-deletion-r2-2026-10-28).
+The user explicitly approved the current click prototype.
+
+Angular implementation is complete: Manager delete confirmation, scheduled-deletion
+list, read-only retired details and reactivation. Missed-month choices appear only
+after the backend reports that an explicit policy is required; neither choice is
+preselected. See the [delivery and verification record](../development.md#account-lifecycle-ui-and-typed-roles-2026-10-28).
+
+## Account Deletion R1 (2026-10-28)
+
+**Accounts and account-details wireframes R1 approved, 2026-10-28.** The user
+explicitly approved both current sources after arranging their annotations and
+clarified that `[delete]` represents an icon. The editable
+[accounts source](wireframes/accounts/accounts-wireframe.drawio) adds a
+Manager-only scheduled-deletion list with navigation to details. The
+[account-details source](wireframes/account-details/account-details-wireframe.drawio)
+adds deletion, a read-only retired-state notice and the sole reactivation action.
+The user's positions, routing and icon placeholder are preserved. Review colors
+have been restored in the sources.
+
+The [accounts preview](wireframes/accounts/accounts-wireframe.png) and
+[account-details preview](wireframes/account-details/account-details-wireframe.png)
+were re-exported from the approved sources and inspected after color cleanup.
+The user adjusted the delete and allowance annotations and exported the updated
+account-details preview. Inspection found no crossing over the transaction or
+last-credit text.
+
+**Account Deletion R1 click prototype draft.** The
+[integrated prototype](prototypes/index.html), [Accounts](prototypes/accounts/index.html)
+and [account details](prototypes/account-details/index.html) now demonstrate
+the deletion and reactivation flows. Shared fictional data hides retired accounts
+from [Overview](prototypes/accounts-overview/index.html). See the separate
+[prototype verification](prototypes/README.md#account-deletion-r1-2026-10-28).
+R1 was superseded by the approved R2 prototype above.
+
 ## Prototype Password Sampling R1 (2026-10-26)
 
 **Administration Users prototype R1 draft.** The
@@ -761,16 +847,16 @@ hydrated controls and did not change the existing signed-in session.
 Actual notice documents/build metadata and the explicit partial-coverage/legal placeholders
 remain unchanged. See the [delivery record](../development.md#four-tab-about-delivery-2026-10-23).
 
-| Reference | Scope |
-| --- | --- |
-| App shell | Shared navigation, identity/role controls, content boundaries, and responsive structure, without specific view content |
-| Accounts overview | Application home/landing view with accounts and balances; no separate marketing page |
-| Account management | Dedicated **Accounts** navigation entry: Manager account creation and navigation; no existing-account name editing |
-| Account details | Manager rename beside the heading, image controls, balance, opening state, transactions/history, deposit/withdrawal forms, and monthly allowance configuration/status |
-| Settings | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration |
-| User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection |
-| Login | Sign-in, forced-password change, and session-expiry states |
-| About | Notices wireframe and matching shared prototype R6 explicitly approved 2026-10-24; Angular implemented and locally verified against the production image; other wireframes retain their earlier approvals |
+| Reference           | Scope                                                                                                                                                                                                     |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| App shell           | Shared navigation, identity/role controls, content boundaries, and responsive structure, without specific view content                                                                                    |
+| Accounts overview   | Application home/landing view with accounts and balances; no separate marketing page                                                                                                                      |
+| Account management  | Dedicated **Accounts** navigation entry: Manager account creation and navigation; no existing-account name editing                                                                                        |
+| Account details     | Manager rename beside the heading, image controls, balance, opening state, transactions/history, deposit/withdrawal forms, and monthly allowance configuration/status                                     |
+| Settings            | **Profile** tab in Administration: personal preferences and password change; instance settings remain deployment configuration                                                                            |
+| User administration | **Users** tab in Administration: Manager user creation, roles, disablement, password reset, and last-manager protection                                                                                   |
+| Login               | Sign-in, forced-password change, and session-expiry states                                                                                                                                                |
+| About               | Notices wireframe and matching shared prototype R6 explicitly approved 2026-10-24; Angular implemented and locally verified against the production image; other wireframes retain their earlier approvals |
 
 Use desktop/mobile and Manager/Member variants where relevant. Forms, dialogs,
 image upload, confirmations, and validation/retry states can be named pages in
@@ -890,23 +976,23 @@ inspected. The Profile preview remains synchronized from its previous export.
 All 11 sources parse with valid references and no review colours on notes.
 Prototype approvals and legal-content review remain separate and unchanged.
 
-Every click prototype in the following table has the **approved 2026-10-23 surface
-revision**. Earlier dates in that column record approval history; the Status
-column retains the unchanged wireframe approvals.
+Click prototypes in the following table retain the **approved 2026-10-23 surface
+revision** as history where a later draft is listed. Earlier dates in that column
+record approval history.
 
-| Reference | Files | Status | Click prototype |
-| --- | --- | --- | --- |
-| App shell | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and Administration-last correction approval 2026-10-17 retained as history; user-edited icon placeholders/annotation arrangement preserved | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history |
-| Accounts overview | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png) | Allowance Presentation R1 approved 2026-10-24; earlier 2026-10-10 approval retained as history | [Overview](prototypes/accounts-overview/index.html), Currency Formatting R1 approved 2026-10-24; earlier Allowance Status Consistency R2, Error Feedback R3 and Allowance Presentation R2 approvals retained as history |
-| Accounts | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png) | Allowance Presentation R1 approved 2026-10-24; earlier Compact Account Names R2 approval retained as history | [Accounts](prototypes/accounts/index.html), Currency Formatting R1 approved 2026-10-24; Allowance Presentation R2 approved 2026-10-24 retained as history |
-| Account details | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png) | Wireframe and earlier execution-status prototype explicitly approved 2026-10-12; borderless image-edit badge prototype explicitly approved 2026-10-17 ("Approve both current references"); approved wireframe unchanged | [Account details](prototypes/account-details/index.html), Currency Formatting R1 approved 2026-10-24; Allowance Status Consistency R2 approved 2026-10-24 retained as history |
-| Administration: Profile | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Password Dialog R1 approved 2026-10-24; 2026-10-21 and earlier approvals retained as history | [Administration](prototypes/administration/index.html), Password Dialog R1 prototype approved 2026-10-24 |
-| Administration: Users | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png) | Approved 2026-10-10 | [Administration](prototypes/administration/index.html), Password Sampling R1 draft 2026-10-26; earlier approvals retained as history |
-| Login | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history |
-| About: Overview | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
-| About: Project license | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19 |
-| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png) | R6 package/document hierarchy explicitly approved 2026-10-24 with "approved"; user arrangement preserved, review markers cleared and preview inspected; prior wording/source approval 2026-10-21 and R5 approval 2026-10-19 retained as history | [About](prototypes/about/index.html), R6 explicitly approved 2026-10-24 with "prototype approved, implement", after standalone and integrated verification; earlier R5 and Shared Notice Documents R1 approvals remain history |
-| About: Legal information | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png) | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; legal wording not approved | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19; legal placeholders only |
+| Reference                  | Files                                                                                                                                                              | Status                                                                                                                                                                                                                                          | Click prototype                                                                                                                                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| App shell                  | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png)     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and Administration-last correction approval 2026-10-17 retained as history; user-edited icon placeholders/annotation arrangement preserved                  | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history   |
+| Accounts overview          | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png)     | Allowance Presentation R1 approved 2026-10-24; earlier 2026-10-10 approval retained as history                                                                                                                                                  | [Overview](prototypes/accounts-overview/index.html), Account Deletion R2 shared state approved 2026-10-28; earlier approvals retained as history |
+| Accounts                   | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png)                                         | Account Deletion R1 approved 2026-10-28; earlier approvals retained as history | [Accounts](prototypes/accounts/index.html), Account Deletion R2 shared state approved 2026-10-28; earlier approvals retained as history |
+| Account details            | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png)             | Account Deletion R2 approved 2026-10-28; R1 retained as history | [Account details](prototypes/account-details/index.html), Account Deletion R2 approved 2026-10-28; earlier approvals retained as history |
+| Administration: Profile    | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Password Dialog R1 approved 2026-10-24; 2026-10-21 and earlier approvals retained as history                                                                                                                                                    | [Administration](prototypes/administration/index.html), Password Dialog R1 prototype approved 2026-10-24                                                                                                                       |
+| Administration: Users      | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png)     | Approved 2026-10-10                                                                                                                                                                                                                             | [Administration](prototypes/administration/index.html), Password Sampling R1 draft 2026-10-26; earlier approvals retained as history                                                                                           |
+| Login                      | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png)                                                     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history                                                                                                | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history                                                                                             |
+| About: Overview            | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png)                                                     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview                                                                             | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19                                                                                                                                                        |
+| About: Project license     | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png)                                     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged                                                                           | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19                                                                                                                                                        |
+| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png)                                     | R6 package/document hierarchy explicitly approved 2026-10-24 with "approved"; user arrangement preserved, review markers cleared and preview inspected; prior wording/source approval 2026-10-21 and R5 approval 2026-10-19 retained as history | [About](prototypes/about/index.html), R6 explicitly approved 2026-10-24 with "prototype approved, implement", after standalone and integrated verification; earlier R5 and Shared Notice Documents R1 approvals remain history |
+| About: Legal information   | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png)                                         | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; legal wording not approved                                                                                           | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19; legal placeholders only                                                                                                                               |
 
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).

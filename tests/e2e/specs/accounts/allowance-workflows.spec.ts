@@ -223,6 +223,118 @@ test('manager schedules allowance changes and members read them without ledger c
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test('retired accounts pause scheduled allowance wording without changing saved settings', async ({ page, request, browser, instance }) => {
+  const manager = bootstrapManager(instance);
+
+  await login(request, manager);
+
+  const account = await createAccount(request, 'Retired allowance');
+  const path = `/api/accounts/${account.id}`;
+
+  expect((await csrfWrite(request, 'POST', `${path}/opening`, { amount: '0', idempotencyKey: randomUUID() })).status()).toBe(200);
+  expect(
+    (await csrfWrite(request, 'POST', `${path}/transactions`, { source: 'deposit', amount: '1', idempotencyKey: randomUUID() })).status(),
+  ).toBe(200);
+  expect((await csrfWrite(request, 'PUT', `${path}/allowance`, { enabled: true, amount: '12.34' })).status()).toBe(200);
+
+  const configuration = await (await request.get(`${path}/allowance`)).json();
+  const month = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+    new Date(`${configuration.scheduled.effectiveMonth}-01T12:00:00Z`),
+  );
+  const reason = 'No automatic allowance credits are posted while this account is scheduled for deletion.';
+  const reader = await createReader(request);
+
+  await login(request, manager);
+
+  expect((await csrfWrite(request, 'DELETE', path, {})).status()).toBe(202);
+
+  await signIn(page, manager, `/accounts/${account.id}`);
+
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance paused');
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveText(reason);
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveRole('status');
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveClass(/message-info/);
+  await expect(page.locator('#account-details-allowance-paused-reason .icon-info')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#account-details-allowance-scheduled')).toHaveText(`Saved allowance setting from ${month}.`);
+  await expect(page.locator('#account-details-allowance-amount-display')).toHaveText('+12.34 € per month');
+  await expect(page.locator('#account-details-allowance-edit')).toHaveCount(0);
+  await expect(page.locator('#account-details-no-credits')).toHaveText('No credits yet');
+
+  const notice = await page.locator('#account-details-allowance-paused-reason').evaluate((element) => {
+    const title = element.previousElementSibling;
+
+    if (!title) {
+      throw new Error('Missing allowance title before retirement info box');
+    }
+
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+
+    return {
+      titleId: title.id,
+      beforeConfiguration: element.nextElementSibling?.classList.contains('allowance'),
+      gap: rect.top - title.getBoundingClientRect().bottom,
+      expectedGap: parseFloat(style.getPropertyValue('--space-4')) * parseFloat(getComputedStyle(document.documentElement).fontSize),
+      fits: element.scrollWidth <= element.clientWidth,
+    };
+  });
+
+  expect(notice.titleId).toBe('account-details-allowance-title');
+  expect(notice.beforeConfiguration).toBe(true);
+  expect(notice.gap).toBeCloseTo(notice.expectedGap, 1);
+  expect(notice.fits).toBe(true);
+
+  await page.locator('app-account-allowance').screenshot({ path: test.info().outputPath('retired-allowance-info.png') });
+
+  const divider = await page.locator('#account-details-allowance-execution').evaluate((element) => {
+    const style = getComputedStyle(element);
+
+    return {
+      width: style.borderTopWidth,
+      style: style.borderTopStyle,
+      color: style.borderTopColor,
+      padding: parseFloat(style.paddingTop),
+      expectedPadding: parseFloat(style.getPropertyValue('--space-5')) * parseFloat(getComputedStyle(document.documentElement).fontSize),
+    };
+  });
+
+  expect(divider.width).toBe('1px');
+  expect(divider.style).toBe('solid');
+  expect(divider.color).not.toBe('rgba(0, 0, 0, 0)');
+  expect(divider.padding).toBeCloseTo(divider.expectedPadding, 1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
+  const context = await browser.newContext({ ...test.info().project.use, baseURL: instance.origin, ignoreHTTPSErrors: true });
+
+  try {
+    const memberPage = await context.newPage();
+
+    await signIn(memberPage, reader, `/accounts/${account.id}`);
+
+    await expect(memberPage.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance paused');
+    await expect(memberPage.locator('#account-details-allowance-paused-reason')).toHaveText(reason);
+    await expect(memberPage.locator('#account-details-allowance-paused-reason')).toHaveRole('status');
+    await expect(memberPage.locator('#account-details-allowance-paused-reason')).toHaveClass(/message-info/);
+    expect(await memberPage.locator('#account-details-allowance-paused-reason').evaluate(element => element.previousElementSibling?.id))
+      .toBe('account-details-allowance-title');
+    await expect(memberPage.locator('#account-details-allowance-scheduled')).toHaveText(`Saved allowance setting from ${month}.`);
+    await expect(memberPage.locator('#account-details-allowance-edit')).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+
+  expect(await (await request.get(`${path}/allowance`)).json()).toEqual(configuration);
+  expect((await csrfWrite(request, 'POST', `${path}/reactivate`, {})).status()).toBe(204);
+
+  await page.reload();
+
+  await expect(page.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance scheduled');
+  await expect(page.locator('#account-details-allowance-scheduled')).toHaveText(`Credits are posted automatically from ${month}.`);
+  await expect(page.locator('#account-details-allowance-paused-reason')).toHaveCount(0);
+  await expect(page.locator('#account-details-allowance-edit')).toBeEnabled();
+  expect(await (await request.get(`${path}/allowance`)).json()).toEqual(configuration);
+});
+
 test('allowance save failures and stale edits retain input until the manager retries or refreshes', async ({ page, request, instance }) => {
   const manager = bootstrapManager(instance);
 

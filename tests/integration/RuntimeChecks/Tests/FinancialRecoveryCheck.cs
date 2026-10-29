@@ -15,6 +15,66 @@ namespace RuntimeChecks.Tests;
 
 internal static class FinancialRecoveryCheck
 {
+    public static async Task CheckSnapshotVersionsAsync()
+    {
+        var root = Path.Combine(Path.GetTempPath(), $"snapshot-version-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        var settings = new InstanceSettings { DataPath = root, Timezone = "UTC", DefaultLocale = "en-US" };
+        var path = Path.Combine(root, "snapshot.json");
+        var originalError = Console.Error;
+
+        try
+        {
+            foreach (var (json, expected) in new[]
+            {
+                ("{\"formatVersion\":0}", "snapshot_version_unsupported"),
+                ("{\"formatVersion\":1}", "snapshot_version_unsupported"),
+                ("{\"formatVersion\":3,\"futureField\":true}", "snapshot_version_unsupported"),
+                ("{}", "snapshot_invalid"),
+                ("{\"formatVersion\":\"2\"}", "snapshot_invalid"),
+                ("{\"formatVersion\":3,\"formatVersion\":1}", "snapshot_invalid"),
+                ("{\"formatVersion\":3,\"future\":{\"key\":1,\"key\":2}}", "snapshot_invalid"),
+                ("{\"formatVersion\":3,", "snapshot_invalid")
+            })
+            {
+                await File.WriteAllTextAsync(path, json);
+                using var errors = new StringWriter();
+                Console.SetError(errors);
+
+                var result = await FinancialImportCommand.RunAsync(settings, path, default);
+
+                Require(result == 1 && errors.ToString().Trim() == expected);
+                Require(!File.Exists(Path.Combine(root, "monkey.db")));
+            }
+
+            Console.SetError(originalError);
+            var exports = Path.Combine(root, "exports");
+            var store = new FinancialExportStore(exports, 1);
+            store.Prepare();
+            var oldPath = Path.Combine(exports, "pocket-monkey-20260101T0000000000000Z-00000000000000000000000000000001.json");
+            await File.WriteAllTextAsync(oldPath, "{\"formatVersion\":1}");
+            var now = new DateTimeOffset(2026, 10, 28, 12, 0, 0, TimeSpan.Zero);
+            var snapshot = EmptySnapshot() with { CapturedAtUtc = now };
+            var retired = snapshot with
+            {
+                SnapshotId = Guid.NewGuid().ToString(),
+                CapturedAtUtc = now.AddDays(1),
+                Accounts = [snapshot.Accounts[0] with { RetiredAtUtc = now }]
+            };
+
+            Require(FinancialExportStore.ContentHash(snapshot) != FinancialExportStore.ContentHash(retired));
+            Require(await store.CheckAsync(_ => Task.FromResult(snapshot), now, "UTC", default));
+            Require(await store.CheckAsync(_ => Task.FromResult(retired), now.AddDays(1), "UTC", default));
+            Require(File.Exists(oldPath) && Directory.GetFiles(exports, "pocket-monkey-*.json").Length == 2);
+            Console.WriteLine("snapshot_version_passed");
+        }
+        finally
+        {
+            Console.SetError(originalError);
+            Directory.Delete(root, true);
+        }
+    }
+
     public static async Task RunAsync(string? fixtureDirectory = null)
     {
         var root = Path.Combine(Path.GetTempPath(), $"financial-recovery-{Guid.NewGuid():N}");
@@ -81,13 +141,13 @@ internal static class FinancialRecoveryCheck
         var source = FinancialScenarioFixtures.All()["signed-balances"];
         var invalid = new[]
         {
-            source with { FormatVersion = 2 },
+            source with { FormatVersion = 1 },
             source with { Accounts = [source.Accounts[0] with { Balance = "12.51" }, .. source.Accounts.Skip(1)] },
             source with { LedgerEntries = [source.LedgerEntries[0] with { Amount = "10.001" }, .. source.LedgerEntries.Skip(1)] },
             source with { LedgerEntries = [source.LedgerEntries[0] with { AccountId = Guid.NewGuid().ToString() }, .. source.LedgerEntries.Skip(1)] },
             source with { RetiredLedgerKeys = [new SnapshotRetiredLedgerKey
             {
-                IdempotencyKey = source.LedgerEntries[0].IdempotencyKey, RetiredAtUtc = source.CapturedAtUtc
+                IdempotencyKey = source.LedgerEntries[0].IdempotencyKey, AccountId = null, RetiredAtUtc = source.CapturedAtUtc
             }] },
             source with { LedgerMaintenanceState = source.LedgerMaintenanceState with { LastAllocatedSequenceNumber = 0 } }
         };
@@ -300,6 +360,7 @@ internal static class FinancialRecoveryCheck
                     RetiredLedgerKeys = [new SnapshotRetiredLedgerKey
                     {
                         IdempotencyKey = credited.IdempotencyKey,
+                        AccountId = null,
                         RetiredAtUtc = clock.Now
                     }],
                     LedgerMaintenanceState = snapshot.LedgerMaintenanceState with { RetentionRevision = 1 }
@@ -504,7 +565,7 @@ internal static class FinancialRecoveryCheck
     {
         return new FinancialSnapshot
         {
-            FormatVersion = 1,
+            FormatVersion = FinancialSnapshotValidation.CurrentFormatVersion,
             SnapshotId = Guid.NewGuid().ToString(),
             CapturedAtUtc = DateTimeOffset.UtcNow,
             ApplicationVersion = "fixture",
@@ -513,7 +574,8 @@ internal static class FinancialRecoveryCheck
             TransactionRetentionMonths = 24,
             Accounts = [new SnapshotAccount
             {
-                Id = "10000000-0000-0000-0000-000000000001", Name = "Uninitialized", NormalizedName = "UNINITIALIZED", Balance = null
+                Id = "10000000-0000-0000-0000-000000000001", Name = "Uninitialized", NormalizedName = "UNINITIALIZED", Balance = null,
+                RetiredAtUtc = null
             }],
             LedgerEntries = [],
             AuditEvents = [],

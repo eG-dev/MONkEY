@@ -10,5 +10,6 @@ public sealed record SnapshotAllowanceExecution
     public required int Attempts { get; init; }
     public required DateTimeOffset? LastAttemptAtUtc { get; init; }
     public required DateTimeOffset? CreditedAtUtc { get; init; }
+    public required DateTimeOffset? DroppedAtUtc { get; init; }
     public required string? ErrorCode { get; init; }
 }

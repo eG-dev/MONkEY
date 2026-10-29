@@ -1,10 +1,11 @@
 import { ThemePreference } from './theme-preference';
+import { UserRole } from './user-role';
 
 export interface SessionUser {
   id: string;
   username: string;
   displayName: string;
-  role: 'Manager' | 'Member';
+  role: UserRole;
   language: 'de' | 'en';
   theme: ThemePreference;
   mustChangePassword: boolean;
@@ -21,7 +22,7 @@ export function isSessionUser(value: unknown): value is SessionUser {
     typeof user['id'] === 'string' &&
     typeof user['username'] === 'string' &&
     typeof user['displayName'] === 'string' &&
-    (user['role'] === 'Manager' || user['role'] === 'Member') &&
+    (user['role'] === UserRole.Manager || user['role'] === UserRole.Member) &&
     (user['language'] === 'de' || user['language'] === 'en') &&
     (user['theme'] === 'system' || user['theme'] === 'light' || user['theme'] === 'dark') &&
     typeof user['mustChangePassword'] === 'boolean'

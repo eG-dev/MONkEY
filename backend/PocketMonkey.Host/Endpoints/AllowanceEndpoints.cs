@@ -32,7 +32,7 @@ public static class AllowanceEndpoints
                     principal.FindFirstValue(ClaimTypes.NameIdentifier)!, cancellationToken);
 
                 return result.Error is null ? TypedResults.Ok(result.Configuration) : TypedResults.Json(new { code = result.Error },
-                    statusCode: result.Error == "not_found" ? 404 : result.Error is "allowance_conflict" or "not_initialized" ? 409 : 400);
+                    statusCode: result.Error == "not_found" ? 404 : result.Error is "allowance_conflict" or "not_initialized" or "account_retired" ? 409 : 400);
             })
             .RequireAuthorization(UserRole.Manager.ToIdentityName())
             .WithTags("Accounts")

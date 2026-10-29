@@ -15,7 +15,7 @@ namespace PocketMonkey.Storage.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -168,6 +168,9 @@ namespace PocketMonkey.Storage.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("RetiredAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
@@ -200,6 +203,9 @@ namespace PocketMonkey.Storage.Migrations
                     b.Property<DateTimeOffset?>("CreditedAtUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTimeOffset?>("DroppedAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ErrorCode")
                         .HasColumnType("TEXT");
 
@@ -229,6 +235,8 @@ namespace PocketMonkey.Storage.Migrations
                             t.HasCheckConstraint("CK_AllowanceExecutions_Attempts", "Attempts >= 0");
 
                             t.HasCheckConstraint("CK_AllowanceExecutions_Month", "BusinessMonth BETWEEN 101 AND 999912 AND BusinessMonth % 100 BETWEEN 1 AND 12");
+
+                            t.HasCheckConstraint("CK_AllowanceExecutions_Outcome", "CreditedAtUtc IS NULL OR DroppedAtUtc IS NULL");
                         });
                 });
 
@@ -499,16 +507,32 @@ namespace PocketMonkey.Storage.Migrations
                         });
                 });
 
+            modelBuilder.Entity("PocketMonkey.Storage.Entities.PendingImageDeletion", b =>
+                {
+                    b.Property<string>("ImageKey")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ImageKey");
+
+                    b.ToTable("PendingImageDeletions");
+                });
+
             modelBuilder.Entity("PocketMonkey.Storage.Entities.RetiredLedgerKey", b =>
                 {
                     b.Property<string>("IdempotencyKey")
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("AccountId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTimeOffset>("RetiredAtUtc")
                         .HasColumnType("TEXT");
 
                     b.HasKey("IdempotencyKey");
+
+                    b.HasIndex("AccountId");
 
                     b.ToTable("RetiredLedgerKeys", null, t =>
                         {
@@ -599,6 +623,14 @@ namespace PocketMonkey.Storage.Migrations
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Storage.Entities.RetiredLedgerKey", b =>
+                {
+                    b.HasOne("PocketMonkey.Storage.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("PocketMonkey.Storage.Entities.Account", b =>

@@ -12,5 +12,7 @@ public sealed class Account
 
     public string? ImageKey { get; set; }
 
+    public DateTimeOffset? RetiredAtUtc { get; set; }
+
     public List<LedgerEntry> LedgerEntries { get; } = [];
 }

@@ -7,4 +7,5 @@ export interface SharedAccount {
   balance: string | null;
   imageUrl: string | null;
   openingEntry: OpeningEntry | null;
+  purgeAtUtc: string | null;
 }

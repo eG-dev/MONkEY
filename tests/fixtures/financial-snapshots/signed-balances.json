@@ -1,5 +1,5 @@
 {
-  "formatVersion": 1,
+  "formatVersion": 2,
   "snapshotId": "90000000-0000-0000-0000-000000000002",
   "capturedAtUtc": "2026-06-15T12:00:00.0000000Z",
   "applicationVersion": "fixture",
@@ -11,19 +11,22 @@
       "id": "10000000-0000-0000-0000-000000000001",
       "name": "Positive",
       "normalizedName": "POSITIVE",
-      "balance": "12.50"
+      "balance": "12.50",
+      "retiredAtUtc": null
     },
     {
       "id": "10000000-0000-0000-0000-000000000002",
       "name": "Negative",
       "normalizedName": "NEGATIVE",
-      "balance": "-5.00"
+      "balance": "-5.00",
+      "retiredAtUtc": null
     },
     {
       "id": "10000000-0000-0000-0000-000000000003",
       "name": "Zero",
       "normalizedName": "ZERO",
-      "balance": "0.00"
+      "balance": "0.00",
+      "retiredAtUtc": null
     }
   ],
   "ledgerEntries": [
