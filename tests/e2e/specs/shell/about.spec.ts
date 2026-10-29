@@ -296,9 +296,15 @@ test("public About preserves sign-in values, supports keyboard tabs, and bundles
       expect(await row.getByTestId('about-metadata-separator').allTextContents()).toEqual(
         metadata.slice(1).map(() => '\u00a0\u00a0|\u00a0\u00a0'),
       );
-      expect(await row.getByTestId('about-component-metadata-groups').textContent()).toBe(
-        metadata.join('\u00a0\u00a0|\u00a0\u00a0'),
-      );
+      expect(await row.getByTestId('about-component-metadata-groups').locator(':scope > span').evaluateAll((spans) =>
+        spans.map((span) => ({
+          type: span.getAttribute('data-testid'),
+          text: span.getAttribute('data-testid') === 'about-component-metadata' ? span.textContent?.trim() : span.textContent,
+        })),
+      )).toEqual(metadata.flatMap((text, index) => [
+        ...(index === 0 ? [] : [{ type: 'about-metadata-separator', text: '\u00a0\u00a0|\u00a0\u00a0' }]),
+        { type: 'about-component-metadata', text },
+      ]));
     }
     const collapsedNotices = await page.locator("#about-panel-notices").boundingBox();
 
