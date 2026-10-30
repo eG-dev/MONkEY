@@ -15,7 +15,7 @@ revision while its source is a draft.
 ## Reusable Annotation Example
 
 See the UI/UX skill's [annotation syntax and example](../../.github/skills/ui-ux-design/SKILL.md#annotation-scopes)
-and [repository bindings](../../.github/skills/ui-ux-design/SKILL.md#repository-integration-pocket-monkey).
+and [repository profile](../../.github/skills/ui-ux-design/references/pocket-monkey.md).
 The [ADR](../ADR/ADR-0013-wireframes-and-click-prototypes.md) owns decisions and
 approval policy; this index records artifact status and review evidence.
 

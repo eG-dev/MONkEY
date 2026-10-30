@@ -1,0 +1,28 @@
+<mxfile host="drawio">
+    <diagram id="view" name="View">
+        <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2440" pageHeight="1100" background="#FFFFFF" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="viewport" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=3;dashed=1;" value="" vertex="1">
+                    <mxGeometry height="900" width="1440" x="500" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="view-title" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Calibri;fontSize=28;fontStyle=1;" value="View title" vertex="1">
+                    <mxGeometry height="48" width="600" x="532" y="132" as="geometry"/>
+                </mxCell>
+                <mxCell id="primary-action" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" value="Primary action" vertex="1">
+                    <mxGeometry height="40" width="180" x="1728" y="136" as="geometry"/>
+                </mxCell>
+                <mxCell id="content-panel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;dashed=1;" value="Content placeholder" vertex="1">
+                    <mxGeometry height="760" width="1376" x="532" y="208" as="geometry"/>
+                </mxCell>
+                <mxCell id="primary-action-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Key behavior not visible in the drawing.&lt;br&gt;&lt;br&gt;&lt;b&gt;[role: editor][state: draft]&lt;/b&gt;&lt;br&gt;Detail that applies only when both conditions hold." vertex="1">
+                    <mxGeometry height="130" width="420" x="1990" y="91" as="geometry"/>
+                </mxCell>
+                <mxCell id="primary-action-arrow" edge="1" parent="1" source="primary-action-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;strokeWidth=3;edgeStyle=none;curved=0;" target="primary-action">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,49 +1,91 @@
 ---
 name: ui-ux-design
-description: "Reusable UI/UX design workflow: create or update editable wireframes, detailed click prototypes, and design-system references before implementation. Use when asked to design, redesign, or change a screen, dialog, navigation, colors, states, or interaction behavior, or to add a new view."
+description: "Reusable UI/UX design workflow for wireframes, mockups, draw.io annotations, click prototypes, design tokens and design review/approval before implementation. Use when designing, redesigning or changing a screen, dialog, navigation, colors, states or interactions; adding a view; arranging or revising wireframe notes; approving a wireframe or prototype; exporting approved previews; or setting up a project's design workflow."
 ---
 
 # UI/UX Design Workflow
 
-Use this workflow for structure and behavior review before application
-implementation, regardless of product domain or frontend framework. Paths,
-roles, languages, viewport sizes and runtime helpers are project configuration,
-not prerequisites of the workflow. Preserve an existing project's conventions
-rather than introducing this repository's choices elsewhere.
+A reusable workflow for reviewing structure and behavior before application
+implementation, independent of product domain and frontend framework. Each
+project supplies a profile with its paths, roles, languages, viewports, tools
+and runtime helpers.
 
-In this repository, follow [ADR-0013](../../../docs/ADR/ADR-0013-wireframes-and-click-prototypes.md)
-and the [design instructions](../../instructions/design.instructions.md).
-The ADR owns decisions and approval policy; this skill owns the working procedure,
-annotation examples and repository bindings. Keep artifact status and review
-evidence in the design index, not in these reusable rules.
+## Before You Start
+
+1. Load the project profile from `references/` or the project's design
+   documentation. Here: [POCKET MONkEY](references/pocket-monkey.md).
+   If none exists, follow [Set up a project](#set-up-a-project).
+2. Read the project's decision records and design index named in the profile.
+   Project decisions override the profile; the profile overrides the defaults
+   in this skill ([precedence](references/project-profile.md#precedence)).
+3. Preserve existing conventions and user edits; do not import another
+   project's choices.
+
+## Choose the Path
+
+| Request | Go to |
+| --- | --- |
+| New view or structural change | [Understand](#1-understand-the-change), [Wireframe](#2-wireframe) |
+| Revise wireframe notes | [Wireframe](#2-wireframe), [annotation scopes](#annotation-scopes) |
+| Notes arranged by the user | Run [source checks](references/drawio-conventions.md#source-checks); present the source for review |
+| Wireframe approved | [Cleanup and export](#drawing-and-review), then [record approval](#6-finish) |
+| Interaction, state or text detail | [Click prototype](#3-click-prototype), [Verify](#5-verify) |
+| Prototype approved | [Record approval](#6-finish); hand off for implementation |
+| Color, typography, spacing or component pattern | [Design system](#4-design-system), [Verify](#5-verify) |
+| No design setup or profile yet | [Set up a project](#set-up-a-project) |
 
 ## Workflow Overview
 
 ```mermaid
 flowchart LR
-  W[Wireframe<br>structure and key behavior] --> A{Approved?}
-  A -- changes --> W
-  A -- yes --> P[Click prototype<br>details and behavior]
-  P --> V[Verify standalone<br>then integrated application]
-  V --> R{Explicitly approved?}
-  R -- structural change --> W
+  D[Wireframe draft] --> N[User arranges notes]
+  N --> W{Wireframe approved?}
+  W -- changes --> D
+  W -- yes --> C[Clean markers<br>export and inspect preview]
+  C --> P[Click prototype draft]
+  P --> V[Verify standalone<br>then integrated]
+  V --> R{Prototype approved?}
+  R -- structural change --> D
   R -- detail change --> P
-  R -- yes --> I[Application implementation<br>verified end to end]
+  R -- yes --> I[Implementation<br>verified end to end]
 ```
+
+Artifact status: `draft` → `in review` → `approved`. Any change to an approved
+artifact returns it to `draft`.
 
 ## Explicit Approval Gates
 
-Apply the project's approval policy, here [ADR-0013: Changes and approval](../../../docs/ADR/ADR-0013-wireframes-and-click-prototypes.md#changes-and-approval).
-Before each dependent step, check the design index for explicit approval of its
-current prerequisite revision. Present drafts and verification evidence for
-review; when corrections are requested, update and verify the draft before
-returning it for review. Wait without repeatedly prompting for approval or
-continuing dependent work while review is pending.
+Default rules; a project's decision records may strengthen or override them.
+
+- Only explicit user approval of a named artifact's current revision counts.
+  Feedback, requested corrections, arrangement confirmation, policy acceptance,
+  "proceed" and passing checks are not approval.
+- Earlier approvals remain history and never carry over to a changed revision.
+- Require wireframe approval and its cleaned, inspected preview before the
+  prototype, and prototype approval before implementation. Both named current
+  artifacts may be approved together.
+- Before each dependent step, check the design index for the prerequisite's
+  approval. Present drafts with verification evidence. After corrections,
+  verify and return the draft; do not repeatedly prompt for approval or continue
+  dependent work while review is pending.
+
+## Set up a project
+
+1. Detect existing design artifacts, decision records, tokens, prototype runtime
+   and implementation conventions.
+2. Create a profile from the [profile template](references/project-profile.md#profile-template).
+   Ask for business-relevant values such as roles, languages and approval rules;
+   never invent them.
+3. Create a design index with the [required fields](references/project-profile.md#design-index-fields).
+4. Start wireframes from the [template](assets/wireframe-template.drawio).
+5. Create a minimal offline prototype runtime and tokens only when the requested
+   work needs them.
+6. Link the profile from the project's agent instructions.
 
 ## 1. Understand the change
 
-1. Read the project's design index, the affected draw.io source, and the prototype. An existing PNG may show an older revision and is not the current draft.
-2. Read the applicable decisions and requirements (for example, business rules, permissions, localization and accessibility). A design change must not invent business rules; ask when a policy is unclear.
+1. Read the design index, the affected editable source and the prototype. An existing preview may show an older revision and is not the current draft.
+2. Read the applicable decisions and requirements (business rules, permissions, localization, accessibility). Do not invent business rules; ask when a policy is unclear.
 3. Decide which artifacts change:
 
 | Change | Wireframe | Prototype | Design system |
@@ -56,16 +98,21 @@ continuing dependent work while review is pending.
 
 ## 2. Wireframe
 
-- Use one editable source per substantially different view layout, with one desktop main-content viewport at the project's agreed size. Keep shared shell chrome in its own wireframe. Expand the drawing around the viewport for annotations; do not enlarge the viewport merely to fit notes.
-- Use one agreed review language consistently for UI labels, placeholders, annotations and connector labels unless explicitly asked otherwise. Wireframe review language does not replace the prototype's or application's localization requirements.
-- For each annotation, ask whether the detail affects what users see or can do, or is needed to decide the layout. Keep only the key interaction or critical constraint needed for that review, stated briefly. Demonstrate detailed interactions, validation, errors and edge cases in the prototype; keep enduring business and security rules in their authoritative ADRs rather than relying on a wireframe or prototype as the specification. Do not discard requirements when shortening notes.
-- Check whether the drawing already conveys the detail without a note. Omit or remove notes that merely describe visible elements, such as identifying a visible tab, even when those elements were just changed. Keep necessary behavior, scope, and constraints that are not apparent from the drawing.
+- Use one editable source per substantially different view layout, with one desktop main-content viewport at the profile's width. Keep shared shell chrome in its own wireframe. Start from the [template](assets/wireframe-template.drawio) and follow the [draw.io conventions](references/drawio-conventions.md) unless the profile overrides them.
+- Write all wireframe text in English, including UI labels, placeholders, notes and connector labels. Product localization applies to prototypes and the application, not wireframes.
+- For each note, ask whether the detail affects what users see or can do, or is needed to decide the layout. Keep only that key behavior or critical constraint, briefly. Detailed interactions, validation, errors and edge cases belong in the prototype; enduring business and security rules belong in authoritative decisions. Do not discard requirements when shortening notes.
+- Omit notes that merely describe what the drawing already shows, such as a visible tab, even after a change.
 
 ### Annotation scopes
 
-- Group conditional details under short, bold bracketed scope headers on their own lines, with the relevant detail below each header. Use adjacent brackets for attributes that must all apply: `[role: manager][state: retired]` means the detail applies only to managers viewing a retired item. Add further attributes the same way, for example `[role: manager][state: retired][device: phone]`. Do not split a combined condition across separate headers or use one bracket containing multiple attributes. Use separate sections when behavior differs; `[roles: manager, member]` denotes a shared detail for either listed role, not two simultaneous roles. Attribute names and values are examples, not a fixed product vocabulary. Put a blank line before a header when other text precedes it in the note; do not add one before the first line. General details need no scope header.
+- Put conditional details under short, bold bracketed scope headers on their own lines, with the detail below.
+- Adjacent brackets mean every condition must apply: `[role: manager][state: retired]` applies only to managers viewing a retired item. Add more conditions the same way, such as `[role: manager][state: retired][device: phone]`.
+- Write attributes in the profile's order (default: role, state, device or viewport). Do not split one combined condition across headers or put several attributes in one bracket.
+- Use separate sections for differing behavior. `[roles: manager, member]` marks a detail shared by either listed role, not both at once.
+- Use the profile's scope vocabulary; names and values here are examples.
+- Put an empty line before a header that follows other text, not before the first line. General details need no header.
 
-Example note (bold headers, with each detail below its header):
+Example note:
 
 **[role: manager][state: retired]**<br>
 Show the reactivation action.
@@ -75,108 +122,54 @@ Open confirmation full-screen.
 
 ### Drawing and review
 
-- Style conventions: Calibri; panels and controls as plain boxes; primary actions green-filled; placeholders dashed. Enclose the viewport in a dashed border. Use yellow note shapes (`shape=note`, not callouts) for needed key behavior, states, roles, dialogs, and phone layout, entirely outside the viewport. Arrange notes around its edges with space between them. Connect each note to the relevant existing component with an arrow pointing from note to component; route through empty space where possible.
-- In viewport UI, square-bracketed text such as `[delete]` represents an icon placeholder, not a literal UI label. This is separate from annotation scope headers.
-- Keep the XML readable. If the user edited the source, change only the affected cells.
-- Consolidate notes about the same area/component into one note with one arrow. Use straight connectors (`edgeStyle=none;curved=0`) with a 3px stroke (`strokeWidth=3`) and no intermediate waypoints.
-- Use a black 3px viewport border with draw.io's "Dashed (1)" preset (`strokeColor=#000000;strokeWidth=3;dashed=1`, no custom `dashPattern`).
-- Send the viewport rectangle to the back (first drawable cell in the XML root), keeping other elements in front. Use black (`strokeColor=#000000`) for annotation connector lines.
-- Make new or changed annotations visually obvious during review instead of embedding revision labels such as "R5 draft" in comment text. Prefer a temporary light-blue note (`fillColor=#dae8fc;strokeColor=#6c8ebf`); optionally highlight its text or connector in blue (`#0078D4`). Use a consistent marker for the changed annotations only, keeping their text readable and preserving the user's positions and arrow routing. Keep revision/approval history in the design index, not the annotation prose.
-- After explicit approval, inspect the approved source for remaining review colours. If the user has not reset them, restore the normal yellow note (`fillColor=#fff2cc;strokeColor=#d6b656`), black text (`fontColor=#000000`) and black connector (`strokeColor=#000000`), removing temporary inline text-colour overrides where necessary. Remove obsolete revision/draft prefixes from annotation prose without changing its meaning. Preserve all other user edits. This is approval housekeeping, not a new design revision or approval gate.
-- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in draw.io. Offer all four sides, including top and bottom, to shorten arrows. Do not automatically optimize routes or overwrite their placement. After the user confirms the arrangement, present the current source for review; that confirmation is not approval.
-- Do not export a PNG while creating, revising, or arranging a draft, including when adding review markers. Review the current `.drawio` source in draw.io instead. Identify any existing PNG as potentially stale rather than presenting it as the draft. Check the source for concise, review-relevant notes that do not merely restate the drawing, consistent use of the agreed review language, the dashed viewport, external note placement, readable text, one arrow per annotated area, and absence of annotation/control overlap. Report any checks that cannot be performed.
-- Only after explicit approval of the current source and review-marker cleanup, export the preview with the draw.io desktop app:
-
-```text
-<drawio-executable> -x -f png -b 10 -o <view>-wireframe.png <view>-wireframe.drawio
-```
-
-- View the exported PNG and verify that it reflects the cleaned approved source, including the viewport and external notes. Do not record cleanup as complete or advance to the prototype if export or inspection is blocked. If inspection reveals a design flaw requiring a source change, correct the draft and return the new revision for explicit approval.
+- Consolidate notes about one area into one note with one arrow. In user-edited sources, change only affected cells.
+- Mark new or changed notes with the [review marker](references/drawio-conventions.md#review-markers) instead of revision labels in their text.
+- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in the editor, on any side. Do not optimize or overwrite their placement. Arrangement confirmation is not approval.
+- Review the editable source, never a preview, while the wireframe is a draft. Do not export during creation, revision or arrangement; identify any existing preview as potentially stale. Run the [source checks](references/drawio-conventions.md#source-checks) before presenting the draft.
+- After explicit approval, apply the [cleanup](references/drawio-conventions.md#cleanup-after-approval), then [export](references/drawio-conventions.md#export) and view the preview without waiting for a separate request.
+- Do not record cleanup as complete or advance to the prototype if export or inspection is blocked. If inspection reveals a design flaw, correct the source and return the new revision for approval.
 
 ## 3. Click prototype
 
-- Build an offline prototype from the approved wireframe using shared shell,
-  components, formatting and fictional data. Keep assets local and reuse the
-  project's runtime helpers rather than inventing parallel implementations.
-- Maintain an integrated application entry that composes the existing views,
-  not a specimen gallery. Keep standalone views usable, the directly opened
-  shell neutral, and avoid duplicate chrome. Preserve role, language, theme and
-  fictional data through actual navigation. Keep implementation notes separate
-  from the review surface.
-- Demonstrate loading, empty, error/retry, validation, submitting, success and
-  failure with retained input where applicable. Cover relevant permissions,
-  languages, themes and responsive layouts using the project's design tokens.
-- Prototypes illustrate behavior; they do not enforce security or define new
-  business rules.
+- Build an offline prototype from the approved wireframe using the profile's shared shell, components, formatting helpers, tokens and fictional data. Keep assets local; reuse existing helpers rather than creating parallel ones.
+- Maintain an integrated application entry that composes the existing views, not a specimen gallery. Keep standalone views usable, the directly opened shell neutral and chrome unduplicated. Preserve role, language, theme and fictional data through actual navigation. Keep implementation notes outside the review surface.
+- Demonstrate loading, empty, error/retry, validation, submitting, success and failure with retained input where applicable, plus the profile's permissions, languages, themes and breakpoints.
+- Prototypes illustrate behavior; they do not enforce security or define business rules.
 
 ## 4. Design system
 
-- Change shared tokens rather than duplicating color or size literals. Include
-  all supported themes and document contrast for new color pairs.
-- Pair status with icon and text cues; retain visible focus and accessible names.
-- Update the relevant component/typography guides and specimens when a shared
-  primitive changes.
+- Change shared tokens rather than adding color or size literals. Provide values for every supported theme and document contrast for new color pairs.
+- Pair status with icon and text cues; keep visible focus and accessible names.
+- Update component/typography guides and specimens when a shared primitive changes.
 
 ## 5. Verify
 
-Check the focused standalone prototype first, then the integrated application
-entry through actual navigation. Exercise changed flows, owning-view dialogs,
-shell context, relevant roles, languages, themes, states and desktop/phone widths.
-Check keyboard and focus behavior, overflow and console errors.
+Check the focused standalone prototype first, then the integrated entry through
+actual navigation. Exercise changed flows, owning-view dialogs, shell context and
+the profile's matrix of roles, languages, themes, states and breakpoints. Check
+keyboard and focus behavior, overflow and console errors.
 
-Record standalone and integrated evidence separately, including viewport and
-settings. Standalone success alone is insufficient; report blocked integration
-instead of claiming full verification. Successful checks are not design approval.
+Record evidence separately for standalone and integrated checks. Standalone
+success alone is insufficient; report blocked checks rather than claiming full
+verification. Passing checks are not design approval.
+
+```markdown
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | <role> | <lang> | <theme> | <width> | <checked> | pass / fail / blocked: <reason> |
+| Integrated | <role> | <lang> | <theme> | <width> | <checked> | pass / fail / blocked: <reason> |
+```
 
 ## 6. Finish
 
-- Update the project's design index with links and draft status for changed references.
-- Record each explicit approval against its artifact and reviewed revision, with the approval date; preserve earlier approvals as history. Complete the wireframe cleanup/export procedure above without a separate request. Report pending work.
+- Update the design index with links, revision and status for changed artifacts.
+- Record each explicit approval against its artifact and reviewed revision, with date and the user's wording; keep earlier approvals as history. Complete wireframe cleanup/export without a separate request. Report pending work.
 - Summarize changes and actual verification; list open business questions rather than deciding them in the design.
-- Implement only after the required approvals, following the project's application and testing conventions.
-- If either artifact is still a draft, state what awaits review. Do not infer approval from feedback or a general instruction to continue.
+- If an artifact is still a draft, state what awaits review. Do not infer approval from feedback or a general instruction to continue.
+- After both approvals, hand off implementation with the approved revisions, open questions and the states and flows that need application tests. Follow the profile's implementation and verification conventions.
 
-## Repository Integration: POCKET MONkEY
+## Project Profiles
 
-These bindings apply here, not to other projects adopting the workflow:
-
-- Design index: [docs/design/README.md](../../../docs/design/README.md).
-- Wireframes: `docs/design/wireframes/<view>/<view>-wireframe.drawio` and the matching approved PNG; desktop viewport width 1440px.
-- Wireframe review language: English unless explicitly requested otherwise. Prototypes and application: German and English.
-- Supported roles: Manager and Member; themes: light and dark. Verify desktop and 360px phone widths, including read-only Member behavior where applicable. Phone styles use `@media (max-width: 599px)`.
-- Integrated entry: `docs/design/prototypes/index.html`; shared runtime: `docs/design/prototypes/shared/`.
-- Tokens: `docs/design/design-system/styles/*.css`; document contrast in `color-scheme.md` and patterns in `components.md` or `typography.md`.
-- Application implementation: Angular, following the [web instructions](../../instructions/web.instructions.md) and [ADR-0005](../../../docs/ADR/ADR-0005-e2e-first-verification.md).
-- Windows draw.io executable: `C:\Program Files\draw.io\draw.io.exe`.
-
-- Page skeleton: `docs/design/prototypes/<view>/index.html` with `<div id="view">`, then `../shared/data.js`, `../shared/prototype.js`, and an inline script calling `PM.init`.
-
-```js
-PM.init({
-  active: 'overview',            // navigation entry; omit for none
-  title: 'pageTitleKey',
-  states: ['normal', 'loading', 'error'], // optional review states
-  render,                        // re-run on every language, theme, role, or data change
-  strings: { en: { /* … */ }, de: { /* … */ } }
-});
-```
-
-- Runtime helpers in `shared/prototype.js`:
-
-| Helper | Purpose |
-| --- | --- |
-| `PM.t(key, params)` | Translated text; `{name}` placeholders |
-| `PM.money(minor)` / `PM.amountHtml(minor)` | Signed, colored amount from integer cents |
-| `PM.parseAmount(text, { signed })` | Exact two-decimal input to cents, or `null` |
-| `PM.date(iso, withTime)` | Business-timezone date formatting for the language |
-| `PM.dialog({ title, body, footer, dismissible })` | Modal dialog with focus return |
-| `PM.fieldError(input, message)` | Accessible field error |
-| `PM.request()` | Simulated save; honors "Next save fails" |
-| `PM.toast(text, tone)` | Supplementary confirmation |
-| `PM.data`, `PM.saveData()` | Fictional data in local storage |
-| `PM.isManager()`, `PM.currentUser()` | Role-dependent rendering |
-
-- Use `PM.t`, `PM.money` and `PM.date` rather than hard-coding translated strings, amounts, currency or dates. Amounts are always signed: positive green, negative red, zero standard text.
-- Verify simulated save failures with "Next save fails" and the available review states.
-
-The integrated browser tab may be hidden: prefer `page.evaluate` with `requestSubmit()`/`click()` or `force: true` clicks, and disable the cache (`Network.setCacheDisabled`) so edited `file://` scripts reload.
+- Contract and template: [project-profile.md](references/project-profile.md).
+- Wireframe defaults: [drawio-conventions.md](references/drawio-conventions.md).
+- This repository: [POCKET MONkEY profile](references/pocket-monkey.md).

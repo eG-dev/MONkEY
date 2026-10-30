@@ -22,8 +22,8 @@ Design work for a view follows two steps: a rough wireframe, then a detailed
 click prototype. Review and explicitly approve each current artifact before
 advancing to its dependent artifact or application implementation. This record
 owns those decisions and their rationale. The [UI/UX skill](../../.github/skills/ui-ux-design/SKILL.md)
-owns the detailed procedure, annotation syntax, drawing/export conventions and
-repository bindings; the [design instructions](../../.github/instructions/design.instructions.md)
+owns the detailed procedure, annotation syntax, drawing/export conventions,
+default approval rules (which this record strengthens) and repository bindings; the [design instructions](../../.github/instructions/design.instructions.md)
 provide concise constraints and routing. The [design index](../design/README.md)
 owns artifact status, approval history and review evidence. Do not maintain
 parallel copies of those details here.
@@ -56,11 +56,12 @@ for the design sequence and review checkpoints.
 - Implement approved views using the shared design-system tokens and the project's verification requirements.
 
 Repository bindings are maintained once in the skill's
-[repository integration](../../.github/skills/ui-ux-design/SKILL.md#repository-integration-pocket-monkey).
+[POCKET MONkEY profile](../../.github/skills/ui-ux-design/references/pocket-monkey.md).
 Implementation verification follows [ADR-0005](ADR-0005-e2e-first-verification.md).
 
 ## Change History
 
+- 2026-10-30: Split the skill into a reusable core with default approval rules, a project-profile contract, draw.io conventions with a starter template, and a separate POCKET MONkEY profile, so the workflow can be adopted elsewhere while this record continues to define the local policy.
 - 2026-10-30: Consolidated annotation handling, verification/evidence steps, approval administration, the workflow diagram and local bindings in the skill, leaving this ADR responsible for decisions/rationale and instructions for concise constraints/routing. This reduces drift without changing design or approval requirements.
 - 2026-10-30: Defined adjacent scope attributes as a combined condition and separated reusable design/review principles from repository-specific bindings, so the workflow can be adopted in other domains and frameworks.
 - 2026-10-30: Clarified singular role headers and separate sections for differing role behavior, so each detail's audience is clear.
