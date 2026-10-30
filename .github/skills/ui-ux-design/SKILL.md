@@ -79,8 +79,10 @@ Default rules; a project's decision records may strengthen or override them.
    never invent them.
 3. Create a design index with the [required fields](references/project-profile.md#design-index-fields).
 4. Start wireframes from the [template](assets/wireframe-template.drawio).
-5. Create a minimal offline prototype runtime and tokens only when the requested
-   work needs them.
+5. Create a minimal offline prototype runtime when the requested work needs it.
+   If the project has no design system, start one from the
+   [design-system starter](assets/design-system/) following the
+   [design-system contract](references/design-system.md).
 6. Link the profile from the project's agent instructions.
 
 ## 1. Understand the change
@@ -139,9 +141,13 @@ Open confirmation full-screen.
 
 ## 4. Design system
 
-- Change shared tokens rather than adding color or size literals. Provide values for every supported theme and document contrast for new color pairs.
+The project's design system lives where the profile's *Design tokens* setting
+points. Follow the [design-system contract](references/design-system.md) for its
+required parts, token layers and rules.
+
+- Change shared semantic tokens rather than adding color or size literals. Provide values for every supported theme and document contrast for new color pairs.
 - Pair status with icon and text cues; keep visible focus and accessible names.
-- Update component/typography guides and specimens when a shared primitive changes.
+- Update the affected guides and specimens, then work through the contract's [change checklist](references/design-system.md#change-checklist).
 
 ## 5. Verify
 

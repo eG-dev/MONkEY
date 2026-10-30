@@ -9,7 +9,7 @@ link it from the project's agent instructions so it is found reliably.
 
 | File | Ownership |
 | --- | --- |
-| `SKILL.md`, `references/project-profile.md`, `references/drawio-conventions.md`, `assets/` | Shared: copy unchanged between projects; never add project details |
+| `SKILL.md`, `references/project-profile.md`, `references/drawio-conventions.md`, `references/design-system.md`, `assets/` | Shared: copy unchanged between projects; never add project details |
 | `references/<project>.md` | Project-owned profile; never copy to another project |
 
 When adopting the skill elsewhere, copy only the shared files, then create the
@@ -34,7 +34,7 @@ new project's profile in that project's own workspace.
 | Permissions | Roles or permission levels whose behavior differs | Detect from decisions; ask; never invent |
 | States and themes | Review states and supported themes | Detect; propose loading, empty, error and success |
 | Breakpoints | Phone/desktop verification widths | Ask; propose 360px and the desktop width |
-| Design tokens | Token location and documentation for contrast/patterns | Detect; create only when the design system is in scope |
+| Design tokens | Location of the design system (tokens, guides, specimens) per the [design-system contract](design-system.md) | Detect; otherwise start from the shared design-system starter when the design system is in scope |
 | Prototype runtime | Prototype location, shared runtime, integrated entry and helpers | Detect; create a minimal offline runtime during setup |
 | Implementation | Application stack, conventions and verification requirements | Detect; ask before implementation |
 
