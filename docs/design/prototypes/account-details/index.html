@@ -125,7 +125,7 @@
       }
 
       if (state === 'error' || !account) {
-        view.innerHTML = `${back()}<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body"><span>${PM.esc(PM.t(account ? 'loadFailed' : 'notFound'))}</span>${account ? `<div><button class="button button-secondary" type="button" id="retry">${PM.esc(PM.t('tryAgain'))}</button></div>` : ''}</div></div>`;
+        view.innerHTML = `${back()}<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body"><span>${PM.esc(PM.t(account ? 'loadFailed' : 'accountNotFound'))}</span>${account ? `<div><button class="button button-secondary" type="button" id="retry">${PM.esc(PM.t('tryAgain'))}</button></div>` : ''}</div></div>`;
         document.getElementById('retry')?.addEventListener('click', () => PM.savePrefs({ viewState: 'normal' }));
         return;
       }

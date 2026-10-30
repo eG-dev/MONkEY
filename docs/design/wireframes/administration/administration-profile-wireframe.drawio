@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="administration-profile" name="Administration - Profile">
-        <mxGraphModel dx="2663" dy="3489" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2640" pageHeight="1160" background="#FFFFFF" math="0" shadow="0">
+        <mxGraphModel dx="1106" dy="2493" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2640" pageHeight="1160" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -15,6 +15,9 @@
                 </mxCell>
                 <mxCell id="undefined-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Users" vertex="1">
                     <mxGeometry height="44" width="160" x="784" y="156" as="geometry"/>
+                </mxCell>
+                <mxCell id="account-assignments-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Account assignments" vertex="1">
+                    <mxGeometry height="44" width="240" x="944" y="156" as="geometry"/>
                 </mxCell>
                 <mxCell id="undefined-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
                     <mxGeometry height="2" width="1392" x="624" y="200" as="geometry"/>
@@ -58,8 +61,11 @@
                 <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;rounded=1;arcSize=50;" value="" vertex="1">
                     <mxGeometry height="24" width="48" x="850" y="678" as="geometry"/>
                 </mxCell>
-                <mxCell id="undefined-20" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Members see only the Profile tab." vertex="1">
-                    <mxGeometry height="60" width="480" x="624" y="-90" as="geometry"/>
+                <mxCell id="82S1vbXneX7mzSyEdbGr-1" edge="1" parent="1" source="undefined-20" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" target="account-assignments-tab">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="undefined-20" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Managers see Profile, Users and Account assignments. Members see only Profile." vertex="1">
+                    <mxGeometry height="80" width="480" x="624" y="-90" as="geometry"/>
                 </mxCell>
                 <mxCell id="undefined-21" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;fontStyle=0" value="Visible to everyone. The user menu &quot;Profile&quot; link opens this tab. Display name, username, and role are changed by Managers in Users." vertex="1">
                     <mxGeometry height="96" width="480" x="20" y="244" as="geometry"/>

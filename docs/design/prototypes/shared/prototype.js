@@ -44,20 +44,24 @@
       Manager: 'Manager', Member: 'Member', version: 'Version 0.1.0', mainNavigation: 'Main navigation', drawer: 'Navigation', userMenu: 'User menu',
       showNavigation: 'Show navigation', hideNavigation: 'Hide navigation', close: 'Close', cancel: 'Cancel', save: 'Save', saving: 'Saving…',
       tryAgain: 'Try again', saveFailed: 'This could not be saved. Your input is kept; please try again.', required: 'This field is required.',
-      notInitialized: 'Not initialized', automatic: 'Automatic'
+      notInitialized: 'Not initialized', automatic: 'Automatic', accountNotFound: 'Account not found.'
     },
     de: {
       overview: 'Übersicht', accounts: 'Konten', administration: 'Verwaltung', about: 'Info', aboutUnavailable: 'Info konnte nicht geöffnet werden. Bitte versuche es erneut.', profile: 'Profil', darkMode: 'Dunkler Modus', signOut: 'Abmelden',
       Manager: 'Manager', Member: 'Mitglied', version: 'Version 0.1.0', mainNavigation: 'Hauptnavigation', drawer: 'Navigation', userMenu: 'Benutzermenü',
       showNavigation: 'Navigation anzeigen', hideNavigation: 'Navigation ausblenden', close: 'Schließen', cancel: 'Abbrechen', save: 'Speichern', saving: 'Wird gespeichert…',
       tryAgain: 'Erneut versuchen', saveFailed: 'Das konnte nicht gespeichert werden. Deine Eingaben bleiben erhalten; bitte versuche es erneut.', required: 'Dieses Feld ist erforderlich.',
-      notInitialized: 'Nicht initialisiert', automatic: 'Automatisch'
+      notInitialized: 'Nicht initialisiert', automatic: 'Automatisch', accountNotFound: 'Konto nicht gefunden.'
     }
   };
 
   const defaults = { language: 'en', dark: matchMedia('(prefers-color-scheme: dark)').matches, layout: 'auto', user: 'mara', viewState: 'normal', failNext: false };
   let prefs = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
   let data = JSON.parse(localStorage.getItem(DATA_KEY) || 'null') || window.PM_SEED();
+  for (const user of data.users) {
+    user.accountIds ??= [];
+    user.assignmentsVersion ??= crypto.randomUUID();
+  }
   let pageStrings = { en: {}, de: {} };
   let options = {};
 
@@ -77,6 +81,15 @@
   }
 
   function saveData() {
+    for (const user of data.users) {
+      const activeIds = (user.accountIds ?? []).filter(id => data.accounts.some(item => item.id === id && !item.purgeAtUtc));
+
+      if (activeIds.length !== (user.accountIds ?? []).length) {
+        user.accountIds = activeIds;
+        user.assignmentsVersion = crypto.randomUUID();
+      }
+    }
+
     try {
       localStorage.setItem(DATA_KEY, JSON.stringify(data));
     } catch {
@@ -125,10 +138,11 @@
 
   const balance = account => account.history.some(item => item.type === 'opening') ? account.history.reduce((sum, item) => sum + item.amount, 0) : null;
   const currentUser = () => data.users.find(user => user.id === prefs.user) ?? data.users[0];
-  const isManager = () => currentUser().role === 'Manager';
-  const account = id => data.accounts.find(item => item.id === id);
-  const accountsByName = () => data.accounts.filter(item => !item.purgeAtUtc).sort((a, b) => a.name.localeCompare(b.name, locale()));
-  const archivedAccountsByName = () => data.accounts.filter(item => item.purgeAtUtc).sort((a, b) => a.name.localeCompare(b.name, locale()));
+  const isManager = () => currentUser().role === 'Manager' && currentUser().status !== 'disabled';
+  const canReadAccount = item => currentUser().status !== 'disabled' && (isManager() || (!item.purgeAtUtc && (currentUser().accountIds ?? []).includes(item.id)));
+  const account = id => data.accounts.find(item => item.id === id && canReadAccount(item));
+  const accountsByName = () => data.accounts.filter(item => !item.purgeAtUtc && canReadAccount(item)).sort((a, b) => a.name.localeCompare(b.name, locale()));
+  const archivedAccountsByName = () => data.accounts.filter(item => isManager() && item.purgeAtUtc).sort((a, b) => a.name.localeCompare(b.name, locale()));
 
   function allowanceStatus(item) {
     if (!item.allowance.enabled || item.allowance.amount <= 0) {

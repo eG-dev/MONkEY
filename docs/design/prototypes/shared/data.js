@@ -43,9 +43,9 @@ window.PM_SEED = () => {
     users: [
       { id: 'mara', displayName: 'Mara Example', username: 'mara', role: 'Manager', status: 'active' },
       { id: 'tom', displayName: 'Tom Example', username: 'tom', role: 'Manager', status: 'active' },
-      { id: 'emma', displayName: 'Emma', username: 'emma', role: 'Member', status: 'active' },
-      { id: 'noah', displayName: 'Noah', username: 'noah', role: 'Member', status: 'disabled' },
-      { id: 'lena', displayName: 'Lena', username: 'lena', role: 'Member', status: 'mustChange' }
+      { id: 'emma', displayName: 'Emma', username: 'emma', role: 'Member', status: 'active', accountIds: ['ben', 'emma'] },
+      { id: 'noah', displayName: 'Noah', username: 'noah', role: 'Member', status: 'disabled', accountIds: [] },
+      { id: 'lena', displayName: 'Lena', username: 'lena', role: 'Member', status: 'mustChange', accountIds: ['lena'] }
     ]
   };
 };

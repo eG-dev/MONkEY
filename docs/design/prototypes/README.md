@@ -5,6 +5,79 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Member Account Assignment R2 (2026-10-30)
+
+**Click prototype R2 draft; not approved.** Backend/Data Proposal R9 and the
+Administration Users wireframe R2 are approved. Open the
+[integrated application](index.html), follow Administration to Users and edit
+the dedicated Assigned accounts column. The
+[standalone Administration view](administration/index.html) remains usable;
+select its Users tab.
+
+Managers see all accounts; Member Emma starts assigned to Ben and Emma, Lena
+to Lena, and disabled Noah to none. Managers have no assignment edit control.
+New users and old saved fixture users without assignment data default to none;
+use Reset prototype data for the current seed. Assignment selections persist
+through actual navigation. No change history is stored. Role/disablement keeps
+assignments; retirement/deletion drops them and reactivation does not restore
+them. This is a fictional local-storage simulation, not security enforcement.
+Production backend, migrations and Angular code are unchanged.
+
+Administration's View state selects normal, loading, empty, error, conflict,
+unavailable or not-member for the assignment dialog. Next save fails exercises
+kept checkbox input and reload before retry. Stale versions prevent overwrite;
+reload refreshes assignments or, for a non-Member target, the user list. No
+selection is valid. Retired accounts never appear in the checkbox list. The
+Member overview distinguishes no assigned accounts from loading/failure and
+the Manager create-first state. Shared About includes the approved English and
+German assignment privacy explanation and retains the host-access warning.
+
+Standalone integrated-browser checks passed 16 combinations of Manager/Member,
+English/German, light/dark and 360x1000/1440x1000. Manager checks opened disabled
+Noah's dialog; Member checks confirmed no Users or assignment controls. Checks
+found no table/dialog horizontal overflow. Additional standalone checks covered
+all six non-normal review states, a real stale-version conflict, failed save
+with unchanged data/kept selection, reload and successful save, focus return,
+retired-account exclusion and a 40-character account name in a long summary at
+both widths. The German dark phone dialog screenshot was inspected.
+
+Through the integrated entry, a separate 16-case matrix used actual navigation
+between Overview and Administration with the same roles/languages/themes and
+outer viewports. It checked the assignment dialog, one shell, inner/outer fit,
+and six Manager versus two Member overview cards. A saved Mia assignment
+survived navigation and appeared for Emma; removing all produced the informative
+Member empty state without a create action. Fixture assignments were restored
+after these checks. A role change during editing blocked save and Reload
+refreshed the user list. Six direct-link checks returned identical localized
+not-found messages for inaccessible Lena, retired Alex and a missing ID. Assigned
+Emma details stayed Member read-only. Both About privacy translations were
+checked through the shell's About dialog. The English light desktop column
+screenshot was inspected; no page script errors occurred in the matrices.
+
+Focused Node checks also passed shared visibility/retirement-version behavior,
+inline script syntax and preservation of the existing German allowance phrase.
+The browser initially cached an older inline script during follow-up checks;
+cache was disabled and the current source verified before rerunning them.
+These are prototype checks, not production E2E or prototype approval. Older
+verification notes below describe their historical all-account access baseline.
+
+Checkbox correction after review, 2026-10-30: native accent-only rendering was
+replaced with explicit existing primary-color tokens, a check
+mark, focus outline, disabled styling and native forced-color fallback. No new
+tokens or layout were introduced. Ordinary headless Chromium passed eight
+standalone and eight integrated cases (English/German, light/dark,
+360x1000/1440x1000), including distinct checked colors, no horizontal
+overflow, visible keyboard focus and actual Space-key toggling. No page script
+errors occurred. Early keyboard runs reused the same file URL and accidentally
+stacked dialogs; unique document URLs isolated cases and resolved that test
+setup error. The separate assignment tab is now drafted in the
+[R3 wireframes](../README.md#member-account-assignment-r3-2026-10-30), not yet
+approved or implemented in this prototype. The prototype still shows R2's Users
+column; its R3 revision awaits explicit wireframe approval.
+At the user's request, selected rows no longer receive a background fill; hover
+feedback remains. Four standalone and four integrated light/dark and phone/desktop
+cases passed with unfilled selected rows, colored checkboxes and Space toggling.
+
 ## Retired Account Allowance R2 (2026-10-28)
 
 **Account-details prototype R2 approved, 2026-10-28.** The user explicitly approved

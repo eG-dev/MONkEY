@@ -2,7 +2,7 @@
 
 _Creation date_: 2026-10-25
 
-_Updated_: 2026-10-28
+_Updated_: 2026-10-30
 
 ## Context
 
@@ -17,6 +17,7 @@ manual test scenarios. This does not replace a complete installation backup.
   ledger details, audit metadata, allowance revisions/executions, retired posting
   keys and ledger maintenance counters. Preserve historical attribution. Exclude
   images, login identities, credentials, sessions and authentication keys.
+- Exclude user-to-account access assignments from financial-only recovery. Leave assignments empty for Managers to recreate; never infer identity matches from names or historical actors. A complete installation backup/restore must preserve assignments along with users and other installation state. This boundary does not itself approve introducing account assignments.
 - Keep money as exact decimal strings, 64-bit identifiers/counters as integer
   strings and timestamps as precise UTC instants. Preserve stored balances rather
   than reconstructing them from history that may have been pruned.
@@ -63,5 +64,6 @@ the durable allowance identities in [ADR-0016](ADR-0016-monthly-allowance-execut
 
 ## Change History
 
+- 2026-10-30: Confirmed that financial-only recovery leaves access assignments empty for deliberate Manager reassignment; full installation backups preserve them.
 - 2026-10-28: Clarified that prerelease imports need not support incompatible snapshot versions; unsupported formats are rejected.
 - 2026-10-28: Incompatible prerelease recovery is suspended rather than allowed to silently lose state; recovery work is deferred until requested or required for 1.0.

@@ -1,6 +1,7 @@
 # ADR-0002 Application Boundaries
 
 _Creation date_: 2026-10-04
+_Updated_: 2026-10-30
 
 ## Context
 
@@ -11,6 +12,7 @@ microservice architecture.
 
 ## Decision
 
+- POCKET MONkEY is a family pocket-money application, not a financial-management or regulated accounting platform. Do not introduce compliance-oriented audit, retention or reporting requirements without an explicit product need and approval. This scope does not waive applicable legal obligations or weaken authorization, privacy, exact arithmetic, atomic writes or recovery integrity.
 - Use Angular SSR with Taiga UI and locally packaged Lucide icon fonts/assets for the web interface and Web-BFF.
 - Use ASP.NET Core application services for business rules, authorization, persistence, and background jobs. Keep financial mutations out of Angular components and SSR handlers.
 - Connect the Web-BFF and backend through explicit HTTP contracts. Backend authorization applies equally to browser requests and SSR data reads.
@@ -25,3 +27,7 @@ flowchart LR
     Backend --> State["Persistent data and media"]
     Backend --> Jobs["Background jobs"]
 ```
+
+## Change History
+
+- 2026-10-30: Recorded the family-use product scope to avoid repeatedly assuming financial-platform compliance requirements while preserving security and data-integrity guarantees.

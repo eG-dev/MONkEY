@@ -15,6 +15,38 @@
     .temporary { display: flex; gap: var(--space-3); align-items: center; }
     .temporary code { flex: 1; padding: 8px 12px; border: 0; border-radius: var(--radius-sm); background: var(--surface-input); font: var(--type-h3); font-family: var(--font-mono); letter-spacing: .04em; }
     .status-disabled, .status-mustChange { color: var(--text-secondary); }
+    .users-table { table-layout: fixed; }
+    .users-table th, .users-table td { overflow-wrap: anywhere; white-space: normal; }
+    .users-table th:nth-child(1) { width: 18%; }
+    .users-table th:nth-child(2) { width: 13%; }
+    .users-table th:nth-child(3) { width: 12%; }
+    .users-table th:nth-child(4) { width: 17%; }
+    .users-table th:nth-child(5) { width: 27%; }
+    .users-table th:nth-child(6) { width: 13%; }
+    .assigned-summary { display: flex; align-items: center; gap: var(--space-2); }
+    .assigned-summary > span { flex: 1; min-width: 0; }
+    .assigned-summary .icon-button { flex-shrink: 0; }
+    .assignment-mobile-label { display: none; }
+    .assignment-dialog[open] { display: flex; flex-direction: column; }
+    .assignment-dialog .dialog-header, .assignment-dialog .dialog-footer { flex-shrink: 0; }
+    .assignment-dialog .dialog-header h2 { overflow-wrap: anywhere; min-width: 0; }
+    .assignment-dialog .dialog-body { overflow: auto; min-height: 0; }
+    .assignment-options { display: grid; gap: var(--space-2); max-height: calc(var(--control-lg) * 5); overflow: auto; padding: 0; border: 0; }
+    .assignment-options legend { font: var(--type-label); margin-bottom: var(--space-3); }
+    .assignment-option { display: flex; align-items: center; gap: var(--space-3); min-height: var(--control-lg); padding: var(--space-2); border-radius: var(--radius-sm); overflow-wrap: anywhere; cursor: pointer; }
+    .assignment-option:hover { background: var(--surface-hover); }
+    .assignment-option input { appearance: none; display: grid; place-content: center; flex-shrink: 0; width: var(--space-5); height: var(--space-5); margin: 0; border: 2px solid var(--action-primary); border-radius: var(--radius-sm); background: var(--surface-input); cursor: inherit; }
+    .assignment-option input::before { content: ''; width: 6px; height: 10px; border: solid var(--action-primary-text); border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0); }
+    .assignment-option input:checked { background: var(--action-primary); }
+    .assignment-option input:checked::before { transform: rotate(45deg) scale(1); }
+    .assignment-option input:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; }
+    .assignment-option:has(input:disabled) { color: var(--text-disabled); cursor: not-allowed; }
+    .assignment-option input:disabled { border-color: var(--text-disabled); background: var(--surface-sunken); }
+    .assignment-option input:disabled::before { border-color: var(--text-disabled); }
+    @media (forced-colors: active) {
+      .assignment-option input { appearance: auto; }
+      .assignment-option input::before { content: none; }
+    }
     @media (max-width: 599px) {
       .table thead { display: none; }
       .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; }
@@ -23,6 +55,8 @@
       .table td.username, .table td.role, .table td.status-cell { grid-column: 1; font: var(--type-caption); color: var(--text-secondary); }
       .table td.actions-cell { grid-column: 2; grid-row: 1 / 5; align-self: center; }
       .table .row-actions { flex-direction: column; align-items: flex-end; }
+      .table td.assignments-cell { grid-column: 1 / -1; padding-top: var(--space-3); }
+      .assignment-mobile-label { display: block; font: var(--type-caption); color: var(--text-secondary); }
     }
   </style>
 </head>
@@ -123,16 +157,142 @@
       const rows = [...PM.data.users].sort((a, b) => a.displayName.localeCompare(b.displayName)).map(user => `<tr>
         <td class="user-name">${PM.esc(user.displayName)}</td><td class="username">${PM.esc(user.username)}</td><td class="role">${PM.esc(PM.t(user.role))}</td>
         <td class="status-cell status-${user.status}">${PM.esc(statusLabel(user))}</td>
+        <td class="assignments-cell"><span class="assignment-mobile-label">${PM.esc(PM.t('assignedAccounts'))}</span><div class="assigned-summary"><span>${PM.esc(user.role === 'Manager' ? PM.t('allAccounts') : assignedAccountNames(user))}</span>${user.role === 'Member' ? `<button class="icon-button" type="button" data-assignments="${PM.esc(user.id)}" aria-label="${PM.esc(PM.t('assignmentsNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('assignmentsNamed', { name: user.displayName }))}">${PM.icon('pencil')}</button>` : ''}</div></td>
         <td class="actions-cell"><span class="row-actions"><button class="icon-button" type="button" data-edit="${user.id}" aria-label="${PM.esc(PM.t('editNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('editNamed', { name: user.displayName }))}">${PM.icon('pencil')}</button><button class="icon-button" type="button" data-reset="${user.id}" aria-label="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}">${PM.icon('key')}</button></span></td>
       </tr>`).join('');
       return `<div class="page-header"><span></span><button class="button button-primary" type="button" id="create-user">${PM.icon('plus')}${PM.esc(PM.t('createUser'))}</button></div>
-        <div class="table-wrap"><table class="table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('username'))}</th><th>${PM.esc(PM.t('role'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        <div class="table-wrap"><table class="table users-table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('username'))}</th><th>${PM.esc(PM.t('role'))}</th><th>${PM.esc(PM.t('status'))}</th><th>${PM.esc(PM.t('assignedAccounts'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function assignedAccountNames(user) {
+      return PM.data.accounts.filter(account => !account.purgeAtUtc && (user.accountIds ?? []).includes(account.id))
+        .sort((first, second) => first.name.localeCompare(second.name))
+        .map(account => account.name).join(', ') || PM.t('noAssignedAccounts');
     }
 
     function bindUsers() {
       document.getElementById('create-user').addEventListener('click', openCreateUser);
+      view.querySelectorAll('[data-assignments]').forEach(button => button.addEventListener('click', () => openAssignments(button.dataset.assignments)));
       view.querySelectorAll('[data-edit]').forEach(button => button.addEventListener('click', () => openEditUser(PM.data.users.find(user => user.id === button.dataset.edit))));
       view.querySelectorAll('[data-reset]').forEach(button => button.addEventListener('click', () => confirmReset(PM.data.users.find(user => user.id === button.dataset.reset))));
+    }
+
+    function openAssignments(userId) {
+      const target = () => PM.data.users.find(user => user.id === userId);
+      let version;
+      let submitting = false;
+      let ready = false;
+      let reviewState = PM.prefs.viewState;
+      const editor = PM.dialog({
+        title: PM.t('assignmentsNamed', { name: target().displayName }),
+        body: '<form class="form" id="assignments-form"><div id="assignments-feedback"></div><div id="assignments-list"></div></form>',
+        footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="assignments-form" id="assignments-save" disabled>${PM.esc(PM.t('save'))}</button>`
+      });
+      editor.classList.add('assignment-dialog');
+      const save = editor.querySelector('#assignments-save');
+      const list = editor.querySelector('#assignments-list');
+      const feedback = editor.querySelector('#assignments-feedback');
+
+      function showError(key) {
+        ready = false;
+        save.disabled = true;
+        feedback.innerHTML = `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body"><span>${PM.esc(PM.t(key))}</span><button class="button button-secondary" type="button" id="assignments-reload">${PM.icon('refresh')}${PM.esc(PM.t('reloadAssignments'))}</button></div></div>`;
+        feedback.querySelector('button').addEventListener('click', () => {
+          if (key === 'assignmentsNotMember') {
+            editor.close();
+            render();
+            return;
+          }
+
+          reviewState = 'normal';
+          loadAssignments();
+        });
+      }
+
+      async function loadAssignments() {
+        ready = false;
+        save.disabled = true;
+        feedback.innerHTML = '';
+        list.innerHTML = `<p role="status" aria-busy="true">${PM.esc(PM.t('assignmentsLoading'))}</p>`;
+
+        if (reviewState === 'loading') {
+          return;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        if (!editor.isConnected) {
+          return;
+        }
+
+        if (reviewState === 'error') {
+          list.innerHTML = '';
+          showError('assignmentsLoadFailed');
+          return;
+        }
+
+        if (!PM.isManager() || !target() || target().role !== 'Member') {
+          list.innerHTML = '';
+          showError('assignmentsNotMember');
+          return;
+        }
+
+        version = target().assignmentsVersion;
+        const accounts = reviewState === 'empty' ? [] : PM.accountsByName();
+        list.innerHTML = accounts.length ? `<fieldset class="assignment-options"><legend>${PM.esc(PM.t('assignedAccounts'))}</legend>${accounts.map(account => `<label class="assignment-option"><input type="checkbox" name="accountIds" value="${PM.esc(account.id)}" ${(target().accountIds ?? []).includes(account.id) ? 'checked' : ''}><span>${PM.esc(account.name)}</span></label>`).join('')}</fieldset>` : `<p>${PM.esc(PM.t('noActiveAccounts'))}</p>`;
+        ready = true;
+        save.disabled = false;
+      }
+
+      editor.addEventListener('cancel', event => {
+        if (submitting) {
+          event.preventDefault();
+        }
+      });
+      editor.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+
+        if (!ready || submitting) {
+          return;
+        }
+
+        const selected = [...editor.querySelectorAll('[name="accountIds"]:checked')].map(input => input.value).sort();
+        submitting = true;
+        save.disabled = true;
+        save.textContent = PM.t('saving');
+        editor.querySelectorAll('input, [data-close]').forEach(control => control.disabled = true);
+
+        try {
+          await PM.request();
+
+          if (!PM.isManager() || !target() || target().role !== 'Member' || reviewState === 'not-member') {
+            showError('assignmentsNotMember');
+          } else if (target().assignmentsVersion !== version || reviewState === 'conflict') {
+            showError('assignmentsConflict');
+          } else if (selected.some(id => !PM.data.accounts.some(account => account.id === id && !account.purgeAtUtc)) || reviewState === 'unavailable') {
+            showError('assignmentUnavailable');
+          } else {
+            if (JSON.stringify([...(target().accountIds ?? [])].sort()) !== JSON.stringify(selected)) {
+              target().accountIds = selected;
+              target().assignmentsVersion = crypto.randomUUID();
+            }
+
+            PM.saveData();
+            editor.close();
+            render();
+            [...view.querySelectorAll('[data-assignments]')].find(button => button.dataset.assignments === userId)?.focus();
+            PM.toast(PM.t('assignmentsSaved'));
+          }
+        } catch {
+          showError('assignmentsSaveFailed');
+        } finally {
+          submitting = false;
+          save.textContent = PM.t('save');
+          editor.querySelectorAll('input, [data-close]').forEach(control => control.disabled = false);
+          save.disabled = !ready;
+        }
+      });
+      loadAssignments();
     }
 
     const roleSegments = (selected, disableMember = false) => `<fieldset class="field"><legend class="field-label">${PM.esc(PM.t('role'))}</legend><div class="segments">
@@ -175,7 +335,7 @@
 
         try {
           await PM.request();
-          const user = { id: `user-${Date.now()}`, username: name, displayName: display.value.trim(), role: editor.querySelector('[name="role"]:checked').value, status: 'mustChange' };
+          const user = { id: `user-${Date.now()}`, username: name, displayName: display.value.trim(), role: editor.querySelector('[name="role"]:checked').value, status: 'mustChange', accountIds: [], assignmentsVersion: crypto.randomUUID() };
           PM.data.users.push(user);
           PM.saveData();
           editor.close();
@@ -299,9 +459,15 @@
     PM.init({
       active: 'administration',
       title: 'administration',
+      states: ['normal', 'loading', 'empty', 'error', 'conflict', 'unavailable', 'not-member'],
       render,
       strings: {
         en: {
+          assignedAccounts: 'Assigned accounts', allAccounts: 'All accounts', noAssignedAccounts: 'No accounts', assignmentsNamed: 'Assigned accounts for {name}',
+          assignmentsLoading: 'Loading assigned accounts…', noActiveAccounts: 'No active accounts available.', reloadAssignments: 'Reload',
+          assignmentsLoadFailed: 'Assigned accounts could not be loaded. Please try again.', assignmentsSaveFailed: 'Assignments could not be saved. Reload them before trying again.',
+          assignmentsConflict: 'These assignments have changed. Reload them before saving again.', assignmentUnavailable: 'An account is no longer available for assignment. Reload the account list and check your selection.',
+          assignmentsNotMember: 'Accounts can only be assigned to Members. Reload the user list.', assignmentsSaved: 'Assigned accounts saved.',
           users: 'Users', account: 'Account', displayName: 'Display name', username: 'Username', role: 'Role', status: 'Status', actions: 'Actions', changePassword: 'Change password', preferences: 'Preferences',
           language: 'Language', preferencesSaved: 'Preferences saved.', currentPassword: 'Current password', newPassword: 'New password', passwordHint: 'At least 12 characters',
           confirmPassword: 'Confirm new password', passwordMismatch: 'The passwords do not match.',
@@ -314,6 +480,11 @@
           temporaryPassword: 'Temporary password', temporaryFor: 'Temporary password for {name}:', temporaryOnce: 'This password is shown only once. {name} must change it at the first sign-in.', copy: 'Copy', copied: 'Copied to the clipboard.', done: 'Done'
         },
         de: {
+          assignedAccounts: 'Zugewiesene Konten', allAccounts: 'Alle Konten', noAssignedAccounts: 'Keine Konten', assignmentsNamed: 'Zugewiesene Konten für {name}',
+          assignmentsLoading: 'Zugewiesene Konten werden geladen…', noActiveAccounts: 'Keine aktiven Konten verfügbar.', reloadAssignments: 'Neu laden',
+          assignmentsLoadFailed: 'Die zugewiesenen Konten konnten nicht geladen werden. Bitte versuche es erneut.', assignmentsSaveFailed: 'Die Zuweisungen konnten nicht gespeichert werden. Lade sie neu, bevor du es erneut versuchst.',
+          assignmentsConflict: 'Diese Zuweisungen wurden geändert. Lade sie neu, bevor du erneut speicherst.', assignmentUnavailable: 'Ein Konto kann nicht mehr zugewiesen werden. Lade die Kontenliste neu und prüfe deine Auswahl.',
+          assignmentsNotMember: 'Konten können nur Mitgliedern zugewiesen werden. Lade die Benutzerliste neu.', assignmentsSaved: 'Zugewiesene Konten gespeichert.',
           users: 'Benutzer', account: 'Konto', displayName: 'Anzeigename', username: 'Benutzername', role: 'Rolle', status: 'Status', actions: 'Aktionen', changePassword: 'Passwort ändern', preferences: 'Einstellungen',
           language: 'Sprache', preferencesSaved: 'Einstellungen gespeichert.', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', passwordHint: 'Mindestens 12 Zeichen',
           confirmPassword: 'Neues Passwort bestätigen', passwordMismatch: 'Die Passwörter stimmen nicht überein.',

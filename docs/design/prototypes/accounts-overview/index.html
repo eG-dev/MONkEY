@@ -76,7 +76,7 @@
       const accounts = state === 'empty' ? [] : PM.accountsByName();
 
       if (!accounts.length) {
-        view.innerHTML = `${header}<div class="empty"><strong>${PM.esc(PM.t('empty'))}</strong>${manager ? `<a href="../accounts/index.html">${PM.esc(PM.t('createFirst'))}</a>` : ''}</div>`;
+        view.innerHTML = `${header}<div class="empty"><strong>${PM.esc(PM.t(manager ? 'empty' : 'memberEmpty'))}</strong>${manager ? `<a href="../accounts/index.html">${PM.esc(PM.t('createFirst'))}</a>` : `<p>${PM.esc(PM.t('memberEmptyBody'))}</p>`}</div>`;
         return;
       }
 
@@ -96,8 +96,8 @@
       states: ['normal', 'loading', 'empty', 'error'],
       render,
       strings: {
-        en: { manageAccounts: 'Manage accounts', manage: 'Manage', balance: 'Balance', loading: 'Loading accounts', loadFailed: 'Accounts could not be loaded.', empty: 'No accounts yet', createFirst: 'Create the first account in Accounts', noAllowance: 'No monthly allowance', perMonth: '{amount} monthly', creditedOn: 'credited {date}', nextOn: 'next on {date}', creditFailed: 'credit failed', scheduledMonthly: '{amount} monthly from {month}', scheduledAllowance: 'From {month}: {amount} monthly', stopsFrom: 'Automatic allowance disabled from {month}' },
-        de: { manageAccounts: 'Konten verwalten', manage: 'Verwalten', balance: 'Kontostand', loading: 'Konten werden geladen', loadFailed: 'Die Konten konnten nicht geladen werden.', empty: 'Noch keine Konten', createFirst: 'Erstes Konto unter Konten anlegen', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} monatlich', creditedOn: 'gutgeschrieben am {date}', nextOn: 'nächste Gutschrift am {date}', creditFailed: 'Gutschrift fehlgeschlagen', scheduledMonthly: '{amount} monatlich ab {month}', scheduledAllowance: 'Ab {month}: {amount} monatlich', stopsFrom: 'Automatisches Taschengeld deaktiviert ab {month}' }
+        en: { memberEmpty: 'No accounts to show', memberEmptyBody: 'No active accounts are assigned to you. Ask a Manager if you need access to an account.', manageAccounts: 'Manage accounts', manage: 'Manage', balance: 'Balance', loading: 'Loading accounts', loadFailed: 'Accounts could not be loaded.', empty: 'No accounts yet', createFirst: 'Create the first account in Accounts', noAllowance: 'No monthly allowance', perMonth: '{amount} monthly', creditedOn: 'credited {date}', nextOn: 'next on {date}', creditFailed: 'credit failed', scheduledMonthly: '{amount} monthly from {month}', scheduledAllowance: 'From {month}: {amount} monthly', stopsFrom: 'Automatic allowance disabled from {month}' },
+        de: { memberEmpty: 'Keine Konten anzuzeigen', memberEmptyBody: 'Dir sind keine aktiven Konten zugewiesen. Bitte einen Manager, wenn du Zugriff auf ein Konto brauchst.', manageAccounts: 'Konten verwalten', manage: 'Verwalten', balance: 'Kontostand', loading: 'Konten werden geladen', loadFailed: 'Die Konten konnten nicht geladen werden.', empty: 'Noch keine Konten', createFirst: 'Erstes Konto unter Konten anlegen', noAllowance: 'Kein monatliches Taschengeld', perMonth: '{amount} monatlich', creditedOn: 'gutgeschrieben am {date}', nextOn: 'nächste Gutschrift am {date}', creditFailed: 'Gutschrift fehlgeschlagen', scheduledMonthly: '{amount} monatlich ab {month}', scheduledAllowance: 'Ab {month}: {amount} monatlich', stopsFrom: 'Automatisches Taschengeld deaktiviert ab {month}' }
       }
     });
   </script>

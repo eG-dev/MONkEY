@@ -50,7 +50,7 @@ See [testing](testing.md) for current coverage and commands.
 ## Acceptance Ownership
 
 - [Lifecycle completion](03h-lifecycle.md): implemented behavior and feature-closeout boundaries.
-- [Member account assignment draft](03a-accounts.md#member-account-assignment--backenddata-proposal-r7): proposed access change; not yet approved or implemented.
+- [Member account assignment R9](03a-accounts.md#member-account-assignment--backenddata-proposal-r9): backend/data concept approved on 2026-10-30; implementation and separate UI design reviews pending.
 - [Builds and releases](builds-releases.md): hosted verification, approval, publication and artifact identity.
 - [Operations and cutover](04-operations-cutover.md): host rehearsal, backup/restore, upgrades and final acceptance.
 - [Testing](testing.md), [configuration](configuration.md) and [localization](localization.md): cross-cutting contracts and checks.
