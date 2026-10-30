@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="login-1" name="Desktop - sign in">
-        <mxGraphModel dx="2530" dy="3378" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3120" pageHeight="1240" background="#FFFFFF" math="0" shadow="0">
+        <mxGraphModel dx="3111" dy="3789" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3120" pageHeight="1240" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -43,8 +43,8 @@
                 <mxCell id="undefined-14" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="No application shell before sign-in. Fields support password managers (username / current-password autocomplete)." vertex="1">
                     <mxGeometry height="90" width="480" x="1320" y="-70" as="geometry"/>
                 </mxCell>
-                <mxCell id="undefined-15" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Language can be chosen before sign-in; after sign-in the saved preference applies." vertex="1">
-                    <mxGeometry height="90" width="480" x="2620" y="40" as="geometry"/>
+                <mxCell id="undefined-15" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;[state: signed out / signed in]&lt;/b&gt;&lt;br&gt;Choose language before sign-in; afterward the saved preference applies." vertex="1">
+                    <mxGeometry height="90" width="480" x="2620" y="79" as="geometry"/>
                 </mxCell>
                 <mxCell id="undefined-16" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="No email recovery: Managers reset passwords in Administration." vertex="1">
                     <mxGeometry height="83" width="480" x="2620" y="795" as="geometry"/>
@@ -52,16 +52,16 @@
                 <mxCell id="sNdbuL23PBqq-89-687P-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" value="Notes/errors" vertex="1">
                     <mxGeometry height="48" width="400" x="1360" y="476" as="geometry"/>
                 </mxCell>
-                <mxCell id="sNdbuL23PBqq-89-687P-2" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="The area for notes/errors is hidden when there are none.&lt;br&gt;&lt;br&gt;&lt;b&gt;Errors&lt;/b&gt; (in the notes area): incorrect username or password, without saying which; locked after 5 failed attempts (try again in 15 minutes); sign-in temporarily unavailable. The username is kept, the password is cleared.&lt;br&gt;&lt;br&gt;&lt;b&gt;Session expired&lt;/b&gt;: info note &quot;Your session has expired. Please sign in again.&quot; Sessions end after 8 hours or when a Manager resets the password, changes the role, or disables the user." vertex="1">
-                    <mxGeometry height="202" width="480" x="2620" y="350" as="geometry"/>
+                <mxCell id="sNdbuL23PBqq-89-687P-2" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Show sign-in errors and session-expiry information here; hide the area otherwise." vertex="1">
+                    <mxGeometry height="83" width="480" x="2620" y="458.5" as="geometry"/>
                 </mxCell>
-                <mxCell id="login-note-3" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;Forced password change&lt;/b&gt;: after the first sign-in or a password reset, the card shows &quot;Change your password&quot; with an info note, current password, new password (at least 12 characters), &quot;Change password&quot;, and a &quot;Sign out&quot; link. Afterwards the user signs in again.&lt;br&gt;&lt;br&gt;&lt;b&gt;Phone&lt;/b&gt;: full-width form without the card; same states." vertex="1">
-                    <mxGeometry height="157" width="480" x="40" y="536.5" as="geometry"/>
+                <mxCell id="login-note-3" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;[state: password change required]&lt;/b&gt;&lt;br&gt;Replace sign-in with a password-change form.&lt;br&gt;&lt;br&gt;&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Full-width form." vertex="1">
+                    <mxGeometry height="130" width="480" x="50" y="563.25" as="geometry"/>
                 </mxCell>
                 <mxCell id="login-footer" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=14;align=center;fontColor=#666666;" value="Version [build version]   |   About" vertex="1">
                     <mxGeometry height="40" width="480" x="1320" y="1080" as="geometry"/>
                 </mxCell>
-                <mxCell id="login-footer-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Footer in every login state: Version | About, with a pipe separator and no info icon. Opens the shared About modal without signing in; closing restores focus here and preserves the form. Footer flows below tall content without overlap on phones." vertex="1">
+                <mxCell id="login-footer-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="The footer appears in every login state. About opens without signing in." vertex="1">
                     <mxGeometry height="130" width="480" x="2620" y="1035" as="geometry"/>
                 </mxCell>
                 <mxCell id="annotation-arrow-undefined-14" edge="1" parent="1" source="undefined-14" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;edgeStyle=none;curved=0;strokeWidth=3;entryDx=0;entryDy=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="undefined-5">

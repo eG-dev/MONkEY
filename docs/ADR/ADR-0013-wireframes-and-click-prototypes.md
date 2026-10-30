@@ -1,7 +1,7 @@
 # ADR-0013 Wireframes and Click Prototypes
 
 _Creation date_: 2026-10-10
-_Updated_: 2026-10-23
+_Updated_: 2026-10-30
 
 ## Context
 
@@ -35,20 +35,23 @@ flowchart LR
 
 ### Wireframes
 
-- Create one editable draw.io source per view in `docs/design/wireframes/<view>/<view>-wireframe.drawio` with a synchronized `<view>-wireframe.png` preview.
-- Draw one main desktop viewport per view, enclosed by a dashed border. Describe important behavior, states, role differences, dialogs, and phone layout in note shapes outside that border, connected by arrows to the relevant component. Keep annotations off the UI and on the same drawing rather than adding pages per state.
+- Create one editable draw.io source per view in `docs/design/wireframes/<view>/<view>-wireframe.drawio`. Review and approve the current source in draw.io; only after approval and review-marker cleanup export and inspect a synchronized `<view>-wireframe.png` preview. Existing previews may show earlier revisions while a source is a draft.
+- Draw one main desktop viewport per view, enclosed by a dashed border. Use concise notes outside the border, connected to the relevant component, for key interactions, states, role differences, dialogs, or phone-layout choices needed to review the view. Keep annotations off the UI and on the same drawing rather than adding pages per state.
 - Show only the view inside the shell's main content container. The application shell has its own wireframe, so it can change without updating every view.
 - Create a separate source only when a screen has its own substantial layout, such as separate tabs of one view.
 - Keep wireframes rough: they define structure, hierarchy, and key interactions, not colors, typography, or exact spacing.
-- Consolidate annotations for the same area into one note and arrow. After the initial wireframe is created or substantially updated, ask the user to arrange the external notes in draw.io, using any side of the viewport for readable, short connectors. Preserve that arrangement, then export and review the synchronized preview after confirmation.
+- Include a behavioral detail when it affects what users see or can do, or is needed to decide the layout. Do not turn notes into exhaustive specifications: demonstrate detailed interactions, validation, errors and edge cases in the prototype, and keep enduring business and security rules in their authoritative ADRs. A critical constraint may still need a brief wireframe note.
+- Omit notes that merely restate what the drawing already makes clear, including after a revision; retain necessary behavior, scope or constraints not apparent from the drawing.
+- Group conditional details under short, bold bracketed scope headers on their own lines (for example, `[role: member]` or `[device: phone]`), with the relevant detail below each header. Use separate `[role: manager]` and `[role: member]` sections when behavior differs; use `[roles: manager, member]` only for a detail shared by both roles. Put a blank line before a header when other text precedes it in the note; do not add one before the first line. General details need no scope header.
+- Consolidate annotations for the same area into one note and arrow. After the initial wireframe is created or substantially updated, ask the user to arrange the external notes in draw.io, using any side of the viewport for readable, short connectors. Preserve that arrangement and review the source; arrangement confirmation is not approval and does not trigger an export.
 
 Annotation format refined with user approval on 2026-10-10: external notes and
 component-directed arrows replace the original in-viewport callouts. The
 wireframe/prototype approval workflow is unchanged.
 
 Annotation workflow refined with user approval on 2026-10-10: the assistant
-prepares consolidated note content; the user arranges notes before final export
-and review. This replaces automatic annotation-layout optimization, not the
+prepares consolidated note content; the user arranges notes before source
+review and final export. This replaces automatic annotation-layout optimization, not the
 wireframe/prototype approval gates.
 
 Annotation review markers refined with user approval on 2026-10-21: highlight
@@ -56,7 +59,7 @@ changed notes visually instead of adding revision labels to annotation prose.
 Use a temporary light-blue note, optionally with blue text or connector, and keep
 revision/approval history in the design index. After explicit approval, the
 assistant restores normal yellow notes and black text/connectors if needed,
-removes obsolete annotation revision/draft prefixes and re-exports/inspects the
+removes obsolete annotation revision/draft prefixes and exports/inspects the
 PNG without waiting for a separate cleanup request. Preserve user layout and
 annotation meaning. This housekeeping does not create another approval gate.
 
@@ -87,13 +90,18 @@ annotation meaning. This housekeeping does not create another approval gate.
 
 ### Changes and approval
 
-- Require explicit user approval of the current wireframe revision before advancing to its click prototype, and explicit approval of the current prototype revision before Angular implementation. Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed, and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts. If corrections are requested, verify the revised drafts and wait for review without repeatedly prompting for approval.
-- Change structure in the wireframe first and then the prototype; change details or behavior in the prototype only.
+- Require explicit user approval of the current wireframe source, followed by marker cleanup and PNG export and inspection, before advancing to its click prototype, and explicit approval of the current prototype revision before Angular implementation. Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed, and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts. If corrections are requested, verify the revised drafts and wait for review without repeatedly prompting for approval.
+- Change structure or key behavior needed to review the wireframe there first and then in the prototype; change other interaction details in the prototype only.
 - Record approval per reference in the design index. Approved references guide the implementation but do not override ADRs, backend authorization, or exact money rules, and do not create business rules on their own.
 - Implement approved views in the Angular application using the design-system tokens and verify them as described in [ADR-0005](ADR-0005-e2e-first-verification.md).
 
 ## Change History
 
+- 2026-10-30: Clarified singular role headers and separate sections for differing role behavior, so each detail's audience is clear.
+- 2026-10-30: Made scope headers bold and separated them from preceding note text with a blank line, improving annotation scanability.
+- 2026-10-30: Moved PNG export until after source approval and review-marker cleanup, avoiding repeated exports while the editable wireframe is still changing.
+- 2026-10-30: Clarified that wireframe notes capture only behavior needed to review the view, use a bracketed first-line scope header when details are conditional, and leave detailed interactions and enduring rules to their authoritative records, to keep wireframes readable.
+- 2026-10-30: Excluded notes that merely repeat visible wireframe content, including revision changes, while retaining necessary details not conveyed by the drawing.
 - 2026-10-23: Added a global application composition and standalone-then-integrated
     verification, following the requested prototype review pattern. This exposes
     navigation, dialog and shell-context problems that isolated views cannot show;

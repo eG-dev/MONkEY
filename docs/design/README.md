@@ -1,12 +1,136 @@
 # POCKET MONkEY design references
 
-Store editable draw.io sources and synchronized PNG previews here for
+Store editable draw.io sources and approved PNG previews here for
 [step 2B: product UX and UI design](../../plans/migration/02b-ux-ui-design.md).
 The user approved the then-current wireframes, click prototypes, visual design,
 and implemented representative design on 2026-10-10, including all subsequent
 refinements recorded below. Approval applies to that reviewed revision;
 later design changes require renewed review. It does not settle future business
 policies or certify unperformed technical checks.
+
+Review current drafts in draw.io. PNG previews are exported after source
+approval and marker cleanup, so an existing preview may show an earlier
+revision while its source is a draft.
+
+## Annotation Clarity R1 (2026-10-30)
+
+**All 12 wireframes in the reference table are Annotation Clarity R1 drafts; not approved.** The annotations were shortened without moving notes, controls or connectors. Blue notes identify the changes. The earlier status and approvals in the table are retained as history, not approval of R1. The Account assignments, Users and Profile diagrams also retain their pending Member Account Assignment R3 review. The prior notes below preserve detailed design context for prototype review, including the user-edited R3 sources. They are historical, not new decisions: current ADRs and later approved designs take precedence. In particular, Member visibility is limited to assigned active accounts and retired details are Manager-only. The prototypes have not been changed. Note arrangement and source review are pending; export follows approval.
+
+### Annotation Scope R2 (2026-10-30)
+
+**All 12 wireframes remain drafts; R2 is not approved.** Scope headers group
+conditional role, state, viewport and phone details within the existing notes;
+redundant visible-layout descriptions were removed, including the Legal
+information tab note and its connector. Changed notes are blue. Existing note
+positions and remaining connectors are preserved. Arrange notes in draw.io as
+needed before source review. The linked PNGs have not been updated for R2 and
+may show an earlier revision; export follows explicit approval.
+
+### Annotation Formatting R3 (2026-10-30)
+
+**The wireframes remain drafts; R3 is not approved.** Scope headers are bold,
+with a blank line before each header that follows other note text. Some note
+boxes were made taller to fit without moving their anchor positions; arrangement
+and visual inspection remain pending. PNG previews remain unchanged pending
+approval.
+
+### Role Scope R4 (2026-10-30)
+
+**The wireframes remain drafts; R4 is not approved.** Notes now use singular
+role headers and separate Manager and Member sections for differing behavior.
+Note arrangement and visual inspection remain pending; PNGs are not exported
+until approval.
+
+<details>
+<summary>Previous annotation detail (historical context)</summary>
+
+- **login / login-wireframe.drawio - sNdbuL23PBqq-89-687P-2:** The area for notes/errors is hidden when there are none. Errors (in the notes area): incorrect username or password, without saying which; locked after 5 failed attempts (try again in 15 minutes); sign-in temporarily unavailable. The username is kept, the password is cleared. Session expired : info note "Your session has expired. Please sign in again." Sessions end after 8 hours or when a Manager resets the password, changes the role, or disables the user.
+
+- **login / login-wireframe.drawio - login-note-3:** Forced password change : after the first sign-in or a password reset, the card shows "Change your password" with an info note, current password, new password (at least 12 characters), "Change password", and a "Sign out" link. Afterwards the user signs in again. Phone : full-width form without the card; same states.
+
+- **login / login-wireframe.drawio - login-footer-note:** Footer in every login state: Version | About, with a pipe separator and no info icon. Opens the shared About modal without signing in; closing restores focus here and preserves the form. Footer flows below tall content without overlap on phones.
+
+- **application-shell / application-shell-wireframe.drawio - repository-note:** Build version remains beneath About in smaller text. GitHub/source, project license, third-party notices and operator/privacy links move to About. GitHub stays unavailable there until the future repository URL is agreed.
+
+- **accounts-overview / accounts-overview-wireframe.drawio - undefined-41:** Managers only: link to the dedicated Accounts view. Members see all accounts read-only, without this link.
+
+- **accounts-overview / accounts-overview-wireframe.drawio - undefined-42:** The whole card links to the account details. Accounts are ordered by name. Cards wrap: 4 per row at full width, fewer when space is narrower. Phone: one full-width card per row, "Manage" as short link. States Loading: skeleton cards. Empty: "No accounts yet"; Managers additionally get a link to create the first account in Accounts. Error: message with "Try again"; no stale balances shown as current.
+
+- **accounts-overview / accounts-overview-wireframe.drawio - undefined-43:** The Balance label is right-aligned directly above its amount, not below the account name, on desktop and phones. Balance colored by sign: positive green, negative red, zero standard text. Uninitialized accounts say so instead of showing 0.
+
+- **accounts-overview / accounts-overview-wireframe.drawio - undefined-44:** Allowance has two rows on desktop and phone. The first row shows the monthly amount with sign-based coloring and its frequency, or "No monthly allowance". The second row shows execution information, including the credit date, next scheduled credit, or Manager-visible failure status, using the theme-aware Text dimmed color. Existing role visibility and scheduling rules apply. No execution row is shown for "No monthly allowance". Long text wraps.
+
+- **accounts / accounts-wireframe.drawio - retirement-list-note:** Scheduled for deletion Managers see retired accounts here, separate from active accounts. Names and chevrons open read-only details; show the scheduled deletion date. Omit the section when empty. Reactivation is available only in account details. Phone: stack the name and date without clipping; the name opens details.
+
+- **accounts / accounts-wireframe.drawio - undefined-34:** Columns: Name, Balance, Allowance, Status, chevron. Name has a capped width. Balance and Allowance are right-aligned. Additional desktop width is allocated to Status. Allowance shows the configured monthly amount or "No monthly allowance". Names are links without underlines, with hover feedback and visible keyboard focus. The chevron opens account details. Renaming is available via the pencil in account details; allowance configuration is also in account details. Phone: avatar/name share a 44px-minimum link on the left; muted status is below the name. Balance is on the right, with Allowance directly below it. No separate status or chevron column. Names and amounts wrap without overlap.
+
+- **accounts / accounts-wireframe.drawio - undefined-36:** Create dialog only Field: Name (1-40 characters, unique). Buttons: Cancel and Create account. On success open account details; new accounts are not initialized. Rename and image changes are available only in account details. Full-screen on phones. Creation validation Errors are announced, including duplicate names. Input is kept on errors and retries. No existing name, balance, or history is editable in this list.
+
+- **account-details / account-details-wireframe.drawio - transaction-dialog-note:** Record transaction opens a dialog at every width: Deposit/Withdrawal selector, positive amount (up to two decimals), optional comment (up to 500 characters), mode-coloured submit. Errors retain input; success closes and refreshes balance/history. No inline transaction form. Right-aligned actions: icon-only refresh, then labelled Record transaction for Managers with an opening balance. On phones the action group wraps together onto a right-aligned line. Rename stays beside the name. Managers only. The mode is shown by color plus sign: deposit green (+), withdrawal red (−) on the selected toggle, the amount sign, and the button. Submitting disables the button until the backend confirms; retries reuse the same request so nothing is booked twice. Withdrawals may make the balance negative. Member: balance, allowance and history only; no business-write controls. Phone: labelled Record transaction stays after refresh in the header and opens a full-screen dialog. Balance, allowance and history remain stacked; amounts are never truncated.
+
+- **account-details / account-details-wireframe.drawio - undefined-60:** Managers: avatar edits the image (PNG/JPEG/WebP); pencil beside the heading renames (1-40 characters, unique). Errors keep input; Cancel keeps the name. Members see no edit controls. Rename is available only on this page.
+
+- **account-details / account-details-wireframe.drawio - undefined-63:** Newest first, 20 per page. Dates in the business timezone, formatted for the language. Amounts signed and colored. Without transactions: "No transactions yet".
+
+- **account-details / account-details-wireframe.drawio - undefined-64:** Not initialized The balance shows "Not initialized". Managers get an "Opening amount" form instead of "Record transaction": signed amount (may be zero or negative), optional comment, "Post opening amount". Final once posted, so a confirmation dialog asks before posting. Members see a note instead.
+
+- **account-details / account-details-wireframe.drawio - undefined-65:** Monthly allowance Current/next-month settings; positive amount or disabled (retains amount). Opening required. Credit runs below, separated by space: latest credited month/time or no credits; oldest pending/failed month. No repeated amount. Managers see attempt details/reason. Retries catch up eligible months. History: Allowance by Automatic, with its month. Saving never posts money.
+
+- **account-details / account-details-wireframe.drawio - delete-account-note:** Delete account Managers only. The icon-only button has a Delete account tooltip and accessible name. Confirm deletion and explain both possible outcomes: immediate deletion without manual transaction or credited allowance history, otherwise retirement for 30 days. On success return to the account list. Announce failures and allow retry. On phones, wrap the header actions without overlap; the confirmation fills the screen.
+
+- **account-details / account-details-wireframe.drawio - retired-details-note:** Retired state Show the banner only for retired accounts, below the name and image. Both roles can open a direct link and see the deletion date, balance, allowance and history. Hide rename, image, transaction, opening and allowance controls; no credits or business writes are allowed. Only Managers can reactivate, from this view before the deadline; Members see no action. When eligible allowance months are outstanding, require a choice: credit them or permanently drop them. Existing allowance settings stay unchanged and normal scheduling resumes after reactivation. Announce failures and keep the choice for retry. Format the date for the selected language and business timezone.
+
+- **administration / administration-account-assignments-wireframe.drawio - visibility-note:** Managers only List Members only, including disabled Members. Managers never appear here: their account access is unrestricted and their retained assignments cannot be edited until demotion. Users remains the place for identity, role, status and passwords. Members see only Profile.
+
+- **administration / administration-account-assignments-wireframe.drawio - editor-note:** Edit a Member's assignments Show assigned active account names, wrapping long lists, or No accounts. [edit] has a Member-specific accessible name and tooltip. Open a separate dialog naming the Member, with a scrolling active-account checkbox list, Save and Cancel. No selection is valid and removes all assignments. Retired accounts are not selectable; reactivation requires fresh assignment. Distinguish loading, no active accounts and load failure with Retry. Saving prevents duplicate submission. Save failure keeps input; reload before retry after an uncertain result. Stale edits, unavailable accounts or a changed role require reload/review. A role change reload returns to the Member list. No assignment history. Checked boxes use primary colors without filling the selected row. Keep keyboard focus visible.
+
+- **administration / administration-account-assignments-wireframe.drawio - list-states-note:** List states and phones Loading and failure with Retry are distinct from an empty Member list. No Members: show an empty state with a link to Users, not account creation. A Member with no assignments still has a row and an edit control. Phone: tabs remain reachable without page overflow; each Member becomes a compact list item with name, username, status, assigned account names and an edit icon. No role column, user-edit or password actions. Dialog fits the viewport with its list scrolling and Save/Cancel reachable.
+
+- **administration / administration-profile-wireframe.drawio - undefined-22:** "Change password" opens a dialog The action uses the square-asterisk icon. Fields: current password, new password (at least 12 characters), and Confirm new password. Confirmation is required and must match exactly. A mismatch appears at the confirmation field and prevents submission; entered values are kept. Cancel and Change password actions. Other errors appear at the relevant field (e.g. wrong current password). All sessions end after a successful change; the user signs in again. Full-screen on phones.
+
+- **administration / administration-users-wireframe.drawio - undefined-38:** Managers only. The last active Manager cannot be disabled or demoted; the related controls are disabled with an explanation. Edit user dialog Display name, role, Active switch, and "Reset password". Role change or disabling ends the user's sessions. For the last active Manager, "Member" and "Active" are disabled with the reason shown.
+
+- **administration / administration-users-wireframe.drawio - undefined-40:** Create user dialog Username (sign-in name, not changeable later), display name (up to 100 characters), role (Member / Manager). Then a second step shows the temporary password once with Copy and Done: never shown again, the user must change it at the first sign-in.
+
+- **administration / administration-users-wireframe.drawio - undefined-42:** Reset password Asks for confirmation, then shows the new temporary password once (same step as when creating). Existing sessions of that user end.
+
+- **administration / administration-users-wireframe.drawio - member-account-assignments-note:** Account assignments tab Managers manage Member account visibility in this separate tab. Users remains focused on identity, role, status and password actions; there is no assignment column or assignment action here. Members see only Profile.
+
+- **about / about-legal-wireframe.drawio - tabs-note:** Last tab: Legal information. Distinct operator, warranty/liability and privacy sections in the same modal from login or app, for both roles. Retain current language/theme. Close or Escape restores focus to the opener; background stays inert. No consent gate or per-user acceptance state.
+
+- **about / about-legal-wireframe.drawio - operator-note:** Placeholder structure only, not approved legal wording. Distinguish the person operating the instance from household users and project maintainers. Review hosting, access/HTTPS, configuration, updates, storage and backups/recovery responsibilities. No invented operator identity, contact or hosting promise.
+
+- **about / about-legal-wireframe.drawio - warranty-note:** Wording remains subject to review. Qualify warranty/liability statements by mandatory law; do not promise absolute immunity, a service-level agreement or continued maintenance/support. This information must not restrict AGPL rights or replace the full text on the dedicated Project license tab.
+
+- **about / about-legal-wireframe.drawio - privacy-note:** Privacy is a distinct section, not a liability disclaimer. Describe actual local processing and operator responsibilities after review; do not imply project maintainers host household data or reuse cloud legal texts. Publish no household/user details. German/English content must be reviewed separately from this layout.
+
+- **about / about-legal-wireframe.drawio - phone-note:** Desktop: near-full viewport dialog; phone: full-screen with one readable column. Header/tabs remain visible; content scrolls internally. Text grows naturally; dashed boxes are placeholders, not fixed-height panels. Scroll the tab strip horizontally without page overflow. Accessible tabs and visible focus. Bundle required content locally.
+
+- **about / about-license-wireframe.drawio - tabs-note:** Tab order: Overview (default), Project license (selected), Third-party notices, Legal information. Shared modal, public and both roles. Keyboard tabs, Close/Escape and opener focus return remain unchanged. No consent or acceptance gate.
+
+- **about / about-license-wireframe.drawio - license-note:** Show the entire canonical project-license text immediately when selecting this tab. No details/summary, accordion, expand button or collapsed state. Preserve the bundled AGPL text verbatim, including line breaks; translate navigation/labels only. Project license remains AGPL-3.0-only. The dashed text box represents flowing text, not a framed fixed-height tool.
+
+- **about / about-license-wireframe.drawio - file-note:** Keep a local link to the complete original license file, identical to the inline text and root LICENSE. No external network access is needed. This tab does not replace project/source links on Overview or third-party license obligations on the notices tab.
+
+- **about / about-license-wireframe.drawio - phone-note:** Desktop: near-full viewport; phone: full-screen. Header/tabs remain fixed while the license flows in the existing dialog scroll area. Keep centred content stable with balanced scrollbar gutters. Wrap long lines without horizontal content overflow; do not add a nested license scroll box. Tab strip can scroll horizontally on phones.
+
+- **about / about-notices-wireframe.drawio - tabs-note:** Shared modal from login or app, for both roles. Close or Escape restores focus; background stays inert. Tab order: Overview (default), Project license, Third-party notices (selected), Legal information. Only third-party content here; operator/privacy content stays last.
+
+- **about / about-notices-wireframe.drawio - search-note:** Search includes component and package names. A matching package retains its complete parent entry and explicit document applicability. Keep the tabs/search visible for empty results. Preserve group/document expansion across filtering and tab changes; closing the dialog resets it. Controls/status text are German/English; original legal texts are not translated.
+
+- **about / about-notices-wireframe.drawio - inventory-note:** Each expanded entry contains clearly bounded package/license groups. Show applicable packages once per group, with individual source links. Put shared version/license metadata in the group heading; retain individual metadata when members differ. Give each document a readable title and independent expansion, initially closed. Open original always opens the locally bundled file without toggling its body. The illustrated MIT body is open only to show the pattern: expansion reveals the complete unchanged text and pushes later groups down. Do not repeat package lists before every document. This partial collection is not release approval.
+
+- **about / about-notices-wireframe.drawio - phone-note:** Desktop: near-full viewport dialog; phone: full-screen. Stack group metadata below its heading and wrap package names, document titles and links. Keep header/tabs visible; use one scrolling content area, not nested legal-text scrollers. Document expansion uses keyboard-accessible controls with clear focus/state. Group borders, headings and spacing distinguish sections without relying on color. Tab-strip scrolling must not cause page overflow.
+
+- **about / about-wireframe.drawio - access-note:** One shared About modal opens over login or the app, for both roles. Desktop: near-full viewport; phone: full-screen. Close icon and Escape dismiss it and restore focus to its opener. Trap focus; background is inert. Keep header/tabs visible; scroll content internally. Retain current language/theme. No authentication or consent gate.
+
+- **about / about-wireframe.drawio - source-note:** Show only public version/revision metadata. GitHub and source access move here from the shell/login footer. Repository URL remains unavailable until agreed. Source must match this release; do not substitute the latest branch. Never invent URLs or expose deployment diagnostics.
+
+- **about / about-wireframe.drawio - license-note:** The project license moves to its own second tab: Project license. Overview contains only project/version/source information. The license tab shows the complete bundled, unmodified AGPLv3 text immediately, without an expandable row. Project grant remains version 3 only.
+
+- **about / about-wireframe.drawio - notices-note:** Tab order: Overview (default), Project license, Third-party notices, Legal information. Operator/privacy content stays on the last tab. Each tab has its own wireframe. Keyboard-accessible tabs and visible active state; scroll the tab strip on phones without page overflow.
+
+</details>
 
 ## Member Account Assignment R3 (2026-10-30)
 
@@ -1022,8 +1146,8 @@ Follow [ADR-0013](../ADR/ADR-0013-wireframes-and-click-prototypes.md): rough
 wireframe first, then a detailed click prototype.
 
 - Keep each `.drawio` source and its exported PNG preview together here, named `<view>-wireframe.drawio` and `<view>-wireframe.png`.
-- Draw one main desktop viewport per view. Show only the view inside the shell's main content container (max 1440px), not the application shell, so the shell can change independently. Mark its bounds with a dashed border. Describe behavior, states, role differences, dialogs, and phone layout in yellow note shapes outside the viewport, around its edges, with arrows pointing to the relevant component. Never overlay annotations on the view. Expand the drawing/export to include the notes, not the viewport itself. Create a separate `.drawio` only when a screen has its own substantial layout, such as the Profile and Users tabs.
-- Show detailed interactions and states in the click prototype, not in additional wireframes. Keep exports synchronized with the source revision. Prefer readable, uncompressed XML when practical.
+- Draw one main desktop viewport per view. Show only the view inside the shell's main content container (max 1440px), not the application shell, so the shell can change independently. Mark its bounds with a dashed border. Briefly note key behavior, states, role differences, dialogs, or phone-layout choices needed to review what users see or can do or decide the layout. Use yellow note shapes outside the viewport, around its edges, with arrows pointing to the relevant component. Never overlay annotations on the view. Expand the drawing/export to include the notes, not the viewport itself. Create a separate `.drawio` only when a screen has its own substantial layout, such as the Profile and Users tabs.
+- Show detailed interactions, validation, errors, and edge cases in the click prototype, not in exhaustive wireframe notes or additional wireframes. Keep enduring business and security rules in their authoritative ADRs; briefly note critical constraints when needed for wireframe review. Keep exports synchronized with the source revision. Prefer readable, uncompressed XML when practical.
 - Commit editable sources, not only screenshots or external draw.io links. Use fictional data; never include credentials or private financial information.
 - As references arrive, add actual source/preview links below with role, viewport/state, draft/approved status, reviewed revision, approval date, and open questions. Only link files that exist.
 - Keep visual-token and interaction guidance here too, linked from that index. Wireframes alone do not approve typography, colors, or all behavior.

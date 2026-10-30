@@ -13,21 +13,21 @@ the rules; this skill describes the steps.
 
 - New or changed wireframes and click prototypes are drafts until the user explicitly approves the current revision of each artifact. Preserve earlier approvals as history; never carry them forward to changed references.
 - Feedback, requested corrections, annotation-placement confirmation, business-policy acceptance, "proceed", and successful automated checks are not design approval. A response that identifies remaining flaws leaves the artifact unapproved.
-- After wireframe export and inspection, present the draft and wait for explicit wireframe approval before advancing to its click prototype. After prototype verification, present the draft and wait for explicit prototype approval before Angular implementation. The user may explicitly approve both named current artifacts together.
+- Present the draft draw.io source for review and wait for explicit wireframe approval. After approval, clear review markers, export and inspect the PNG before advancing to its click prototype. After prototype verification, present the draft and wait for explicit prototype approval before Angular implementation. The user may explicitly approve both named current artifacts together.
 - Approval must identify the artifact and reviewed revision. Record the user's explicit approval and date in the design index only after it is given. Never mark a reference approved based on inference or implementation progress.
 - When corrections are requested, apply them to the draft, verify it, and return it for review. Do not repeatedly prompt for approval while the user is still reviewing or requesting fixes, and do not continue dependent implementation in the meantime.
 
 ## 1. Understand the change
 
-1. Read the [design index](../../../docs/design/README.md), the affected wireframe PNG, and the prototype.
+1. Read the [design index](../../../docs/design/README.md), the affected draw.io source, and the prototype. An existing PNG may show an older revision and is not the current draft.
 2. Read the applicable ADRs and plans (business rules, roles, money, language). A design change must not invent business rules; ask when a policy is unclear.
 3. Decide which artifacts change:
 
 | Change | Wireframe | Prototype | Design system |
 | --- | --- | --- | --- |
-| New view | New source and PNG | New page | Only if new patterns are needed |
+| New view | New source; PNG after approval | New page | Only if new patterns are needed |
 | Layout, sections, navigation, new controls | Update | Update | — |
-| Validation, states, texts, dialog details, interaction | Note only if important | Update | — |
+| Validation, states, texts, dialog details, interaction | Note only key behavior needed to review the view | Update | — |
 | Colors, typography, spacing, component pattern | — | Update affected pages | Update tokens and guides |
 | Shell (toolbar, navigation, user menu) | Shell wireframe | `shared/prototype.js` / `.css` | If tokens change |
 
@@ -35,23 +35,25 @@ the rules; this skill describes the steps.
 
 - Location: `docs/design/wireframes/<view>/<view>-wireframe.drawio`; one page with a 1440px-wide main-content viewport (or an existing agreed viewport size). Expand the drawing around it for annotations; do not enlarge the viewport merely to fit notes.
 - Use English only for all wireframe text, including UI labels, placeholders, annotations and connector labels, unless the user explicitly requests another language or bilingual text. Do not pair English and German terms by default. The bilingual requirements for click prototypes and the application remain unchanged.
-- Style conventions: Calibri; panels and controls as plain boxes; primary actions green-filled; placeholders dashed. Enclose the viewport in a dashed border. Use yellow note shapes (`shape=note`, not callouts) for behavior, states, roles, dialogs, and phone layout, entirely outside the viewport. Arrange notes around its edges with space between them. Connect each note to the relevant existing component with an arrow pointing from note to component; route through empty space where possible.
+- For each annotation, ask whether the detail affects what users see or can do, or is needed to decide the layout. Keep only the key interaction or critical constraint needed for that review, stated briefly. Demonstrate detailed interactions, validation, errors and edge cases in the prototype; keep enduring business and security rules in their authoritative ADRs rather than relying on a wireframe or prototype as the specification. Do not discard requirements when shortening notes.
+- Check whether the drawing already conveys the detail without a note. Omit or remove notes that merely describe visible elements, such as identifying a visible tab, even when those elements were just changed. Keep necessary behavior, scope, and constraints that are not apparent from the drawing.
+- Group conditional details under short, bold bracketed scope headers on their own lines (for example, `[role: member]` or `[device: phone]`), with the relevant detail below each header. Use separate `[role: manager]` and `[role: member]` sections when behavior differs; use `[roles: manager, member]` only for a detail shared by both roles. Put a blank line before a header when other text precedes it in the note; do not add one before the first line. General details need no scope header.
+- Style conventions: Calibri; panels and controls as plain boxes; primary actions green-filled; placeholders dashed. Enclose the viewport in a dashed border. Use yellow note shapes (`shape=note`, not callouts) for needed key behavior, states, roles, dialogs, and phone layout, entirely outside the viewport. Arrange notes around its edges with space between them. Connect each note to the relevant existing component with an arrow pointing from note to component; route through empty space where possible.
 - Keep the XML readable. If the user edited the source, change only the affected cells.
 - Consolidate notes about the same area/component into one note with one arrow. Use straight connectors (`edgeStyle=none;curved=0`) with a 3px stroke (`strokeWidth=3`) and no intermediate waypoints.
 - Use a black 3px viewport border with draw.io's "Dashed (1)" preset (`strokeColor=#000000;strokeWidth=3;dashed=1`, no custom `dashPattern`).
 - Send the viewport rectangle to the back (first drawable cell in the XML root), keeping other elements in front. Use black (`strokeColor=#000000`) for annotation connector lines.
 - Make new or changed annotations visually obvious during review instead of embedding revision labels such as "R5 draft" in comment text. Prefer a temporary light-blue note (`fillColor=#dae8fc;strokeColor=#6c8ebf`); optionally highlight its text or connector in blue (`#0078D4`). Use a consistent marker for the changed annotations only, keeping their text readable and preserving the user's positions and arrow routing. Keep revision/approval history in the design index, not the annotation prose.
 - After explicit approval, inspect the approved source for remaining review colours. If the user has not reset them, restore the normal yellow note (`fillColor=#fff2cc;strokeColor=#d6b656`), black text (`fontColor=#000000`) and black connector (`strokeColor=#000000`), removing temporary inline text-colour overrides where necessary. Remove obsolete revision/draft prefixes from annotation prose without changing its meaning. Preserve all other user edits. This is approval housekeeping, not a new design revision or approval gate.
-- Whenever review markers are added or cleared, re-export and inspect the PNG from the resulting source. Do not leave the approved preview showing stale highlights, or record cleanup as complete until the source and preview agree.
-- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in draw.io. Offer all four sides, including top and bottom, to shorten arrows. Pause final layout/export review until the user confirms the arrangement is ready; do not automatically optimize routes or overwrite their placement. A preliminary PNG may be exported as a draft.
-- Export the preview with the draw.io desktop app:
+- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in draw.io. Offer all four sides, including top and bottom, to shorten arrows. Do not automatically optimize routes or overwrite their placement. After the user confirms the arrangement, present the current source for review; that confirmation is not approval.
+- Do not export a PNG while creating, revising, or arranging a draft, including when adding review markers. Review the current `.drawio` source in draw.io instead. Identify any existing PNG as potentially stale rather than presenting it as the draft. Check the source for concise, review-relevant notes that do not merely restate the drawing, English-only text (unless explicitly requested otherwise), the dashed viewport, external note placement, readable text, one arrow per annotated area, and absence of annotation/control overlap. Report any checks that cannot be performed.
+- Only after explicit approval of the current source and review-marker cleanup, export the preview with the draw.io desktop app:
 
 ```powershell
 & "C:\Program Files\draw.io\draw.io.exe" -x -f png -b 10 -o <view>-wireframe.png <view>-wireframe.drawio
 ```
 
-- Once the user confirms the arrangement, re-export and view the PNG. Check English-only text (unless explicitly requested otherwise), the dashed viewport, external note placement, readable text, one arrow per annotated area, and absence of annotation/control overlap before continuing.
-- Arrangement confirmation only permits export. Wait for explicit approval of the exported wireframe revision before starting or updating its dependent click prototype.
+- View the exported PNG and verify that it reflects the cleaned approved source, including the viewport and external notes. Do not record cleanup as complete or advance to the prototype if export or inspection is blocked. If inspection reveals a design flaw requiring a source change, correct the draft and return the new revision for explicit approval.
 
 ## 3. Click prototype
 
@@ -119,7 +121,7 @@ The integrated browser tab may be hidden: prefer `page.evaluate` with `requestSu
 ## 6. Finish
 
 - Update the [design index](../../../docs/design/README.md): links, and mark changed references as drafts until the user approves them.
-- When approval is given, record the approved revision/date and complete the annotation-colour cleanup and PNG re-export above; do not wait for the user to request cleanup separately.
+- When approval is given, record the approved revision/date and complete the annotation-colour cleanup and PNG export/inspection above; do not wait for the user to request cleanup separately. Report any pending cleanup or verification.
 - Summarize what changed and what was verified; list open business questions instead of deciding them in the design.
 - Angular implementation happens separately after approval, following the [web instructions](../../instructions/web.instructions.md) and the E2E-first verification of [ADR-0005](../../../docs/ADR/ADR-0005-e2e-first-verification.md).
 - If either current artifact is still a draft, finish by stating what awaits review. Do not infer approval from feedback or a general instruction to continue.

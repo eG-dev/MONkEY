@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="administration-account-assignments" name="Administration - Account assignments">
-        <mxGraphModel dx="1590" dy="3077" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2640" pageHeight="1440" background="#FFFFFF" math="0" shadow="0">
+        <mxGraphModel dx="4734" dy="3155" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2640" pageHeight="1440" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -82,22 +82,22 @@
                 <mxCell id="edit-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="visibility-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;Managers only&lt;/b&gt;&lt;br&gt;List Members only, including disabled Members. Managers never appear here: their account access is unrestricted and their retained assignments cannot be edited until demotion. Users remains the place for identity, role, status and passwords. Members see only Profile." vertex="1">
-                    <mxGeometry height="180" width="480" x="2140" y="100" as="geometry"/>
+                <mxCell id="visibility-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;[role: manager]&lt;/b&gt;&lt;br&gt;Assign accounts, including for disabled Members.&lt;br&gt;&lt;br&gt;&lt;b&gt;[role: member]&lt;/b&gt;&lt;br&gt;See only Profile." vertex="1">
+                    <mxGeometry height="125" width="480" x="824" y="-60" as="geometry"/>
                 </mxCell>
-                <mxCell id="editor-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;Edit a Member's assignments&lt;/b&gt;&lt;br&gt;Show assigned active account names, wrapping long lists, or No accounts. [edit] has a Member-specific accessible name and tooltip. Open a separate dialog naming the Member, with a scrolling active-account checkbox list, Save and Cancel. No selection is valid and removes all assignments. Retired accounts are not selectable; reactivation requires fresh assignment.&lt;br&gt;&lt;br&gt;Distinguish loading, no active accounts and load failure with Retry. Saving prevents duplicate submission. Save failure keeps input; reload before retry after an uncertain result. Stale edits, unavailable accounts or a changed role require reload/review. A role change reload returns to the Member list. No assignment history.&lt;br&gt;&lt;br&gt;Checked boxes use primary colors without filling the selected row. Keep keyboard focus visible." vertex="1">
-                    <mxGeometry height="360" width="480" x="2140" y="340" as="geometry"/>
+                <mxCell id="editor-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Edit opens a dialog to select active accounts for this Member. An empty selection is allowed." vertex="1">
+                    <mxGeometry height="90" width="480" x="2120" y="375" as="geometry"/>
                 </mxCell>
-                <mxCell id="list-states-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;List states and phones&lt;/b&gt;&lt;br&gt;Loading and failure with Retry are distinct from an empty Member list. No Members: show an empty state with a link to Users, not account creation. A Member with no assignments still has a row and an edit control.&lt;br&gt;&lt;br&gt;Phone: tabs remain reachable without page overflow; each Member becomes a compact list item with name, username, status, assigned account names and an edit icon. No role column, user-edit or password actions. Dialog fits the viewport with its list scrolling and Save/Cancel reachable." vertex="1">
-                    <mxGeometry height="200" width="640" x="800" y="1160" as="geometry"/>
+                <mxCell id="list-states-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Show loading, empty and error states.&lt;br&gt;&lt;br&gt;&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Compact Member items; keep dialog actions reachable." vertex="1">
+                    <mxGeometry height="114" width="640" x="-120" y="353" as="geometry"/>
                 </mxCell>
-                <mxCell id="visibility-arrow" edge="1" parent="1" source="visibility-note" target="account-assignments-tab" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0;entryX=1;entryY=0;edgeStyle=none;curved=0;strokeWidth=3;">
+                <mxCell id="visibility-arrow" edge="1" parent="1" source="visibility-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;edgeStyle=none;curved=0;strokeWidth=3;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;" target="account-assignments-tab">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="editor-arrow" edge="1" parent="1" source="editor-note" target="edit-lena" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0.25;entryX=1;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;">
+                <mxCell id="editor-arrow" edge="1" parent="1" source="editor-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0.5;entryX=1;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;exitDx=0;exitDy=0;exitPerimeter=0;" target="edit-lena">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="list-states-arrow" edge="1" parent="1" source="list-states-note" target="member-name-lena" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0.2;exitY=0;entryX=0.5;entryY=1;edgeStyle=none;curved=0;strokeWidth=3;">
+                <mxCell id="list-states-arrow" edge="1" parent="1" source="list-states-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0;entryX=0;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;exitDx=640;exitDy=67;exitPerimeter=0;entryDx=0;entryDy=0;" target="member-name-lena">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
             </root>
