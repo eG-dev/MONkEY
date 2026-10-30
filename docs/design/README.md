@@ -12,6 +12,13 @@ Review current drafts in draw.io. PNG previews are exported after source
 approval and marker cleanup, so an existing preview may show an earlier
 revision while its source is a draft.
 
+## Reusable Annotation Example
+
+See the UI/UX skill's [annotation syntax and example](../../.github/skills/ui-ux-design/SKILL.md#annotation-scopes)
+and [repository bindings](../../.github/skills/ui-ux-design/SKILL.md#repository-integration-pocket-monkey).
+The [ADR](../ADR/ADR-0013-wireframes-and-click-prototypes.md) owns decisions and
+approval policy; this index records artifact status and review evidence.
+
 ## Annotation Clarity R1 (2026-10-30)
 
 **All 12 wireframes in the reference table are Annotation Clarity R1 drafts; not approved.** The annotations were shortened without moving notes, controls or connectors. Blue notes identify the changes. The earlier status and approvals in the table are retained as history, not approval of R1. The Account assignments, Users and Profile diagrams also retain their pending Member Account Assignment R3 review. The prior notes below preserve detailed design context for prototype review, including the user-edited R3 sources. They are historical, not new decisions: current ADRs and later approved designs take precedence. In particular, Member visibility is limited to assigned active accounts and retired details are Manager-only. The prototypes have not been changed. Note arrangement and source review are pending; export follows approval.
@@ -40,6 +47,15 @@ approval.
 role headers and separate Manager and Member sections for differing behavior.
 Note arrangement and visual inspection remain pending; PNGs are not exported
 until approval.
+
+### Combined Scope R5 (2026-10-30)
+
+**The wireframes remain drafts; R5 is not approved.** Account details and Accounts
+now express combined role/state/device conditions in adjacent brackets, for
+example `[role: manager][state: retired]`. Opening-form conditions move from prose
+into their headers; phone transaction/deletion conditions explicitly retain their
+Manager scope. Note geometry and connectors are unchanged. Source arrangement
+and visual review remain pending; PNGs are unchanged until explicit approval.
 
 <details>
 <summary>Previous annotation detail (historical context)</summary>
