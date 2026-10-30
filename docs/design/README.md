@@ -57,6 +57,18 @@ into their headers; phone transaction/deletion conditions explicitly retain thei
 Manager scope. Note geometry and connectors are unchanged. Source arrangement
 and visual review remain pending; PNGs are unchanged until explicit approval.
 
+### Placeholder Conventions R6 (2026-10-30)
+
+**The wireframes remain drafts; R6 is not approved.** Text placeholders now use
+curly braces (`Version {build version}`, `{Package source}`, reviewed legal-text
+bodies); square brackets are reserved for icons. Named icon placeholders became
+`[icon] Search components`, `[icon] GitHub project`, `[icon] Source for this
+version`, and the rename action `[rename]`. The two Login card notes were merged
+into one blue note with one arrow (grown upward, outside the viewport), and the
+signed-out/signed-in header split into separate sections. Three connectors in
+Profile and Shell were made explicitly straight and black. No other geometry
+changed; arrangement and source review are pending, and PNGs follow approval.
+
 <details>
 <summary>Previous annotation detail (historical context)</summary>
 

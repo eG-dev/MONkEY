@@ -34,10 +34,10 @@
                 <mxCell id="product" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=24;fontStyle=1;align=left;" value="POCKET MONkEY" vertex="1">
                     <mxGeometry height="40" width="1320" x="640" y="410" as="geometry"/>
                 </mxCell>
-                <mxCell id="version" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=16;align=left;" value="Version [build version]   |   Revision [source revision]" vertex="1">
+                <mxCell id="version" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=16;align=left;" value="Version {build version}   |   Revision {source revision}" vertex="1">
                     <mxGeometry height="32" width="1320" x="640" y="455" as="geometry"/>
                 </mxCell>
-                <mxCell id="source-links" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=16;align=left;fontStyle=4;" value="[GitHub icon] GitHub project     [code icon] Source for this version" vertex="1">
+                <mxCell id="source-links" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=16;align=left;fontStyle=4;" value="[icon] GitHub project     [icon] Source for this version" vertex="1">
                     <mxGeometry height="40" width="450" x="640" y="500" as="geometry"/>
                 </mxCell>
                 <mxCell id="access-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;spacing=16;" value="About opens from login or the application for both roles.&lt;br&gt;&lt;br&gt;&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Full-screen dialog." vertex="1">

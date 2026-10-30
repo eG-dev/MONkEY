@@ -37,7 +37,7 @@
                 <mxCell id="license-file" parent="1" style="text;html=1;fontFamily=Calibri;fontSize=16;fontStyle=4;align=left;" value="Open full license file" vertex="1">
                     <mxGeometry height="32" width="160" x="640" y="455" as="geometry"/>
                 </mxCell>
-                <mxCell id="license-text" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;" value="GNU AFFERO GENERAL PUBLIC LICENSE&lt;br&gt;Version 3, 19 November 2007&lt;br&gt;&lt;br&gt;[Complete, unmodified bundled license text is immediately visible here and continues below the viewport.]" vertex="1">
+                <mxCell id="license-text" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;" value="GNU AFFERO GENERAL PUBLIC LICENSE&lt;br&gt;Version 3, 19 November 2007&lt;br&gt;&lt;br&gt;{Complete, unmodified bundled license text is immediately visible here and continues below the viewport.}" vertex="1">
                     <mxGeometry height="480" width="1360" x="640" y="510" as="geometry"/>
                 </mxCell>
                 <mxCell id="license-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;spacing=16;" value="Show the complete project license immediately, without a collapsed or expandable state." vertex="1">

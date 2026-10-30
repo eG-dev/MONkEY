@@ -61,7 +61,7 @@
                 <mxCell id="undefined-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;rounded=1;arcSize=50;" value="" vertex="1">
                     <mxGeometry height="24" width="48" x="850" y="678" as="geometry"/>
                 </mxCell>
-                <mxCell id="82S1vbXneX7mzSyEdbGr-1" edge="1" parent="1" source="undefined-20" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" target="account-assignments-tab">
+                <mxCell id="82S1vbXneX7mzSyEdbGr-1" edge="1" parent="1" source="undefined-20" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;curved=0;rounded=0;strokeColor=#000000;" target="account-assignments-tab">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="undefined-20" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;[role: manager]&lt;/b&gt;&lt;br&gt;See all tabs.&lt;br&gt;&lt;br&gt;&lt;b&gt;[role: member]&lt;/b&gt;&lt;br&gt;See only Profile." vertex="1">
@@ -70,7 +70,7 @@
                 <mxCell id="undefined-21" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;fontStyle=0" value="The user menu Profile link opens this tab.&lt;br&gt;&lt;br&gt;&lt;b&gt;[role: manager]&lt;/b&gt;&lt;br&gt;Change display name, username and role in Users." vertex="1">
                     <mxGeometry height="110" width="480" x="20" y="244" as="geometry"/>
                 </mxCell>
-                <mxCell id="Us0w6F9M97g_j0vgRW-9-2" edge="1" parent="1" source="undefined-22" style="html=1;exitX=0;exitY=0;exitDx=480;exitDy=66.5;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;strokeWidth=3;rounded=0;strokeColor=#000000;" target="undefined-14">
+                <mxCell id="Us0w6F9M97g_j0vgRW-9-2" edge="1" parent="1" source="undefined-22" style="edgeStyle=none;html=1;exitX=0;exitY=0;exitDx=480;exitDy=66.5;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;strokeWidth=3;rounded=0;strokeColor=#000000;" target="undefined-14">
                     <mxGeometry relative="1" x="-0.0035" as="geometry"/>
                 </mxCell>
                 <mxCell id="undefined-22" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Change password opens a dialog with current, new and confirmation fields.&lt;br&gt;&lt;br&gt;&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Full-screen dialog." vertex="1">
