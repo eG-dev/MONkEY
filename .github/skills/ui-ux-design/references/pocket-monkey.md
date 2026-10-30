@@ -13,7 +13,7 @@ following the [profile contract](project-profile.md). They apply only here.
 
 - Wireframes: `docs/design/wireframes/<view>/<view>-wireframe.drawio`; approved preview `<view>-wireframe.png` beside it.
 - draw.io executable (Windows): `C:\Program Files\draw.io\draw.io.exe`.
-- Desktop viewport: 1440px main content; the application shell has its own wireframe.
+- Desktop viewport: 1440px main content; the application shell has its own wireframe. Full-window wireframes (application shell, login) use 1920px.
 - Product languages: German and English for prototypes and the application.
 - Permissions: Manager (business writes) and Member (read-only). Never treat UI visibility as security enforcement.
 - Themes: light and dark.

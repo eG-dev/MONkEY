@@ -2,8 +2,18 @@
 
 A project profile binds the reusable workflow to one repository. Keep it short,
 factual and maintained with the project. Store it in this skill's `references/`
-folder (for example `references/<project>.md`) or in project documentation linked
-from the project's agent instructions.
+folder (for example `references/<project>.md`) or in project documentation, and
+link it from the project's agent instructions so it is found reliably.
+
+## Shared and Project Files
+
+| File | Ownership |
+| --- | --- |
+| `SKILL.md`, `references/project-profile.md`, `references/drawio-conventions.md`, `assets/` | Shared: copy unchanged between projects; never add project details |
+| `references/<project>.md` | Project-owned profile; never copy to another project |
+
+When adopting the skill elsewhere, copy only the shared files, then create the
+new project's profile in that project's own workspace.
 
 ## Precedence
 

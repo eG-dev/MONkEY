@@ -12,8 +12,9 @@ and runtime helpers.
 
 ## Before You Start
 
-1. Load the project profile from `references/` or the project's design
-   documentation. Here: [POCKET MONkEY](references/pocket-monkey.md).
+1. Load the project profile: the file linked from the project's agent
+   instructions, otherwise the project file in `references/` (any file other
+   than the shared `project-profile.md` and `drawio-conventions.md`).
    If none exists, follow [Set up a project](#set-up-a-project).
 2. Read the project's decision records and design index named in the profile.
    Project decisions override the profile; the profile overrides the defaults
@@ -170,6 +171,6 @@ verification. Passing checks are not design approval.
 
 ## Project Profiles
 
-- Contract and template: [project-profile.md](references/project-profile.md).
-- Wireframe defaults: [drawio-conventions.md](references/drawio-conventions.md).
-- This repository: [POCKET MONkEY profile](references/pocket-monkey.md).
+- Contract, template and shared/project file split: [project-profile.md](references/project-profile.md).
+- Wireframe conventions: [drawio-conventions.md](references/drawio-conventions.md).
+- The project's own profile is located as described in [Before You Start](#before-you-start).

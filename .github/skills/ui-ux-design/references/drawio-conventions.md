@@ -10,6 +10,7 @@ and review rules. Start new sources from [the wireframe template](../assets/wire
 - Icon placeholders use square brackets and are not literal labels. They are separate from annotation scope headers and need no explanatory note:
   - `[delete]` alone is an icon-only button; the bracketed word names its purpose and accessible name.
   - `[icon] Overview` in menus, navigation or similar is a labelled item with an icon. Choosing the icon does not block wireframe review or approval; define it in the prototype.
+- Text placeholders use curly braces, such as `Version {build version}` or `{Reviewed privacy information}`, for variable or yet-to-be-written content. Do not use square brackets for text.
 - Keep the XML readable. In user-edited sources, change only the affected cells.
 
 ## Viewport
@@ -62,6 +63,7 @@ Before presenting a draft, check:
 - viewport first, dashed and at the agreed width;
 - notes entirely outside the viewport, without overlapping controls or other notes;
 - one arrow per annotated area and readable text;
+- square brackets only for icon placeholders; text placeholders in curly braces;
 - English-only text and concise notes that do not restate the drawing or explain icon placeholders.
 
 Report any check that cannot be performed.
