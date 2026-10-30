@@ -84,7 +84,7 @@ Default rules; a project's decision records may strengthen or override them.
 
 ## 1. Understand the change
 
-1. Read the design index, the affected editable source and the prototype. An existing preview may show an older revision and is not the current draft.
+1. Read the design index, the affected draw.io source and the prototype. An existing preview may show an older revision and is not the current draft.
 2. Read the applicable decisions and requirements (business rules, permissions, localization, accessibility). Do not invent business rules; ask when a policy is unclear.
 3. Decide which artifacts change:
 
@@ -98,7 +98,7 @@ Default rules; a project's decision records may strengthen or override them.
 
 ## 2. Wireframe
 
-- Use one editable source per substantially different view layout, with one desktop main-content viewport at the profile's width. Keep shared shell chrome in its own wireframe. Start from the [template](assets/wireframe-template.drawio) and follow the [draw.io conventions](references/drawio-conventions.md) unless the profile overrides them.
+- Wireframes are always draw.io sources (`.drawio`); projects do not choose another tool. Use one source per substantially different view layout, with one desktop main-content viewport at the profile's width. Keep shared shell chrome in its own wireframe. Start from the [template](assets/wireframe-template.drawio) and follow the [draw.io conventions](references/drawio-conventions.md); a profile may override only their house-style values.
 - Write all wireframe text in English, including UI labels, placeholders, notes and connector labels. Product localization applies to prototypes and the application, not wireframes.
 - For each note, ask whether the detail affects what users see or can do, or is needed to decide the layout. Keep only that key behavior or critical constraint, briefly. Detailed interactions, validation, errors and edge cases belong in the prototype; enduring business and security rules belong in authoritative decisions. Do not discard requirements when shortening notes.
 - Omit notes that merely describe what the drawing already shows, such as a visible tab, even after a change.
@@ -124,8 +124,8 @@ Open confirmation full-screen.
 
 - Consolidate notes about one area into one note with one arrow. In user-edited sources, change only affected cells.
 - Mark new or changed notes with the [review marker](references/drawio-conventions.md#review-markers) instead of revision labels in their text.
-- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in the editor, on any side. Do not optimize or overwrite their placement. Arrangement confirmation is not approval.
-- Review the editable source, never a preview, while the wireframe is a draft. Do not export during creation, revision or arrangement; identify any existing preview as potentially stale. Run the [source checks](references/drawio-conventions.md#source-checks) before presenting the draft.
+- Give notes an initial non-overlapping position outside the viewport, then ask the user to arrange them in draw.io, on any side. Do not optimize or overwrite their placement. Arrangement confirmation is not approval.
+- Review the draw.io source, never a preview, while the wireframe is a draft. Do not export during creation, revision or arrangement; identify any existing preview as potentially stale. Run the [source checks](references/drawio-conventions.md#source-checks) before presenting the draft.
 - After explicit approval, apply the [cleanup](references/drawio-conventions.md#cleanup-after-approval), then [export](references/drawio-conventions.md#export) and view the preview without waiting for a separate request.
 - Do not record cleanup as complete or advance to the prototype if export or inspection is blocked. If inspection reveals a design flaw, correct the source and return the new revision for approval.
 

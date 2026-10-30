@@ -1,8 +1,8 @@
 # draw.io Wireframe Conventions
 
-Defaults for draw.io wireframes. A project profile may override house-style
-values; keep the structural and review rules unless a project decision changes them.
-Start new sources from [the wireframe template](../assets/wireframe-template.drawio).
+draw.io is the workflow's wireframe tool. These conventions apply to every wireframe;
+a project profile may override only the house-style values, not the structural
+and review rules. Start new sources from [the wireframe template](../assets/wireframe-template.drawio).
 
 ## Drawing
 
@@ -44,7 +44,8 @@ If the user has not already reset them:
 
 ## Export
 
-Export only the cleaned, approved source:
+Export only the cleaned, approved source with the draw.io desktop app, using the
+executable path from the project profile:
 
 ```text
 <drawio-executable> -x -f png -b 10 -o <view>-wireframe.png <view>-wireframe.drawio

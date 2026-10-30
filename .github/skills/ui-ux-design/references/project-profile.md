@@ -17,8 +17,8 @@ from the project's agent instructions.
 | --- | --- | --- |
 | Design index | Where artifact links, status, approvals and evidence are recorded | Propose a location; create it during setup |
 | Decision records | Authoritative design, approval and domain rules | Use the skill's default approval rules |
-| Wireframe sources | Path pattern for editable sources and approved previews | Propose `docs/design/wireframes/<view>/<view>-wireframe.drawio` |
-| Wireframe tool | Editor and export command | Default to draw.io; ask for the executable path |
+| Wireframe sources | Path pattern for draw.io sources and approved previews | Propose `docs/design/wireframes/<view>/<view>-wireframe.drawio` |
+| draw.io executable | Local desktop app path used for export | Detect the default install path; ask |
 | Desktop viewport | Width of the main-content viewport | Ask; propose 1440px |
 | Product languages | Languages prototypes and the application must provide | Detect from the application; ask |
 | Permissions | Roles or permission levels whose behavior differs | Detect from decisions; ask; never invent |
@@ -63,7 +63,7 @@ Keep earlier approvals as history; never move them to a changed revision.
 - Design index: <path>
 - Decision records: <paths or "none">
 - Wireframes: <path pattern>; preview: <path pattern>
-- Wireframe tool: <editor>; export: <command>
+- draw.io executable: <path>
 - Desktop viewport: <width>
 - Product languages: <languages>
 - Permissions: <roles and differences>
