@@ -1,103 +1,103 @@
 <mxfile host="65bd71144e">
     <diagram id="administration-account-assignments" name="Administration - Account assignments">
-        <mxGraphModel dx="4734" dy="3155" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2640" pageHeight="1440" background="#FFFFFF" math="0" shadow="0">
+        <mxGraphModel dx="5402" dy="3026" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2640" pageHeight="1440" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="viewport" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=3;dashed=1;" value="" vertex="1">
+                <mxCell id="viewport" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=3;dashed=1;fontFamily=Helvetica;" value="" vertex="1">
                     <mxGeometry height="1000" width="1440" x="600" y="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Calibri;fontSize=28;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Administration" vertex="1">
+                <mxCell id="title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Helvetica;fontSize=28;align=left;verticalAlign=middle;fontColor=#000000;fontStyle=1;" value="Administration" vertex="1">
                     <mxGeometry height="44" width="800" x="624" y="96" as="geometry"/>
                 </mxCell>
-                <mxCell id="profile-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Profile" vertex="1">
+                <mxCell id="profile-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Profile" vertex="1">
                     <mxGeometry height="44" width="160" x="624" y="156" as="geometry"/>
                 </mxCell>
-                <mxCell id="users-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Users" vertex="1">
+                <mxCell id="users-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#666666;" value="Users" vertex="1">
                     <mxGeometry height="44" width="160" x="784" y="156" as="geometry"/>
                 </mxCell>
-                <mxCell id="account-assignments-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#7EA6E0;strokeColor=#6c8ebf;fontStyle=1;" value="Account assignments" vertex="1">
+                <mxCell id="account-assignments-tab" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#7EA6E0;strokeColor=#6c8ebf;fontStyle=1;" value="Account assignments" vertex="1">
                     <mxGeometry height="44" width="240" x="944" y="156" as="geometry"/>
                 </mxCell>
-                <mxCell id="tab-divider" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#4D4D4D;strokeColor=none;" value="" vertex="1">
+                <mxCell id="tab-divider" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#4D4D4D;strokeColor=none;fontFamily=Helvetica;" value="" vertex="1">
                     <mxGeometry height="2" width="1392" x="624" y="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="display-name-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Display name" vertex="1">
+                <mxCell id="display-name-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Display name" vertex="1">
                     <mxGeometry height="40" width="300" x="624" y="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="username-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Username" vertex="1">
+                <mxCell id="username-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Username" vertex="1">
                     <mxGeometry height="40" width="200" x="924" y="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="status-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Status" vertex="1">
+                <mxCell id="status-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Status" vertex="1">
                     <mxGeometry height="40" width="300" x="1124" y="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="assigned-accounts-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Assigned accounts" vertex="1">
+                <mxCell id="assigned-accounts-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Assigned accounts" vertex="1">
                     <mxGeometry height="40" width="512" x="1424" y="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="actions-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Actions" vertex="1">
+                <mxCell id="actions-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Actions" vertex="1">
                     <mxGeometry height="40" width="80" x="1936" y="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-name-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Emma" vertex="1">
+                <mxCell id="member-name-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Emma" vertex="1">
                     <mxGeometry height="48" width="300" x="624" y="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-username-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="emma" vertex="1">
+                <mxCell id="member-username-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="emma" vertex="1">
                     <mxGeometry height="48" width="200" x="924" y="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-status-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Active" vertex="1">
+                <mxCell id="member-status-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Active" vertex="1">
                     <mxGeometry height="48" width="300" x="1124" y="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="assigned-accounts-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Ben, Emma" vertex="1">
+                <mxCell id="assigned-accounts-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Ben, Emma" vertex="1">
                     <mxGeometry height="48" width="512" x="1424" y="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="edit-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
+                <mxCell id="edit-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-name-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Noah" vertex="1">
+                <mxCell id="member-name-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Noah" vertex="1">
                     <mxGeometry height="48" width="300" x="624" y="348" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-username-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="noah" vertex="1">
+                <mxCell id="member-username-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="noah" vertex="1">
                     <mxGeometry height="48" width="200" x="924" y="348" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-status-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;fontColor=#666666;" value="Disabled" vertex="1">
+                <mxCell id="member-status-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;fontColor=#666666;" value="Disabled" vertex="1">
                     <mxGeometry height="48" width="300" x="1124" y="348" as="geometry"/>
                 </mxCell>
-                <mxCell id="assigned-accounts-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="No accounts" vertex="1">
+                <mxCell id="assigned-accounts-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="No accounts" vertex="1">
                     <mxGeometry height="48" width="512" x="1424" y="348" as="geometry"/>
                 </mxCell>
-                <mxCell id="edit-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
+                <mxCell id="edit-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="348" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-name-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Lena" vertex="1">
+                <mxCell id="member-name-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Lena" vertex="1">
                     <mxGeometry height="48" width="300" x="624" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-username-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="lena" vertex="1">
+                <mxCell id="member-username-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="lena" vertex="1">
                     <mxGeometry height="48" width="200" x="924" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-status-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Must change password" vertex="1">
+                <mxCell id="member-status-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Must change password" vertex="1">
                     <mxGeometry height="48" width="300" x="1124" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="assigned-accounts-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Lena" vertex="1">
+                <mxCell id="assigned-accounts-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Lena" vertex="1">
                     <mxGeometry height="48" width="512" x="1424" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="edit-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Calibri;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
+                <mxCell id="edit-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="visibility-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;[role: manager]&lt;/b&gt;&lt;br&gt;Assign accounts, including for disabled Members.&lt;br&gt;&lt;br&gt;&lt;b&gt;[role: member]&lt;/b&gt;&lt;br&gt;See only Profile." vertex="1">
+                <mxCell id="visibility-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="&lt;b&gt;[role: manager]&lt;/b&gt;&lt;br&gt;Assign accounts, including for disabled Members.&lt;br&gt;&lt;br&gt;&lt;b&gt;[role: member]&lt;/b&gt;&lt;br&gt;See only Profile." vertex="1">
                     <mxGeometry height="125" width="480" x="824" y="-60" as="geometry"/>
                 </mxCell>
-                <mxCell id="editor-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Edit opens a dialog to select active accounts for this Member. An empty selection is allowed." vertex="1">
+                <mxCell id="editor-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Edit opens a dialog to select active accounts for this Member. An empty selection is allowed." vertex="1">
                     <mxGeometry height="90" width="480" x="2120" y="375" as="geometry"/>
                 </mxCell>
-                <mxCell id="list-states-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Calibri;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Show loading, empty and error states.&lt;br&gt;&lt;br&gt;&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Compact Member items; keep dialog actions reachable." vertex="1">
+                <mxCell id="list-states-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;verticalAlign=middle;spacing=16;" value="Show loading, empty and error states.&lt;br&gt;&lt;br&gt;&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Compact Member items; keep dialog actions reachable." vertex="1">
                     <mxGeometry height="114" width="640" x="-120" y="353" as="geometry"/>
                 </mxCell>
-                <mxCell id="visibility-arrow" edge="1" parent="1" source="visibility-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;edgeStyle=none;curved=0;strokeWidth=3;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;" target="account-assignments-tab">
+                <mxCell id="visibility-arrow" edge="1" parent="1" source="visibility-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;edgeStyle=none;curved=0;strokeWidth=3;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;fontFamily=Helvetica;" target="account-assignments-tab">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="editor-arrow" edge="1" parent="1" source="editor-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0.5;entryX=1;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;exitDx=0;exitDy=0;exitPerimeter=0;" target="edit-lena">
+                <mxCell id="editor-arrow" edge="1" parent="1" source="editor-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0.5;entryX=1;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;exitDx=0;exitDy=0;exitPerimeter=0;fontFamily=Helvetica;" target="edit-lena">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="list-states-arrow" edge="1" parent="1" source="list-states-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0;entryX=0;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;exitDx=640;exitDy=67;exitPerimeter=0;entryDx=0;entryDy=0;" target="member-name-lena">
+                <mxCell id="list-states-arrow" edge="1" parent="1" source="list-states-note" style="rounded=0;html=1;startArrow=none;endArrow=classic;endFill=1;strokeColor=#000000;exitX=0;exitY=0;entryX=0;entryY=0.5;edgeStyle=none;curved=0;strokeWidth=3;exitDx=640;exitDy=67;exitPerimeter=0;entryDx=0;entryDy=0;fontFamily=Helvetica;" target="member-name-lena">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
             </root>
