@@ -93,7 +93,7 @@ CI and release acceptance remain separate gates.
   [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md) were updated for the
   approved last-committed replacement and atomic lifecycle validation. R9 remains
   historical; its approved wording is preserved below.
-- The [approved prototype R9](../../docs/design/prototypes/README.md#member-account-assignment-r9-2026-10-31)
+- The approved prototype R9 (see the [Administration prototype](../../docs/design/prototypes/README.md#administration))
   removes R8's stale-conflict flow and adapts failure/retry behavior. Other approved UI layout
   and visibility rules remain unchanged.
 
@@ -375,9 +375,9 @@ not-found wording for inaccessible and nonexistent IDs.
   synchronized preview inspected without altering that routing. The Member
   Account Assignment R2 click prototype is now drafted and verified standalone
   and through the integrated entry; it awaits explicit prototype approval.
-  See the [design review record](../../docs/design/README.md#member-account-assignment-r2-2026-10-30).
+  The design review record is in the design index's Git history.
 - Later on 2026-10-30 the user requested a dedicated assignment tab instead.
-  [Wireframe R3](../../docs/design/README.md#member-account-assignment-r3-2026-10-30)
+  Wireframe R3 ([assignment source](../../docs/design/wireframes/administration/administration-account-assignments-wireframe.drawio))
   now separates the Member-only list from Users and synchronizes Profile tabs.
   Note arrangement and explicit R3 wireframe approval are pending before revising
   the click prototype. The earlier R2 approval does not approve R3.

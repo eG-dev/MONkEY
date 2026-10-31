@@ -24,19 +24,22 @@ stylesheet, Roboto fonts, and logo.
 - [shared/data.js](../shared/data.js) holds the fictional seed data. Changes made
   while clicking through are kept in the browser's local storage.
 
-## Prototype settings
+## Review panel
 
-The user menu contains **Prototype settings** for review:
+Prototype-only controls are in the shared review panel: open it with the round
+button in a page corner (Alt+Shift+R hides or shows the button).
 
-- Language (English/German) and signed-in role (Manager Mara or Member Emma).
-- Navigation mode (auto, compact, wide).
-- View state (normal, loading, empty, error) on views that support it.
-- **Next save fails** to review error and retry handling once.
-- **Reset prototype data** to restore the seed data.
+- Settings: language, theme, signed-in sample user (Manager Mara or Member Emma)
+  and navigation mode (auto, compact, wide).
+- States: the view's sample states where it has any, **Next save fails** to
+  review error and retry handling once, and **Reset prototype data**.
+- About this view: purpose and links to its wireframes, the
+  [prototype notes](../README.md#review-panel) and the
+  [approval register](../../approvals.md).
 
 On the login page, every fictional user signs in with `pocket-monkey`; `lena`
 must change her password, and five wrong attempts lock the sign-in.
 
-The prototypes illustrate approved behavior; they are not the Angular
-implementation and do not enforce security. Amounts are integer cents and the
-business date is fixed to 10 Oct 2026 for repeatable reviews.
+The prototypes illustrate behavior; they are not the Angular implementation
+and do not enforce security. Amounts are integer cents and the business date
+is fixed to 10 Oct 2026 for repeatable reviews.

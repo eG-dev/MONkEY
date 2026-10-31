@@ -40,8 +40,7 @@ h1, h2, h3, p { margin: 0; }
 .user-menu { width: 264px; max-width: calc(100vw - 24px); }
 .menu-user { display: flex; flex-direction: column; padding: 12px 16px; }
 .menu-user-name { font-weight: var(--weight-medium); }
-.menu-user-role, .menu-heading { font: var(--type-caption); color: var(--text-muted); }
-.menu-heading { padding: 12px 16px 6px; font-weight: var(--weight-medium); }
+.menu-user-role { font: var(--type-caption); color: var(--text-muted); }
 .menu-divider { height: 1px; margin: 4px 0; background: var(--border-subtle); }
 .menu-item { display: flex; align-items: center; gap: 12px; padding: 0 16px; width: 100%; height: var(--control-lg); border: 0; background: transparent; color: var(--text-primary); text-align: start; text-decoration: none; }
 .menu-item:hover { background: var(--surface-hover); color: var(--text-primary); }

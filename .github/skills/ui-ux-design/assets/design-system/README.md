@@ -1,6 +1,6 @@
 # <Project> Design System
 
-Status: draft. Record approvals and dates in the design index.
+Status: draft. Record approvals and dates in the project's approval register.
 
 <One paragraph: what the product is, who uses it, and how the interface should
 feel. Prioritize clarity over decoration.>

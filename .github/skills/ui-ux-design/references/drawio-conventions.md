@@ -37,7 +37,7 @@ and review rules. Start new sources from [the wireframe template](../assets/wire
 - Mark new or changed notes visually instead of adding revision labels to their text.
 - Changed note: `fillColor=#dae8fc;strokeColor=#6c8ebf`; optionally blue text or connector `#0078D4`.
 - Mark only changed notes; preserve the user's positions and routing.
-- Keep revision and approval history in the design index.
+- Track the view's review state in the project's approval register; Git keeps earlier versions.
 
 ## Cleanup After Approval
 

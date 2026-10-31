@@ -55,6 +55,18 @@
     }
   };
 
+  // Review-panel context per prototype folder; paths are relative to this runtime.
+  const REVIEW_VIEWS = {
+    'accounts-overview': { title: 'Overview', wireframes: ['accounts-overview/accounts-overview-wireframe.drawio'], notes: ['Account cards with balances and allowance status. Members see only their assigned active accounts.'] },
+    accounts: { title: 'Accounts', wireframes: ['accounts/accounts-wireframe.drawio'], notes: ['Manager account management, including retired accounts and deletion.'] },
+    'account-details': { title: 'Account details', wireframes: ['account-details/account-details-wireframe.drawio'], notes: ['Balance, transactions and allowance of one account; select it with ?account=<id>.'] },
+    administration: { title: 'Administration', wireframes: ['administration/administration-profile-wireframe.drawio', 'administration/administration-users-wireframe.drawio', 'administration/administration-account-assignments-wireframe.drawio'], notes: ['Profile for everyone; Users and Account assignments for Managers.'] },
+    'application-shell': { title: 'Application shell', wireframes: ['application-shell/application-shell-wireframe.drawio'], notes: ['Header, navigation drawer and user menu around an empty content area.'] },
+    login: { title: 'Login', wireframes: ['login/login-wireframe.drawio'], notes: ['Every fictional user signs in with pocket-monkey: emma (Member), mara (Manager), lena (must change password). Five wrong passwords lock sign-in; add ?expired=1 for an expired session.'] },
+    about: { title: 'About', wireframes: ['about/about-wireframe.drawio', 'about/about-license-wireframe.drawio', 'about/about-notices-wireframe.drawio', 'about/about-legal-wireframe.drawio'], notes: ['Hosts the About dialog that the shell and login open.'] }
+  };
+  const REVIEW_NOTE = 'Fictional local-storage data with the business date fixed to 10 Oct 2026. The prototype illustrates behavior; it enforces no security.';
+
   const defaults = { language: 'en', dark: matchMedia('(prefers-color-scheme: dark)').matches, layout: 'auto', user: 'mara', viewState: 'normal', failNext: false };
   let prefs = { ...defaults, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
   let data = JSON.parse(localStorage.getItem(DATA_KEY) || 'null') || window.PM_SEED();
@@ -153,12 +165,13 @@
     return { configured: true, amount: item.allowance.amount, credited: credited?.at, failed: item.allowance.failedPeriod === month, next: next.toISOString() };
   }
 
-  // Simulated backend call; "Next save fails" in the prototype settings makes exactly one call fail.
+  // Simulated backend call; "Next save fails" in the review panel makes exactly one call fail.
   function request(delay = 600) {
     return new Promise((resolve, reject) => setTimeout(() => {
       if (prefs.failNext) {
         prefs = { ...prefs, failNext: false };
         localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+        refreshReview();
         reject(new Error('simulated'));
       } else {
         resolve();
@@ -312,9 +325,6 @@
         <a class="menu-item" role="menuitem" href="../administration/index.html#profile">${icon('profile')}<span data-t="profile"></span></a>
         <button class="menu-item" type="button" role="menuitemcheckbox" id="dark-mode">${icon('moon')}<span data-t="darkMode"></span><span class="switch" aria-hidden="true"></span></button>
         <a class="menu-item" role="menuitem" href="../login/index.html?signedout=1">${icon('signout')}<span data-t="signOut"></span></a>
-        <div class="menu-divider" role="separator"></div>
-        <div class="menu-heading">Prototype</div>
-        <button class="menu-item" type="button" role="menuitem" id="prototype-toggle">${icon('settings')}Prototype settings</button>
       </div>`);
 
     const toggle = document.getElementById('navigation-toggle');
@@ -370,11 +380,6 @@
       }
     });
     document.getElementById('dark-mode').addEventListener('click', () => savePrefs({ dark: !prefs.dark }));
-    document.getElementById('prototype-toggle').addEventListener('click', () => {
-      userMenu.hidePopover();
-      openPrototypeSettings();
-      userToggle.focus();
-    });
     wideViewport.addEventListener('change', () => {
       temporaryNavigation = false;
       renderShell();
@@ -419,40 +424,79 @@
     document.getElementById('user-toggle').title = userLabel;
   }
 
-  function openPrototypeSettings() {
-    const segment = (name, values, current) => `<div class="segments segments-block">${values.map(([value, label]) => `<label><input type="radio" name="${name}" value="${value}" ${String(current) === value ? 'checked' : ''}><span>${label}</span></label>`).join('')}</div>`;
-    const states = options.states ?? [];
-    const settings = dialog({
-      title: 'Prototype settings',
-      body: `<form class="form" id="prototype-form">
-        <fieldset class="field"><legend class="field-label">Language</legend>${segment('language', [['en', 'English'], ['de', 'Deutsch']], prefs.language)}</fieldset>
-        <fieldset class="field"><legend class="field-label">Signed in as</legend>${segment('user', [['mara', 'Manager (Mara)'], ['emma', 'Member (Emma)']], prefs.user)}</fieldset>
-        <fieldset class="field"><legend class="field-label">Navigation</legend>${segment('layout', [['auto', 'Auto'], ['compact', 'Compact'], ['wide', 'Wide']], prefs.layout)}</fieldset>
-        ${states.length ? `<div class="field"><label for="prototype-view-state">View state</label><select class="input" id="prototype-view-state" name="viewState">${states.map(state => `<option value="${esc(state)}"${prefs.viewState === state ? ' selected' : ''}>${esc(state[0].toUpperCase() + state.slice(1))}</option>`).join('')}</select></div>` : ''}
-        <div class="switch-row"><span class="field-label" id="fail-label">Next save fails</span><button class="switch" type="button" role="switch" id="fail-next" aria-labelledby="fail-label" aria-checked="${prefs.failNext}"></button></div>
-        <button class="button button-secondary" type="button" id="reset-data">Reset prototype data</button>
-      </form>`
-    });
-    settings.querySelector('form').addEventListener('change', event => {
-      const value = event.target.value;
-      savePrefs({ [event.target.name]: value });
+  // ---------- Review panel (review tooling, not part of the design) ----------
+  let review;
 
-      if (event.target.name === 'layout') {
-        temporaryNavigation = false;
-        renderShell();
-      }
-    });
-    settings.querySelector('#fail-next').addEventListener('click', event => {
-      savePrefs({ failNext: !prefs.failNext });
-      event.currentTarget.setAttribute('aria-checked', String(prefs.failNext));
-    });
-    settings.querySelector('#reset-data').addEventListener('click', () => {
+  function reviewConfig() {
+    const folder = location.pathname.split('/').slice(-2, -1)[0];
+    const view = REVIEW_VIEWS[folder] ?? { title: document.title, wireframes: [], notes: [] };
+    const choice = (name, label, group, value, entries) => ({ name, label, group, type: 'select', value, options: entries.map(([optionValue, optionLabel]) => ({ value: optionValue, label: optionLabel })) });
+    const states = options.states ?? [];
+    const controls = [
+      choice('language', 'Language', 'Settings', prefs.language, [['en', 'English'], ['de', 'Deutsch']]),
+      choice('theme', 'Theme', 'Settings', prefs.dark ? 'dark' : 'light', [['light', 'Light'], ['dark', 'Dark']])
+    ];
+
+    if (shell) {
+      controls.push(
+        choice('user', 'Signed in as', 'Settings', prefs.user, [['mara', 'Manager (Mara)'], ['emma', 'Member (Emma)']]),
+        choice('layout', 'Navigation', 'Settings', prefs.layout, [['auto', 'Auto'], ['compact', 'Compact'], ['wide', 'Wide']])
+      );
+    }
+
+    if (states.length) {
+      controls.push(choice('viewState', 'View state', 'States', prefs.viewState, states.map(state => [state, state[0].toUpperCase() + state.slice(1)])));
+    }
+
+    controls.push(
+      { name: 'failNext', label: 'Next save fails', group: 'States', type: 'checkbox', value: prefs.failNext },
+      { name: 'reset', label: 'Reset prototype data', group: 'States', type: 'button' }
+    );
+    const link = (label, path) => ({ label, href: new URL(path, runtimeUrl).href });
+    return {
+      title: view.title,
+      controls,
+      notes: [...view.notes, REVIEW_NOTE],
+      links: [
+        ...view.wireframes.map(path => link(`Wireframe: ${path.split('/').pop()}`, `../../wireframes/${path}`)),
+        link('Prototype README', '../README.md'),
+        link('Approval register', '../../approvals.md')
+      ]
+    };
+  }
+
+  function changeReview(name, value) {
+    if (name === 'reset') {
       localStorage.removeItem(DATA_KEY);
       data = window.PM_SEED();
-      settings.close();
       render();
       toast('Prototype data reset.', 'info');
-    });
+      return;
+    }
+
+    if (name === 'layout') {
+      temporaryNavigation = false;
+    }
+
+    savePrefs(name === 'theme' ? { dark: value === 'dark' } : { [name]: value });
+  }
+
+  function refreshReview() {
+    review?.update({ ...reviewConfig(), onChange: changeReview });
+  }
+
+  // Every page owns its shell, so it hosts its own panel; the integrated entry is a chrome-less frame.
+  function loadReview() {
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = new URL('prototype-review.css', runtimeUrl).href;
+    document.head.append(style);
+    const script = document.createElement('script');
+    script.src = new URL('prototype-review.js', runtimeUrl).href;
+    script.onload = () => {
+      review = window.PrototypeReview.register({ ...reviewConfig(), onChange: changeReview });
+    };
+    document.head.append(script);
   }
 
   function applyPrefs() {
@@ -469,6 +513,7 @@
     }
 
     options.render?.();
+    refreshReview();
   }
 
   function init(config) {
@@ -480,6 +525,7 @@
     }
 
     applyPrefs();
+    loadReview();
   }
 
   window.PM = {

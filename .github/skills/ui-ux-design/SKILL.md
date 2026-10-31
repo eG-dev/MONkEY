@@ -18,11 +18,12 @@ and runtime helpers.
    If several project files exist, ask which applies rather than guessing.
    If none exists, follow [Set up a project](#set-up-a-project); never treat a
    shared contract as a configured project profile.
-2. Read the project's decision records and design index named in the profile.
+2. Read the project's decision records, design index and approval register named in the profile.
    Project decisions override the profile; the profile overrides the defaults
    in this skill ([precedence](references/project-profile.md#precedence)).
 3. Before any design work, including direct prototype and small-change paths,
-   read the profile's design guide and applicable component/pattern notes, then
+   read the profile's design guide and applicable component/pattern notes, plus
+   the relevant parts of its brand standard when one is configured, then
    inspect the affected view's existing prototype and nearby application
    implementation (or the closest analogous view for new work). Read relevant
    shared helpers and a usage example from the profile's inventory before
@@ -71,8 +72,12 @@ flowchart LR
   R -- yes --> I[Implementation<br>verified end to end]
 ```
 
-Artifact status: `draft` → `in review` → `approved`. Any change to an approved
-artifact returns it to `draft`.
+View state, ordered: `wireframe draft` → `wireframe approved` → `prototype draft` →
+`prototype approved` → `implemented`. Views without a wireframe start at
+`prototype draft`. Changing a wireframe returns the view to `wireframe draft`;
+changing only the prototype returns it to `prototype draft`. Track the state per
+view in the [approval register](references/project-profile.md#approval-register);
+Git history keeps earlier versions, so do not number revisions.
 
 ## Explicit Approval Gates
 
@@ -86,7 +91,7 @@ Default rules; a project's decision records may strengthen or override them.
   and cleaned, inspected preview before the prototype. Skipping a low-value
   wireframe update does not require wireframe approval. Always require prototype
   approval before implementation. Both named current artifacts may be approved together.
-- Before each dependent step, check the design index for the prerequisite's
+- Before each dependent step, check the approval register for the prerequisite's
   approval. Present drafts with verification evidence. After corrections,
   verify and return the draft; do not repeatedly prompt for approval or continue
   dependent work while review is pending.
@@ -111,7 +116,7 @@ Default rules; a project's decision records may strengthen or override them.
   existing profile, design index, design system and prototype runtime; starter
   assets are only for missing foundations, never replacements for existing work.
 - Verify that the agent-instruction links resolve and the profile identifies the
-  actual project resources. Keep existing artifact revisions and approvals intact.
+  actual project resources. Keep existing artifacts and approvals intact.
 
 ### Setup steps
 
@@ -120,7 +125,8 @@ Default rules; a project's decision records may strengthen or override them.
 2. Update the existing profile, or create one from the [profile template](references/project-profile.md#profile-template).
    Ask for business-relevant values such as roles, languages and approval rules;
    never invent them.
-3. Reuse the existing design index, or create one with the [required fields](references/project-profile.md#design-index-fields).
+3. Reuse the existing design index, or create one. Create the approval register
+   with the [required fields](references/project-profile.md#approval-register) if it is missing.
 4. When a wireframe adds review value, start it from the [template](assets/wireframe-template.drawio).
 5. Create a minimal offline prototype runtime when the requested work needs it.
    If the project has no design system, start one from the
@@ -130,7 +136,7 @@ Default rules; a project's decision records may strengthen or override them.
 
 ## 1. Understand the change
 
-1. Read the design index and any existing wireframe and prototype for the view. An existing preview may show an older revision and is not the current draft.
+1. Read the design index, the approval register and any existing wireframe and prototype for the view. An existing preview may show an older revision and is not the current draft.
 2. Read the applicable decisions and requirements (business rules, permissions, localization, accessibility). Do not invent business rules; ask when a policy is unclear.
 3. Decide which artifacts change:
 
@@ -160,9 +166,9 @@ only after they have been incorporated; retaining a stale-reference note is not
 a substitute for this required update.
 
 If an existing wireframe is not updated and no longer matches the prototype,
-record the mismatch and affected scope in the design index or artifact README,
-linking the newer prototype revision. Preserve the earlier wireframe approval
-as history for that revision; do not present it as an accurate, approved
+record the mismatch and affected scope in the view's register *Note*,
+naming the newer prototype change. Preserve the earlier wireframe approval
+as history for that version; do not present it as an accurate, approved
 representation of the changed design. Unaffected wireframes need no status change.
 
 ## 2. Wireframe
@@ -205,6 +211,7 @@ Open confirmation full-screen.
 
 - Build an offline prototype from requirements and existing design references, using the approved wireframe when one is part of this change. Use the profile's shared shell, components, formatting helpers, tokens and fictional data. Keep assets local; reuse existing helpers rather than creating parallel ones.
 - Maintain an integrated application entry that composes the existing views, not a specimen gallery. Keep standalone views usable, the directly opened shell neutral and chrome unduplicated. Preserve role, language, theme and fictional data through actual navigation. Keep implementation notes outside the review surface.
+- Put prototype-only controls and context in one shared review panel per prototype runtime, not in per-view settings dialogs or inside the reviewed layout. A small circular button in a movable corner opens a non-modal panel centered near the top; a keyboard shortcut hides or shows the button for clean screenshots. Each view registers *Settings* (language, theme, direction when standalone), *States* (sample states, failure switches, reset) and *About this view* (purpose, simulation boundaries, links to README, wireframe and approval register). In an integrated entry, only the shell shows the panel; embedded views register through the validated message channel. Label the panel as review tooling in the project's review language. If the project has none, start from the [prototype-review starter](assets/prototype-review/) (`prototype-review.js`, `prototype-review.css`, wired up in `example.html`); its styles use the design-system tokens with fallbacks.
 - Demonstrate loading, empty, error/retry, validation, submitting, success and failure with retained input where applicable, plus the profile's permissions, languages, themes and breakpoints.
 - Prototypes illustrate behavior and layout intent; they do not enforce security or define business rules. Their markup and incidental visual details are not production specifications.
 
@@ -216,6 +223,7 @@ required parts, token layers and rules.
 
 - Change shared semantic tokens rather than adding color or size literals. Provide values for every supported theme and document contrast for new color pairs.
 - Pair status with icon and text cues; keep visible focus and accessible names.
+- If the profile names a brand standard, take brand values from it and record any necessary deviation instead of diverging silently ([external brand standard](references/design-system.md#external-brand-standard-optional)).
 - Update the affected guides and specimens, then work through the contract's [change checklist](references/design-system.md#change-checklist).
 
 ## 5. Verify
@@ -238,11 +246,11 @@ verification. Passing checks are not design approval.
 
 ## 6. Finish
 
-- Update the design index with links, revision and status for changed artifacts.
-- Record each explicit approval against its artifact and reviewed revision, with date and the user's wording; keep earlier approvals as history. Complete wireframe cleanup/export without a separate request. Report pending work.
+- Update the view's register row (state, *Since*, *Last approved*, *Note*) in the same commit as the change or approval; keep the design index's artifact links current. The commit that sets an approved state identifies what was approved.
+- Artifact READMEs describe the current design and its verification and link to the register instead of repeating status or keeping revision histories. Complete wireframe cleanup/export without a separate request. Report pending work.
 - Summarize changes and actual verification; list open business questions rather than deciding them in the design.
 - If an artifact is still a draft, state what awaits review. Do not infer approval from feedback or a general instruction to continue.
-- After prototype approval and any applicable wireframe approval, hand off implementation with the approved revisions, open questions and the states and flows that need application tests. Identify any older wireframe that no longer matches. Follow the profile's implementation and verification conventions.
+- After the view reaches `prototype approved`, hand off implementation with the approved versions, open questions and the states and flows that need application tests. Identify any older wireframe that no longer matches. Follow the profile's implementation and verification conventions. Set the view to `implemented` once the application is built and verified.
 
 ## Implementation Handoff
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review panel example</title>
+  <link rel="stylesheet" href="../design-system/tokens.css">
+  <link rel="stylesheet" href="prototype-review.css">
+  <script defer src="prototype-review.js"></script>
+  <style>
+    body { margin: 0; padding: var(--space-6); font: var(--type-body); color: var(--text-primary); background: var(--surface-app); }
+    [data-state="empty"] .rows, [data-state="error"] .rows { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Copy into the project's prototype runtime and adjust paths; the panel is review tooling, not part of the design. -->
+  <main>
+    <h1>Example view</h1>
+    <p id="status" role="status"></p>
+    <ul class="rows"><li>Item A</li><li>Item B</li></ul>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = document.documentElement;
+      let state = 'standard';
+      let failNext = false;
+      const render = () => {
+        root.dataset.state = state;
+        document.getElementById('status').textContent = { standard: '', empty: 'No items', error: 'Unable to load items.' }[state];
+      };
+      const config = () => ({
+        title: 'Example view',
+        controls: [
+          { name: 'theme', label: 'Theme', group: 'Settings', type: 'select', value: root.dataset.theme || 'light', options: [{ value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }] },
+          { name: 'direction', label: 'Direction', group: 'Settings', type: 'select', value: root.dir, options: [{ value: 'ltr', label: 'Left to right' }, { value: 'rtl', label: 'Right to left' }] },
+          { name: 'state', label: 'Sample state', group: 'States', type: 'select', value: state, options: [{ value: 'standard', label: 'Standard' }, { value: 'empty', label: 'Empty' }, { value: 'error', label: 'Load error' }] },
+          { name: 'failNext', label: 'Fail next submission', group: 'States', type: 'checkbox', value: failNext },
+          { name: 'reset', label: 'Reset sample data', group: 'States', type: 'button' }
+        ],
+        notes: ['Describe the view purpose, what is simulated and open questions.'],
+        links: [{ label: 'View README', href: 'README.md' }],
+        onChange(name, value) {
+          if (name === 'theme') root.dataset.theme = value;
+          if (name === 'direction') root.dir = value;
+          if (name === 'state') state = value;
+          if (name === 'failNext') failNext = value;
+          if (name === 'reset') { state = 'standard'; failNext = false; }
+          render();
+          panel.update(config());
+        }
+      });
+      const panel = window.PrototypeReview.register(config());
+      render();
+    });
+  </script>
+</body>
+</html>

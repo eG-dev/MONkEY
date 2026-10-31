@@ -9,5 +9,6 @@ applyTo: "docs/design/**"
 - Load the [ui-ux-design skill](../skills/ui-ux-design/SKILL.md) before design work. It owns the detailed workflow, annotation syntax, drawing conventions, export procedure and verification checklist; do not duplicate them here.
 - Use the skill's [POCKET MONkEY profile](../skills/ui-ux-design/references/pocket-monkey.md) for local paths, languages, roles, viewports and runtime helpers. Keep those bindings there rather than treating them as universal workflow requirements.
 - Preserve user-edited sources and placement; make targeted changes instead of regenerating artifacts.
-- Keep the [design index](../../docs/design/README.md) current with artifact links, draft/approval history and review evidence, not another copy of the workflow.
+- Track each view's review state only in the [approval register](../../docs/design/approvals.md), updated in the same commit as the change or approval; do not number revisions or keep approval logs. Keep the [design index](../../docs/design/README.md) to artifact links and scope, and artifact READMEs to the current design and verification evidence.
+- Put prototype-only controls and sample context in the shared review panel, never in the reviewed layout.
 - Design references do not override authoritative business, security or accessibility requirements. Report unresolved policy questions and blocked checks rather than inventing rules or claiming approval.

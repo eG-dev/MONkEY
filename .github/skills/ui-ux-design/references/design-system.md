@@ -50,9 +50,27 @@ assets folder; never load them from a CDN.
 - A design-system change is a design change: update the guides and specimens,
   then follow the approval gates before implementation.
 
+## External Brand Standard (Optional)
+
+Some projects must follow an organization-wide style guide owned elsewhere, such
+as a corporate brand standard. Projects without one skip this section.
+
+- Keep a read-only local snapshot so design work stays usable offline, and
+  record its provenance: upstream location, revision or tag, and snapshot date.
+  Do not edit it as part of design work.
+- Brand colors, typefaces, logos and their usage rules feed the *primitives*
+  layer. Product choices, semantic aliases, component patterns and adaptations
+  belong in the project's design system, never in the snapshot.
+- Prefer the brand standard's values. When the product needs a deviation, record
+  it with its reason in the deviation log named by the profile, propose it
+  upstream and preserve it across snapshot refreshes until reconciled.
+- Refresh the snapshot only on request. Report the differences and their effect
+  on tokens, assets and specimens before changing them.
+
 ## Change Checklist
 
 - Token values for every theme, semantic layer only for theme differences.
+- Brand-standard values respected, or the deviation recorded (when the project has one).
 - Contrast documented for new or changed pairs.
 - Affected guide, component notes and specimens updated.
 - Prototypes using the changed tokens rechecked in every theme.

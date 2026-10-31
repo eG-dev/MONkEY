@@ -65,8 +65,8 @@ and link to existing originals.
 At phone widths, stack group metadata and original-file actions and wrap long
 package names/titles/links. Keep one dialog content scroller, not nested legal-text
 scroll boxes. Preserve expansion during search and tab changes, resetting only
-on dialog close. The [prototype evidence](../prototypes/README.md#notice-document-hierarchy-r6-2026-10-24)
-records standalone and integrated checks. The user's "prototype approved,
+on dialog close. The [prototype notes](../prototypes/README.md#about)
+describe the current dialog; earlier check records are in Git history. The user's "prototype approved,
 implement" completes the separate prototype approval gate.
 Angular now maps this pattern into its About SCSS and renders complete original
 legal bodies; see the [production verification](../../development.md#grouped-notice-documents-r6-2026-10-24).

@@ -326,8 +326,8 @@ npm --prefix tests/e2e run check
 npm --prefix tests/e2e test -- "security[.]spec[.]ts$" --project=desktop --workers=1
 ```
 
-The independent fictional-password sampling correction is recorded in the
-[prototype notes](design/prototypes/README.md#password-sampling-r1-2026-10-26).
+The independent fictional-password sampling correction is part of the
+[Administration prototype](design/prototypes/README.md#administration).
 No GitHub alerts have been dismissed; CodeQL must run again on the changed
 revision before alert closure can be confirmed.
 
@@ -844,8 +844,8 @@ Account assertions cover non-underlined links, capped columns at
 retry, signed-balance and history checks also passed. Desktop and 360px phone
 account screenshots were inspected. Catalog validation covers both languages;
 the production-image workflows ran in English. The prototype was separately
-verified across both languages and themes, as recorded in the
-[design index](design/README.md#compact-account-names-r2-2026-10-24).
+verified across both languages and themes; that record is in the design
+index's Git history, and the [approval register](design/approvals.md) holds the current state.
 
 The build retains the warning-only initial-bundle budget overrun
 (753.81kB versus 750kB); limits are unchanged. This focused selection is not a full

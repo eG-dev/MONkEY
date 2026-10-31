@@ -32,7 +32,8 @@ new project's profile in that project's own workspace.
 
 | Setting | Purpose | When missing |
 | --- | --- | --- |
-| Design index | Where artifact links, status, approvals and evidence are recorded | Propose a location; create it during setup |
+| Design index | Where artifact links, design overview and evidence pointers are kept | Propose a location; create it during setup |
+| Approval register | The single file tracking every view's review state, per the [approval register](#approval-register) fields | Propose `docs/design/approvals.md` beside the design index; create it during setup |
 | Decision records | Authoritative design, approval and domain rules | Use the skill's default approval rules |
 | Design baseline | Links to the design guide, component/pattern notes, and prototype/application entry points for finding nearby implementations | Detect existing equivalents; explicitly record absent resources |
 | Wireframe sources | Path pattern for draw.io sources and approved previews | Propose `docs/design/wireframes/<view>/<view>-wireframe.drawio` |
@@ -60,6 +61,14 @@ without assuming one story maps to one screen. These are contextual inputs,
 not replacements for authoritative requirements and decisions. Missing sources
 are not a setup failure: record "none" and proceed without creating them or
 introducing a workshop or approval prerequisite.
+
+## Optional Brand Standard
+
+Link an organization-wide style guide the product must follow, if any: the local
+snapshot, its provenance (upstream location, revision, snapshot date) and the
+deviation log. Handle it per the design-system contract's
+[external brand standard](design-system.md#external-brand-standard-optional)
+rules. Most projects have none: record "none" and rely on the design system alone.
 
 ## Shared Helper Inventory
 
@@ -89,17 +98,24 @@ state: <state values>
 device: phone | tablet | desktop
 ```
 
-## Design Index Fields
+## Approval Register
 
-For every wireframe and prototype, record:
+Track review state in exactly one file so it is easy to find. Do not repeat it in
+the design index, artifact READMEs or other documents; link to the register
+instead. It has one row per view, covering the view's wireframes and its click
+prototype (shared parts such as the shell or dialog masters get their own rows):
 
-- artifact name and link;
-- current revision and status (`draft`, `in review`, `approved`);
-- approval date and the user's explicit wording, once given;
-- verification evidence links or summaries;
-- open questions and pending work, such as cleanup or blocked checks.
+- view, with links to its wireframe sources and prototype;
+- state, in this order: `wireframe draft`, `wireframe approved`, `prototype draft`,
+  `prototype approved`, `implemented`;
+- *Since*: the date the view entered its current state;
+- *Last approved*: the date of the most recent explicit approval, kept while the
+  view is back in draft;
+- *Note*: pending review, a known wireframe/prototype mismatch or open items.
 
-Keep earlier approvals as history; never move them to a changed revision.
+Do not number revisions or keep an approval log: update the row in the same
+commit as the change or approval, so Git history shows what was approved and when.
+Artifact READMEs describe the current design and its verification.
 
 ## Profile Template
 
@@ -107,9 +123,11 @@ Keep earlier approvals as history; never move them to a changed revision.
 # <Project> Design Profile
 
 - Design index: <path>
+- Approval register: <path>
 - Decision records: <paths or "none">
 - Design baseline: <guide>; component/pattern notes: <paths>; nearby implementations: <prototype/application roots or examples; note absences>
 - Business context (optional): <domain stories, journeys or workshop notes; ownership/review conventions; or "none">
+- Brand standard (optional): <snapshot path; provenance; deviation log; or "none">
 - Wireframes: <path pattern>; preview: <path pattern>
 - draw.io executable: <path>
 - Desktop viewport: <width>
