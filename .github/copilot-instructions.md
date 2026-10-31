@@ -4,6 +4,10 @@
 
 - The application is named **POCKET MONkEY**, with a lowercase `k`, a pun on managing pocket money. Use that spelling in product-facing text and documentation; do not rename existing technical identifiers or paths merely to match the display name.
 
+## Product Context
+
+- POCKET MONkEY is a pocket-money application for small households or groups. Avoid raising speculative privacy concerns or adding privacy requirements without a concrete connection to the task. Continue to follow agreed access controls, security requirements and applicable ADRs.
+
 ## Architecture Decisions
 
 - Read and follow applicable ADRs in `docs/ADR/` before changing code, plans, or instructions. ADRs are the authoritative record of agreed architectural decisions; do not silently depart from them.

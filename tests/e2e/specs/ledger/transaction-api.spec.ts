@@ -216,13 +216,20 @@ test('concurrent transactions, source-aware retries and snapshot history survive
   await login(request, manager);
 
   const before = await (await request.get(path)).json();
+  const renamedPage = await (await request.get(`${path}?pageSize=3`)).json();
+  const renamedNext = await (await request.get(`${path}?pageSize=3&cursor=${encodeURIComponent(renamedPage.nextCursor)}`)).json();
+
+  expect([...renamedPage.entries, ...renamedNext.entries].every((entry) => entry.actorDisplayName === 'Renamed transaction manager')).toBe(true);
 
   docker('restart', instance.container);
   await waitReady(containerOrigin(instance.container));
 
   expect(await (await request.get(path)).json()).toEqual(before);
   expect((await (await request.get(`/api/accounts/${account.id}`)).json()).balance).toBe('-0.15');
-  expect(await (await csrfWrite(request, 'POST', path, payload)).json()).toEqual(replayed[0]);
+  expect(await (await csrfWrite(request, 'POST', path, payload)).json()).toEqual({
+    ...replayed[0],
+    actorDisplayName: 'Renamed transaction manager',
+  });
 });
 
 test('signed opening extremes reject overflowing transactions without changing history @api', async ({ request, instance }) => {

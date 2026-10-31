@@ -31,7 +31,7 @@ public sealed class AccountAdministration
             .ThenBy(account => account.Id)
             .ToListAsync(cancellationToken);
 
-        return accounts.Select(Describe).ToList();
+        return await DescribeAccountsAsync(accounts, cancellationToken);
     }
 
     public async Task<List<AccountResponse>> ListRetiredAsync(CancellationToken cancellationToken)
@@ -43,7 +43,7 @@ public sealed class AccountAdministration
             .ThenBy(account => account.Id)
             .ToListAsync(cancellationToken);
 
-        return accounts.Select(Describe).ToList();
+        return await DescribeAccountsAsync(accounts, cancellationToken);
     }
 
     public async Task<AccountResponse?> FindAsync(string id, CancellationToken cancellationToken, string? memberId = null)
@@ -54,7 +54,13 @@ public sealed class AccountAdministration
             .Where(account => account.Id == id)
             .SingleOrDefaultAsync(cancellationToken);
 
-        return account is null ? null : Describe(account);
+        if (account is null)
+        {
+            return null;
+        }
+
+        var actorNames = await LedgerAdministration.ResolveActorNamesAsync(database, account.LedgerEntries, cancellationToken);
+        return Describe(account, actorNames);
     }
 
     public async Task<(AccountResponse? Account, AccountError? Error)> CreateAsync(
@@ -126,11 +132,11 @@ public sealed class AccountAdministration
         if (error is null)
         {
             await transaction.CommitAsync(cancellationToken);
+            var actorNames = await LedgerAdministration.ResolveActorNamesAsync(database, account.LedgerEntries, cancellationToken);
+            return (Describe(account, actorNames), null);
         }
 
-        return error is null
-            ? (Describe(account), null)
-            : (null, error);
+        return (null, error);
     }
 
     public async Task<(DateTimeOffset? PurgeAtUtc, string? Error)> DeleteAsync(
@@ -346,7 +352,14 @@ public sealed class AccountAdministration
         }
     }
 
-    private AccountResponse Describe(Account account) => new()
+    private async Task<List<AccountResponse>> DescribeAccountsAsync(List<Account> accounts, CancellationToken cancellationToken)
+    {
+        var entries = accounts.SelectMany(account => account.LedgerEntries);
+        var actorNames = await LedgerAdministration.ResolveActorNamesAsync(database, entries, cancellationToken);
+        return accounts.Select(account => Describe(account, actorNames)).ToList();
+    }
+
+    private AccountResponse Describe(Account account, IReadOnlyDictionary<string, string>? actorNames = null) => new()
     {
         Id = account.Id,
         Name = account.Name,
@@ -354,6 +367,8 @@ public sealed class AccountAdministration
         PurgeAtUtc = account.RetiredAtUtc?.AddDays(30),
         Currency = settings.Currency,
         Balance = account.BalanceMinorUnits is { } balance ? CurrencyAmount.Format(balance) : null,
-        OpeningEntry = account.LedgerEntries.SingleOrDefault() is { } entry ? LedgerAdministration.Describe(entry, settings.Currency) : null
+        OpeningEntry = account.LedgerEntries.SingleOrDefault() is { } entry
+            ? LedgerAdministration.Describe(entry, settings.Currency, actorNames)
+            : null
     };
 }

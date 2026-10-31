@@ -1,5 +1,6 @@
 using System.Data.Common;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -267,6 +268,7 @@ internal static class LedgerPersistenceCheck
             await CheckRetentionAsync(options, settings);
             await CheckRetentionQueryPlanAsync(options, queryCapture);
             await CheckUtcMappingAsync();
+            await CheckActorNamesAsync();
 
             Console.WriteLine("ledger_persistence_passed");
         }
@@ -274,6 +276,160 @@ internal static class LedgerPersistenceCheck
         {
             SqliteConnection.ClearAllPools();
             File.Delete(path);
+        }
+    }
+
+    private static async Task CheckActorNamesAsync()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"ledger-actors-{Guid.NewGuid():N}.db");
+        var settings = new InstanceSettings { DataPath = Path.GetDirectoryName(path)!, Timezone = "UTC", DefaultLocale = "en-US" };
+        var queryCapture = new ActorNameQueryCapture();
+        var options = new DbContextOptionsBuilder<PocketMonkeyDbContext>()
+            .UseSqlite($"Data Source={path};Foreign Keys=True")
+            .AddInterceptors(queryCapture)
+            .Options;
+        var openingRequest = new OpeningBalanceRequest { Amount = "10.00", IdempotencyKey = Guid.NewGuid().ToString() };
+        var transactionRequest = new TransactionRequest
+        {
+            Amount = "1.00", Source = LedgerEntrySource.Deposit, IdempotencyKey = Guid.NewGuid().ToString()
+        };
+
+        try
+        {
+            await using (var database = new PocketMonkeyDbContext(options))
+            {
+                await database.Database.MigrateAsync();
+                database.Users.AddRange(
+                    new ApplicationUser { Id = "actor-one", UserName = "one", DisplayName = "Original One" },
+                    new ApplicationUser { Id = "actor-two", UserName = "two", DisplayName = "Original Two" },
+                    new ApplicationUser { Id = "reader", UserName = "reader", DisplayName = "Reader" });
+                database.Roles.AddRange(
+                    new IdentityRole { Id = "manager-role", Name = "Manager", NormalizedName = "MANAGER" },
+                    new IdentityRole { Id = "member-role", Name = "Member", NormalizedName = "MEMBER" });
+                database.UserRoles.Add(new IdentityUserRole<string> { UserId = "actor-one", RoleId = "manager-role" });
+                database.Accounts.AddRange(
+                    new Account { Id = "actor-account", Name = "Actor Account", NormalizedName = "ACTOR ACCOUNT" },
+                    new Account { Id = "second-account", Name = "Second Account", NormalizedName = "SECOND ACCOUNT" },
+                    new Account { Id = "retired-account", Name = "Retired Account", NormalizedName = "RETIRED ACCOUNT" });
+                await database.SaveChangesAsync();
+                database.MemberAccountAssignments.Add(new MemberAccountAssignment { UserId = "reader", AccountId = "actor-account" });
+                await database.SaveChangesAsync();
+            }
+
+            LedgerEntryResponse opening;
+            LedgerEntryResponse transaction;
+
+            await using (var database = new PocketMonkeyDbContext(options))
+            {
+                var ledger = new LedgerAdministration(database, settings);
+                opening = (await ledger.PostOpeningAsync("actor-account", openingRequest, "actor-one", default)).Entry
+                    ?? throw new InvalidOperationException("Actor opening failed.");
+                transaction = (await ledger.PostTransactionAsync("actor-account", transactionRequest, "actor-one", default)).Entry
+                    ?? throw new InvalidOperationException("Actor transaction failed.");
+
+                foreach (var accountId in new[] { "second-account", "retired-account" })
+                {
+                    var result = await ledger.PostOpeningAsync(accountId, new OpeningBalanceRequest
+                    {
+                        Amount = "0.00", IdempotencyKey = Guid.NewGuid().ToString()
+                    }, "actor-two", default);
+
+                    if (result.Error is not null)
+                    {
+                        throw new InvalidOperationException("Second actor opening failed.");
+                    }
+                }
+            }
+
+            await using (var database = new PocketMonkeyDbContext(options))
+            {
+                var first = await database.Users.SingleAsync(user => user.Id == "actor-one");
+                var second = await database.Users.SingleAsync(user => user.Id == "actor-two");
+                first.DisplayName = "Current One";
+                first.IsActive = false;
+                second.DisplayName = "Current Two";
+                database.UserRoles.Remove(await database.UserRoles.SingleAsync(role => role.UserId == "actor-one"));
+                database.UserRoles.Add(new IdentityUserRole<string> { UserId = "actor-one", RoleId = "member-role" });
+                (await database.Accounts.SingleAsync(account => account.Id == "retired-account")).RetiredAtUtc = DateTimeOffset.UtcNow;
+                var account = await database.Accounts.SingleAsync(account => account.Id == "actor-account");
+                var state = await database.LedgerMaintenanceStates.SingleAsync();
+                database.LedgerEntries.AddRange(
+                    new LedgerEntry
+                    {
+                        Id = "missing-actor-entry", AccountId = account.Id, AmountMinorUnits = 1,
+                        SequenceNumber = ++state.LastAllocatedSequenceNumber, IdempotencyKey = Guid.NewGuid().ToString(),
+                        ActorId = "missing-actor", ActorDisplayName = "Missing Actor Snapshot",
+                        Source = LedgerEntrySource.Deposit, OccurredAtUtc = DateTimeOffset.UtcNow
+                    },
+                    new LedgerEntry
+                    {
+                        Id = "allowance-entry", AccountId = account.Id, AmountMinorUnits = 1,
+                        SequenceNumber = ++state.LastAllocatedSequenceNumber, IdempotencyKey = Guid.NewGuid().ToString(),
+                        ActorId = "actor-one", ActorDisplayName = "System Snapshot", AllowanceMonth = 202610,
+                        Source = LedgerEntrySource.Allowance, OccurredAtUtc = DateTimeOffset.UtcNow
+                    });
+                account.BalanceMinorUnits += 2;
+                await database.SaveChangesAsync();
+            }
+
+            await using (var database = new PocketMonkeyDbContext(options))
+            {
+                var ledger = new LedgerAdministration(database, settings);
+                var accounts = new AccountAdministration(database, settings);
+                queryCapture.Count = 0;
+                var active = await accounts.ListAsync(default);
+
+                if (queryCapture.Count != 1 || active.Single(account => account.Id == "actor-account").OpeningEntry?.ActorDisplayName != "Current One" ||
+                    active.Single(account => account.Id == "second-account").OpeningEntry?.ActorDisplayName != "Current Two" ||
+                    (await accounts.ListRetiredAsync(default)).Single(account => account.Id == "retired-account").OpeningEntry?.ActorDisplayName != "Current Two" ||
+                    (await accounts.FindAsync("actor-account", default, "reader"))?.OpeningEntry?.ActorDisplayName != "Current One")
+                {
+                    throw new InvalidOperationException("Account opening names or batched actor lookup failed.");
+                }
+
+                var updated = await accounts.UpdateAsync("actor-account", new UpdateAccountRequest { Name = "Updated Account" }, "actor-two", default);
+                var firstPage = await ledger.HistoryAsync("actor-account", 2, null, default, "reader");
+                var secondPage = await ledger.HistoryAsync("actor-account", 2, firstPage.History?.NextCursor, default, "reader");
+                var entries = firstPage.History!.Entries.Concat(secondPage.History!.Entries).ToDictionary(entry => entry.Id);
+                var replayOpening = await ledger.PostOpeningAsync("actor-account", openingRequest, "actor-one", default);
+                var replayTransaction = await ledger.PostTransactionAsync("actor-account", transactionRequest, "actor-one", default);
+                var snapshot = await new FinancialSnapshotService(database, settings, TimeProvider.System).CaptureAsync(default);
+
+                if (updated.Account?.OpeningEntry?.ActorDisplayName != "Current One" || entries.Count != 4 ||
+                    entries[opening.Id].ActorDisplayName != "Current One" || entries[transaction.Id].ActorDisplayName != "Current One" ||
+                    entries["missing-actor-entry"].ActorDisplayName != "Missing Actor Snapshot" ||
+                    entries["allowance-entry"].ActorDisplayName != "System Snapshot" ||
+                    replayOpening.Entry != opening with { ActorDisplayName = "Current One" } ||
+                    replayTransaction.Entry != transaction with { ActorDisplayName = "Current One" } ||
+                    snapshot.LedgerEntries.Single(entry => entry.Id == opening.Id).ActorDisplayName != "Original One" ||
+                    snapshot.LedgerEntries.Single(entry => entry.Id == transaction.Id).ActorDisplayName != "Original One" ||
+                    await database.LedgerEntries.CountAsync(entry => entry.AccountId == "actor-account") != 4 ||
+                    (await database.Accounts.SingleAsync(account => account.Id == "actor-account")).BalanceMinorUnits != 1102)
+                {
+                    throw new InvalidOperationException("Actor resolution, fallback, replay, or preserved snapshot failed.");
+                }
+            }
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            File.Delete(path);
+        }
+    }
+
+    private sealed class ActorNameQueryCapture : DbCommandInterceptor
+    {
+        public int Count { get; set; }
+
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
+            CommandEventData eventData, InterceptionResult<DbDataReader> result, CancellationToken cancellationToken = default)
+        {
+            if (command.CommandText.Contains("FROM \"AspNetUsers\"", StringComparison.Ordinal))
+            {
+                Count++;
+            }
+
+            return ValueTask.FromResult(result);
         }
     }
 

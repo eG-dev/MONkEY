@@ -17,6 +17,7 @@ import {
   image,
 } from '../../fixtures';
 import { createAccount } from '../../helpers/ledger';
+import { createMember } from '../../helpers/accounts';
 
 test.use({ ignoreHTTPSErrors: true });
 
@@ -41,7 +42,7 @@ test('real SQLite ledger migration, exact arithmetic, constraints and complete r
   expect(output).toBe('ledger_persistence_passed');
 });
 
-test('maximum exact balances, historical actor names and private SSR survive restart @api', async ({ request, instance }) => {
+test('maximum exact balances, current actor names and private SSR survive restart @api', async ({ request, instance }) => {
   const manager = bootstrapManager(instance);
   const profile = await login(request, manager);
   const account = await createAccount(request, 'Exact private ledger');
@@ -71,8 +72,29 @@ test('maximum exact balances, historical actor names and private SSR survive res
   await login(request, manager);
 
   const replay = await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, payload);
+  const resolvedEntry = { ...entry, actorDisplayName: 'Renamed Manager' };
 
-  expect(await replay.json()).toEqual(entry);
+  expect(await replay.json()).toEqual(resolvedEntry);
+  expect((await (await request.get(`/api/accounts/${account.id}`)).json()).openingEntry).toEqual(resolvedEntry);
+  expect((await (await request.get('/api/accounts')).json()).find((item: { id: string }) => item.id === account.id).openingEntry).toEqual(
+    resolvedEntry,
+  );
+  expect((await (await request.get(`/api/accounts/${account.id}/transactions`)).json()).entries).toEqual([resolvedEntry]);
+
+  const updated = await csrfWrite(request, 'PUT', `/api/accounts/${account.id}`, { name: 'Exact private ledger renamed' });
+
+  expect(updated.status()).toBe(200);
+  expect((await updated.json()).openingEntry).toEqual(resolvedEntry);
+
+  await createMember(request, [account.id]);
+
+  expect((await (await request.get(`/api/accounts/${account.id}`)).json()).openingEntry).toEqual(resolvedEntry);
+  expect((await (await request.get('/api/accounts')).json()).find((item: { id: string }) => item.id === account.id).openingEntry).toEqual(
+    resolvedEntry,
+  );
+  expect((await (await request.get(`/api/accounts/${account.id}/transactions`)).json()).entries).toEqual([resolvedEntry]);
+
+  await login(request, manager);
 
   const { account: secondManager } = await createUser(request, 'othermanager', 'Other Manager', 'Manager');
 
@@ -109,6 +131,7 @@ test('maximum exact balances, historical actor names and private SSR survive res
     expect(privatePage.headers()['cache-control']).toBe('no-store');
     expect(await privatePage.text()).toContain(payload.amount);
     expect(await privatePage.text()).toContain(payload.comment);
+    expect(await privatePage.text()).toContain('Renamed Manager');
     expect(await publicPage.text()).not.toContain(payload.amount);
     expect(await publicPage.text()).not.toContain(payload.comment);
   } finally {
@@ -121,7 +144,7 @@ test('maximum exact balances, historical actor names and private SSR survive res
   const persisted = await (await request.get(`/api/accounts/${account.id}`)).json();
 
   expect(persisted.balance).toBe(payload.amount);
-  expect(persisted.openingEntry).toEqual(entry);
+  expect(persisted.openingEntry).toEqual(resolvedEntry);
 
   docker('rm', '--force', instance.container);
   await waitReady(startContainer(instance.container, instance.volume, 'USD'));
@@ -130,10 +153,10 @@ test('maximum exact balances, historical actor names and private SSR survive res
 
   expect(relabeled.balance).toBe(payload.amount);
   expect(relabeled.currency).toBe('USD');
-  expect(relabeled.openingEntry).toEqual({ ...entry, currency: 'USD' });
+  expect(relabeled.openingEntry).toEqual({ ...resolvedEntry, currency: 'USD' });
 
   const replayed = await csrfWrite(request, 'POST', `/api/accounts/${account.id}/opening`, payload);
 
   expect(replayed.status()).toBe(200);
-  expect(await replayed.json()).toEqual({ ...entry, currency: 'USD' });
+  expect(await replayed.json()).toEqual({ ...resolvedEntry, currency: 'USD' });
 });

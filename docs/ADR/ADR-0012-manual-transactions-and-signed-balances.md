@@ -2,7 +2,7 @@
 
 _Creation date_: 2026-10-08
 
-_Updated_: 2026-10-28
+_Updated_: 2026-10-31
 
 ## Context
 
@@ -18,6 +18,7 @@ repeated postings or silently invalidate the meaning of a paginated history.
 - Require strictly positive deposit and withdrawal inputs. Store deposits as positive ledger deltas and withdrawals as negative deltas. Retain exact two-decimal decimal-string transport and reject extra precision rather than rounding.
 - Require an explicit opening before manual transactions. Preserve the one-opening constraint, including explicit zero and negative openings.
 - Keep optional comments trimmed, empty-as-null, and at most 500 characters. Persist immutable actor identity, display-name snapshot, source, and UTC posting time.
+- For human ledger entries, show the current display name when the stored actor ID resolves to a user; otherwise show the stored display-name snapshot. Automatic allowance entries retain their system attribution. This applies to history, embedded opening entries and posting responses, including idempotent replays; replay still returns the same retained entry without another write, although its displayed name may change after a rename. Financial exports preserve the stored snapshot.
 - Keep ledger posting times as `DateTimeOffset` in application/API contracts, with a UTC `DateTime` EF provider mapping and readable SQLite `TEXT`. Normalize writes to UTC and explicitly restore UTC kind on reads, preserving full 100-nanosecond precision independently of the host timezone. This allows indexed database-side timestamp comparison and ordering through LINQ without storage-text inspection in application services. Normalize existing supported UTC representations losslessly; reject unexpected stored formats atomically rather than guessing an instant. Other timestamp mappings remain unchanged.
 - Permit validated offline reconstruction only into empty financial state under [ADR-0021](ADR-0021-portable-financial-recovery.md). Preserve balances, retained history and durable retry/allowance identities atomically; this is not permission to edit or replace a live ledger.
 - Commit every ledger delta, resulting balance, posting sequence, and audit event atomically. Retain unique idempotency keys; matching account, actor, source, amount, and comment replay a retained original entry, while conflicting reuse is rejected. A retained retired key cannot be reused and returns HTTP `409`, `transaction_history_expired`, instead of replaying deleted details; attributable keys are removed on account deletion under [ADR-0009](ADR-0009-shared-accounts.md).
@@ -43,6 +44,7 @@ reversal workflow requires a separately agreed policy.
 
 ## Change History
 
+- 2026-10-31: Use current user names in ledger responses when the immutable actor ID resolves, retaining the original snapshot as fallback and leaving stored history unchanged.
 - 2026-10-28: Account deletion is an additional authorized removal exception, including opening entries, account-linked audit and attributable retry keys; unassociated legacy keys remain protected.
 - 2026-10-25: Approved R7 portable recovery permits controlled empty-target reconstruction without weakening live-history immutability or duplicate-credit protection.
 - 2026-10-18: Approved retention R1 introduces bounded transaction-detail removal as an explicit exception to permanent ledger retention. Durable sequence allocation, retired keys, retained opening/allowance identities and cursor invalidation preserve financial safety without retaining complete expired transaction payloads. Backup-confirmed activation prevents schema initialization or the default duration from silently authorizing destructive cleanup.
