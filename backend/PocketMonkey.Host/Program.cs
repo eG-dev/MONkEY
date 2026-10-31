@@ -50,6 +50,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddLocalIdentity(builder.Environment.IsDevelopment());
 builder.Services.AddScoped<AccountAdministration>();
+builder.Services.AddScoped<MemberAccountAssignments>();
 builder.Services.AddScoped<LedgerAdministration>();
 builder.Services.AddScoped<AccountImages>();
 builder.Services.AddSingleton(TimeProvider.System);

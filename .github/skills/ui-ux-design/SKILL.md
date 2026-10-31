@@ -1,6 +1,6 @@
 ---
 name: ui-ux-design
-description: "Reusable UI/UX design workflow for wireframes, mockups, draw.io annotations, click prototypes, design tokens and design review/approval before implementation. Use when designing, redesigning or changing a screen, dialog, navigation, colors, states or interactions; adding a view; arranging or revising wireframe notes; approving a wireframe or prototype; exporting approved previews; or setting up a project's design workflow."
+description: "Reusable UI/UX design workflow for wireframes, mockups, draw.io annotations, click prototypes, design tokens and design review/approval before implementation. Use when designing, redesigning or changing a screen, dialog, navigation, colors, states or interactions; adding a view; arranging or revising wireframe notes; approving a wireframe or prototype; implementing an approved design; exporting approved previews; or setting up a project's design workflow."
 ---
 
 # UI/UX Design Workflow
@@ -206,7 +206,7 @@ Open confirmation full-screen.
 - Build an offline prototype from requirements and existing design references, using the approved wireframe when one is part of this change. Use the profile's shared shell, components, formatting helpers, tokens and fictional data. Keep assets local; reuse existing helpers rather than creating parallel ones.
 - Maintain an integrated application entry that composes the existing views, not a specimen gallery. Keep standalone views usable, the directly opened shell neutral and chrome unduplicated. Preserve role, language, theme and fictional data through actual navigation. Keep implementation notes outside the review surface.
 - Demonstrate loading, empty, error/retry, validation, submitting, success and failure with retained input where applicable, plus the profile's permissions, languages, themes and breakpoints.
-- Prototypes illustrate behavior; they do not enforce security or define business rules.
+- Prototypes illustrate behavior and layout intent; they do not enforce security or define business rules. Their markup and incidental visual details are not production specifications.
 
 ## 4. Design system
 
@@ -243,6 +243,16 @@ verification. Passing checks are not design approval.
 - Summarize changes and actual verification; list open business questions rather than deciding them in the design.
 - If an artifact is still a draft, state what awaits review. Do not infer approval from feedback or a general instruction to continue.
 - After prototype approval and any applicable wireframe approval, hand off implementation with the approved revisions, open questions and the states and flows that need application tests. Identify any older wireframe that no longer matches. Follow the profile's implementation and verification conventions.
+
+## Implementation Handoff
+
+Use the approved prototype to preserve workflows, dynamic states, edge cases,
+accessibility and responsive layout intent, not as a pixel-perfect specification.
+For production styling, follow the project's design system, approved component
+patterns and chosen UI library or framework, if any. Do not reproduce incidental
+prototype spacing, borders or other visual details merely to match the prototype.
+Preserve explicitly approved design-system rules and product-specific visual
+requirements, and verify the resulting workflows in the application.
 
 ## Project Profiles
 

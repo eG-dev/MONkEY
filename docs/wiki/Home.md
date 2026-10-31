@@ -6,8 +6,8 @@ POCKET MONkEY records children's pocket money and savings without holding or
 transferring money. Track signed opening balances, deposits, withdrawals and
 monthly allowances in one shared instance, in German or English.
 
-Managers manage users and financial data. Members can read all accounts; accounts
-are not private to individual members. Amounts use exact two-decimal arithmetic.
+Managers manage users and financial data. Members can read assigned active accounts;
+accounts are shared resources, not private to individual members. Amounts use exact two-decimal arithmetic.
 Currency is a display unit, not a currency-conversion service.
 
 ## Start Here

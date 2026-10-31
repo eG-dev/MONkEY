@@ -56,16 +56,17 @@ public sealed class LedgerAdministration
         string accountId,
         int pageSize,
         string? cursor,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? memberId = null)
     {
+        if (!await AccountReadAccess.Accounts(database, memberId).AnyAsync(account => account.Id == accountId, cancellationToken))
+        {
+            return (null, LedgerError.NotFound);
+        }
+
         if (pageSize is < 1 or > 100)
         {
             return (null, LedgerError.InvalidPageSize);
-        }
-
-        if (!await database.Accounts.AnyAsync(account => account.Id == accountId, cancellationToken))
-        {
-            return (null, LedgerError.NotFound);
         }
 
         LedgerHistoryCursor? continuation = null;

@@ -28,11 +28,8 @@
                 <mxCell id="display-name-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Display name" vertex="1">
                     <mxGeometry height="40" width="400" x="624" y="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="status-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Status" vertex="1">
-                    <mxGeometry height="40" width="300" x="1024" y="260" as="geometry"/>
-                </mxCell>
                 <mxCell id="assigned-accounts-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Assigned accounts" vertex="1">
-                    <mxGeometry height="40" width="612" x="1324" y="260" as="geometry"/>
+                    <mxGeometry height="40" width="912" x="1024" y="260" as="geometry"/>
                 </mxCell>
                 <mxCell id="actions-header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;align=left;spacingLeft=12;spacingRight=12;" value="Actions" vertex="1">
                     <mxGeometry height="40" width="80" x="1936" y="260" as="geometry"/>
@@ -40,11 +37,8 @@
                 <mxCell id="member-name-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Emma" vertex="1">
                     <mxGeometry height="48" width="400" x="624" y="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-status-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Active" vertex="1">
-                    <mxGeometry height="48" width="300" x="1024" y="300" as="geometry"/>
-                </mxCell>
                 <mxCell id="assigned-accounts-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Ben, Emma" vertex="1">
-                    <mxGeometry height="48" width="612" x="1324" y="300" as="geometry"/>
+                    <mxGeometry height="48" width="912" x="1024" y="300" as="geometry"/>
                 </mxCell>
                 <mxCell id="edit-emma" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="300" as="geometry"/>
@@ -52,11 +46,8 @@
                 <mxCell id="member-name-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Noah" vertex="1">
                     <mxGeometry height="48" width="400" x="624" y="348" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-status-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;fontColor=#666666;" value="Disabled" vertex="1">
-                    <mxGeometry height="48" width="300" x="1024" y="348" as="geometry"/>
-                </mxCell>
                 <mxCell id="assigned-accounts-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="No accounts" vertex="1">
-                    <mxGeometry height="48" width="612" x="1324" y="348" as="geometry"/>
+                    <mxGeometry height="48" width="912" x="1024" y="348" as="geometry"/>
                 </mxCell>
                 <mxCell id="edit-noah" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="348" as="geometry"/>
@@ -64,11 +55,8 @@
                 <mxCell id="member-name-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Lena" vertex="1">
                     <mxGeometry height="48" width="400" x="624" y="396" as="geometry"/>
                 </mxCell>
-                <mxCell id="member-status-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Must change password" vertex="1">
-                    <mxGeometry height="48" width="300" x="1024" y="396" as="geometry"/>
-                </mxCell>
                 <mxCell id="assigned-accounts-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;align=left;spacingLeft=12;spacingRight=12;" value="Lena" vertex="1">
-                    <mxGeometry height="48" width="612" x="1324" y="396" as="geometry"/>
+                    <mxGeometry height="48" width="912" x="1024" y="396" as="geometry"/>
                 </mxCell>
                 <mxCell id="edit-lena" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;fillColor=#FFFFFF;strokeColor=#CCCCCC;" value="[edit]" vertex="1">
                     <mxGeometry height="48" width="80" x="1936" y="396" as="geometry"/>

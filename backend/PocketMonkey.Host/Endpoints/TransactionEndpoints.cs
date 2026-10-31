@@ -20,10 +20,12 @@ public static class TransactionEndpoints
             string id,
             int? pageSize,
             string? cursor,
+            ClaimsPrincipal principal,
             LedgerAdministration administration,
             CancellationToken cancellationToken) =>
             {
-                var result = await administration.HistoryAsync(id, pageSize ?? 20, cursor, cancellationToken);
+                var result = await administration.HistoryAsync(id, pageSize ?? 20, cursor, cancellationToken,
+                    AccountReadAccess.MemberId(principal));
 
                 return result.Error is { } error ? ToResult(error) : TypedResults.Ok(result.History);
             })

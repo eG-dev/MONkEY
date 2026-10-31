@@ -1652,7 +1652,7 @@ at the hidden terminal prompt, not as arguments or in chat.
 - Sessions expire after eight hours without sliding renewal or remember-me persistence. Valid cookies survive container restart, but password reset, role change, or disablement revokes them on the next request.
 - Unsafe requests require the backend-issued antiforgery token, including login/logout. The BFF forwards cookies/tokens and strips client identity/proxy headers; the backend decides access.
 - Five failed password attempts lock the account for fifteen minutes; login additionally permits twenty attempts per minute for the instance. Authentication failures use generic errors.
-- Members can change their own password/language and read every account and its ledger history. Managers create/edit accounts, post explicit opening entries, and make deposits/withdrawals.
+- Members can change their own password/language and read assigned active accounts and their ledger history. Managers read all accounts, create/edit accounts, post explicit opening entries, and make deposits/withdrawals. Assignment management currently requires the Manager-only API; its UI is pending prototype approval.
 
 Application role decisions and contracts use `UserRole`; explicit Identity names
 and JSON values remain `Manager`/`Member`. Invalid textual roles retain the

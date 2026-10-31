@@ -102,7 +102,7 @@ test('shared scenario recovery, permissions and explicit disposable reset @deskt
     await expect(page.getByTestId('ledger-entry').first()).toContainText('After recovery');
     await page.screenshot({ path: test.info().outputPath('recovered-account.png'), fullPage: true });
 
-    const member = await createMember(request);
+    const member = await createMember(request, [accountId]);
     expect((await (await request.get(`/api/accounts/${accountId}`)).json()).balance).toBe('13.75');
     expect(
       (

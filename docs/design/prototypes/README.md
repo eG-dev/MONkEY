@@ -5,6 +5,100 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Member Account Assignment R9 (2026-10-31)
+
+**Click prototype R9 draft; not approved.** The assignment dialog removes the
+stale-conflict state and uses last-committed replacement. When a save cannot be
+confirmed, the selected checkboxes remain visible, saving is disabled and the
+Manager can reload the current assignments before deciding whether to save
+again. The message does not claim that the save failed. The approved R8
+wireframe is unchanged; this detail is not depicted in its list or notes.
+
+Verification, headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager, Member | en, de | light, dark | 360, 1440 | Assignment tab visibility, Space selection, unconfirmed save retaining input, reload, successful save, no stale-conflict rejection, page overflow and script errors (16 cases) | pass |
+| Integrated | Manager, Member | en, de | light, dark | 360, 1440 | Navigation to Administration and the same changed flows (16 cases) | pass |
+
+These are prototype checks, not production E2E verification or design approval.
+
+## Member Account Assignment R8 (2026-10-31)
+
+**Click prototype R8 approved, 2026-10-31:** "prototype approved". The Account assignments tab removes
+Status entirely, including beside names; the released space goes to assigned
+accounts. Disabled Members remain listed and editable. Users retains its status
+column, and duplicate Member names still include usernames for disambiguation.
+The [wireframe R8](../README.md#member-account-assignment-r8-2026-10-31)
+was approved and its PNG exported and inspected before this prototype change.
+
+Verification, headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager, Member | en, de | light, dark | 360, 1440 | Three columns, no status, disabled Member editing, keyboard and focus, dialog fit, Users status and Member tab visibility (16 cases) | pass |
+| Integrated | Manager, Member | en, de | light, dark | 360, 1440 | Shell and tab navigation; same dialog and visibility checks (16 cases) | pass |
+| Standalone | Manager | en | light | 1280 | Loading, error, empty; duplicate disabled Member identity, dialog and save | pass |
+
+These are prototype checks, not production E2E verification.
+
+## Member Account Assignment R7 (2026-10-31)
+
+**Click prototype R7 draft; not approved.** Account rows have a 4px gap using
+the existing spacing token. Rows remain 36px on desktop and 44px on phones;
+R6's selection colors and behavior are unchanged. The approved R4 wireframe
+remains unchanged because this is a small dialog-spacing adjustment.
+
+Verification, headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager | en, de | light, dark | 360, 1440 | Row gap and height, selection color, Space toggle, focus and dialog fit (8 cases) | pass |
+| Integrated | Manager | en, de | light, dark | 360, 1440 | Shell and tab navigation; same dialog checks (8 cases) | pass |
+
+These are prototype checks, not production E2E or design approval. The current
+prototype still requires explicit approval before application implementation.
+
+## Member Account Assignment R6 (2026-10-31)
+
+**Click prototype R6 draft; not approved.** Checked account rows use
+`--surface-selected` and `--text-selected`, the existing navigation selection
+colors in both themes. Hover does not obscure the selection, and the checkbox
+and focus outline remain visible. The approved R4 wireframe is unchanged; this
+is a dialog styling detail. R5's compact rows and the earlier flow evidence
+remain in effect. The previous R2 unfilled-row request is superseded.
+
+Verification, headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager, Member | en, de | light, dark | 360, 1440 | Selected and unselected colors, Space toggling, focus, dialog fit and Member tab visibility (16 cases) | pass |
+| Integrated | Manager, Member | en, de | light, dark | 360, 1440 | Shell and tab navigation; same dialog and visibility checks (16 cases) | pass |
+
+Selected-row colors were also checked against the active navigation while
+hovered in both themes. These are prototype checks, not production E2E or design
+approval. The current prototype still requires explicit approval before
+application implementation.
+
+## Member Account Assignment R5 (2026-10-31)
+
+**Click prototype R5 draft; not approved.** The assignment dialog uses compact
+36px checkbox rows on desktop and retains 44px rows on phones. The extra space
+between rows was removed; selection behavior is unchanged and no search was
+added. The approved R4 wireframe remains unchanged because this is a small
+dialog-spacing adjustment, not a structural or behavioral change. R4 evidence
+below remains historical.
+
+Verification, headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager | en, de | light, dark | 360, 1440 | Row heights, Space toggling, dialog fit, reachable Save, focus return, no page errors (8 cases) | pass |
+| Integrated | Manager | en, de | light, dark | 360, 1440 | Shell and tab navigation; same dialog checks (8 cases) | pass |
+
+These are prototype checks, not production E2E or design approval. The current
+prototype still requires explicit approval before application implementation.
+
 ## Member Account Assignment R4 (2026-10-31)
 
 **Click prototype R4 draft; not approved.** In the

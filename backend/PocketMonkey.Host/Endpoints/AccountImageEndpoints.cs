@@ -14,10 +14,10 @@ public static class AccountImageEndpoints
             .RequireAuthorization("ReadyUser")
             .WithTags("Account images");
 
-        images.MapGet("", async Task<IResult> (string id, AccountImages service, HttpContext context, CancellationToken cancellationToken) =>
+        images.MapGet("", async Task<IResult> (string id, ClaimsPrincipal principal, AccountImages service, HttpContext context, CancellationToken cancellationToken) =>
             {
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-                var stream = await service.OpenAsync(id, cancellationToken);
+                var stream = await service.OpenAsync(id, cancellationToken, AccountReadAccess.MemberId(principal));
 
                 return stream is null ? Error("not_found") : Results.Stream(stream, "image/png");
             })

@@ -109,11 +109,10 @@ images, balances, transaction amounts/dates/comments and recorded attribution,
 and monthly-allowance settings and execution records. Do not enter unnecessary
 personal or sensitive information into names, images or comments.
 
-Accounts are shared within the instance: both Members and Managers can read all
-accounts. Managers manage access and perform business writes. Accounts are not
-private spaces assigned to individual Members. Host administrators and parties
-with storage or backup access may have access outside the application's role
-controls.
+Managers can read all accounts. Members can read only active accounts assigned
+to them by a Manager. Accounts remain shared instance resources, not individually
+owned private spaces. Host administrators and parties with storage or backup
+access may have access outside the application's role controls.
 
 Browser cookies support authentication, request security and language selection.
 Connecting to an installation also exposes technical request information to its
@@ -201,10 +200,10 @@ sowie Einstellungen und Ausführungsdaten monatlicher Taschengeldzahlungen.
 Tragen Sie keine unnötigen personenbezogenen oder sensiblen Informationen in
 Namen, Bilder oder Kommentare ein.
 
-Konten werden innerhalb der Instanz gemeinsam genutzt: Mitglieder und Manager
-können alle Konten lesen. Manager verwalten Zugriffe und führen fachliche
-Schreibvorgänge aus. Konten sind keine privaten, einzelnen Mitgliedern
-zugewiesenen Bereiche. Hostadministratoren und Personen mit Zugriff auf
+Manager können alle Konten lesen. Mitglieder können nur aktive Konten lesen,
+die ihnen ein Manager zugewiesen hat. Konten bleiben gemeinsam genutzte
+Ressourcen der Instanz und sind keine privaten Bereiche im Eigentum einzelner
+Benutzer. Hostadministratoren und Personen mit Zugriff auf
 Speicher oder Sicherungen können außerhalb der Rollensteuerung der Anwendung
 Zugriff auf Daten haben.
 

@@ -39,6 +39,25 @@ public static class UserEndpoints
                 return TypedResults.Ok(responses);
             });
 
+        management.MapGet("/{id}/account-assignments", async Task<IResult> (
+            string id,
+            MemberAccountAssignments assignments,
+            CancellationToken cancellationToken) =>
+            {
+                var result = await assignments.GetAsync(id, cancellationToken);
+                return result.Error is null ? TypedResults.Ok(result.Response) : AssignmentError(result.Error);
+            });
+
+        management.MapPut("/{id}/account-assignments", async Task<IResult> (
+            string id,
+            UpdateMemberAccountAssignmentsRequest? request,
+            MemberAccountAssignments assignments,
+            CancellationToken cancellationToken) =>
+            {
+                var result = await assignments.ReplaceAsync(id, request, cancellationToken);
+                return result.Error is null ? TypedResults.Ok(result.Response) : AssignmentError(result.Error);
+            });
+
         management.MapPost("", async Task<IResult> (
             CreateUserRequest request,
             ClaimsPrincipal principal,
@@ -104,4 +123,12 @@ public static class UserEndpoints
                     : EndpointErrors.ToResult(error.Value);
             });
     }
+
+    private static IResult AssignmentError(string code) => TypedResults.Json(new { code }, statusCode: code switch
+    {
+        "not_found" => StatusCodes.Status404NotFound,
+        "assignment_target_not_member" or "account_not_assignable" => StatusCodes.Status409Conflict,
+        "invalid_account_assignments" => StatusCodes.Status400BadRequest,
+        _ => throw new ArgumentOutOfRangeException(nameof(code), code, "Unsupported assignment error.")
+    });
 }

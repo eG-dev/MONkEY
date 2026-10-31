@@ -90,7 +90,7 @@ docker compose -f compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dl
 Enter credentials in the terminal, never in a checked-in environment file or issue
 report. Passwords require at least 12 characters, uppercase and lowercase letters,
 and a digit. Sign in at the configured HTTPS URL. Create additional users through
-user administration; Members can read every account but cannot perform business writes.
+user administration; Members can read assigned active accounts but cannot perform business writes.
 
 For an existing Manager who cannot sign in, use `recover-manager` instead of
 trying to bootstrap another first Manager. See the

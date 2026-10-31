@@ -43,6 +43,68 @@ column. See the [prototype record](prototypes/README.md#member-account-assignmen
 for states and the standalone/integrated verification matrix. Explicit prototype
 approval is required before Angular implementation.
 
+## Member Account Assignment R8 (2026-10-31)
+
+**Account assignments wireframe R8 approved, 2026-10-31:** "wireframe approved".
+The
+[draw.io source](wireframes/administration/administration-account-assignments-wireframe.drawio)
+removes the Status column and its cells without adding status beside the name.
+Assigned accounts occupies the released width; names, actions and existing
+notes and connectors retain their positions. The visibility note still covers
+assigning accounts to disabled Members. The user's existing note arrangement
+is preserved; no note text changed. Source checks passed for XML, unique IDs,
+the 1440px dashed viewport, three contiguous columns, nonoverlapping notes and
+valid connectors. The earlier R4 wireframe approval remains history.
+
+No review markers or obsolete labels needed cleanup. The
+[R8 PNG preview](wireframes/administration/administration-account-assignments-wireframe.png)
+was exported using draw.io desktop and visually inspected: the three columns,
+notes and connectors are legible, with no Status column.
+
+**Click prototype R8 approved, 2026-10-31:** "prototype approved". The Administration Account
+assignments tab now matches the approved wireframe: no status column or status
+beside names, including disabled Members. The Users tab retains its status.
+See the [R8 prototype record](prototypes/README.md#member-account-assignment-r8-2026-10-31)
+for standalone and integrated verification.
+
+## Member Account Assignment R9 (2026-10-31)
+
+**Click prototype R9 draft; not approved.** The assignment dialog no longer
+simulates stale-edit conflicts. An unconfirmed save retains the selection and
+requires reloading current assignments before deciding whether to save again.
+See the [R9 prototype record](prototypes/README.md#member-account-assignment-r9-2026-10-31)
+for verification. Explicit approval is required before Angular implementation.
+
+The approved R8 wireframe is unchanged: it contains no stale-conflict or retry
+detail, and the cumulative difference is limited to this dialog behavior, not
+its structure or the depicted list. Earlier prototype approval remains history.
+
+## Member Account Assignment R7 (2026-10-31)
+
+**Click prototype R7 draft; not approved.** A small gap separates the compact
+account rows, including adjacent highlighted selections. The approved R4
+wireframe remains unchanged: the adjustment affects dialog spacing only. See
+the [R7 prototype record](prototypes/README.md#member-account-assignment-r7-2026-10-31)
+for standalone and integrated verification. Prototype approval remains pending.
+
+## Member Account Assignment R6 (2026-10-31)
+
+**Click prototype R6 draft; not approved.** Checked account rows use the same
+theme-aware selection colors as the navigation. Checkbox state and keyboard
+focus remain visible. The approved R4 wireframe remains unchanged: the change
+affects dialog styling, not its structure or behavior. See the
+[R6 prototype record](prototypes/README.md#member-account-assignment-r6-2026-10-31)
+for standalone and integrated verification. Prototype approval remains pending.
+
+## Member Account Assignment R5 (2026-10-31)
+
+**Click prototype R5 draft; not approved.** The assignment dialog has more
+compact checkbox rows, with 44px touch targets retained on phones. No search was
+added. The approved R4 wireframe remains unchanged: the adjustment is confined
+to dialog spacing and does not change its structure or behavior. See the
+[R5 prototype record](prototypes/README.md#member-account-assignment-r5-2026-10-31)
+for standalone and integrated verification. Prototype approval remains pending.
+
 ## Member Account Assignment R4 (2026-10-31)
 
 **Account assignments wireframe R4 approved, 2026-10-31; click prototype R4 draft, not approved.**

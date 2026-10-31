@@ -1,7 +1,7 @@
 # ADR-0003 Shared-Instance Access
 
 _Creation date_: 2026-10-04
-_Updated_: 2026-10-30
+_Updated_: 2026-10-31
 
 ## Context
 
@@ -18,7 +18,7 @@ usable without email delivery or an external identity service.
 - Ready authenticated Members may read only their explicitly assigned active accounts. A Member may have multiple accounts, and multiple Members may share an account. No assignments means no account access. Personal language/password preferences do not grant business-write permissions.
 - Enforce account visibility in the backend for lists, direct IDs, images, transaction history, allowance reads and SSR requests, not only through frontend guards or hidden controls. Grants and revocations apply on subsequent requests with existing sessions. Return the same `404`/`not_found` response for inaccessible and nonexistent account IDs; do not expose existence through account-scoped reads.
 - Retain assignments across promotion to Manager and disablement. They have no limiting effect for Managers and grant no access to disabled users; their effect returns on demotion to Member or re-enablement, provided the account remains active. Assignment management targets Members, including disabled Members, not current Managers.
-- Keep only current assignments and concurrency metadata. Assignment changes are atomic and reject stale edits rather than silently overwrite another Manager's changes. Do not store assignment audit events, change history or a separate retention policy. Existing financial, account and user audit requirements are unaffected.
+- Keep only current assignments. Assignment replacement is atomic; the last valid committed replacement wins, even when another Manager changed the assignments after the editor was opened. Do not store assignment concurrency metadata, audit events, change history or a separate retention policy. Existing financial, account and user audit requirements are unaffected.
 - Retirement removes account assignments; reactivation requires fresh assignment. Permanent account deletion leaves no assignment orphans. Existing Members start without assignments when this access model is introduced; do not infer access from prior all-account reads.
 - Financial-only recovery leaves assignments empty for Managers to recreate, without inferred identity matches. Complete installation backup/restore preserves assignments with user identities, following [ADR-0021](ADR-0021-portable-financial-recovery.md). Application access controls cannot recall data already delivered or restrict host administrators with direct storage/backup access.
 - Use immutable internal user identifiers; names and login/profile fields are not financial actor identity.
@@ -27,4 +27,5 @@ usable without email delivery or an external identity service.
 
 ## Change History
 
+- 2026-10-31: Replaced stale-edit rejection with last-committed assignment replacement to simplify administration; atomic validation and financial concurrency guarantees remain unchanged.
 - 2026-10-30: Replaced all-account Member reads with explicit many-to-many account assignments to support family access boundaries without tenancy. Recorded retained role/disablement assignments, removal on retirement, empty recovery/upgrade assignments and current-state-only storage without assignment auditing.

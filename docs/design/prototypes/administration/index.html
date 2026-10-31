@@ -25,9 +25,8 @@
     .assignments-table { table-layout: fixed; }
     .assignments-table th, .assignments-table td { overflow-wrap: anywhere; white-space: normal; }
     .assignments-table th:nth-child(1) { width: 28%; }
-    .assignments-table th:nth-child(2) { width: 22%; }
-    .assignments-table th:nth-child(3) { width: 40%; }
-    .assignments-table th:nth-child(4) { width: 10%; }
+    .assignments-table th:nth-child(2) { width: 62%; }
+    .assignments-table th:nth-child(3) { width: 10%; }
     .assignment-username { display: block; font: var(--type-caption); color: var(--text-secondary); }
     .assignments-table td.actions-cell { text-align: right; }
     .assignment-mobile-label { display: none; }
@@ -37,8 +36,9 @@
     .assignment-dialog .dialog-body { overflow: auto; min-height: 0; }
     .assignment-options { display: grid; gap: var(--space-2); max-height: calc(var(--control-lg) * 5); overflow: auto; padding: 0; border: 0; }
     .assignment-options legend { font: var(--type-label); margin-bottom: var(--space-3); }
-    .assignment-option { display: flex; align-items: center; gap: var(--space-3); min-height: var(--control-lg); padding: var(--space-2); border-radius: var(--radius-sm); overflow-wrap: anywhere; cursor: pointer; }
+    .assignment-option { display: flex; align-items: center; gap: var(--space-3); min-height: var(--control-md); padding: var(--space-2); border-radius: var(--radius-sm); overflow-wrap: anywhere; cursor: pointer; }
     .assignment-option:hover { background: var(--surface-hover); }
+    .assignment-option:has(input:checked) { background: var(--surface-selected); color: var(--text-selected); }
     .assignment-option input { appearance: none; display: grid; place-content: center; flex-shrink: 0; width: var(--space-5); height: var(--space-5); margin: 0; border: 2px solid var(--action-primary); border-radius: var(--radius-sm); background: var(--surface-input); cursor: inherit; }
     .assignment-option input::before { content: ''; width: 6px; height: 10px; border: solid var(--action-primary-text); border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0); }
     .assignment-option input:checked { background: var(--action-primary); }
@@ -52,6 +52,7 @@
       .assignment-option input::before { content: none; }
     }
     @media (max-width: 599px) {
+      .assignment-option { min-height: var(--control-lg); }
       .table thead { display: none; }
       .table tr { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; }
       .table td { border: 0; padding: 2px 4px; }
@@ -190,11 +191,10 @@
 
       const rows = members.map(user => `<tr>
         <td class="user-name">${PM.esc(user.displayName)}${assignmentMemberName(user) !== user.displayName ? `<span class="assignment-username">${PM.esc(user.username)}</span>` : ''}</td>
-        <td class="status-cell status-${user.status}">${PM.esc(statusLabel(user))}</td>
         <td class="assignments-cell"><span class="assignment-mobile-label">${PM.esc(PM.t('assignedAccounts'))}</span>${PM.esc(assignedAccountNames(user))}</td>
         <td class="actions-cell"><button class="icon-button" type="button" data-assignments="${PM.esc(user.id)}" aria-label="${PM.esc(PM.t('assignmentsNamed', { name: assignmentMemberName(user) }))}" title="${PM.esc(PM.t('assignmentsNamed', { name: assignmentMemberName(user) }))}">${PM.icon('pencil')}</button></td>
       </tr>`).join('');
-      return `<div class="table-wrap"><table class="table assignments-table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('status'))}</th><th>${PM.esc(PM.t('assignedAccounts'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      return `<div class="table-wrap"><table class="table assignments-table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('assignedAccounts'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
 
     function assignmentMemberName(user) {
@@ -222,7 +222,6 @@
 
     function openAssignments(userId) {
       const target = () => PM.data.users.find(user => user.id === userId);
-      let version;
       let submitting = false;
       let ready = false;
       let reviewState = PM.prefs.viewState;
@@ -280,7 +279,6 @@
           return;
         }
 
-        version = target().assignmentsVersion;
         const accounts = reviewState === 'no-active-accounts' ? [] : PM.accountsByName();
         list.innerHTML = accounts.length ? `<fieldset class="assignment-options"><legend>${PM.esc(PM.t('assignedAccounts'))}</legend>${accounts.map(account => `<label class="assignment-option"><input type="checkbox" name="accountIds" value="${PM.esc(account.id)}" ${(target().accountIds ?? []).includes(account.id) ? 'checked' : ''}><span>${PM.esc(account.name)}</span></label>`).join('')}</fieldset>` : `<p>${PM.esc(PM.t('noActiveAccounts'))}</p>`;
         ready = true;
@@ -310,16 +308,10 @@
 
           if (!PM.isManager() || !target() || target().role !== 'Member' || reviewState === 'not-member') {
             showError('assignmentsNotMember');
-          } else if (target().assignmentsVersion !== version || reviewState === 'conflict') {
-            showError('assignmentsConflict');
           } else if (selected.some(id => !PM.data.accounts.some(account => account.id === id && !account.purgeAtUtc)) || reviewState === 'unavailable') {
             showError('assignmentUnavailable');
           } else {
-            if (JSON.stringify([...(target().accountIds ?? [])].sort()) !== JSON.stringify(selected)) {
-              target().accountIds = selected;
-              target().assignmentsVersion = crypto.randomUUID();
-            }
-
+            target().accountIds = selected;
             PM.saveData();
             editor.close();
             render();
@@ -378,7 +370,7 @@
 
         try {
           await PM.request();
-          const user = { id: `user-${Date.now()}`, username: name, displayName: display.value.trim(), role: editor.querySelector('[name="role"]:checked').value, status: 'mustChange', accountIds: [], assignmentsVersion: crypto.randomUUID() };
+          const user = { id: `user-${Date.now()}`, username: name, displayName: display.value.trim(), role: editor.querySelector('[name="role"]:checked').value, status: 'mustChange', accountIds: [] };
           PM.data.users.push(user);
           PM.saveData();
           editor.close();
@@ -502,7 +494,7 @@
     PM.init({
       active: 'administration',
       title: 'administration',
-      states: ['normal', 'loading', 'error', 'no-members', 'dialog-loading', 'dialog-error', 'no-active-accounts', 'conflict', 'unavailable', 'not-member'],
+      states: ['normal', 'loading', 'error', 'no-members', 'dialog-loading', 'dialog-error', 'no-active-accounts', 'unavailable', 'not-member'],
       render,
       strings: {
         en: {
@@ -510,8 +502,8 @@
           noMembers: 'No Members yet', noMembersLink: 'Create a Member in Users',
           assignedAccounts: 'Assigned accounts', noAssignedAccounts: 'No accounts', assignmentsNamed: 'Assigned accounts for {name}',
           assignmentsLoading: 'Loading assigned accounts…', noActiveAccounts: 'No active accounts available.', reloadAssignments: 'Reload',
-          assignmentsLoadFailed: 'Assigned accounts could not be loaded. Please try again.', assignmentsSaveFailed: 'Assignments could not be saved. Reload them before trying again.',
-          assignmentsConflict: 'These assignments have changed. Reload them before saving again.', assignmentUnavailable: 'An account is no longer available for assignment. Reload the account list and check your selection.',
+          assignmentsLoadFailed: 'Assigned accounts could not be loaded. Please try again.', assignmentsSaveFailed: 'The save could not be confirmed. Reload the current assignments before deciding whether to save again.',
+          assignmentUnavailable: 'An account is no longer available for assignment. Reload the account list and check your selection.',
           assignmentsNotMember: 'Accounts can only be assigned to Members. Reload the user list.', assignmentsSaved: 'Assigned accounts saved.',
           users: 'Users', account: 'Account', displayName: 'Display name', username: 'Username', role: 'Role', status: 'Status', actions: 'Actions', changePassword: 'Change password', preferences: 'Preferences',
           language: 'Language', preferencesSaved: 'Preferences saved.', currentPassword: 'Current password', newPassword: 'New password', passwordHint: 'At least 12 characters',
@@ -529,8 +521,8 @@
           noMembers: 'Noch keine Mitglieder', noMembersLink: 'Mitglied unter Benutzer anlegen',
           assignedAccounts: 'Zugewiesene Konten', noAssignedAccounts: 'Keine Konten', assignmentsNamed: 'Zugewiesene Konten für {name}',
           assignmentsLoading: 'Zugewiesene Konten werden geladen…', noActiveAccounts: 'Keine aktiven Konten verfügbar.', reloadAssignments: 'Neu laden',
-          assignmentsLoadFailed: 'Die zugewiesenen Konten konnten nicht geladen werden. Bitte versuche es erneut.', assignmentsSaveFailed: 'Die Zuweisungen konnten nicht gespeichert werden. Lade sie neu, bevor du es erneut versuchst.',
-          assignmentsConflict: 'Diese Zuweisungen wurden geändert. Lade sie neu, bevor du erneut speicherst.', assignmentUnavailable: 'Ein Konto kann nicht mehr zugewiesen werden. Lade die Kontenliste neu und prüfe deine Auswahl.',
+          assignmentsLoadFailed: 'Die zugewiesenen Konten konnten nicht geladen werden. Bitte versuche es erneut.', assignmentsSaveFailed: 'Das Speichern konnte nicht bestätigt werden. Lade die aktuellen Zuweisungen neu, bevor du entscheidest, ob du erneut speicherst.',
+          assignmentUnavailable: 'Ein Konto kann nicht mehr zugewiesen werden. Lade die Kontenliste neu und prüfe deine Auswahl.',
           assignmentsNotMember: 'Konten können nur Mitgliedern zugewiesen werden. Lade die Benutzerliste neu.', assignmentsSaved: 'Zugewiesene Konten gespeichert.',
           users: 'Benutzer', account: 'Konto', displayName: 'Anzeigename', username: 'Benutzername', role: 'Rolle', status: 'Status', actions: 'Aktionen', changePassword: 'Passwort ändern', preferences: 'Einstellungen',
           language: 'Sprache', preferencesSaved: 'Einstellungen gespeichert.', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', passwordHint: 'Mindestens 12 Zeichen',

@@ -188,6 +188,13 @@ test('manager account creation/editing and member read-only workflow', async ({ 
   await expect(page.locator('#accounts-create-error')).toHaveRole('alert');
   await expect(page.locator('#accounts-create-error')).toHaveText(labels.duplicate);
 
+  const usersBeforeMember = await (await page.request.get('/api/users')).json();
+  const memberBeforeLogin = usersBeforeMember.find((entry: { user: { username: string } }) => entry.user.username === member.username);
+  const accountsBeforeMember = await (await page.request.get('/api/accounts')).json();
+  expect((await csrfWrite(page.request, 'PUT', `/api/users/${memberBeforeLogin.user.id}/account-assignments`, {
+    accountIds: accountsBeforeMember.map((account: { id: string }) => account.id),
+  })).status()).toBe(200);
+
   const context = await browser.newContext({ ...test.info().project.use, baseURL: instance.origin, ignoreHTTPSErrors: true });
 
   try {

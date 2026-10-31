@@ -311,13 +311,8 @@ test('retired accounts pause scheduled allowance wording without changing saved 
 
     await signIn(memberPage, reader, `/accounts/${account.id}`);
 
-    await expect(memberPage.locator('#account-details-allowance-status')).toHaveText('Automatic monthly allowance paused');
-    await expect(memberPage.locator('#account-details-allowance-paused-reason')).toHaveText(reason);
-    await expect(memberPage.locator('#account-details-allowance-paused-reason')).toHaveRole('status');
-    await expect(memberPage.locator('#account-details-allowance-paused-reason')).toHaveClass(/message-info/);
-    expect(await memberPage.locator('#account-details-allowance-paused-reason').evaluate(element => element.previousElementSibling?.id))
-      .toBe('account-details-allowance-title');
-    await expect(memberPage.locator('#account-details-allowance-scheduled')).toHaveText(`Saved allowance setting from ${month}.`);
+    await expect(memberPage.locator('#account-details-error')).toContainText('This account does not exist.');
+    await expect(memberPage.locator('#account-details-allowance-status')).toHaveCount(0);
     await expect(memberPage.locator('#account-details-allowance-edit')).toHaveCount(0);
   } finally {
     await context.close();

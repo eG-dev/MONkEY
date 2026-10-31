@@ -60,7 +60,6 @@
   let data = JSON.parse(localStorage.getItem(DATA_KEY) || 'null') || window.PM_SEED();
   for (const user of data.users) {
     user.accountIds ??= [];
-    user.assignmentsVersion ??= crypto.randomUUID();
   }
   let pageStrings = { en: {}, de: {} };
   let options = {};
@@ -86,7 +85,6 @@
 
       if (activeIds.length !== (user.accountIds ?? []).length) {
         user.accountIds = activeIds;
-        user.assignmentsVersion = crypto.randomUUID();
       }
     }
 

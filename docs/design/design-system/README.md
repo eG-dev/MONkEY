@@ -16,7 +16,7 @@ Review the [surface specimen](specimens/colors-surfaces.html) and
 [overview prototype](../prototypes/accounts-overview/index.html).
 
 POCKET MONkEY manages household pocket-money accounts on a shared instance.
-Managers maintain accounts and record transactions; Members view all accounts.
+Managers maintain accounts and record transactions; Members view assigned active accounts.
 Prioritize clear balances, unambiguous amounts, and simple everyday tasks over
 decoration.
 

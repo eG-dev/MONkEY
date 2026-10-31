@@ -8,6 +8,7 @@ applyTo: "web/**"
 - Follow [application boundaries](../../docs/ADR/ADR-0002-application-boundaries.md) and the [runtime plan](../../plans/migration/01-runtime-stack.md). Keep business rules, authorization decisions, persistence, and jobs in the backend.
 - Follow the evaluated [runtime stack](../../docs/ADR/ADR-0007-application-foundation.md): Angular 22/Node 24, Taiga 5, Transloco/MessageFormat, and server-only `provideUniversal()` providers. Patch versions and commands live in the [development guide](../../docs/development.md).
 - Use Taiga UI consistently and locally packaged Lucide icon fonts/assets; do not depend on a runtime CDN. Use accessible labels/tooltips for icon controls and verify keyboard/mobile behavior.
+- When implementing an approved design, follow the [UI/UX skill's implementation handoff](../skills/ui-ux-design/SKILL.md#implementation-handoff) and the [project design system](../../docs/design/design-system/README.md).
 - Author application/component/global styles in Sass using SCSS syntax. Keep Taiga's vendor Less theme import as Less; new Angular component and inline-style defaults must use SCSS.
 - Keep identity, language, and other SSR state request-scoped. Do not store user state in singletons, prerender private pages, or shared-cache private responses.
 - Forward sessions and CSRF data according to the verified backend contract. Never trust client identity/role headers, expose backend secrets in hydration data, or store authentication tokens in browser local storage.

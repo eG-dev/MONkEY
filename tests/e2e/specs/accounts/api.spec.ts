@@ -4,10 +4,72 @@ import {
   test,
   expect,
   bootstrapManager,
+  credentials,
+  createUser,
   csrfWrite,
   login,
 } from "../../fixtures";
 import { createMember } from "../../helpers/accounts";
+import { picture, upload } from "../../helpers/images";
+
+test("Member assignments restrict account reads through the BFF @api", async ({ page, request, instance }) => {
+  const manager = bootstrapManager(instance);
+  const managerProfile = await login(request, manager);
+  const member = await createUser(request, "assigned-reader", "Assigned Reader", "Member");
+  const memberPath = `/api/users/${member.profile.id}/account-assignments`;
+  const first = await (await csrfWrite(request, "POST", "/api/accounts", { name: "Assigned account" })).json();
+  const second = await (await csrfWrite(request, "POST", "/api/accounts", { name: "Hidden account" })).json();
+  const firstPath = `/api/accounts/${first.id}`;
+  const secondPath = `/api/accounts/${second.id}`;
+
+  await page.goto("/");
+  const image = await picture(page, 4, 4);
+  expect((await upload(request, `${firstPath}/image`, image)).status()).toBe(204);
+  expect((await upload(request, `${secondPath}/image`, image)).status()).toBe(204);
+  expect((await request.get(memberPath)).status()).toBe(200);
+  expect(await (await request.get(memberPath)).json()).toEqual({ accountIds: [] });
+  expect((await request.put(memberPath, { data: { accountIds: [first.id] } })).status()).toBe(400);
+  expect(await (await csrfWrite(request, "PUT", memberPath, { accountIds: [first.id, first.id] })).json())
+    .toEqual({ code: "invalid_account_assignments" });
+  expect(await (await csrfWrite(request, "PUT", memberPath, { accountIds: [randomUUID()] })).json())
+    .toEqual({ code: "not_found" });
+  expect(await (await csrfWrite(request, "PUT", `/api/users/${managerProfile.id}/account-assignments`, { accountIds: [] })).json())
+    .toEqual({ code: "assignment_target_not_member" });
+  expect(await (await request.get(memberPath)).json()).toEqual({ accountIds: [] });
+
+  const memberCredentials = credentials("assigned-reader");
+  await login(request, member.account);
+  expect((await csrfWrite(request, "POST", "/api/auth/password", {
+    currentPassword: member.account.password, newPassword: memberCredentials.password,
+  })).status()).toBe(204);
+  await login(request, memberCredentials);
+  expect(await (await request.get("/api/accounts")).json()).toEqual([]);
+  expect((await request.get(memberPath)).status()).toBe(403);
+  expect((await csrfWrite(request, "PUT", memberPath, { accountIds: [first.id] })).status()).toBe(403);
+
+  await login(request, manager);
+  const assigned = await csrfWrite(request, "PUT", memberPath, { accountIds: [first.id] });
+  expect(assigned.status()).toBe(200);
+  expect(await assigned.json()).toEqual({ accountIds: [first.id] });
+  await login(request, memberCredentials);
+  expect((await (await request.get("/api/accounts")).json()).map((account: { id: string }) => account.id)).toEqual([first.id]);
+
+  for (const suffix of ["", "/image", "/transactions", "/allowance"]) {
+    expect((await request.get(`${firstPath}${suffix}`)).status()).toBe(200);
+    const hidden = await request.get(`${secondPath}${suffix}`);
+    const missing = await request.get(`/api/accounts/${randomUUID()}${suffix}`);
+    expect(hidden.status()).toBe(404);
+    expect(await hidden.json()).toEqual({ code: "not_found" });
+    expect(missing.status()).toBe(404);
+    expect(await missing.json()).toEqual({ code: "not_found" });
+  }
+
+  await login(request, manager);
+  expect((await csrfWrite(request, "PUT", memberPath, { accountIds: [] })).status()).toBe(200);
+  await login(request, memberCredentials);
+  expect(await (await request.get("/api/accounts")).json()).toEqual([]);
+  expect((await request.get(firstPath)).status()).toBe(404);
+});
 
 test.use({ ignoreHTTPSErrors: true });
 
@@ -109,10 +171,8 @@ test("shared-account APIs enforce roles, CSRF, names and missing-account errors 
 
   await createMember(request);
 
-  expect((await request.get("/api/accounts")).status()).toBe(200);
-  expect(
-    await (await request.get(`/api/accounts/${account.id}`)).json(),
-  ).toEqual(account);
+  expect(await (await request.get("/api/accounts")).json()).toEqual([]);
+  expect((await request.get(`/api/accounts/${account.id}`)).status()).toBe(404);
   expect(
     (
       await csrfWrite(request, "POST", "/api/accounts", {
@@ -134,7 +194,7 @@ test("shared-account APIs enforce roles, CSRF, names and missing-account errors 
   ).toBe(403);
 });
 
-test("account retirement preserves shared reads and restricts lifecycle writes to managers @api", async ({
+test("account retirement hides Member reads and restricts lifecycle writes to managers @api", async ({
   request,
   instance,
 }) => {
@@ -214,9 +274,9 @@ test("account retirement preserves shared reads and restricts lifecycle writes t
 
   await createMember(request);
   expect((await request.get("/api/accounts/archived")).status()).toBe(403);
-  expect((await request.get(path)).status()).toBe(200);
-  expect((await request.get(`${path}/transactions`)).status()).toBe(200);
-  expect((await (await request.get(`${path}/allowance`)).json()).scheduled).toEqual(allowanceBeforeRetirement.scheduled);
+  expect((await request.get(path)).status()).toBe(404);
+  expect((await request.get(`${path}/transactions`)).status()).toBe(404);
+  expect((await request.get(`${path}/allowance`)).status()).toBe(404);
   expect((await csrfWrite(request, "DELETE", path, {})).status()).toBe(403);
   expect(
     (await csrfWrite(request, "POST", `${path}/reactivate`, {})).status(),

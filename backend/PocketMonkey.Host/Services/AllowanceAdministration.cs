@@ -22,9 +22,9 @@ public sealed class AllowanceAdministration
     }
 
     public async Task<AllowanceResponse?> FindAsync(string accountId, CancellationToken cancellationToken,
-        bool includeExecutionDetails = false)
+        bool includeExecutionDetails = false, string? memberId = null)
     {
-        if (!await database.Accounts.AnyAsync(account => account.Id == accountId, cancellationToken))
+        if (!await AccountReadAccess.Accounts(database, memberId).AnyAsync(account => account.Id == accountId, cancellationToken))
         {
             return null;
         }

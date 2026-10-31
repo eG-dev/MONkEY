@@ -29,7 +29,7 @@
 ## Replacement Invariants
 
 - The backend owns authorization, business rules, persistence, and jobs; Angular/Web-BFF owns rendering and transport. UI guards are not security enforcement.
-- Use a shared instance with Manager and Member roles, not tenancy. Members read all accounts; managers perform business writes. Personal preferences do not grant business-write access. Do not add email or Azure data import.
+- Use a shared instance with Manager and Member roles, not tenancy. Members read only assigned active accounts; Managers read all accounts and perform business writes. Personal preferences do not grant business-write access. Do not add email or Azure data import.
 - Financial writes must be atomic, use exact monetary arithmetic, and be safe under retries/concurrency. Jobs must be idempotent. Do not silently rewrite financial history.
 - Keep SSR identity and language request-scoped. Never expose server secrets or privately cache one user's response for another user.
 - Deliver German and English with every UI feature and bundle runtime assets locally. Keep language, currency, UTC timestamps, and the business timezone configured by `TZ` separate.

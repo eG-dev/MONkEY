@@ -24,9 +24,96 @@ scope; the pending design review is in
 Current commands and release gates are in [testing](testing.md) and the
 [finish-line plan](README.md).
 
+## Member Account Assignment — Backend/Data Proposal R10
+
+**Approved, 2026-10-31:** "yes, I approve that". The user requested: "we don't need to
+implement prevention from parallel assignments by different managers. Last one
+wins, keep it simple". This revises the concurrency portion of the approved R9
+below; its other requirements remain unchanged. Prototype approval remains a
+separate prerequisite for Angular implementation.
+
+**Implementation in progress:** Storage, Manager API, lifecycle cleanup, BFF
+forwarding and backend read filtering are implemented. The revised prototype R9
+is awaiting approval; the assignment UI and Member empty state are not implemented.
+Do not deploy this partial state: existing Members start with no assignments,
+and Managers cannot yet manage them through the application UI.
+
+### Purpose and persistence
+
+- A Manager saves the complete set of assigned active accounts. Replacing the
+  set remains atomic: validate the current target role and every selected
+  account inside the serialized write transaction, then replace the set or make
+  no change. Among valid saves for the same Member, the last transaction to
+  commit wins, even if its editor was opened before another save. No stale-edit
+  conflict or assignment version is used.
+- A delayed retry after an uncertain response can overwrite another Manager's
+  later edit. Do not retry automatically; a Manager can reload the current
+  assignments before deciding whether to save again. Financial writes, their
+  concurrency/idempotency guarantees, and unrelated user/account operations
+  are unchanged.
+- The existing
+  [`PocketMonkey.Storage.Entities.MemberAccountAssignment`](../../backend/PocketMonkey.Storage/Entities/MemberAccountAssignment.cs)
+  and its mapping in [`PocketMonkey.Storage.PocketMonkeyDbContext`](../../backend/PocketMonkey.Storage/PocketMonkeyDbContext.cs)
+  retain R9's composite key, account-leading index and foreign keys. Remove the
+  partially implemented `AccountAssignmentsVersion` property from
+  [`PocketMonkey.Storage.Entities.ApplicationUser`](../../backend/PocketMonkey.Storage/Entities/ApplicationUser.cs)
+  and its context mapping: no per-user assignment concurrency metadata is needed.
+- The uncommitted generated
+  [assignment migration](../../backend/PocketMonkey.Storage/Migrations/20261031161242_MemberAccountAssignments.cs),
+  its designer and the
+  [model snapshot](../../backend/PocketMonkey.Storage/Migrations/PocketMonkeyDbContextModelSnapshot.cs)
+  were revised before shipping to remove the version column and initialization.
+  The migration was untracked, absent from Git history and not found in visible
+  workspace databases or Docker volumes. Existing Members
+  still start with no assignments on upgrade; no existing assignments or user
+  data may be silently discarded.
+- Retirement and deletion still remove assignments atomically; neither advances
+  a version. A save cannot reassign a retired/deleted account or target a user
+  who is no longer a Member. Serialize lifecycle/role validation with the write
+  so these changes cannot race a commit. Role/disablement retention and all
+  Member visibility rules remain as in R9.
+
+### API, callers and design
+
+- Proposed `PocketMonkey.Host.Services.MemberAccountAssignments` in
+  `backend/PocketMonkey.Host/Services/MemberAccountAssignments.cs` replaces
+  whole sets transactionally. Existing
+  [`PocketMonkey.Host.Endpoints.UserEndpoints`](../../backend/PocketMonkey.Host/Endpoints/UserEndpoints.cs)
+  exposes Manager-only `GET` and `PUT /api/users/{id}/account-assignments`.
+  Proposed `PocketMonkey.Host.Contracts.Users.MemberAccountAssignmentsResponse`
+  and `UpdateMemberAccountAssignmentsRequest` contain only
+  `{ accountIds: string[] }`; return the resulting consistently sorted set.
+  The existing [`UsersService`](../../web/src/app/services/users/users.service.ts)
+  and assignment UI consume the revised contract.
+- R9's authentication, antiforgery, target/account validation, and error
+  mappings remain, except that `version` is absent, malformed/missing versions
+  are not validated, and `account_assignments_conflict` is removed. Retired
+  accounts and non-Member targets still fail without changing assignments.
+- [ADR-0003](../../docs/ADR/ADR-0003-shared-instance-access.md) and
+  [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md) were updated for the
+  approved last-committed replacement and atomic lifecycle validation. R9 remains
+  historical; its approved wording is preserved below.
+- The [prototype R9 draft](../../docs/design/prototypes/README.md#member-account-assignment-r9-2026-10-31)
+  removes R8's stale-conflict flow and adapts failure/retry behavior. Separate
+  approval is required before Angular implementation. Other approved UI layout
+  and visibility rules remain unchanged.
+
+### Verification after approval
+
+- Real SQLite/API checks cover two Managers saving different full sets in both
+  commit orders, the later valid save winning, atomic rollback on invalid IDs,
+  and serialized role changes and account retirement/deletion. Verify an
+  unchanged save and an uncertain-response retry do not create duplicate pairs;
+  a later explicit retry may replace an intervening save.
+- Verify populated-schema upgrade, foreign keys, retained user data, empty
+  initial assignments, restart and migration history; follow the existing
+  recovery/rollback precautions. Browser checks cover assignment, removal,
+  failure with retained input, reload, disabled Members and Member visibility.
+
 ## Member Account Assignment — Backend/Data Proposal R9
 
-**Backend/Data Proposal R9 approved on 2026-10-30; not implemented.** This change
+**Backend/Data Proposal R9 approved on 2026-10-30; partially scaffolded.** Its
+concurrency design is superseded by the approved R10 revision above. This change
 intentionally differs from the implemented scope and acceptance results above.
 The user explicitly approved the whole current concept, including the R9 data,
 concurrency, lifecycle and API/error contracts. Backend implementation is

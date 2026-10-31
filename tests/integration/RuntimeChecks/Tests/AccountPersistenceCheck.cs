@@ -28,6 +28,8 @@ internal static class AccountPersistenceCheck
             var administration = new AccountAdministration(database, settings, clock);
             var ledger = new LedgerAdministration(database, settings, clock);
             var immediate = (await administration.CreateAsync(new CreateAccountRequest { Name = "Immediate" }, "manager", default)).Account!;
+            database.MemberAccountAssignments.Add(new MemberAccountAssignment { UserId = "manager", AccountId = immediate.Id });
+            await database.SaveChangesAsync();
             Require((await ledger.PostOpeningAsync(immediate.Id, new OpeningBalanceRequest
             {
                 Amount = "0.00", IdempotencyKey = Guid.NewGuid().ToString()
@@ -35,6 +37,7 @@ internal static class AccountPersistenceCheck
             var immediateResult = await administration.DeleteAsync(immediate.Id, "manager", default);
             Require(immediateResult.Error is null && immediateResult.PurgeAtUtc is null);
             Require(await administration.FindAsync(immediate.Id, default) is null);
+            Require(!await database.MemberAccountAssignments.AnyAsync(assignment => assignment.AccountId == immediate.Id));
 
             var account = (await administration.CreateAsync(new CreateAccountRequest { Name = "Retired" }, "manager", default)).Account!;
             Require((await ledger.PostOpeningAsync(account.Id, new OpeningBalanceRequest
@@ -59,10 +62,27 @@ internal static class AccountPersistenceCheck
             });
             var entity = await database.Accounts.SingleAsync(item => item.Id == account.Id);
             entity.ImageKey = "0123456789abcdef0123456789abcdef.png";
+            database.MemberAccountAssignments.Add(new MemberAccountAssignment { UserId = "manager", AccountId = account.Id });
             await database.SaveChangesAsync();
 
+            await database.Database.ExecuteSqlRawAsync("CREATE TRIGGER RejectAccountRetirement BEFORE UPDATE OF RetiredAtUtc ON Accounts WHEN NEW.RetiredAtUtc IS NOT NULL BEGIN SELECT RAISE(ABORT, 'fixture failure'); END;");
+
+            try
+            {
+                await administration.DeleteAsync(account.Id, "manager", default);
+                throw new InvalidOperationException("Account retirement should have failed.");
+            }
+            catch (DbUpdateException)
+            {
+            }
+
+            database.ChangeTracker.Clear();
+            Require(await database.MemberAccountAssignments.AnyAsync(assignment => assignment.AccountId == account.Id));
+            Require(await database.Accounts.AnyAsync(item => item.Id == account.Id && item.RetiredAtUtc == null));
+            await database.Database.ExecuteSqlRawAsync("DROP TRIGGER RejectAccountRetirement;");
             var retired = await administration.DeleteAsync(account.Id, "manager", default);
             Require(retired.Error is null && retired.PurgeAtUtc == clock.Now.AddDays(30));
+            Require(!await database.MemberAccountAssignments.AnyAsync(assignment => assignment.AccountId == account.Id));
             Require((await administration.DeleteAsync(account.Id, "manager", default)).PurgeAtUtc == retired.PurgeAtUtc);
             Require((await administration.ListAsync(default)).All(item => item.Id != account.Id));
             Require((await administration.ListRetiredAsync(default)).Single().PurgeAtUtc == retired.PurgeAtUtc);

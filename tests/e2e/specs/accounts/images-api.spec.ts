@@ -77,6 +77,7 @@ test('private account images validate content, limits, access and persistence @a
   expect(await (await request.get(path)).body()).toEqual(lastImage);
 
   const member = await createUser(request, 'image-reader', 'Image Reader', 'Member');
+  expect((await csrfWrite(request, 'PUT', `/api/users/${member.profile.id}/account-assignments`, { accountIds: [account.id] })).status()).toBe(200);
 
   await login(request, member.account);
 

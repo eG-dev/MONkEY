@@ -21,9 +21,9 @@ public sealed class AccountAdministration
         this.clock = clock ?? TimeProvider.System;
     }
 
-    public async Task<List<AccountResponse>> ListAsync(CancellationToken cancellationToken)
+    public async Task<List<AccountResponse>> ListAsync(CancellationToken cancellationToken, string? memberId = null)
     {
-        var accounts = await database.Accounts
+        var accounts = await AccountReadAccess.Accounts(database, memberId)
             .AsNoTracking()
             .Where(account => account.RetiredAtUtc == null)
             .Include(account => account.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Opening))
@@ -46,9 +46,9 @@ public sealed class AccountAdministration
         return accounts.Select(Describe).ToList();
     }
 
-    public async Task<AccountResponse?> FindAsync(string id, CancellationToken cancellationToken)
+    public async Task<AccountResponse?> FindAsync(string id, CancellationToken cancellationToken, string? memberId = null)
     {
-        var account = await database.Accounts
+        var account = await AccountReadAccess.Accounts(database, memberId)
             .AsNoTracking()
             .Include(account => account.LedgerEntries.Where(entry => entry.Source == LedgerEntrySource.Opening))
             .Where(account => account.Id == id)
@@ -165,6 +165,9 @@ public sealed class AccountAdministration
         }
 
         var now = clock.GetUtcNow().ToUniversalTime();
+        await database.MemberAccountAssignments
+            .Where(assignment => assignment.AccountId == id)
+            .ExecuteDeleteAsync(cancellationToken);
         account.RetiredAtUtc = now;
         database.AuditEvents.Add(new AuditEvent
         {
@@ -290,6 +293,9 @@ public sealed class AccountAdministration
     private async Task PurgeAsync(Account account, CancellationToken cancellationToken)
     {
         var accountId = account.Id;
+        await database.MemberAccountAssignments
+            .Where(assignment => assignment.AccountId == accountId)
+            .ExecuteDeleteAsync(cancellationToken);
         var removedEntries = await database.LedgerEntries.Where(entry => entry.AccountId == accountId)
             .ExecuteDeleteAsync(cancellationToken);
         await database.AllowanceExecutions.Where(execution => execution.AccountId == accountId).ExecuteDeleteAsync(cancellationToken);

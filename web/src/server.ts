@@ -101,6 +101,7 @@ app.use('/api', (request, response) => {
   const path = request.originalUrl.split('?')[0];
   const allowed = ['GET', 'HEAD'].includes(request.method)
     ? ['/api/auth/csrf', '/api/auth/me', '/api/users', '/api/accounts'].includes(path) ||
+      /^\/api\/users\/[\w-]+\/account-assignments$/.test(path) ||
       /^\/api\/accounts\/[\w-]+(?:\/(?:transactions|image|allowance))?$/.test(path)
     : request.method === 'POST'
       ? ['/api/auth/login', '/api/auth/logout', '/api/auth/password', '/api/users', '/api/accounts'].includes(path) ||
@@ -108,6 +109,7 @@ app.use('/api', (request, response) => {
         /^\/api\/accounts\/[\w-]+\/(?:opening|transactions|reactivate)$/.test(path)
       : request.method === 'PUT'
         ? (['/api/auth/language', '/api/auth/theme'].includes(path) || /^\/api\/(?:users|accounts)\/[\w-]+$/.test(path) ||
+          /^\/api\/users\/[\w-]+\/account-assignments$/.test(path) ||
           /^\/api\/accounts\/[\w-]+\/(?:image|allowance)$/.test(path))
         : request.method === 'DELETE' && /^\/api\/accounts\/[\w-]+(?:\/image)?$/.test(path);
 
