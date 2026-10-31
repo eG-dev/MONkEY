@@ -19,6 +19,71 @@ and [repository profile](../../.github/skills/ui-ux-design/references/pocket-mon
 The [ADR](../ADR/ADR-0013-wireframes-and-click-prototypes.md) owns decisions and
 approval policy; this index records artifact status and review evidence.
 
+## Wireframe Approval (2026-10-31)
+
+**All 12 wireframes approved at R3/annotation revisions, 2026-10-31.** The user explicitly approved
+the annotation revisions R1–R6 below, the Helvetica font change, and Member
+Account Assignment R3 (Account assignments, Users and Profile): "I approve all
+the adjustments we did on the wireframes due to improvements in the skill.
+Additionally. the account to member assignment feature and its wireframes are
+unapproved to my knowledge. I approve them too". The approval covers the current
+sources, including the user's note arrangement; earlier approvals remain history.
+
+Cleanup: all review-marked notes were restored to yellow with black text and
+the obsolete "(R5 draft)"/"(R6)" page-name suffixes were removed from the About
+sources. Geometry, text and connectors are unchanged. All 12 PNG previews were
+re-exported from the cleaned sources and visually inspected. The R1–R6 and R3
+sections below are kept as history; their "not approved" status is superseded.
+The Member Account Assignment click prototype still needs explicit approval
+before Angular work.
+
+**Member Account Assignment R3 click prototype draft, 2026-10-31; not approved.**
+Administration now has the Account assignments tab and Users has no assignment
+column. See the [prototype record](prototypes/README.md#member-account-assignment-r3-2026-10-31)
+for states and the standalone/integrated verification matrix. Explicit prototype
+approval is required before Angular implementation.
+
+## Member Account Assignment R4 (2026-10-31)
+
+**Account assignments wireframe R4 approved, 2026-10-31; click prototype R4 draft, not approved.**
+The user approved the current, user-arranged source with "approved", including
+the split list, duplicate-name and editor notes. R3 approval remains history.
+Account assignments uses display names without a Username column; only duplicate
+Member names show a secondary username, also included in edit labels and dialog
+titles. Users and Profile sources are unchanged. Removing the column is a
+structural change; the earlier direct-prototype classification was incorrect.
+
+The [R4 assignment source](wireframes/administration/administration-account-assignments-wireframe.drawio)
+removes the Username header and cells and redistributes their width to Display
+name and Assigned accounts, preserving the table boundary and action positions.
+The list note covers list loading/empty/error states (heading and tabs remain
+available) and compact phone items. The user attached it to the viewport and
+placed it below the separate duplicate-name note, which uses
+`[edge-case: duplicate names]` and targets the Display name header. Both left
+notes now have the user's 500px width. The editor note covers active-account
+selection and reachable phone dialog actions; the existing 480px editor and
+visibility note widths are retained. Approved geometry, text and routing are
+preserved; only the three blue review notes were reset to normal yellow with
+black text. All arrows start at fixed note-edge centers.
+
+Source checks passed: well-formed XML, unique IDs, four contiguous columns per
+row, valid connector references and zero source offsets, 1440px dashed viewport
+first, Helvetica notes outside the viewport without note overlap, correct
+approved viewport/name/editor annotation targets and normal note colors.
+The [PNG preview](wireframes/administration/administration-account-assignments-wireframe.png)
+was exported from the cleaned approved R4 source with draw.io and visually
+inspected: all notes are readable, correctly attached and outside the viewport.
+
+The existing R4 prototype already matches the approved structure and note
+requirements, so reconciliation required no code change. Sixteen ordinary
+Chromium cases passed across standalone/integrated navigation, English/German,
+light/dark and 360/1440px: four columns, duplicate names including disabled
+Members, dialog identity and reachable actions, focus return, loading/error/empty
+states retaining heading/tabs, Users unchanged, Member fallback and no page
+errors. Prototype approval remains separate and pending. See the
+[R4 prototype record](prototypes/README.md#member-account-assignment-r4-2026-10-31)
+for verification evidence; production code is unchanged.
+
 ## Annotation Clarity R1 (2026-10-30)
 
 **All 12 wireframes in the reference table are Annotation Clarity R1 drafts; not approved.** The annotations were shortened without moving notes, controls or connectors. Blue notes identify the changes. The earlier status and approvals in the table are retained as history, not approval of R1. The Account assignments, Users and Profile diagrams also retain their pending Member Account Assignment R3 review. The prior notes below preserve detailed design context for prototype review, including the user-edited R3 sources. They are historical, not new decisions: current ADRs and later approved designs take precedence. In particular, Member visibility is limited to assigned active accounts and retired details are Manager-only. The prototypes have not been changed. Note arrangement and source review are pending; export follows approval.
@@ -1218,18 +1283,18 @@ record approval history.
 
 | Reference                  | Files                                                                                                                                                              | Status                                                                                                                                                                                                                                          | Click prototype                                                                                                                                                                                                                |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| App shell                  | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png)     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and Administration-last correction approval 2026-10-17 retained as history; user-edited icon placeholders/annotation arrangement preserved                  | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history   |
-| Accounts overview          | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png)     | Allowance Presentation R1 approved 2026-10-24; earlier 2026-10-10 approval retained as history                                                                                                                                                  | [Overview](prototypes/accounts-overview/index.html), Member Account Assignment R2 draft 2026-10-30; earlier approvals retained as history |
-| Accounts                   | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png)                                         | Account Deletion R1 approved 2026-10-28; earlier approvals retained as history | [Accounts](prototypes/accounts/index.html), Account Deletion R2 shared state approved 2026-10-28; earlier approvals retained as history |
-| Account details            | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png)             | Account Deletion R2 approved 2026-10-28; R1 retained as history | [Account details](prototypes/account-details/index.html), Member Account Assignment R2 scoped reads draft 2026-10-30; earlier approvals retained as history |
-| Administration: Profile    | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Member Account Assignment R3 navigation draft 2026-10-30; note arrangement pending; earlier approvals retained as history | [Administration](prototypes/administration/index.html), unchanged for R3; Password Dialog R1 prototype approved 2026-10-24 |
-| Administration: Users      | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png)     | Member Account Assignment R3 draft 2026-10-30; assignments moved to separate tab; note arrangement pending; R2 approval retained as history | [Administration](prototypes/administration/index.html), Member Account Assignment R2 draft, not yet updated for R3; Password Sampling R1 draft and earlier approvals retained as history |
-| Administration: Account assignments | [draw.io source](wireframes/administration/administration-account-assignments-wireframe.drawio), [PNG preview](wireframes/administration/administration-account-assignments-wireframe.png) | Member Account Assignment R3 draft 2026-10-30; note arrangement pending | Not started; awaits explicit R3 wireframe approval |
-| Login                      | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png)                                                     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history                                                                                                | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history                                                                                             |
-| About: Overview            | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png)                                                     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview                                                                             | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19                                                                                                                                                        |
-| About: Project license     | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png)                                     | English-only wording explicitly approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged                                                                           | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19                                                                                                                                                        |
-| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png)                                     | R6 package/document hierarchy explicitly approved 2026-10-24 with "approved"; user arrangement preserved, review markers cleared and preview inspected; prior wording/source approval 2026-10-21 and R5 approval 2026-10-19 retained as history | [About](prototypes/about/index.html), R6 explicitly approved 2026-10-24 with "prototype approved, implement", after standalone and integrated verification; earlier R5 and Shared Notice Documents R1 approvals remain history |
-| About: Legal information   | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png)                                         | English-only wording explicitly approved 2026-10-21; earlier approvals retained as history; assignment privacy copy approved separately 2026-10-30, not blanket legal-copy approval | [About](prototypes/about/index.html), Member Account Assignment R2 privacy presentation draft 2026-10-30; earlier approvals retained as history |
+| App shell                  | [draw.io source](wireframes/application-shell/application-shell-wireframe.drawio), [PNG preview](wireframes/application-shell/application-shell-wireframe.png)     | Annotation revision approved 2026-10-31; English-only wording approved 2026-10-21; earlier all-wireframe approval and Administration-last correction approval 2026-10-17 retained as history; user-edited icon placeholders/annotation arrangement preserved | [Shell](prototypes/application-shell/index.html), revised Administration-last menu prototype explicitly approved 2026-10-17 ("Approve current shell prototype and implement Angular"); earlier approvals retained as history   |
+| Accounts overview          | [draw.io source](wireframes/accounts-overview/accounts-overview-wireframe.drawio), [PNG preview](wireframes/accounts-overview/accounts-overview-wireframe.png)     | Annotation revision approved 2026-10-31; Allowance Presentation R1 approved 2026-10-24; earlier 2026-10-10 approval retained as history | [Overview](prototypes/accounts-overview/index.html), Member Account Assignment R2 draft 2026-10-30; earlier approvals retained as history |
+| Accounts                   | [draw.io source](wireframes/accounts/accounts-wireframe.drawio), [PNG preview](wireframes/accounts/accounts-wireframe.png)                                         | Annotation revision approved 2026-10-31; Account Deletion R1 approved 2026-10-28; earlier approvals retained as history | [Accounts](prototypes/accounts/index.html), Account Deletion R2 shared state approved 2026-10-28; earlier approvals retained as history |
+| Account details            | [draw.io source](wireframes/account-details/account-details-wireframe.drawio), [PNG preview](wireframes/account-details/account-details-wireframe.png)             | Annotation revision approved 2026-10-31; Account Deletion R2 approved 2026-10-28; R1 retained as history | [Account details](prototypes/account-details/index.html), Member Account Assignment R2 scoped reads draft 2026-10-30; earlier approvals retained as history |
+| Administration: Profile    | [draw.io source](wireframes/administration/administration-profile-wireframe.drawio), [PNG preview](wireframes/administration/administration-profile-wireframe.png) | Member Account Assignment R3 navigation and annotation revision approved 2026-10-31; earlier approvals retained as history | [Administration](prototypes/administration/index.html), Account assignments tab added for Managers in R3 draft 2026-10-31; Password Dialog R1 prototype approved 2026-10-24 |
+| Administration: Users      | [draw.io source](wireframes/administration/administration-users-wireframe.drawio), [PNG preview](wireframes/administration/administration-users-wireframe.png)     | Member Account Assignment R3 approved 2026-10-31; assignments moved to separate tab; R2 approval retained as history | [Administration](prototypes/administration/index.html), Member Account Assignment R3 draft 2026-10-31 (assignment column removed); Password Sampling R1 draft and earlier approvals retained as history |
+| Administration: Account assignments | [draw.io source](wireframes/administration/administration-account-assignments-wireframe.drawio), [PNG preview](wireframes/administration/administration-account-assignments-wireframe.png) | Member Account Assignment R4 approved 2026-10-31 ("approved"); user arrangement preserved, notes cleaned, PNG exported and inspected; R3 approval retained as history | [Administration](prototypes/administration/index.html), Member Account Assignment R4 draft 2026-10-31; reconciled and verified against approved R4, prototype approval pending |
+| Login                      | [draw.io source](wireframes/login/login-wireframe.drawio), [PNG preview](wireframes/login/login-wireframe.png)                                                     | Annotation revision approved 2026-10-31; English-only wording approved 2026-10-21; earlier all-wireframe approval and icon-free footer approval 2026-10-17 retained as history | [Login](prototypes/login/index.html), centring correction draft 2026-10-19; prior shared About/footer approval retained as history                                                                                             |
+| About: Overview            | [draw.io source](wireframes/about/about-wireframe.drawio), [PNG preview](wireframes/about/about-wireframe.png)                                                     | Annotation revision approved 2026-10-31; English-only wording approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; project license remains outside Overview | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19                                                                                                                                                        |
+| About: Project license     | [draw.io source](wireframes/about/about-license-wireframe.drawio), [PNG preview](wireframes/about/about-license-wireframe.png)                                     | Annotation revision approved 2026-10-31; English-only wording approved 2026-10-21; earlier all-wireframe and R5 approval 2026-10-19 retained as history; full AGPL text without expansion unchanged | [About](prototypes/about/index.html), R5 explicitly approved 2026-10-19                                                                                                                                                        |
+| About: Third-party notices | [draw.io source](wireframes/about/about-notices-wireframe.drawio), [PNG preview](wireframes/about/about-notices-wireframe.png)                                     | Annotation revision approved 2026-10-31; R6 package/document hierarchy approved 2026-10-24; prior wording/source approval 2026-10-21 and R5 approval 2026-10-19 retained as history | [About](prototypes/about/index.html), R6 explicitly approved 2026-10-24 with "prototype approved, implement", after standalone and integrated verification; earlier R5 and Shared Notice Documents R1 approvals remain history |
+| About: Legal information   | [draw.io source](wireframes/about/about-legal-wireframe.drawio), [PNG preview](wireframes/about/about-legal-wireframe.png)                                         | Annotation revision approved 2026-10-31; English-only wording approved 2026-10-21; earlier approvals retained as history; assignment privacy copy approved separately 2026-10-30, not blanket legal-copy approval | [About](prototypes/about/index.html), Member Account Assignment R2 privacy presentation draft 2026-10-30; earlier approvals retained as history |
 
 Prototype structure, review settings, and fictional sign-in data are described in
 the [prototype notes](prototypes/README.md).

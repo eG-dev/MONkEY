@@ -17,15 +17,19 @@
     .status-disabled, .status-mustChange { color: var(--text-secondary); }
     .users-table { table-layout: fixed; }
     .users-table th, .users-table td { overflow-wrap: anywhere; white-space: normal; }
-    .users-table th:nth-child(1) { width: 18%; }
-    .users-table th:nth-child(2) { width: 13%; }
-    .users-table th:nth-child(3) { width: 12%; }
-    .users-table th:nth-child(4) { width: 17%; }
-    .users-table th:nth-child(5) { width: 27%; }
-    .users-table th:nth-child(6) { width: 13%; }
-    .assigned-summary { display: flex; align-items: center; gap: var(--space-2); }
-    .assigned-summary > span { flex: 1; min-width: 0; }
-    .assigned-summary .icon-button { flex-shrink: 0; }
+    .users-table th:nth-child(1) { width: 26%; }
+    .users-table th:nth-child(2) { width: 18%; }
+    .users-table th:nth-child(3) { width: 16%; }
+    .users-table th:nth-child(4) { width: 26%; }
+    .users-table th:nth-child(5) { width: 14%; }
+    .assignments-table { table-layout: fixed; }
+    .assignments-table th, .assignments-table td { overflow-wrap: anywhere; white-space: normal; }
+    .assignments-table th:nth-child(1) { width: 28%; }
+    .assignments-table th:nth-child(2) { width: 22%; }
+    .assignments-table th:nth-child(3) { width: 40%; }
+    .assignments-table th:nth-child(4) { width: 10%; }
+    .assignment-username { display: block; font: var(--type-caption); color: var(--text-secondary); }
+    .assignments-table td.actions-cell { text-align: right; }
     .assignment-mobile-label { display: none; }
     .assignment-dialog[open] { display: flex; flex-direction: column; }
     .assignment-dialog .dialog-header, .assignment-dialog .dialog-footer { flex-shrink: 0; }
@@ -55,7 +59,7 @@
       .table td.username, .table td.role, .table td.status-cell { grid-column: 1; font: var(--type-caption); color: var(--text-secondary); }
       .table td.actions-cell { grid-column: 2; grid-row: 1 / 5; align-self: center; }
       .table .row-actions { flex-direction: column; align-items: flex-end; }
-      .table td.assignments-cell { grid-column: 1 / -1; padding-top: var(--space-3); }
+      .table td.assignments-cell { grid-column: 1; padding-top: var(--space-2); }
       .assignment-mobile-label { display: block; font: var(--type-caption); color: var(--text-secondary); }
     }
   </style>
@@ -71,14 +75,17 @@
     const isLastManager = user => user.role === 'Manager' && user.status !== 'disabled' && activeManagers().length === 1;
 
     function tab() {
-      return location.hash === '#users' && PM.isManager() ? 'users' : 'profile';
+      const requested = location.hash.slice(1);
+      return PM.isManager() && ['users', 'assignments'].includes(requested) ? requested : 'profile';
     }
 
     function render() {
       const current = tab();
-      const tabs = `<nav class="tabs" aria-label="${PM.esc(PM.t('administration'))}"><a href="#profile" ${current === 'profile' ? 'aria-current="page"' : ''}>${PM.esc(PM.t('profile'))}</a>${PM.isManager() ? `<a href="#users" ${current === 'users' ? 'aria-current="page"' : ''}>${PM.esc(PM.t('users'))}</a>` : ''}</nav>`;
-      view.innerHTML = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('administration'))}</h1></div>${tabs}${current === 'users' ? users() : profile()}`;
-      current === 'users' ? bindUsers() : bindProfile();
+      const link = (id, key) => `<a href="#${id}" ${current === id ? 'aria-current="page"' : ''}>${PM.esc(PM.t(key))}</a>`;
+      const tabs = `<nav class="tabs" aria-label="${PM.esc(PM.t('administration'))}">${link('profile', 'profile')}${PM.isManager() ? `${link('users', 'users')}${link('assignments', 'assignedAccountsTab')}` : ''}</nav>`;
+      const content = { profile, users, assignments }[current]();
+      view.innerHTML = `<div class="page-header"><h1 class="page-title">${PM.esc(PM.t('administration'))}</h1></div>${tabs}${content}`;
+      ({ profile: bindProfile, users: bindUsers, assignments: bindAssignments })[current]();
     }
 
     // ---------- Profile ----------
@@ -157,11 +164,48 @@
       const rows = [...PM.data.users].sort((a, b) => a.displayName.localeCompare(b.displayName)).map(user => `<tr>
         <td class="user-name">${PM.esc(user.displayName)}</td><td class="username">${PM.esc(user.username)}</td><td class="role">${PM.esc(PM.t(user.role))}</td>
         <td class="status-cell status-${user.status}">${PM.esc(statusLabel(user))}</td>
-        <td class="assignments-cell"><span class="assignment-mobile-label">${PM.esc(PM.t('assignedAccounts'))}</span><div class="assigned-summary"><span>${PM.esc(user.role === 'Manager' ? PM.t('allAccounts') : assignedAccountNames(user))}</span>${user.role === 'Member' ? `<button class="icon-button" type="button" data-assignments="${PM.esc(user.id)}" aria-label="${PM.esc(PM.t('assignmentsNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('assignmentsNamed', { name: user.displayName }))}">${PM.icon('pencil')}</button>` : ''}</div></td>
         <td class="actions-cell"><span class="row-actions"><button class="icon-button" type="button" data-edit="${user.id}" aria-label="${PM.esc(PM.t('editNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('editNamed', { name: user.displayName }))}">${PM.icon('pencil')}</button><button class="icon-button" type="button" data-reset="${user.id}" aria-label="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}" title="${PM.esc(PM.t('resetNamed', { name: user.displayName }))}">${PM.icon('key')}</button></span></td>
       </tr>`).join('');
       return `<div class="page-header"><span></span><button class="button button-primary" type="button" id="create-user">${PM.icon('plus')}${PM.esc(PM.t('createUser'))}</button></div>
-        <div class="table-wrap"><table class="table users-table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('username'))}</th><th>${PM.esc(PM.t('role'))}</th><th>${PM.esc(PM.t('status'))}</th><th>${PM.esc(PM.t('assignedAccounts'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        <div class="table-wrap"><table class="table users-table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('username'))}</th><th>${PM.esc(PM.t('role'))}</th><th>${PM.esc(PM.t('status'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    // ---------- Account assignments ----------
+    function assignments() {
+      const state = PM.prefs.viewState;
+
+      if (state === 'loading') {
+        return `<div class="skeleton" style="height:240px" aria-busy="true" aria-label="${PM.esc(PM.t('membersLoading'))}"></div>`;
+      }
+
+      if (state === 'error') {
+        return `<div class="message message-error" role="alert">${PM.icon('error')}<div class="message-body"><span>${PM.esc(PM.t('membersLoadFailed'))}</span><div><button class="button button-secondary" type="button" id="retry">${PM.esc(PM.t('tryAgain'))}</button></div></div></div>`;
+      }
+
+      const members = state === 'no-members' ? [] : PM.data.users.filter(user => user.role === 'Member').sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+      if (!members.length) {
+        return `<div class="empty"><strong>${PM.esc(PM.t('noMembers'))}</strong><a href="#users">${PM.esc(PM.t('noMembersLink'))}</a></div>`;
+      }
+
+      const rows = members.map(user => `<tr>
+        <td class="user-name">${PM.esc(user.displayName)}${assignmentMemberName(user) !== user.displayName ? `<span class="assignment-username">${PM.esc(user.username)}</span>` : ''}</td>
+        <td class="status-cell status-${user.status}">${PM.esc(statusLabel(user))}</td>
+        <td class="assignments-cell"><span class="assignment-mobile-label">${PM.esc(PM.t('assignedAccounts'))}</span>${PM.esc(assignedAccountNames(user))}</td>
+        <td class="actions-cell"><button class="icon-button" type="button" data-assignments="${PM.esc(user.id)}" aria-label="${PM.esc(PM.t('assignmentsNamed', { name: assignmentMemberName(user) }))}" title="${PM.esc(PM.t('assignmentsNamed', { name: assignmentMemberName(user) }))}">${PM.icon('pencil')}</button></td>
+      </tr>`).join('');
+      return `<div class="table-wrap"><table class="table assignments-table"><thead><tr><th>${PM.esc(PM.t('displayName'))}</th><th>${PM.esc(PM.t('status'))}</th><th>${PM.esc(PM.t('assignedAccounts'))}</th><th><span class="visually-hidden">${PM.esc(PM.t('actions'))}</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function assignmentMemberName(user) {
+      const name = user.displayName.trim().toLowerCase();
+      const duplicate = PM.data.users.some(other => other.role === 'Member' && other.id !== user.id && other.displayName.trim().toLowerCase() === name);
+      return duplicate ? `${user.displayName} (${user.username})` : user.displayName;
+    }
+
+    function bindAssignments() {
+      document.getElementById('retry')?.addEventListener('click', () => PM.savePrefs({ viewState: 'normal' }));
+      view.querySelectorAll('[data-assignments]').forEach(button => button.addEventListener('click', () => openAssignments(button.dataset.assignments)));
     }
 
     function assignedAccountNames(user) {
@@ -172,7 +216,6 @@
 
     function bindUsers() {
       document.getElementById('create-user').addEventListener('click', openCreateUser);
-      view.querySelectorAll('[data-assignments]').forEach(button => button.addEventListener('click', () => openAssignments(button.dataset.assignments)));
       view.querySelectorAll('[data-edit]').forEach(button => button.addEventListener('click', () => openEditUser(PM.data.users.find(user => user.id === button.dataset.edit))));
       view.querySelectorAll('[data-reset]').forEach(button => button.addEventListener('click', () => confirmReset(PM.data.users.find(user => user.id === button.dataset.reset))));
     }
@@ -184,7 +227,7 @@
       let ready = false;
       let reviewState = PM.prefs.viewState;
       const editor = PM.dialog({
-        title: PM.t('assignmentsNamed', { name: target().displayName }),
+        title: PM.t('assignmentsNamed', { name: assignmentMemberName(target()) }),
         body: '<form class="form" id="assignments-form"><div id="assignments-feedback"></div><div id="assignments-list"></div></form>',
         footer: `<button class="button button-secondary" type="button" data-close>${PM.esc(PM.t('cancel'))}</button><button class="button button-primary" type="submit" form="assignments-form" id="assignments-save" disabled>${PM.esc(PM.t('save'))}</button>`
       });
@@ -215,7 +258,7 @@
         feedback.innerHTML = '';
         list.innerHTML = `<p role="status" aria-busy="true">${PM.esc(PM.t('assignmentsLoading'))}</p>`;
 
-        if (reviewState === 'loading') {
+        if (reviewState === 'dialog-loading') {
           return;
         }
 
@@ -225,7 +268,7 @@
           return;
         }
 
-        if (reviewState === 'error') {
+        if (reviewState === 'dialog-error') {
           list.innerHTML = '';
           showError('assignmentsLoadFailed');
           return;
@@ -238,7 +281,7 @@
         }
 
         version = target().assignmentsVersion;
-        const accounts = reviewState === 'empty' ? [] : PM.accountsByName();
+        const accounts = reviewState === 'no-active-accounts' ? [] : PM.accountsByName();
         list.innerHTML = accounts.length ? `<fieldset class="assignment-options"><legend>${PM.esc(PM.t('assignedAccounts'))}</legend>${accounts.map(account => `<label class="assignment-option"><input type="checkbox" name="accountIds" value="${PM.esc(account.id)}" ${(target().accountIds ?? []).includes(account.id) ? 'checked' : ''}><span>${PM.esc(account.name)}</span></label>`).join('')}</fieldset>` : `<p>${PM.esc(PM.t('noActiveAccounts'))}</p>`;
         ready = true;
         save.disabled = false;
@@ -459,11 +502,13 @@
     PM.init({
       active: 'administration',
       title: 'administration',
-      states: ['normal', 'loading', 'empty', 'error', 'conflict', 'unavailable', 'not-member'],
+      states: ['normal', 'loading', 'error', 'no-members', 'dialog-loading', 'dialog-error', 'no-active-accounts', 'conflict', 'unavailable', 'not-member'],
       render,
       strings: {
         en: {
-          assignedAccounts: 'Assigned accounts', allAccounts: 'All accounts', noAssignedAccounts: 'No accounts', assignmentsNamed: 'Assigned accounts for {name}',
+          assignedAccountsTab: 'Account assignments', membersLoading: 'Loading Members…', membersLoadFailed: 'Members could not be loaded. Please try again.',
+          noMembers: 'No Members yet', noMembersLink: 'Create a Member in Users',
+          assignedAccounts: 'Assigned accounts', noAssignedAccounts: 'No accounts', assignmentsNamed: 'Assigned accounts for {name}',
           assignmentsLoading: 'Loading assigned accounts…', noActiveAccounts: 'No active accounts available.', reloadAssignments: 'Reload',
           assignmentsLoadFailed: 'Assigned accounts could not be loaded. Please try again.', assignmentsSaveFailed: 'Assignments could not be saved. Reload them before trying again.',
           assignmentsConflict: 'These assignments have changed. Reload them before saving again.', assignmentUnavailable: 'An account is no longer available for assignment. Reload the account list and check your selection.',
@@ -480,7 +525,9 @@
           temporaryPassword: 'Temporary password', temporaryFor: 'Temporary password for {name}:', temporaryOnce: 'This password is shown only once. {name} must change it at the first sign-in.', copy: 'Copy', copied: 'Copied to the clipboard.', done: 'Done'
         },
         de: {
-          assignedAccounts: 'Zugewiesene Konten', allAccounts: 'Alle Konten', noAssignedAccounts: 'Keine Konten', assignmentsNamed: 'Zugewiesene Konten für {name}',
+          assignedAccountsTab: 'Kontozuweisungen', membersLoading: 'Mitglieder werden geladen…', membersLoadFailed: 'Die Mitglieder konnten nicht geladen werden. Bitte versuche es erneut.',
+          noMembers: 'Noch keine Mitglieder', noMembersLink: 'Mitglied unter Benutzer anlegen',
+          assignedAccounts: 'Zugewiesene Konten', noAssignedAccounts: 'Keine Konten', assignmentsNamed: 'Zugewiesene Konten für {name}',
           assignmentsLoading: 'Zugewiesene Konten werden geladen…', noActiveAccounts: 'Keine aktiven Konten verfügbar.', reloadAssignments: 'Neu laden',
           assignmentsLoadFailed: 'Die zugewiesenen Konten konnten nicht geladen werden. Bitte versuche es erneut.', assignmentsSaveFailed: 'Die Zuweisungen konnten nicht gespeichert werden. Lade sie neu, bevor du es erneut versuchst.',
           assignmentsConflict: 'Diese Zuweisungen wurden geändert. Lade sie neu, bevor du erneut speicherst.', assignmentUnavailable: 'Ein Konto kann nicht mehr zugewiesen werden. Lade die Kontenliste neu und prüfe deine Auswahl.',

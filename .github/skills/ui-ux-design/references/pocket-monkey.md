@@ -37,9 +37,12 @@ role: manager | member
 state: e.g. retired | uninitialized | password change required | signed out
 device: phone
 viewport: e.g. below 1440px
+edge-case: e.g. duplicate names
 ```
 
 Use `[roles: manager, member]` only for a detail shared by both roles.
+Use `edge-case` after device/viewport scopes for exceptional data conditions,
+such as `[edge-case: duplicate names]`, rather than treating them as view states.
 
 ## Prototype Runtime
 

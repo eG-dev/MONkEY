@@ -1,5 +1,5 @@
 <mxfile host="65bd71144e">
-    <diagram id="about-legal-r5" name="About - Legal information (R5 draft)">
+    <diagram id="about-legal-r5" name="About - Legal information">
         <mxGraphModel dx="2075" dy="1722" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2700" pageHeight="1240" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
@@ -49,16 +49,16 @@
                 <mxCell id="privacy-content" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=16;align=left;verticalAlign=top;spacing=16;fillColor=none;strokeColor=#999999;dashed=1;" value="{Reviewed privacy information: actual instance data processing and the instance operator&#39;s responsibilities}" vertex="1">
                     <mxGeometry height="150" width="1360" x="640" y="790" as="geometry"/>
                 </mxCell>
-                <mxCell id="operator-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="Operator information is placeholder structure; the wording and operator details require review." vertex="1">
+                <mxCell id="operator-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="Operator information is placeholder structure; the wording and operator details require review." vertex="1">
                     <mxGeometry height="90" width="480" x="40" y="450" as="geometry"/>
                 </mxCell>
-                <mxCell id="warranty-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="Warranty and liability wording requires review and must respect applicable law and license rights." vertex="1">
+                <mxCell id="warranty-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="Warranty and liability wording requires review and must respect applicable law and license rights." vertex="1">
                     <mxGeometry height="90" width="480" x="40" y="614" as="geometry"/>
                 </mxCell>
-                <mxCell id="privacy-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="Local processing and operator responsibilities require review." vertex="1">
+                <mxCell id="privacy-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="Local processing and operator responsibilities require review." vertex="1">
                     <mxGeometry height="100" width="480" x="40" y="805" as="geometry"/>
                 </mxCell>
-                <mxCell id="phone-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Full-screen, single-column content with reachable tabs." vertex="1">
+                <mxCell id="phone-note" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=20;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontFamily=Helvetica;fontSize=14;align=left;spacing=16;" value="&lt;b&gt;[device: phone]&lt;/b&gt;&lt;br&gt;Full-screen, single-column content with reachable tabs." vertex="1">
                     <mxGeometry height="90" width="480" x="1080" y="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="operator-arrow" edge="1" parent="1" source="operator-note" style="edgeStyle=none;curved=0;strokeWidth=3;strokeColor=#000000;startArrow=none;endArrow=classic;endFill=1;entryX=0;entryY=0.5;exitX=0;exitY=0;exitDx=480;exitDy=55;exitPerimeter=0;fontFamily=Helvetica;" target="operator-content">

@@ -5,6 +5,75 @@ directly in a browser; no server or internet access is required. Keep the
 surrounding design folder with the pages, because they use the shared design
 stylesheet, Roboto fonts, and logo.
 
+## Member Account Assignment R4 (2026-10-31)
+
+**Click prototype R4 draft; not approved.** In the
+[Administration view](administration/index.html), Account assignments now shows
+Display name, Status, Assigned accounts and the edit icon. Username remains in
+Users. Only Members whose display names collide (ignoring case and surrounding
+whitespace) show their username beneath the name; the edit button's accessible
+name and dialog title also include that username. Disabled Members participate
+in the same duplicate-name check.
+
+The column removal is a structural change requiring wireframe review first.
+The [assignment wireframe R4](../wireframes/administration/administration-account-assignments-wireframe.drawio)
+was approved on 2026-10-31 with "approved", including the user's final arrangement
+and split note targets. Its review markers were cleaned and its R4 PNG exported
+and visually inspected. The earlier direct-prototype classification was incorrect;
+that prerequisite is now completed. Reconciliation found the existing prototype
+matches the approved structure and note requirements, requiring no code change.
+The R4 prototype remains unapproved; application implementation does not proceed
+without explicit prototype approval.
+
+Verification, ordinary headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager | en, de | light, dark | 360, 1440 | Four columns, unique names without username, case/whitespace duplicate names, distinct edit labels/dialog title, focus return, Users unchanged, no horizontal overflow (8 cases) | pass |
+| Integrated | Manager | en, de | light, dark | 360, 1440 | Shell navigation to Administration and Account assignments, same identity/dialog/layout checks (8 cases) | pass |
+| Standalone, post-wireframe reconciliation | Manager, Member fallback | en, de | light, dark | 360, 1440 | Four columns, unique/duplicate names including disabled Member, dialog identity, reachable actions, focus return, list loading/error/empty retaining heading/tabs, Users unchanged, no overflow (8 cases) | pass |
+| Integrated, post-wireframe reconciliation | Manager, Member fallback | en, de | light, dark | 360, 1440 | Actual shell/tab navigation and the same approved-wireframe checks (8 cases) | pass |
+
+No page errors occurred. Desktop/phone list screenshots with unique and duplicate
+names and the German dark phone dialog were inspected. R3 flow/state evidence
+below remains historical; these checks are not production E2E or design approval.
+
+## Member Account Assignment R3 (2026-10-31)
+
+**Click prototype R3 draft; not approved.** It follows the Account assignments,
+Users and Profile wireframes R3, approved 2026-10-31. Open the
+[integrated application](index.html) as Manager and follow Administration to
+the new Account assignments tab, or use the
+[standalone Administration view](administration/index.html) and select its Account assignments tab.
+
+The tab lists Members only, including disabled Noah, with Display name,
+Username, Status, Assigned accounts and an edit icon. Managers have no rows.
+Users no longer has an assignment column and keeps its identity, role, status
+and password actions. Members still see only Profile; `#users` and
+`#assignments` fall back to Profile for them. On phones each Member is a
+compact item with a labelled assigned-accounts line and the edit icon. The R2
+dialog behavior is unchanged.
+
+View state now separates list and dialog states: `loading`, `error` (with Try
+again) and `no-members` (empty state linking to Users) for the list;
+`dialog-loading`, `dialog-error`, `no-active-accounts`, `conflict`,
+`unavailable` and `not-member` for the dialog. A not-member reload closes the
+dialog and returns to the refreshed Member list.
+
+Verification, ordinary headless Chromium, 2026-10-31:
+
+| Scope | Role | Language | Theme | Viewport | States/flows | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Standalone | Manager, Member | en, de | light, dark | 360, 1440 | Tabs, Member-only rows/order, summaries, Users without assignment column, no horizontal overflow (24 checks) | pass |
+| Standalone | Manager | en; de | light; dark | 1440; 360 | Assign Noah, save, row update, focus return, Save reachable on phone | pass |
+| Standalone | Manager | en | light | 1440 | loading, error/Try again, no-members/Users link, dialog-error, no-active-accounts, conflict, not-member reload | pass |
+| Integrated | Manager, Member | en, de | light, dark | 360, 1440 | Shell navigation to the tab, one shell, Member-only rows, no Member tab, no overflow (32 checks) | pass |
+| Integrated | Manager | en | light | 1440 | Saved assignment persists through Overview and back | pass |
+
+No page errors occurred. The English light desktop list, German dark phone list
+and German dark phone dialog screenshots were inspected. These are prototype
+checks, not production E2E or approval.
+
 ## Member Account Assignment R2 (2026-10-30)
 
 **Click prototype R2 draft; not approved.** Backend/Data Proposal R9 and the
