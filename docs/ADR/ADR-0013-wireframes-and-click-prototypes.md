@@ -1,7 +1,7 @@
 # ADR-0013 Wireframes and Click Prototypes
 
 _Creation date_: 2026-10-10
-_Updated_: 2026-10-30
+_Updated_: 2026-10-31
 
 ## Context
 
@@ -18,8 +18,10 @@ product domain or frontend framework.
 
 ## Decision
 
-Design work for a view follows two steps: a rough wireframe, then a detailed
-click prototype. Review and explicitly approve each current artifact before
+Design work for a view uses a rough wireframe when agreeing on structure,
+navigation, hierarchy or a workflow materially helps review, then a detailed
+click prototype. Small layout adjustments and detail changes may start directly
+with the prototype. Review and explicitly approve each current artifact before
 advancing to its dependent artifact or application implementation. This record
 owns those decisions and their rationale. The [UI/UX skill](../../.github/skills/ui-ux-design/SKILL.md)
 owns the detailed procedure, annotation syntax, drawing/export conventions,
@@ -34,12 +36,13 @@ for the design sequence and review checkpoints.
 ### Wireframes
 
 - Use one editable draw.io source with one main desktop viewport per substantially different view layout, keeping the shared shell separate. This avoids multiplying drawings for every state or shell change.
+- Create or update a wireframe by review value, not merely because one exists. Skipped updates are judged cumulatively: once accumulated differences from the prototype justify it, the wireframe must be updated and approved before further prototype changes. Until then, record the mismatch; an earlier approval stays history and does not describe the changed design.
 - Keep wireframes rough: structure, hierarchy and key behavior, not visual polish or exhaustive specifications. Concise external notes connect to the relevant components and add only behavior or constraints the drawing cannot convey. Detailed interactions belong in the prototype; enduring business/security rules remain in authoritative decisions.
 - Review the editable source, not a stale image. PNG previews represent approved sources only, never drafts. Preserve user edits and annotation arrangement so revisions do not overwrite reviewed work. The skill defines [drawing and review procedures](../../.github/skills/ui-ux-design/SKILL.md#drawing-and-review), including note arrangement, review markers and post-approval cleanup/export.
 
 ### Click prototypes
 
-- Build an offline click prototype per view from its approved wireframe, using shared shell, components, formatting, design tokens and fictional data. Local assets and file-system operation allow review without a running application or internet access.
+- Build an offline click prototype per view from requirements and existing design references, using its approved wireframe when one is part of the change, plus shared shell, components, formatting, design tokens and fictional data. Local assets and file-system operation allow review without a running application or internet access.
 - Demonstrate the detailed interactions and relevant permission, localization, theme and responsive states that static drawings hide. Prototypes illustrate behavior; they are not production code, enforce no security and establish no production API contracts.
 
 ### Integrated prototype entry
@@ -49,9 +52,9 @@ for the design sequence and review checkpoints.
 
 ### Changes and approval
 
-- New or changed references are drafts until explicit user approval identifies the artifact and reviewed revision. Require approval of the current wireframe source and completion of its approved PNG preview before its prototype; require approval of the current prototype before application implementation. Both named current artifacts may be approved together.
+- New or changed references are drafts until explicit user approval identifies the artifact and reviewed revision. When a wireframe is created or changed, require approval of its current source and completion of its approved PNG preview before its prototype; always require approval of the current prototype before application implementation. Both named current artifacts may be approved together.
 - Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts.
-- Change structure or key behavior needed to review the wireframe there first and then in the prototype; change other interaction details in the prototype only.
+- Change structure or key behavior needed to review the wireframe there first when the wireframe is updated, and then in the prototype; change other interaction details in the prototype only.
 - Approved references guide implementation but do not override architectural decisions, authorization or domain constraints, and do not create business rules on their own. Approval recording and correction handling follow the skill's [approval procedure](../../.github/skills/ui-ux-design/SKILL.md#explicit-approval-gates) and [completion checklist](../../.github/skills/ui-ux-design/SKILL.md#6-finish).
 - Implement approved views using the shared design-system tokens and the project's verification requirements.
 
@@ -61,6 +64,7 @@ Implementation verification follows [ADR-0005](ADR-0005-e2e-first-verification.m
 
 ## Change History
 
+- 2026-10-31: Made wireframes depend on review value, with cumulative mismatch tracking, so small changes can go directly to the prototype without letting drawings drift silently. Prototype approval before implementation is unchanged.
 - 2026-10-30: Split the skill into a reusable core with default approval rules, a project-profile contract, draw.io conventions with a starter template, and a separate POCKET MONkEY profile, so the workflow can be adopted elsewhere while this record continues to define the local policy.
 - 2026-10-30: Consolidated annotation handling, verification/evidence steps, approval administration, the workflow diagram and local bindings in the skill, leaving this ADR responsible for decisions/rationale and instructions for concise constraints/routing. This reduces drift without changing design or approval requirements.
 - 2026-10-30: Defined adjacent scope attributes as a combined condition and separated reusable design/review principles from repository-specific bindings, so the workflow can be adopted in other domains and frameworks.

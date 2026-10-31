@@ -5,7 +5,7 @@ applyTo: "docs/design/**"
 
 # Design References
 
-- Read and follow [ADR-0013](../../docs/ADR/ADR-0013-wireframes-and-click-prototypes.md) for the design decisions and approval policy. Do not advance past an unapproved artifact or export draft wireframes.
+- Read and follow [ADR-0013](../../docs/ADR/ADR-0013-wireframes-and-click-prototypes.md) for the design decisions and approval policy. Choose a wireframe by review value; do not advance past an unapproved artifact or export draft wireframes.
 - Load the [ui-ux-design skill](../skills/ui-ux-design/SKILL.md) before design work. It owns the detailed workflow, annotation syntax, drawing conventions, export procedure and verification checklist; do not duplicate them here.
 - Use the skill's [POCKET MONkEY profile](../skills/ui-ux-design/references/pocket-monkey.md) for local paths, languages, roles, viewports and runtime helpers. Keep those bindings there rather than treating them as universal workflow requirements.
 - Preserve user-edited sources and placement; make targeted changes instead of regenerating artifacts.

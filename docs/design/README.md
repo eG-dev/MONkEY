@@ -1171,7 +1171,7 @@ both affected previews were re-exported and visually checked on 2026-10-10.
 Existing view/prototype approvals below remain unchanged.
 
 Follow [ADR-0013](../ADR/ADR-0013-wireframes-and-click-prototypes.md): rough
-wireframe first, then a detailed click prototype.
+wireframe when it adds review value, then a detailed click prototype.
 
 - Keep each `.drawio` source and its exported PNG preview together here, named `<view>-wireframe.drawio` and `<view>-wireframe.png`.
 - Draw one main desktop viewport per view. Show only the view inside the shell's main content container (max 1440px), not the application shell, so the shell can change independently. Mark its bounds with a dashed border. Briefly note key behavior, states, role differences, dialogs, or phone-layout choices needed to review what users see or can do or decide the layout. Use yellow note shapes outside the viewport, around its edges, with arrows pointing to the relevant component. Never overlay annotations on the view. Expand the drawing/export to include the notes, not the viewport itself. Create a separate `.drawio` only when a screen has its own substantial layout, such as the Profile and Users tabs.

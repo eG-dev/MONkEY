@@ -22,7 +22,7 @@ Records describe agreed product decisions; unresolved proposals stay in the plan
 | [ADR-0010](ADR-0010-ledger-and-money.md)                        | Exact two-decimal minor units, explicit opening entries, atomic posting, and idempotency                |
 | [ADR-0011](ADR-0011-currency-display-unit.md)                   | Instance-wide EUR/USD display unit, unchanged exact arithmetic, and suffix symbols                      |
 | [ADR-0012](ADR-0012-manual-transactions-and-signed-balances.md) | Signed balances, atomic postings, snapshot-bounded history, retention and account-deletion exceptions   |
-| [ADR-0013](ADR-0013-wireframes-and-click-prototypes.md)         | View-only rough wireframes first, then detailed offline click prototypes on a shared shell              |
+| [ADR-0013](ADR-0013-wireframes-and-click-prototypes.md)         | View-only rough wireframes by review value, then detailed offline click prototypes on a shared shell    |
 | [ADR-0014](ADR-0014-private-account-images.md)                  | Account-scoped private images, canonical PNG encoding and immutable-file recovery                        |
 | [ADR-0015](ADR-0015-monthly-allowance-configuration.md)         | Next-month allowance revisions, preserved retirement settings, exact amounts, and Manager configuration  |
 | [ADR-0016](ADR-0016-monthly-allowance-execution.md)             | Historical catch-up, retry-safe credits, reactivation choices, and account/month identities             |
