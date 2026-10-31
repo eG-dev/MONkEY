@@ -39,7 +39,7 @@ See [testing](testing.md) for current coverage and commands.
 
 ## Product Boundaries
 
-- One shared instance; Members read all accounts, Managers perform business writes. Backend authorization is authoritative.
+- One shared instance; Members read assigned active accounts, Managers read all accounts and perform business writes. Backend authorization is authoritative.
 - No tenancy, email/SMTP, monthly reports, Azure data import, or user deletion/anonymization. Account deletion has focused backend implementation, with UI and production-image lifecycle verification pending; see [lifecycle completion](03h-lifecycle.md#allowance-configuration-on-reactivation-r7).
 - Dedicated transaction reversals are deferred beyond the first release.
 - No required external identity provider, runtime CDN, Redis or separate database server.
@@ -50,7 +50,7 @@ See [testing](testing.md) for current coverage and commands.
 ## Acceptance Ownership
 
 - [Lifecycle completion](03h-lifecycle.md): implemented behavior and feature-closeout boundaries.
-- [Member account assignment R10](03a-accounts.md#member-account-assignment--backenddata-proposal-r10): backend and BFF in progress; the revised prototype awaits approval and the assignment UI is not implemented.
+- [Member account assignment R10](03a-accounts.md#member-account-assignment--backenddata-proposal-r10): implemented and focused local browser checks passed; full regression and release gates remain.
 - [Builds and releases](builds-releases.md): hosted verification, approval, publication and artifact identity.
 - [Operations and cutover](04-operations-cutover.md): host rehearsal, backup/restore, upgrades and final acceptance.
 - [Testing](testing.md), [configuration](configuration.md) and [localization](localization.md): cross-cutting contracts and checks.

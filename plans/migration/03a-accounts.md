@@ -32,11 +32,11 @@ wins, keep it simple". This revises the concurrency portion of the approved R9
 below; its other requirements remain unchanged. Prototype approval remains a
 separate prerequisite for Angular implementation.
 
-**Implementation in progress:** Storage, Manager API, lifecycle cleanup, BFF
-forwarding and backend read filtering are implemented. The revised prototype R9
-is awaiting approval; the assignment UI and Member empty state are not implemented.
-Do not deploy this partial state: existing Members start with no assignments,
-and Managers cannot yet manage them through the application UI.
+**Implemented, locally verified:** Storage, Manager API, lifecycle cleanup, BFF
+forwarding, backend read filtering, the approved assignment UI and the Member
+empty state are implemented. Existing Members start with no assignments and
+need a Manager to assign their accounts after upgrade. Full regression, hosted
+CI and release acceptance remain separate gates.
 
 ### Purpose and persistence
 
@@ -58,11 +58,11 @@ and Managers cannot yet manage them through the application UI.
   partially implemented `AccountAssignmentsVersion` property from
   [`PocketMonkey.Storage.Entities.ApplicationUser`](../../backend/PocketMonkey.Storage/Entities/ApplicationUser.cs)
   and its context mapping: no per-user assignment concurrency metadata is needed.
-- The uncommitted generated
+- The generated
   [assignment migration](../../backend/PocketMonkey.Storage/Migrations/20261031161242_MemberAccountAssignments.cs),
   its designer and the
   [model snapshot](../../backend/PocketMonkey.Storage/Migrations/PocketMonkeyDbContextModelSnapshot.cs)
-  were revised before shipping to remove the version column and initialization.
+  were revised before their commit to remove the version column and initialization.
   The migration was untracked, absent from Git history and not found in visible
   workspace databases or Docker volumes. Existing Members
   still start with no assignments on upgrade; no existing assignments or user
@@ -93,12 +93,19 @@ and Managers cannot yet manage them through the application UI.
   [ADR-0009](../../docs/ADR/ADR-0009-shared-accounts.md) were updated for the
   approved last-committed replacement and atomic lifecycle validation. R9 remains
   historical; its approved wording is preserved below.
-- The [prototype R9 draft](../../docs/design/prototypes/README.md#member-account-assignment-r9-2026-10-31)
-  removes R8's stale-conflict flow and adapts failure/retry behavior. Separate
-  approval is required before Angular implementation. Other approved UI layout
+- The [approved prototype R9](../../docs/design/prototypes/README.md#member-account-assignment-r9-2026-10-31)
+  removes R8's stale-conflict flow and adapts failure/retry behavior. Other approved UI layout
   and visibility rules remain unchanged.
 
 ### Verification after approval
+
+On 2026-10-31, the Angular build, production-image build, catalog validation and
+E2E TypeScript check passed. Six focused production-image browser executions
+passed on desktop and mobile: assignment/removal and Member visibility, disabled
+Members and duplicate names, lost-response reload, account removal and role
+changes during editing, list failure/retry, and the German dark-mode dialog.
+Desktop and mobile German screenshots were inspected. No full regression or
+hosted CI run is claimed for this change.
 
 - Real SQLite/API checks cover two Managers saving different full sets in both
   commit orders, the later valid save winning, atomic rollback on invalid IDs,

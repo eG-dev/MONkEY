@@ -1,0 +1,95 @@
+<section *transloco="let t" [attr.aria-label]="t('assignments.title')" [attr.aria-busy]="loading()">
+  @if (!auth.isManager()) {
+    <div class="message message-info" id="assignments-managers-only">
+      <span class="icon icon-info" aria-hidden="true"></span>
+      <div class="message-body">{{ t('users.managersOnly') }}</div>
+    </div>
+  } @else {
+    @if (saved()) {
+      <div class="message message-success" id="assignments-saved" role="status">
+        <span class="icon icon-circle-check" aria-hidden="true"></span>
+        <div class="message-body">{{ t('assignments.saved') }}</div>
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="muted" id="assignments-loading" role="status">{{ t('assignments.membersLoading') }}</p>
+    } @else if (error()) {
+      <div class="message message-danger" id="assignments-error" role="alert">
+        <span class="icon icon-circle-alert" aria-hidden="true"></span>
+        <div class="message-body">
+          <span>{{ t(error()) }}</span>
+          <div><button tuiButton appearance="secondary" size="s" type="button" id="assignments-retry" (click)="load()">{{ t('tryAgain') }}</button></div>
+        </div>
+      </div>
+    } @else if (!rows().length) {
+      <div class="empty" id="assignments-empty">
+        <strong>{{ t('assignments.noMembers') }}</strong>
+        <a id="assignments-create-member" routerLink="/administration/users">{{ t('assignments.createMember') }}</a>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table stack-table assignments-table" id="assignments-table">
+          <thead><tr><th>{{ t('auth.displayName') }}</th><th>{{ t('assignments.assigned') }}</th><th><span class="visually-hidden">{{ t('users.actions') }}</span></th></tr></thead>
+          <tbody>
+            @for (row of rows(); track row.member.user.id) {
+              <tr data-testid="assignment-row" [attr.data-username]="row.member.user.username">
+                <td class="member-name">
+                  {{ row.member.user.displayName }}
+                  @if (memberName(row.member) !== row.member.user.displayName) {
+                    <span class="username">{{ row.member.user.username }}</span>
+                  }
+                </td>
+                <td class="assigned-cell"><span class="mobile-label">{{ t('assignments.assigned') }}</span>{{ accountNames(row.accountIds) || t('assignments.noAccounts') }}</td>
+                <td class="row-actions">
+                  <button tuiButton appearance="flat" size="s" type="button" data-testid="assignment-row-edit"
+                    [disabled]="!interactive()" [attr.aria-label]="t('assignments.named', { name: memberName(row.member) })"
+                    [title]="t('assignments.named', { name: memberName(row.member) })" (click)="open(row.member)">
+                    <span class="icon icon-pencil" aria-hidden="true"></span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <app-modal-dialog dialogId="assignments-dialog" [open]="selected() !== null"
+      [heading]="t('assignments.named', { name: selected() ? memberName(selected()!) : '' })"
+      [dismissible]="!saving()" (closed)="close()">
+      <form class="form" id="assignments-form" (ngSubmit)="save()">
+        @if (dialogError()) {
+          <div class="message message-danger" id="assignments-dialog-error" role="alert">
+            <span class="icon icon-circle-alert" aria-hidden="true"></span>
+            <div class="message-body">
+              <span>{{ t(dialogError()) }}</span>
+              <div><button tuiButton appearance="secondary" size="s" type="button" id="assignments-reload" (click)="reload()"><span class="icon icon-refresh-cw" aria-hidden="true"></span>{{ t('assignments.reload') }}</button></div>
+            </div>
+          </div>
+        }
+
+        @if (dialogLoading()) {
+          <p id="assignments-dialog-loading" role="status">{{ t('assignments.loading') }}</p>
+        } @else if (available().length) {
+          <fieldset class="assignment-options">
+            <legend>{{ t('assignments.assigned') }}</legend>
+            @for (account of available(); track account.id) {
+              <label class="assignment-option">
+                <input type="checkbox" name="accountIds" data-testid="assignment-option" [value]="account.id"
+                  [checked]="selectedIds().includes(account.id)" [disabled]="saving()" (change)="toggle(account.id, $event)" />
+                <span>{{ account.name }}</span>
+              </label>
+            }
+          </fieldset>
+        } @else if (ready()) {
+          <p id="assignments-no-active-accounts">{{ t('assignments.noActiveAccounts') }}</p>
+        }
+      </form>
+      <ng-container dialog-actions>
+        <button tuiButton appearance="secondary" size="m" type="button" id="assignments-cancel" [disabled]="saving()" (click)="close()">{{ t('accounts.cancel') }}</button>
+        <button tuiButton appearance="primary" size="m" type="submit" form="assignments-form" id="assignments-save" [disabled]="!ready() || saving()">{{ t(saving() ? 'assignments.saving' : 'auth.save') }}</button>
+      </ng-container>
+    </app-modal-dialog>
+  }
+</section>

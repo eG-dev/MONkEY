@@ -7,7 +7,7 @@ stylesheet, Roboto fonts, and logo.
 
 ## Member Account Assignment R9 (2026-10-31)
 
-**Click prototype R9 draft; not approved.** The assignment dialog removes the
+**Click prototype R9 approved, 2026-10-31:** "approved, implement the ui,". The assignment dialog removes the
 stale-conflict state and uses last-committed replacement. When a save cannot be
 confirmed, the selected checkboxes remain visible, saving is disabled and the
 Manager can reload the current assignments before deciding whether to save
@@ -21,7 +21,7 @@ Verification, headless Chromium, 2026-10-31:
 | Standalone | Manager, Member | en, de | light, dark | 360, 1440 | Assignment tab visibility, Space selection, unconfirmed save retaining input, reload, successful save, no stale-conflict rejection, page overflow and script errors (16 cases) | pass |
 | Integrated | Manager, Member | en, de | light, dark | 360, 1440 | Navigation to Administration and the same changed flows (16 cases) | pass |
 
-These are prototype checks, not production E2E verification or design approval.
+These are prototype checks, not production E2E verification.
 
 ## Member Account Assignment R8 (2026-10-31)
 

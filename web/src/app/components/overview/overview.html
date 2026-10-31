@@ -95,10 +95,12 @@
     </ul>
   } @else {
     <div class="empty" id="overview-empty">
-      <strong>{{ t('accounts.empty') }}</strong>
-
       @if (auth.isManager()) {
+        <strong>{{ t('accounts.empty') }}</strong>
         <a id="overview-create-first" routerLink="/accounts">{{ t('overview.createFirst') }}</a>
+      } @else {
+        <strong>{{ t('overview.noAssignedAccounts') }}</strong>
+        <span>{{ t('overview.askManager') }}</span>
       }
     </div>
   }

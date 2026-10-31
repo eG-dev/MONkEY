@@ -69,11 +69,11 @@ for standalone and integrated verification.
 
 ## Member Account Assignment R9 (2026-10-31)
 
-**Click prototype R9 draft; not approved.** The assignment dialog no longer
+**Click prototype R9 approved, 2026-10-31:** "approved, implement the ui,". The assignment dialog no longer
 simulates stale-edit conflicts. An unconfirmed save retains the selection and
 requires reloading current assignments before deciding whether to save again.
 See the [R9 prototype record](prototypes/README.md#member-account-assignment-r9-2026-10-31)
-for verification. Explicit approval is required before Angular implementation.
+for verification. Angular implementation is authorized.
 
 The approved R8 wireframe is unchanged: it contains no stale-conflict or retry
 detail, and the cumulative difference is limited to this dialog behavior, not

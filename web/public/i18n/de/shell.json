@@ -76,7 +76,9 @@
   },
   "overview": {
     "manage": "Konten verwalten",
-    "createFirst": "Erstes Konto anlegen"
+    "createFirst": "Erstes Konto anlegen",
+    "noAssignedAccounts": "Keine Konten anzuzeigen",
+    "askManager": "Dir sind keine aktiven Konten zugewiesen. Bitte einen Manager, wenn du Zugriff auf ein Konto brauchst."
   },
   "profile": {
     "account": "Konto",
@@ -100,6 +102,25 @@
     "copy": "Kopieren",
     "copied": "Kopiert",
     "done": "Fertig"
+  },
+  "assignments": {
+    "title": "Kontozuweisungen",
+    "membersLoading": "Mitglieder werden geladen…",
+    "listFailed": "Die Mitglieder konnten nicht geladen werden. Bitte versuche es erneut.",
+    "noMembers": "Noch keine Mitglieder",
+    "createMember": "Mitglied unter Benutzer anlegen",
+    "assigned": "Zugewiesene Konten",
+    "noAccounts": "Keine Konten",
+    "named": "Zugewiesene Konten für {name}",
+    "loading": "Zugewiesene Konten werden geladen…",
+    "noActiveAccounts": "Keine aktiven Konten verfügbar.",
+    "reload": "Neu laden",
+    "loadFailed": "Die zugewiesenen Konten konnten nicht geladen werden. Bitte versuche es erneut.",
+    "saveUnconfirmed": "Das Speichern konnte nicht bestätigt werden. Lade die aktuellen Zuweisungen neu, bevor du entscheidest, ob du erneut speicherst.",
+    "unavailable": "Ein Konto kann nicht mehr zugewiesen werden. Lade die Kontenliste neu und prüfe deine Auswahl.",
+    "notMember": "Konten können nur Mitgliedern zugewiesen werden. Lade die Benutzerliste neu.",
+    "saving": "Wird gespeichert…",
+    "saved": "Zugewiesene Konten gespeichert."
   },
   "accounts": {
     "title": "Konten",

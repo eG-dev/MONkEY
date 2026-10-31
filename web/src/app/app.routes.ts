@@ -13,6 +13,10 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', loadComponent: () => import('./components/profile/profile').then((module) => module.Profile) },
       { path: 'users', loadComponent: () => import('./components/users/users').then((module) => module.Users) },
+      {
+        path: 'account-assignments',
+        loadComponent: () => import('./components/account-assignments/account-assignments').then((module) => module.AccountAssignments),
+      },
     ],
   },
 ];

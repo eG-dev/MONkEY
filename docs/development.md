@@ -32,6 +32,33 @@ Allowance configuration and execution follow
 [ADR-0015](ADR/ADR-0015-monthly-allowance-configuration.md) and
 [ADR-0016](ADR/ADR-0016-monthly-allowance-execution.md).
 
+## Member Account Assignments (2026-10-31)
+
+The approved R9 prototype is implemented in Administration. Managers replace a
+Member's assigned active accounts, including for disabled Members. After an
+unconfirmed save the selection remains visible and the Manager must reload
+before saving again. Members see only assigned active accounts and a distinct
+empty overview when none are assigned. Existing Members start with no
+assignments after upgrade; Managers must assign accounts to restore their access.
+
+Angular and production-image builds, catalog validation and E2E typechecking
+passed. Six focused production-image browser executions passed across desktop
+and mobile: assignment/removal and Member visibility, disabled Members and
+duplicate names, lost-response reload, account removal and role changes during
+editing, list failure/retry, and the German dark-mode dialog. German desktop and
+mobile screenshots were inspected. This is not a full regression or hosted CI
+result.
+
+```text
+NG_CLI_ANALYTICS=false CI=true npm --prefix web run build
+npm --prefix web run check:catalogs
+npm --prefix tests/e2e run check
+NG_CLI_ANALYTICS=false CI=true npm --prefix web run build:image
+npm --prefix tests/e2e test -- specs/accounts/assignments-workflows.spec.ts --grep "managers assign" --workers=1
+npm --prefix tests/e2e test -- specs/accounts/assignments-workflows.spec.ts --grep "editing recovers" --workers=1
+npm --prefix tests/e2e test -- specs/accounts/assignments-workflows.spec.ts --grep "German assignment dialog" --workers=1
+```
+
 ## Account Lifecycle UI and Typed Roles (2026-10-28)
 
 The approved Account Deletion R2 flow is implemented in Angular: Managers get

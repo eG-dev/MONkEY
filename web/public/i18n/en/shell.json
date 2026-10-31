@@ -76,7 +76,9 @@
   },
   "overview": {
     "manage": "Manage accounts",
-    "createFirst": "Create the first account"
+    "createFirst": "Create the first account",
+    "noAssignedAccounts": "No accounts to show",
+    "askManager": "No active accounts are assigned to you. Ask a Manager if you need access to an account."
   },
   "profile": {
     "account": "Account",
@@ -100,6 +102,25 @@
     "copy": "Copy",
     "copied": "Copied",
     "done": "Done"
+  },
+  "assignments": {
+    "title": "Account assignments",
+    "membersLoading": "Loading Members...",
+    "listFailed": "Members could not be loaded. Please try again.",
+    "noMembers": "No Members yet",
+    "createMember": "Create a Member in Users",
+    "assigned": "Assigned accounts",
+    "noAccounts": "No accounts",
+    "named": "Assigned accounts for {name}",
+    "loading": "Loading assigned accounts...",
+    "noActiveAccounts": "No active accounts available.",
+    "reload": "Reload",
+    "loadFailed": "Assigned accounts could not be loaded. Please try again.",
+    "saveUnconfirmed": "The save could not be confirmed. Reload the current assignments before deciding whether to save again.",
+    "unavailable": "An account is no longer available for assignment. Reload the account list and check your selection.",
+    "notMember": "Accounts can only be assigned to Members. Reload the user list.",
+    "saving": "Saving...",
+    "saved": "Assigned accounts saved."
   },
   "accounts": {
     "title": "Accounts",
