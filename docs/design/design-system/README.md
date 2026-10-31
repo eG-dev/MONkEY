@@ -1,19 +1,17 @@
 # POCKET MONkEY Design System
 
-Status: Approved by the user on 2026-10-10 in the [phase 2B design review](../../../plans/migration/02b-ux-ui-design.md).
-The structure was adapted from an earlier product's design system; colors,
-typography, and the application shell are specific to POCKET MONkEY. The current
-design primitives and representative [Angular screens](../../../web) are accepted.
-Design approval does not certify outstanding accessibility or technical checks.
+Review state is recorded in the [approval register](../approvals.md); this guide
+describes the current design. It was created in the
+[phase 2B design review](../../../plans/migration/02b-ux-ui-design.md); the
+structure was adapted from an earlier product's design system, while colors,
+typography and the application shell are specific to POCKET MONkEY. Design
+approval does not certify outstanding accessibility or technical checks.
 
-**Approved revision, 2026-10-23:** neutral tonal panels/cards and restrained
-elevation replace decorative outlines in the design references and shared click
-prototypes. Functional control boundaries, selected-state indicators and focus
-rings remain. The user explicitly approved the current references for Angular
-implementation, which now maps these values into application SCSS without
-importing the specimen stylesheet. Approved wireframes are unchanged.
-Review the [surface specimen](specimens/colors-surfaces.html) and
-[overview prototype](../prototypes/accounts-overview/index.html).
+Neutral tonal panels/cards and restrained elevation replace decorative
+outlines; functional control boundaries, selected-state indicators and focus
+rings remain. Angular maps these values into application SCSS without importing
+the specimen stylesheet. Review the [surface specimen](specimens/colors-surfaces.html)
+and [overview prototype](../prototypes/accounts-overview/index.html).
 
 POCKET MONkEY manages household pocket-money accounts on a shared instance.
 Managers maintain accounts and record transactions; Members view assigned active accounts.

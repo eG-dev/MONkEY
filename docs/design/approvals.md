@@ -40,6 +40,7 @@ mismatch or open items.
 | Login | [login](wireframes/login/login-wireframe.drawio) | [login](prototypes/login/index.html) | prototype draft | 2026-10-31 | 2026-10-31 | Review panel; the sign-in sample note moved from the page into the panel; awaiting review. |
 | About | [overview](wireframes/about/about-wireframe.drawio), [project license](wireframes/about/about-license-wireframe.drawio), [notices](wireframes/about/about-notices-wireframe.drawio), [legal](wireframes/about/about-legal-wireframe.drawio) | [about](prototypes/about/index.html) | prototype draft | 2026-10-31 | 2026-10-31 | Review panel; the review page's language and theme controls moved into it; awaiting review. Legal wording and notice coverage are reviewed separately. Confirm the 2026-10-30 assignment privacy presentation. |
 | Integrated entry | — | [index](prototypes/index.html) | prototype draft | 2026-10-31 | 2026-10-23 | Each framed page shows its own review panel; the chrome-less entry shows none. Awaiting review. |
+| Design system | — | [guide](design-system/README.md), [specimens](design-system/specimens/index.html) | implemented | 2026-10-24 | 2026-10-24 | Tokens, guides and specimens; mapped into Angular SCSS. Accessibility is a target, not certified; see the guide's open checks. |
 
 Update a row in the same commit as the artifact change or approval it records.
 Add a row when a new view gets its first wireframe or prototype.

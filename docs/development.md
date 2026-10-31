@@ -752,7 +752,7 @@ contrast-safe Error foreground. Failed execution text now uses
 `--status-error-fg`, backed by `--error-text-fg` (`#C4352B` light / `#FF6B60`
 dark), instead of the earlier Danger alias. Successful/scheduled execution text,
 role visibility, destructive actions and monetary colors are unchanged.
-See the [approved contrast values](design/design-system/color-scheme.md#error-text-error-feedback-r3-2026-10-24).
+See the [contrast values](design/design-system/color-scheme.md#error-text).
 
 Validation passed:
 

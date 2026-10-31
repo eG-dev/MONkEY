@@ -4,12 +4,8 @@ These framework-neutral notes record POCKET MONkEY-specific choices on top of
 Taiga UI. They are design inputs, not a component API or proof that a component
 exists in Angular. Use the [design guide](README.md) and [reference styles](styles)
 for shared values and the [accessibility baseline](accessibility.md) for
-interaction requirements.
-
-**Approved 2026-10-23:** the tonal-surface revision below replaces decorative
-outlines with neutral fills, spacing and restrained elevation. The user approved
-the current prototypes for Angular implementation; the surface treatment is now
-mapped into application SCSS. Earlier approvals remain history.
+interaction requirements. Review state is recorded in the
+[approval register](../approvals.md).
 
 ## Standard Controls
 
@@ -40,9 +36,8 @@ mapped into application SCSS. Earlier approvals remain history.
 - Retain the established layout, brand colours, amount semantics and radii.
   The [surface specimen](specimens/colors-surfaces.html) shows both themes.
 
-## Notice Document Hierarchy R6
+## Notice Document Hierarchy
 
-**Wireframe and matching click-prototype pattern R6 approved, 2026-10-24.**
 Within an expanded third-party component, separate package/license applicability
 groups with a heading, shared version/license metadata and one package/source
 list. Keep differing member metadata beside the member rather than implying
@@ -66,9 +61,8 @@ At phone widths, stack group metadata and original-file actions and wrap long
 package names/titles/links. Keep one dialog content scroller, not nested legal-text
 scroll boxes. Preserve expansion during search and tab changes, resetting only
 on dialog close. The [prototype notes](../prototypes/README.md#about)
-describe the current dialog; earlier check records are in Git history. The user's "prototype approved,
-implement" completes the separate prototype approval gate.
-Angular now maps this pattern into its About SCSS and renders complete original
+describe the current dialog. Angular maps this pattern into its About SCSS and
+renders complete original
 legal bodies; see the [production verification](../../development.md#grouped-notice-documents-r6-2026-10-24).
 
 ## View Headers
@@ -92,9 +86,9 @@ legal bodies; see the [production verification](../../development.md#grouped-not
 
 - Show amounts with an explicit currency and tabular figures, formatted for the
   selected language. Language never changes the stored value or currency.
-- **Currency Formatting R1 approved, 2026-10-24:** omit the fractional part for zero cents;
-  retain exactly two digits for nonzero cents. See the
-  [formatting examples](typography.md#currency-formatting-r1).
+- Omit the fractional part for zero cents; retain exactly two digits for
+  nonzero cents. See the
+  [formatting examples](typography.md#currency-formatting).
   The shared click-prototype and Angular formatters apply the same rule.
 - Right-align comparable amounts. Render positive amounts with `--amount-positive`
   (green), negative with `--amount-negative` (red), and zero with
@@ -119,8 +113,7 @@ legal bodies; see the [production verification](../../development.md#grouped-not
 
 ## Account Management Rows
 
-**Allowance wireframes R1 and prototypes R2 approved, 2026-10-24.**
-Earlier compact-name R2 approval remains history. In the Accounts view,
+In the Accounts view,
 Name is first with a capped width, followed directly by the right-aligned Balance
 and Allowance columns, then Status. Allowance shows the configured monthly
 amount or "No monthly allowance". Additional desktop width is allocated to
@@ -149,8 +142,6 @@ keyboard focus identify interaction. Other link patterns are unchanged.
 
 ## Overview Allowance Execution
 
-**Allowance Status Consistency R2 approved, 2026-10-24; prototype-only correction;
-earlier approvals retained as history.**
 Monthly allowance amount/frequency is on the
 first row, with execution information on a separate second row on desktop and
 phone. Successful and scheduled execution text uses `--text-dimmed`; failures
@@ -158,9 +149,9 @@ use `--status-error-fg` and an explicit failure label visible to both Members
 and Managers. Only attempt details and failure reasons in details are
 Manager-only. A disabled allowance shows "No monthly allowance"
 without an execution row. Monetary amounts retain sign-based colors. See
-[Text dimmed](color-scheme.md#text-dimmed-allowance-presentation-2026-10-24).
+[Text dimmed](color-scheme.md#text-dimmed).
 The distinct Error foreground and contrast are documented in
-[Error text](color-scheme.md#error-text-error-feedback-r3-2026-10-24).
+[Error text](color-scheme.md#error-text).
 
 ## Reference Lifecycle
 

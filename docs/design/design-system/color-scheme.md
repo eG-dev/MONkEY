@@ -1,7 +1,5 @@
 # Color Scheme
 
-Status: Brand palette approved on 2026-10-10; tonal-surface and secondary-action
-revision explicitly approved on 2026-10-23 and implemented in Angular.
 Brand colors are sampled from the supplied
 [logo](../assets/images/monkey.png); everything else is derived. Values are
 defined in [colors.css](styles/colors.css). Calculated contrast ratios are token
@@ -37,9 +35,9 @@ with the warm brand colors. Components use the semantic aliases such as
 
 ## Application
 
-### Text Dimmed (Allowance Presentation, 2026-10-24)
+### Text Dimmed
 
-**Wireframes R1 and prototypes R2 approved, 2026-10-24.** The overview execution-information
+The overview execution-information
 row is below the monthly allowance. Successful and scheduled execution text uses
 the theme-aware semantic token `--text-dimmed`, backed by these core tokens:
 
@@ -52,19 +50,15 @@ Calculated contrast for the light token: 5.74:1 on white, 5.27:1 on
 card `#F5F5F5`, and 4.82:1 on hovered card `#EBEBEB`. The dark token:
 7.70:1 on app `#121212`, 6.85:1 on card `#1E1E1E`, and 5.74:1 on hovered card
 `#2C2C2C`. All exceed 4.5:1 for normal text. Amount colors retain their existing
-meaning. The approved R2 used `--status-danger-fg` (`#C62828` light /
-`#FF8A80` dark), not dimmed text, with an explicit failure label.
-This is a color-detail correction requested on 2026-10-24; role visibility is
-unchanged. The subsequent Error Feedback R3 draft below supersedes that failure
-color proposal. Definitions and semantic theme mappings are in
+meaning. Failed executions use the [Error text](#error-text) foreground with an
+explicit failure label. Definitions and semantic theme mappings are in
 [colors.css](styles/colors.css); both treatments appear in the
-[surface specimen](specimens/colors-surfaces.html). Angular follows prototype
-approval.
+[surface specimen](specimens/colors-surfaces.html).
 
-### Error Text (Error Feedback R3, 2026-10-24)
+### Error Text
 
-**Approved, 2026-10-24.** The user corrected failed executions to Error rather than Danger
-and selected a distinct, contrast-safe error-text variant. The Error core swatch
+Failed executions use Error rather than Danger, with a distinct, contrast-safe
+error-text variant. The Error core swatch
 remains `--pm-color-error: #F44336`; it is not suitable for small text on light
 cards (3.68:1 on white, 3.38:1 on `#F5F5F5`, 3.09:1 on hover `#EBEBEB`).
 
@@ -80,9 +74,8 @@ hover `#2C2C2C`. All exceed 4.5:1 for normal text.
 The Overview failed-execution row and the surface specimen use this alias.
 Successful/scheduled rows remain dimmed. Destructive-action Danger colors,
 existing status aliases and sign-based monetary colors are unchanged; this is
-not a global recoloring of validation or feedback components. The user explicitly
-approved the current prototype and token values with "both approved"; Angular
-uses the same foreground values and semantic alias.
+not a global recoloring of validation or feedback components. Angular uses the
+same foreground values and semantic alias.
 
 ### Usage
 
@@ -136,7 +129,7 @@ differences, not substitutes for control boundaries or keyboard focus.
 Secondary-button fills are `#EBEBEB` / `#D6D6D6` / `#BDBDBD` in light mode and
 `#333333` / `#3D3D3D` / `#545454` in dark mode. Their labels remain primary text.
 The [surface specimen](specimens/colors-surfaces.html) and shared prototypes
-demonstrate the approved treatment, now mapped into Angular application SCSS.
+demonstrate the treatment, mapped into Angular application SCSS.
 
 ### Established Pairs
 
