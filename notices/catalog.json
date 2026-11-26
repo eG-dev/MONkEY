@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "coverage": "complete",
-  "releaseReview": "reviewed",
+  "releaseReview": "pending",
   "entries": [
     {
       "id": "angular",
@@ -26,7 +26,7 @@
     {
       "id": "sqlite",
       "displayName": "SQLite",
-      "componentIds": ["microsoft-entityframeworkcore-sqlite", "microsoft-entityframeworkcore-sqlite-core", "microsoft-data-sqlite-core", "sqlitepclraw-core", "sqlitepclraw-bundle-e-sqlite3", "sqlitepclraw-provider-e-sqlite3", "sqlitepclraw-lib-e-sqlite3", "sqlite-engine"],
+      "componentIds": ["microsoft-entityframeworkcore-sqlite", "microsoft-entityframeworkcore-sqlite-core", "microsoft-data-sqlite-core", "sqlitepclraw-core", "sqlitepclraw-bundle-e-sqlite3", "sqlitepclraw-provider-e-sqlite3", "sqlitepclraw-config-e-sqlite3", "sqlite-native-package", "sqlite-engine"],
       "groups": [
         {
           "id": "providers",
@@ -36,12 +36,12 @@
         {
           "id": "bindings",
           "titleKey": "sqliteBindings",
-          "componentIds": ["sqlitepclraw-core", "sqlitepclraw-bundle-e-sqlite3", "sqlitepclraw-provider-e-sqlite3", "sqlitepclraw-lib-e-sqlite3"]
+          "componentIds": ["sqlitepclraw-core", "sqlitepclraw-bundle-e-sqlite3", "sqlitepclraw-provider-e-sqlite3", "sqlitepclraw-config-e-sqlite3"]
         },
         {
           "id": "engine",
           "titleKey": "sqliteEngine",
-          "componentIds": ["sqlite-engine"]
+          "componentIds": ["sqlite-native-package", "sqlite-engine"]
         }
       ]
     },
@@ -262,19 +262,19 @@
       "id": "dotnet-runtime",
       "kind": "runtime",
       "name": "Microsoft.NETCore.App",
-      "version": "10.0.14",
+      "version": "11.0.0",
       "versionEvidence": {
         "kind": "files",
-        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.14-noble@sha256:d247d17dd429d96580eeb96cfce220c1089d860dbbf9f94d599ca64cf3604fe4 as the final runtime base, selecting Microsoft.NETCore.App 10.0.14. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material. Original documents retain their recorded capture provenance and are reused under the approved major-series policy.",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:11.0.0-resolute@sha256:ca396ece3f2a2e62c7a03f1d7d710b8bc7e8c9dea5597d091178d9f5bfca13f0 as the final runtime base, selecting Microsoft.NETCore.App 11.0.0. MIT identifies the runtime project's license; its original ThirdPartyNotices.txt retains separately licensed bundled material. Original documents retain their recorded capture provenance and are reused under the approved major-series policy.",
         "files": [
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "cb217b86804222734bf09890311d47bcc9429a3e63f0616d0eaca71092830c99"
+            "sha256": "171f60e9abecbd45574349619a68273e7d9c1e8db8be0dd17b0532bb47572fbf"
           }
         ]
       },
-      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -284,19 +284,19 @@
       "id": "aspnet-core-runtime",
       "kind": "runtime",
       "name": "Microsoft.AspNetCore.App",
-      "version": "10.0.14",
+      "version": "11.0.0",
       "versionEvidence": {
         "kind": "files",
-        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:10.0.14-noble@sha256:d247d17dd429d96580eeb96cfce220c1089d860dbbf9f94d599ca64cf3604fe4 as the final runtime base, selecting Microsoft.AspNetCore.App 10.0.14. MIT identifies the framework project's license; the retained upstream THIRD-PARTY-NOTICES.txt identifies separately licensed material without claiming every listed item ships in this Linux application. Original documents retain their recorded capture provenance and are reused under the approved major-series policy.",
+        "description": "The Dockerfile pins mcr.microsoft.com/dotnet/aspnet:11.0.0-resolute@sha256:ca396ece3f2a2e62c7a03f1d7d710b8bc7e8c9dea5597d091178d9f5bfca13f0 as the final runtime base, selecting Microsoft.AspNetCore.App 11.0.0. MIT identifies the framework project's license; the retained upstream THIRD-PARTY-NOTICES.txt identifies separately licensed material without claiming every listed item ships in this Linux application. Original documents retain their recorded capture provenance and are reused under the approved major-series policy.",
         "files": [
           {
             "path": "deploy/Dockerfile",
             "lineEndings": "lf",
-            "sha256": "cb217b86804222734bf09890311d47bcc9429a3e63f0616d0eaca71092830c99"
+            "sha256": "171f60e9abecbd45574349619a68273e7d9c1e8db8be0dd17b0532bb47572fbf"
           }
         ]
       },
-      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -306,15 +306,15 @@
       "id": "microsoft-entityframeworkcore",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.EntityFrameworkCore"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -324,15 +324,15 @@
       "id": "microsoft-entityframeworkcore-sqlite",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Sqlite",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.EntityFrameworkCore.Sqlite"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -342,15 +342,15 @@
       "id": "microsoft-entityframeworkcore-sqlite-core",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Sqlite.Core",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite.Core@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Sqlite.Core@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.EntityFrameworkCore.Sqlite.Core"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -360,15 +360,15 @@
       "id": "microsoft-data-sqlite-core",
       "kind": "nuget",
       "name": "Microsoft.Data.Sqlite.Core",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.Data.Sqlite.Core@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.Data.Sqlite.Core@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.Data.Sqlite.Core"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14/src/Microsoft.Data.Sqlite.Core",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v11.0.0/src/Microsoft.Data.Sqlite.Core",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -378,95 +378,113 @@
       "id": "sqlitepclraw-core",
       "kind": "nuget",
       "name": "SQLitePCLRaw.core",
-      "version": "2.1.13",
-      "purl": "pkg:nuget/SQLitePCLRaw.core@2.1.13",
+      "version": "3.0.5",
+      "purl": "pkg:nuget/SQLitePCLRaw.core@3.0.5",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SQLitePCLRaw.core"
       },
-      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.core/2.1.13",
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.core/3.0.5",
       "licenseExpression": "Apache-2.0",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
-      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright", "sqlitepclraw-copyright-2026"]
     },
     {
       "id": "sqlitepclraw-bundle-e-sqlite3",
       "kind": "nuget",
       "name": "SQLitePCLRaw.bundle_e_sqlite3",
-      "version": "2.1.13",
-      "purl": "pkg:nuget/SQLitePCLRaw.bundle_e_sqlite3@2.1.13",
+      "version": "3.0.5",
+      "purl": "pkg:nuget/SQLitePCLRaw.bundle_e_sqlite3@3.0.5",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SQLitePCLRaw.bundle_e_sqlite3"
       },
-      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.bundle_e_sqlite3/2.1.13",
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.bundle_e_sqlite3/3.0.5",
       "licenseExpression": "Apache-2.0",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
-      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright", "sqlitepclraw-copyright-2026"]
     },
     {
       "id": "sqlitepclraw-provider-e-sqlite3",
       "kind": "nuget",
       "name": "SQLitePCLRaw.provider.e_sqlite3",
-      "version": "2.1.13",
-      "purl": "pkg:nuget/SQLitePCLRaw.provider.e_sqlite3@2.1.13",
+      "version": "3.0.5",
+      "purl": "pkg:nuget/SQLitePCLRaw.provider.e_sqlite3@3.0.5",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SQLitePCLRaw.provider.e_sqlite3"
       },
-      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3/2.1.13",
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3/3.0.5",
       "licenseExpression": "Apache-2.0",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
-      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright", "sqlitepclraw-copyright-2026"]
     },
     {
-      "id": "sqlitepclraw-lib-e-sqlite3",
+      "id": "sqlitepclraw-config-e-sqlite3",
       "kind": "nuget",
-      "name": "SQLitePCLRaw.lib.e_sqlite3",
-      "version": "2.1.13",
-      "purl": "pkg:nuget/SQLitePCLRaw.lib.e_sqlite3@2.1.13",
+      "name": "SQLitePCLRaw.config.e_sqlite3",
+      "version": "3.0.5",
+      "purl": "pkg:nuget/SQLitePCLRaw.config.e_sqlite3@3.0.5",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
-        "package": "SQLitePCLRaw.lib.e_sqlite3"
+        "framework": "net11.0",
+        "package": "SQLitePCLRaw.config.e_sqlite3"
       },
-      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3/2.1.13",
+      "upstreamUrl": "https://www.nuget.org/packages/SQLitePCLRaw.config.e_sqlite3/3.0.5",
       "licenseExpression": "Apache-2.0",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
-      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright"]
+      "documentIds": ["sqlitepclraw-license", "sqlitepclraw-notice", "sqlitepclraw-copyright", "sqlitepclraw-copyright-2026"]
+    },
+    {
+      "id": "sqlite-native-package",
+      "kind": "nuget",
+      "name": "SQLite",
+      "version": "3.53.4",
+      "purl": "pkg:nuget/SQLite@3.53.4",
+      "versionEvidence": {
+        "kind": "nuget",
+        "path": "backend/PocketMonkey.Storage/packages.lock.json",
+        "framework": "net11.0",
+        "package": "SQLite"
+      },
+      "upstreamUrl": "https://www.nuget.org/packages/SQLite/3.53.4",
+      "licenseExpression": null,
+      "licensingStatus": "public-domain",
+      "reviewStatus": "reviewed",
+      "documentIds": ["sqlite-public-domain", "sqlite-package-license", "sqlite-package-copyright"]
     },
     {
       "id": "sqlite-engine",
       "kind": "native",
       "name": "SQLite engine (e_sqlite3)",
-      "version": "3.53.3",
+      "version": "3.53.4",
       "versionEvidence": {
         "kind": "files",
-        "description": "SQLitePCLRaw.lib.e_sqlite3 2.1.13 supplies the engine; its package version is not the engine version. sqlite3_libversion() reports 3.53.3 in both the packaged win-x64 DLL and the actual Linux image's /app/backend/runtimes/linux-x64/native/libe_sqlite3.so. Both report sqlite3_sourceid() = 2026-06-26 20:14:12 d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62. The Linux image's native SHA-256 b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07 matches the cached NuGet payload. Recheck the native version/source identity when this lockfile changes. Other redistributed native architectures are included in package coverage, not claimed as tested platforms.",
+        "description": "The SQLite 3.53.4 NuGet package supplies the native engine. Its Linux x64 binary reports sqlite3_libversion() = 3.53.4 and sqlite3_sourceid() = 2026-07-24 19:02:57 bf7c7f30031888f4e796e429ab3978879485813aaca6f641c7b33e4e09459bcc; its SHA-256 is eddcd4aa561d5b8f252db77e8272e7d1aed96bcab9fda3f177ca542f916290bf. Other redistributed native architectures are not claimed as tested platforms.",
         "files": [
           {
             "path": "backend/PocketMonkey.Storage/packages.lock.json",
             "lineEndings": "lf",
-            "sha256": "43088c841ae9f96c6f7378818921be6d8306e795689553ee93ae5d30a89a4829"
+            "sha256": "b1704853a9a20b731c969ba13197959b5fad147108c513120ce93895615ba8db"
           }
         ]
       },
-      "upstreamUrl": "https://sqlite.org/src/info/d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62",
+      "upstreamUrl": "https://sqlite.org/src/info/bf7c7f30031888f4e796e429ab3978879485813aaca6f641c7b33e4e09459bcc",
       "licenseExpression": null,
       "licensingStatus": "public-domain",
       "reviewStatus": "reviewed",
-      "documentIds": ["sqlite-public-domain"]
+      "documentIds": ["sqlite-public-domain", "sqlite-package-license", "sqlite-package-copyright"]
     },
     {
       "id": "taiga-ui-cdk",
@@ -748,7 +766,7 @@
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SkiaSharp"
       },
       "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
@@ -766,7 +784,7 @@
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SkiaSharp.NativeAssets.Linux.NoDependencies"
       },
       "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
@@ -784,7 +802,7 @@
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SkiaSharp.NativeAssets.Win32"
       },
       "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
@@ -802,7 +820,7 @@
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "SkiaSharp.NativeAssets.macOS"
       },
       "upstreamUrl": "https://github.com/mono/SkiaSharp/tree/4783f51448f9b070dda4f87b83e941c9599e466e",
@@ -815,15 +833,15 @@
       "id": "microsoft-aspnetcore-identity-entityframeworkcore",
       "kind": "nuget",
       "name": "Microsoft.AspNetCore.Identity.EntityFrameworkCore",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.AspNetCore.Identity.EntityFrameworkCore@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.AspNetCore.Identity.EntityFrameworkCore@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.AspNetCore.Identity.EntityFrameworkCore"
       },
-      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/Identity/EntityFrameworkCore",
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v11.0.0/src/Identity/EntityFrameworkCore",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -833,15 +851,15 @@
       "id": "microsoft-aspnetcore-openapi",
       "kind": "nuget",
       "name": "Microsoft.AspNetCore.OpenApi",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.AspNetCore.OpenApi@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.AspNetCore.OpenApi@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.AspNetCore.OpenApi"
       },
-      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/OpenApi",
+      "upstreamUrl": "https://github.com/dotnet/aspnetcore/tree/v11.0.0/src/OpenApi",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -851,15 +869,15 @@
       "id": "microsoft-openapi",
       "kind": "nuget",
       "name": "Microsoft.OpenApi",
-      "version": "2.12.2",
-      "purl": "pkg:nuget/Microsoft.OpenApi@2.12.2",
+      "version": "3.11.0",
+      "purl": "pkg:nuget/Microsoft.OpenApi@3.11.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.OpenApi"
       },
-      "upstreamUrl": "https://github.com/microsoft/OpenAPI.NET/tree/a24aac560adbf013ff5aa63a873e5a7babce38d2",
+      "upstreamUrl": "https://github.com/microsoft/OpenAPI.NET/tree/2fea8ae4ee7ce6b9c313fa0822f5c617da18c351",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -869,15 +887,15 @@
       "id": "microsoft-entityframeworkcore-abstractions",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Abstractions",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Abstractions@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Abstractions@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.EntityFrameworkCore.Abstractions"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -887,15 +905,15 @@
       "id": "microsoft-entityframeworkcore-relational",
       "kind": "nuget",
       "name": "Microsoft.EntityFrameworkCore.Relational",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Relational@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.EntityFrameworkCore.Relational@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Storage/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.EntityFrameworkCore.Relational"
       },
-      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v10.0.14",
+      "upstreamUrl": "https://github.com/dotnet/efcore/tree/v11.0.0",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -905,15 +923,15 @@
       "id": "microsoft-extensions-dependencymodel",
       "kind": "nuget",
       "name": "Microsoft.Extensions.DependencyModel",
-      "version": "10.0.14",
-      "purl": "pkg:nuget/Microsoft.Extensions.DependencyModel@10.0.14",
+      "version": "11.0.0",
+      "purl": "pkg:nuget/Microsoft.Extensions.DependencyModel@11.0.0",
       "versionEvidence": {
         "kind": "nuget",
         "path": "backend/PocketMonkey.Host/packages.lock.json",
-        "framework": "net10.0",
+        "framework": "net11.0",
         "package": "Microsoft.Extensions.DependencyModel"
       },
-      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v10.0.14/src/libraries/Microsoft.Extensions.DependencyModel",
+      "upstreamUrl": "https://github.com/dotnet/runtime/tree/v11.0.0/src/libraries/Microsoft.Extensions.DependencyModel",
       "licenseExpression": "MIT",
       "licensingStatus": "licensed",
       "reviewStatus": "reviewed",
@@ -932,65 +950,89 @@
     {
       "id": "dotnet-license",
       "kind": "license",
-      "path": "notices/originals/dotnet/10.x/LICENSE.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/runtime/v10.0.13/LICENSE.TXT",
-      "revision": "v10.0.13; captured from /usr/share/dotnet/LICENSE.txt in the pinned ASP.NET runtime image; identical bytes in dotnet/runtime v10.0.13 LICENSE.TXT and dotnet/aspnetcore v10.0.13 LICENSE.txt",
+      "path": "notices/originals/dotnet/11.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/runtime/v11.0.0/LICENSE.TXT",
+      "revision": "dotnet/runtime v11.0.0 LICENSE.TXT; byte-identical to the previously captured .NET 10 license",
       "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
     },
     {
       "id": "dotnet-third-party-notices",
       "kind": "notice",
-      "path": "notices/originals/dotnet/10.x/ThirdPartyNotices.txt",
-      "upstreamUrl": "https://mcr.microsoft.com/v2/dotnet/aspnet/manifests/sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac",
-      "revision": "mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac: /usr/share/dotnet/ThirdPartyNotices.txt, copied unchanged from the built Linux image",
-      "sha256": "2dc8f8c5a39401e928b5784ab564eb8b3ceb99ead3df8f260e0cab7e0bbecc7a"
+      "path": "notices/originals/dotnet/11.x/ThirdPartyNotices.txt",
+      "upstreamUrl": "https://mcr.microsoft.com/v2/dotnet/aspnet/manifests/sha256:ca396ece3f2a2e62c7a03f1d7d710b8bc7e8c9dea5597d091178d9f5bfca13f0",
+      "revision": "mcr.microsoft.com/dotnet/aspnet:11.0.0-resolute@sha256:ca396ece3f2a2e62c7a03f1d7d710b8bc7e8c9dea5597d091178d9f5bfca13f0: /usr/share/dotnet/ThirdPartyNotices.txt, copied unchanged from the Linux runtime image",
+      "sha256": "d30078edf6426ec7ef9427b3048b407fee214d1eb7834a681a3a09290387d591"
     },
     {
       "id": "aspnet-core-third-party-notices",
       "kind": "notice",
-      "path": "notices/originals/aspnetcore/10.x/THIRD-PARTY-NOTICES.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/aspnetcore/v10.0.13/THIRD-PARTY-NOTICES.txt",
-      "revision": "dotnet/aspnetcore v10.0.13: THIRD-PARTY-NOTICES.txt, retained in full without inferring a Linux shipped-component inventory; also the full text supplied by Microsoft.AspNetCore.Identity.EntityFrameworkCore and Microsoft.AspNetCore.OpenApi 10.0.13, differing only by CRLF in those NuGet archives",
-      "sha256": "52af3d603b6d069e635f8afd08ec44ec01559255b5f3afd161ae9e6fe7e7aa54"
+      "path": "notices/originals/aspnetcore/11.x/THIRD-PARTY-NOTICES.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/aspnetcore/v11.0.0/THIRD-PARTY-NOTICES.txt",
+      "revision": "dotnet/aspnetcore v11.0.0: THIRD-PARTY-NOTICES.txt; the OpenApi 11.0.0 package supplies the same text with CRLF line endings",
+      "sha256": "fe970484b338399def0b81b24d8a6005122d5c9f559a257c2ad22cbb83644cab"
     },
     {
       "id": "ef-core-license",
       "kind": "license",
-      "path": "notices/originals/microsoft-entityframeworkcore/10.x/LICENSE.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/efcore/v10.0.13/LICENSE.txt",
-      "revision": "v10.0.13",
+      "path": "notices/originals/microsoft-entityframeworkcore/11.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/dotnet/efcore/v11.0.0/LICENSE.txt",
+      "revision": "v11.0.0; byte-identical to the previously captured EF Core 10 license",
       "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
     },
     {
       "id": "sqlitepclraw-license",
       "kind": "license",
-      "path": "notices/originals/sqlitepclraw/2.x/LICENSE.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/ca835d21508bff43121c65081035840ac5006c4c/LICENSE.TXT",
-      "revision": "v2.1.12, commit ca835d21508bff43121c65081035840ac5006c4c: LICENSE.TXT; same-major original reused for 2.1.13, whose four mapped NuGet packages declare Apache-2.0; no v2.1.13 Git tag was found at collection",
+      "path": "notices/originals/sqlitepclraw/3.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/96043b8cff323f21919df86a431c136655d81b4a/LICENSE.TXT",
+      "revision": "SQLitePCLRaw.config.e_sqlite3 3.0.5 nuspec repository commit 96043b8cff323f21919df86a431c136655d81b4a: LICENSE.TXT; all four mapped packages declare Apache-2.0",
       "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
     },
     {
       "id": "sqlitepclraw-notice",
       "kind": "notice",
-      "path": "notices/originals/sqlitepclraw/2.x/NOTICE.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/ca835d21508bff43121c65081035840ac5006c4c/NOTICE.TXT",
-      "revision": "v2.1.12, commit ca835d21508bff43121c65081035840ac5006c4c: NOTICE.TXT; retained unchanged under same-major reuse, including broader upstream material without asserting SQLCipher/OpenSSL are shipped",
-      "sha256": "485b276b3d2bfaa26df348e1e5c84df3648981e09b88531a6a53006f0705c24b"
+      "path": "notices/originals/sqlitepclraw/3.x/NOTICE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/96043b8cff323f21919df86a431c136655d81b4a/NOTICE.TXT",
+      "revision": "SQLitePCLRaw.config.e_sqlite3 3.0.5 nuspec repository commit 96043b8cff323f21919df86a431c136655d81b4a: NOTICE.TXT; identical at the core/provider repository commit",
+      "sha256": "5a1ab2f670f86dd2f8d42e40a8459cc278ca6d5225a7e2a5fa3ea0184396a6d9"
     },
     {
       "id": "sqlitepclraw-copyright",
       "kind": "copyright",
-      "path": "notices/originals/sqlitepclraw/2.x/COPYRIGHT.txt",
-      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/sqlitepclraw.core/2.1.13/sqlitepclraw.core.2.1.13.nupkg",
-      "revision": "SQLitePCLRaw.core 2.1.13: sqlitepclraw.core.nuspec metadata/copyright value, unchanged text with a terminating LF; identical value verified in bundle_e_sqlite3, provider.e_sqlite3 and lib.e_sqlite3 2.1.13 nuspecs",
-      "sha256": "2143a674c10f50e1efa6e7b8ed756b374085cf367167005e59c9df2e97de12c6"
+      "path": "notices/originals/sqlitepclraw/3.x/COPYRIGHT-2025.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/sqlitepclraw.core/3.0.5/sqlitepclraw.core.3.0.5.nupkg",
+      "revision": "SQLitePCLRaw.core and provider.e_sqlite3 3.0.5 nuspec copyright value, unchanged text with a terminating LF",
+      "sha256": "2041bb1ba3ce6da1dc525f0b52f062de424c1801c041e3fdb63b3103d6cc318e"
+    },
+    {
+      "id": "sqlitepclraw-copyright-2026",
+      "kind": "copyright",
+      "path": "notices/originals/sqlitepclraw/3.x/COPYRIGHT-2026.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/sqlitepclraw.config.e_sqlite3/3.0.5/sqlitepclraw.config.e_sqlite3.3.0.5.nupkg",
+      "revision": "SQLitePCLRaw.config.e_sqlite3 and bundle_e_sqlite3 3.0.5 and SQLite 3.53.4 nuspec copyright value, unchanged text with a terminating LF",
+      "sha256": "0076b2b51a7ca199888c4fe9ef8fffed86f4a2b9133d9a4ba2b5628604d85edc"
+    },
+    {
+      "id": "sqlite-package-license",
+      "kind": "public-domain-statement",
+      "path": "notices/originals/sqlite/3.x/PACKAGE-LICENSE.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/sqlite/3.53.4/sqlite.3.53.4.nupkg",
+      "revision": "SQLite 3.53.4 NuGet package LICENSE.txt",
+      "sha256": "99464c3a88df7b708ce59e462cdcb85f72dfc9b1335b4fcc68be56131b634b95"
+    },
+    {
+      "id": "sqlite-package-copyright",
+      "kind": "copyright",
+      "path": "notices/originals/sqlite/3.x/PACKAGE-COPYRIGHT.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/sqlite/3.53.4/sqlite.3.53.4.nupkg",
+      "revision": "SQLite 3.53.4 nuspec copyright value, unchanged text with a terminating LF",
+      "sha256": "0076b2b51a7ca199888c4fe9ef8fffed86f4a2b9133d9a4ba2b5628604d85edc"
     },
     {
       "id": "sqlite-public-domain",
       "kind": "public-domain-statement",
       "path": "notices/originals/sqlite/3.x/PUBLIC-DOMAIN.txt",
       "upstreamUrl": "https://sqlite.org/src/raw/LICENSE.md?ci=d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62",
-      "revision": "SQLite fossil source identity d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62, reported by the shipped engine: original LICENSE.md; file extension changed only",
+      "revision": "SQLite fossil source identity d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62: original LICENSE.md; file extension changed only; retained under same-major reuse",
       "sha256": "ee6af51062b30d532991face5164136ae6f84e265ecf8abe89dc69dac45ca1e7"
     },
     {
@@ -1108,18 +1150,18 @@
     {
       "id": "openapi-net-license",
       "kind": "license",
-      "path": "notices/originals/openapi-net/2.x/LICENSE.txt",
-      "upstreamUrl": "https://raw.githubusercontent.com/microsoft/OpenAPI.NET/a24aac560adbf013ff5aa63a873e5a7babce38d2/LICENSE",
-      "revision": "Microsoft.OpenApi 2.12.2: unchanged LICENSE from the exact nuspec repository commit a24aac560adbf013ff5aa63a873e5a7babce38d2; no legal file supplied inside the NuGet archive",
+      "path": "notices/originals/openapi-net/3.x/LICENSE.txt",
+      "upstreamUrl": "https://raw.githubusercontent.com/microsoft/OpenAPI.NET/2fea8ae4ee7ce6b9c313fa0822f5c617da18c351/LICENSE",
+      "revision": "Microsoft.OpenApi 3.11.0: unchanged LICENSE from the exact nuspec repository commit 2fea8ae4ee7ce6b9c313fa0822f5c617da18c351; no legal file supplied inside the NuGet archive",
       "sha256": "5d177f23ecfeb0ea8e050b6a5a16355e1ae9a0b286436ca8f83ed08b3795be6b"
     },
     {
       "id": "dotnet-dependency-model-third-party-notices",
       "kind": "notice",
-      "path": "notices/originals/microsoft-extensions-dependencymodel/10.x/THIRD-PARTY-NOTICES.txt",
-      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencymodel/10.0.13/microsoft.extensions.dependencymodel.10.0.13.nupkg",
-      "revision": "Microsoft.Extensions.DependencyModel 10.0.13: complete unchanged THIRD-PARTY-NOTICES.TXT; distinct from the already captured .NET runtime notice bundle; NuGet signature-aware content hash verified against packages.lock.json",
-      "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+      "path": "notices/originals/microsoft-extensions-dependencymodel/11.x/THIRD-PARTY-NOTICES.txt",
+      "upstreamUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencymodel/11.0.0/microsoft.extensions.dependencymodel.11.0.0.nupkg",
+      "revision": "Microsoft.Extensions.DependencyModel 11.0.0: complete unchanged THIRD-PARTY-NOTICES.TXT from the NuGet archive",
+      "sha256": "e3a241a6cf35167d82bf7e081de9641c59d10d2dbd8824409817bed31980d407"
     }
   ]
 }

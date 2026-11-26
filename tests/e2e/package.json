@@ -2,7 +2,7 @@
   "name": "pocket-monkey-e2e",
   "private": true,
   "engines": {
-    "node": ">=24.15.0 <25"
+    "node": ">=26.0.0 <27"
   },
   "scripts": {
     "check": "tsc --noEmit",
@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
-    "@types/node": "24.19.2",
+    "@types/node": "26.6.11",
     "github-slugger": "2.0.0",
     "jsdom": "26.1.0",
     "mermaid": "11.17.2",

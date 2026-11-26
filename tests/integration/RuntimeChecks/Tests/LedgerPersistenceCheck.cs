@@ -464,7 +464,7 @@ internal static class LedgerPersistenceCheck
             {
                 var source = index == 0 ? "opening" : "deposit";
                 var amount = index == 0 ? -131 : 1;
-                await database.Database.ExecuteSqlInterpolatedAsync($"""
+                await database.Database.ExecuteSqlAsync($"""
                     INSERT INTO LedgerEntries (Id, AccountId, AmountMinorUnits, SequenceNumber, IdempotencyKey,
                         ActorId, ActorDisplayName, OccurredAtUtc, Source, Comment)
                     VALUES ({$"mapping-{index}"}, 'mapping', {amount}, {index + 1}, {Guid.NewGuid().ToString()},
@@ -488,7 +488,7 @@ internal static class LedgerPersistenceCheck
                 "2024-10-01 00:00:00.12345678Z", "2024-10-01 00:00:00.Z", "2024-10-01 00:00:00.xZ"
             })
             {
-                await database.Database.ExecuteSqlInterpolatedAsync($"UPDATE LedgerEntries SET OccurredAtUtc = {invalid} WHERE Id = 'invalid'");
+                await database.Database.ExecuteSqlAsync($"UPDATE LedgerEntries SET OccurredAtUtc = {invalid} WHERE Id = 'invalid'");
                 var rejected = false;
 
                 try

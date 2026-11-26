@@ -1247,8 +1247,8 @@ the configured currency or business timezone.
 
 | Component                              | Verified version             |
 | -------------------------------------- | ---------------------------- |
-| .NET SDK / runtime / EF Core           | 10.0.403 / 10.0.14 / 10.0.14 |
-| Node / Angular framework / SSR and CLI | 24.22.1 / 22.2.3 / 22.2.4    |
+| .NET SDK / runtime / EF Core           | 11.0.100 / 11.0.0 / 11.0.0   |
+| Node / Angular framework / SSR and CLI | 26.13.1 / 22.2.3 / 22.2.4    |
 | npm / TypeScript                       | 12.2.1 / 6.0.3               |
 | Taiga / universal Web APIs             | 5.29.0 / 5.4.0               |
 | Transloco / MessageFormat integration  | 8.4.0 / 8.4.0                |
@@ -1261,12 +1261,29 @@ CommonJS and adds approximately 77 KB to the initial browser bundle; the explici
 initial budget is 650 KB warning / 800 KB error. No runtime CDN is used.
 No ARM, Firefox, or WebKit compatibility claim is made yet.
 
-The .NET patch refresh uses SDK 10.0.403 and ASP.NET runtime, EF Core, and
+The 2026-11-26 Node 26 and .NET 11 upgrade passed the locked Release solution
+build, production-image build, six desktop smoke checks, the About check, and
+five focused image checks for SQLite migration/rollback, allowance execution,
+offline runtime, and Node/.NET timezone agreement. A disposable .NET 10 image
+with a populated financial account was upgraded to the .NET 11 image; account
+and ledger history were preserved. Node 26 requires `libatomic1` in the runtime
+image. The production image uses the Ubuntu 26.04 .NET base.
+
+On 2026-11-26, a non-forced npm audit fix updated `follow-redirects` to 1.16.3
+and cleared its high-severity finding. Both high-severity audit gates pass;
+seven moderate findings remain in the web minimatch/Taiga tooling chain, and
+two low findings remain in test-only Mermaid/KaTeX. npm suggests breaking
+changes for the remaining findings, which were not forced. Full regression,
+hosted CI, and a new distribution review remain outstanding. npm 12.2.1 was
+used for lockfile updates; the Node 26 image bundles npm 11.20.0.
+
+The earlier .NET patch refresh used SDK 10.0.403 and ASP.NET runtime, EF Core, and
 `dotnet-ef` 10.0.14. The locked Release solution build in the exact Linux SDK
 container, production image build, and 29 About/build-input checks passed.
-Validation did not upgrade the Windows host SDK; local .NET commands require
-10.0.403 or a compatible later patch according to `global.json`.
-Node remains 24.22.1, npm 12.2.1, and TypeScript on the Angular-compatible 6.0 line.
+Validation did not upgrade the Windows host SDK; at that time local .NET commands
+required 10.0.403 or a compatible later patch according to `global.json`.
+At the time of that refresh, Node was 24.22.1, npm 12.2.1, and TypeScript was
+on the Angular-compatible 6.0 line.
 
 Dependency refresh verified on 2026-10-23: npm 12.2.0 clean installation,
 Angular SSR and replacement .NET builds, production image, 24 About/build-input
@@ -1478,7 +1495,7 @@ hosted rehearsal; syntax checks alone do not establish those results.
 
 ## Build and Verify
 
-Run from the repository root. Node 24, .NET SDK 10.0.402, and Docker
+Run from the repository root. Node 26.13.1, .NET SDK 11.0.100, and Docker
 with a Linux engine are required. These commands work in PowerShell and CI shell:
 
 Stop a running local backend preview before rebuilding its Release output on
@@ -1587,7 +1604,7 @@ tooling remain outside the image.
 
 ## Local Development
 
-With Node 24 and .NET SDK 10.0.402 installed, run these commands from the repository
+With Node 26.13.1 and .NET SDK 11.0.100 installed, run these commands from the repository
 root. Install web dependencies once after checkout or when the lockfile changes:
 
 ```text
@@ -1650,16 +1667,16 @@ password change after login. Both operations create database audit events.
 Host access is a privileged operator capability, not an in-app Manager permission.
 
 For the development launcher, run from the repository root in another PowerShell
-terminal after the Release build. Resolve the replacement directory explicitly
-so the operator command cannot accidentally select a repository-root data folder.
+terminal after the Release build. Resolve the repository directory explicitly
+so the operator command uses the launcher's data folder.
 Use the same public origin as the launcher (change the port below if necessary):
 
 ```powershell
-$revampPath = (Resolve-Path './revamp').Path
+$repoPath = (Resolve-Path '.').Path
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
-$env:MONKEY_DATA_PATH = Join-Path $revampPath '.local/dev'
+$env:MONKEY_DATA_PATH = Join-Path $repoPath '.local/dev'
 $env:MONKEY_PUBLIC_URL = 'http://127.0.0.1:4180'
-dotnet (Join-Path $revampPath 'backend/PocketMonkey.Host/bin/Release/net10.0/PocketMonkey.Host.dll') bootstrap-manager
+dotnet (Join-Path $repoPath 'backend/PocketMonkey.Host/bin/Release/net11.0/PocketMonkey.Host.dll') bootstrap-manager
 ```
 
 Use `recover-manager` in place of `bootstrap-manager` for recovery. Development

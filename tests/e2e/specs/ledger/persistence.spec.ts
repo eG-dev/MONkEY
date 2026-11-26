@@ -22,7 +22,7 @@ import { createMember } from '../../helpers/accounts';
 test.use({ ignoreHTTPSErrors: true });
 
 test('real SQLite ledger migration, exact arithmetic, constraints and complete rollback hold @api', async () => {
-  const probe = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0');
+  const probe = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0');
   const output = docker(
     'run',
     '--rm',

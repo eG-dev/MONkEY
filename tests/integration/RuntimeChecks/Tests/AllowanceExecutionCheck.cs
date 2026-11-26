@@ -107,8 +107,8 @@ internal static class AllowanceExecutionCheck
                 database.Users.Add(new ApplicationUser { Id = "manager", UserName = "manager", DisplayName = "Manager" });
                 await database.SaveChangesAsync();
                 accountId = Guid.NewGuid().ToString();
-                await database.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO Accounts (Id, Name, NormalizedName, BalanceMinorUnits) VALUES ({accountId}, 'Execution', 'EXECUTION', 1000)");
-                await database.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO LedgerEntries (Id, AccountId, AmountMinorUnits, SequenceNumber, IdempotencyKey, ActorId, ActorDisplayName, OccurredAtUtc, Source) VALUES ({Guid.NewGuid().ToString()}, {accountId}, 1000, 1, {Guid.NewGuid().ToString()}, 'manager', 'Manager', {clock.Now.ToString("O")}, 'opening')");
+                await database.Database.ExecuteSqlAsync($"INSERT INTO Accounts (Id, Name, NormalizedName, BalanceMinorUnits) VALUES ({accountId}, 'Execution', 'EXECUTION', 1000)");
+                await database.Database.ExecuteSqlAsync($"INSERT INTO LedgerEntries (Id, AccountId, AmountMinorUnits, SequenceNumber, IdempotencyKey, ActorId, ActorDisplayName, OccurredAtUtc, Source) VALUES ({Guid.NewGuid().ToString()}, {accountId}, 1000, 1, {Guid.NewGuid().ToString()}, 'manager', 'Manager', {clock.Now.ToString("O")}, 'opening')");
 
                 string previous = "";
 

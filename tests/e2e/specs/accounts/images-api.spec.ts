@@ -122,7 +122,7 @@ test('image filesystem failures, atomic audit rollback and orphan recovery hold 
     '--entrypoint',
     'dotnet',
     '--mount',
-    `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0')},target=/tests,readonly`,
+    `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0')},target=/tests,readonly`,
     image,
     '/tests/RuntimeChecks.dll',
     'image-persistence',

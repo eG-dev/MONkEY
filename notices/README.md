@@ -10,9 +10,11 @@ targeted distribution review; do not introduce a bespoke inventory engine.
 
 On 2026-10-25, the owner confirmed completion of the distribution review for
 `0.1.0-beta.1` after selecting GitHub dependency reporting instead of ORT. The
-catalog records `coverage: complete` and `releaseReview: reviewed`. This records
-the owner's review, not an automated legal-completeness finding or an assertion
-that ORT ran. Other release verification and approval gates remain independent.
+catalog recorded `coverage: complete` and `releaseReview: reviewed` for that
+review. The subsequent .NET 11, SQLite and runtime-image upgrade requires a new
+distribution review; `releaseReview` is now `pending`. This is not an automated
+legal-completeness finding or an assertion that ORT ran. Other release
+verification and approval gates remain independent.
 
 Review changed shipped dependencies, assets, runtime/OS inputs and applicable
 source obligations before later releases. Refresh evidence and regenerate the
@@ -22,7 +24,7 @@ release-only consistency policy.
 
 The collection notes below preserve the earlier evidence and review questions.
 References there to deferred ORT work or pending review are historical; the
-current decision and owner-confirmed status above supersede that work order.
+current decision and release-review status above supersede that work order.
 
 ## Proportional Review (Approved 2026-10-24)
 

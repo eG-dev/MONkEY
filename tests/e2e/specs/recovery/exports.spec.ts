@@ -9,7 +9,7 @@ test("real SQLite financial recovery fixtures and failure checks @api @desktop",
   test.setTimeout(120_000);
   const probe = resolve(
     __dirname,
-    "../../../integration/RuntimeChecks/bin/Release/net10.0",
+    "../../../integration/RuntimeChecks/bin/Release/net11.0",
   );
   const fixtures = resolve(__dirname, "../../../fixtures/financial-snapshots");
   const output = docker(

@@ -6,7 +6,7 @@ import { test, expect, bootstrapManager, csrfWrite, login, docker, containerOrig
 test.use({ ignoreHTTPSErrors: true });
 
 test('real SQLite account constraints and audit rollback hold @api', async () => {
-  const probePath = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0');
+  const probePath = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0');
 
   const output = docker(
     'run',

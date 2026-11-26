@@ -107,7 +107,7 @@ test('allowance revision boundaries, constraints and audit rollback hold in real
     '--entrypoint',
     'dotnet',
     '--mount',
-    `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0')},target=/checks,readonly`,
+    `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0')},target=/checks,readonly`,
     image,
     '/checks/RuntimeChecks.dll',
     'allowance-persistence',
