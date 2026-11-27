@@ -14,7 +14,7 @@ test('sessions have eight-hour absolute expiry and expired tickets are rejected 
 
   expect(session).toBeDefined();
 
-  const probePath = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0');
+  const probePath = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0');
 
   const result = spawnSync(
     'docker',

@@ -17,6 +17,24 @@ export class UsersService {
     return firstValueFrom(this.http.get<UserAccount[]>('/api/users').pipe(timeout(5000)));
   }
 
+  async accountAssignments(id: string): Promise<string[]> {
+    const response = await firstValueFrom(
+      this.http.get<{ accountIds: string[] }>(`/api/users/${encodeURIComponent(id)}/account-assignments`).pipe(timeout(5000)),
+    );
+
+    return response.accountIds;
+  }
+
+  async replaceAccountAssignments(id: string, accountIds: string[]): Promise<string[]> {
+    const response = await this.auth.write<{ accountIds: string[] }>(
+      'PUT',
+      `/api/users/${encodeURIComponent(id)}/account-assignments`,
+      { accountIds },
+    );
+
+    return response.accountIds;
+  }
+
   create(username: string, displayName: string, role: UserRole): Promise<CreatedUser> {
     return this.auth.write<CreatedUser>('POST', '/api/users', { username, displayName, role });
   }

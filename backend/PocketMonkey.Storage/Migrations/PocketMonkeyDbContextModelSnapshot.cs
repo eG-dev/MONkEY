@@ -507,6 +507,21 @@ namespace PocketMonkey.Storage.Migrations
                         });
                 });
 
+            modelBuilder.Entity("PocketMonkey.Storage.Entities.MemberAccountAssignment", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AccountId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "AccountId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("MemberAccountAssignments");
+                });
+
             modelBuilder.Entity("PocketMonkey.Storage.Entities.PendingImageDeletion", b =>
                 {
                     b.Property<string>("ImageKey")
@@ -622,6 +637,21 @@ namespace PocketMonkey.Storage.Migrations
                         .WithMany("LedgerEntries")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PocketMonkey.Storage.Entities.MemberAccountAssignment", b =>
+                {
+                    b.HasOne("PocketMonkey.Storage.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PocketMonkey.Storage.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

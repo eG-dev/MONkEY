@@ -14,6 +14,8 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Account> Accounts => Set<Account>();
 
+    public DbSet<MemberAccountAssignment> MemberAccountAssignments => Set<MemberAccountAssignment>();
+
     public DbSet<LedgerEntry> LedgerEntries => Set<LedgerEntry>();
 
     public DbSet<AllowanceRevision> AllowanceRevisions => Set<AllowanceRevision>();
@@ -151,6 +153,27 @@ public sealed class PocketMonkeyDbContext : IdentityDbContext<ApplicationUser>
 
             userEntity.ToTable(table =>
                 table.HasCheckConstraint("CK_AspNetUsers_Theme", "Theme IN ('system', 'light', 'dark')"));
+        });
+
+        modelBuilder.Entity<MemberAccountAssignment>(assignmentEntity =>
+        {
+            assignmentEntity
+                .HasKey(assignment => new { assignment.UserId, assignment.AccountId });
+
+            assignmentEntity
+                .HasIndex(x => x.AccountId);
+
+            assignmentEntity
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            assignmentEntity
+                .HasOne<Account>()
+                .WithMany()
+                .HasForeignKey(x => x.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Account>(accountEntity =>

@@ -41,75 +41,79 @@ Documents: angular-license
 
 .NET
 ----
-Microsoft.NETCore.App 10.0.14
+Microsoft.NETCore.App 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/runtime/tree/v10.0.14
+Source: https://github.com/dotnet/runtime/tree/v11.0.0
 Documents: dotnet-license, dotnet-third-party-notices
 
 ASP.NET Core
 ------------
-Microsoft.AspNetCore.App 10.0.14
+Microsoft.AspNetCore.App 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/aspnetcore/tree/v10.0.14
+Source: https://github.com/dotnet/aspnetcore/tree/v11.0.0
 Documents: dotnet-license, aspnet-core-third-party-notices
-Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.14
+Microsoft.AspNetCore.Identity.EntityFrameworkCore 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/Identity/EntityFrameworkCore
+Source: https://github.com/dotnet/aspnetcore/tree/v11.0.0/src/Identity/EntityFrameworkCore
 Documents: dotnet-license, aspnet-core-third-party-notices
-Microsoft.AspNetCore.OpenApi 10.0.14
+Microsoft.AspNetCore.OpenApi 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/aspnetcore/tree/v10.0.14/src/OpenApi
+Source: https://github.com/dotnet/aspnetcore/tree/v11.0.0/src/OpenApi
 Documents: dotnet-license, aspnet-core-third-party-notices
 
 Entity Framework Core
 ---------------------
-Microsoft.EntityFrameworkCore 10.0.14
+Microsoft.EntityFrameworkCore 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.14
+Source: https://github.com/dotnet/efcore/tree/v11.0.0
 Documents: ef-core-license
-Microsoft.EntityFrameworkCore.Abstractions 10.0.14
+Microsoft.EntityFrameworkCore.Abstractions 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.14
+Source: https://github.com/dotnet/efcore/tree/v11.0.0
 Documents: ef-core-license
-Microsoft.EntityFrameworkCore.Relational 10.0.14
+Microsoft.EntityFrameworkCore.Relational 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.14
+Source: https://github.com/dotnet/efcore/tree/v11.0.0
 Documents: ef-core-license
 
 SQLite
 ------
-Microsoft.EntityFrameworkCore.Sqlite 10.0.14
+Microsoft.EntityFrameworkCore.Sqlite 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.14
+Source: https://github.com/dotnet/efcore/tree/v11.0.0
 Documents: ef-core-license
-Microsoft.EntityFrameworkCore.Sqlite.Core 10.0.14
+Microsoft.EntityFrameworkCore.Sqlite.Core 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.14
+Source: https://github.com/dotnet/efcore/tree/v11.0.0
 Documents: ef-core-license
-Microsoft.Data.Sqlite.Core 10.0.14
+Microsoft.Data.Sqlite.Core 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/efcore/tree/v10.0.14/src/Microsoft.Data.Sqlite.Core
+Source: https://github.com/dotnet/efcore/tree/v11.0.0/src/Microsoft.Data.Sqlite.Core
 Documents: ef-core-license
-SQLitePCLRaw.core 2.1.13
+SQLitePCLRaw.core 3.0.5
 Licensing: Apache-2.0; review: reviewed
-Source: https://www.nuget.org/packages/SQLitePCLRaw.core/2.1.13
-Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright
-SQLitePCLRaw.bundle_e_sqlite3 2.1.13
+Source: https://www.nuget.org/packages/SQLitePCLRaw.core/3.0.5
+Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright, sqlitepclraw-copyright-2026
+SQLitePCLRaw.bundle_e_sqlite3 3.0.5
 Licensing: Apache-2.0; review: reviewed
-Source: https://www.nuget.org/packages/SQLitePCLRaw.bundle_e_sqlite3/2.1.13
-Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright
-SQLitePCLRaw.provider.e_sqlite3 2.1.13
+Source: https://www.nuget.org/packages/SQLitePCLRaw.bundle_e_sqlite3/3.0.5
+Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright, sqlitepclraw-copyright-2026
+SQLitePCLRaw.provider.e_sqlite3 3.0.5
 Licensing: Apache-2.0; review: reviewed
-Source: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3/2.1.13
-Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright
-SQLitePCLRaw.lib.e_sqlite3 2.1.13
+Source: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3/3.0.5
+Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright, sqlitepclraw-copyright-2026
+SQLitePCLRaw.config.e_sqlite3 3.0.5
 Licensing: Apache-2.0; review: reviewed
-Source: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3/2.1.13
-Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright
-SQLite engine (e_sqlite3) 3.53.3
+Source: https://www.nuget.org/packages/SQLitePCLRaw.config.e_sqlite3/3.0.5
+Documents: sqlitepclraw-license, sqlitepclraw-notice, sqlitepclraw-copyright, sqlitepclraw-copyright-2026
+SQLite 3.53.4
 Licensing: public-domain; review: reviewed
-Source: https://sqlite.org/src/info/d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62
-Documents: sqlite-public-domain
+Source: https://www.nuget.org/packages/SQLite/3.53.4
+Documents: sqlite-public-domain, sqlite-package-license, sqlite-package-copyright
+SQLite engine (e_sqlite3) 3.53.4
+Licensing: public-domain; review: reviewed
+Source: https://sqlite.org/src/info/bf7c7f30031888f4e796e429ab3978879485813aaca6f641c7b33e4e09459bcc
+Documents: sqlite-public-domain, sqlite-package-license, sqlite-package-copyright
 
 Taiga UI
 --------
@@ -228,16 +232,16 @@ Documents: skiasharp-license, skiasharp-third-party-notices
 
 OpenAPI.NET
 -----------
-Microsoft.OpenApi 2.12.2
+Microsoft.OpenApi 3.11.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/microsoft/OpenAPI.NET/tree/a24aac560adbf013ff5aa63a873e5a7babce38d2
+Source: https://github.com/microsoft/OpenAPI.NET/tree/2fea8ae4ee7ce6b9c313fa0822f5c617da18c351
 Documents: openapi-net-license
 
 .NET DependencyModel
 --------------------
-Microsoft.Extensions.DependencyModel 10.0.14
+Microsoft.Extensions.DependencyModel 11.0.0
 Licensing: MIT; review: reviewed
-Source: https://github.com/dotnet/runtime/tree/v10.0.14/src/libraries/Microsoft.Extensions.DependencyModel
+Source: https://github.com/dotnet/runtime/tree/v11.0.0/src/libraries/Microsoft.Extensions.DependencyModel
 Documents: dotnet-license, dotnet-dependency-model-third-party-notices
 
 === angular-license (license) ===
@@ -269,9 +273,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 === dotnet-license (license) ===
-Applies to: Microsoft.NETCore.App 10.0.14; Microsoft.AspNetCore.App 10.0.14; Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.14; Microsoft.AspNetCore.OpenApi 10.0.14; Microsoft.Extensions.DependencyModel 10.0.14
-Source: https://raw.githubusercontent.com/dotnet/runtime/v10.0.13/LICENSE.TXT
-Revision: v10.0.13; captured from /usr/share/dotnet/LICENSE.txt in the pinned ASP.NET runtime image; identical bytes in dotnet/runtime v10.0.13 LICENSE.TXT and dotnet/aspnetcore v10.0.13 LICENSE.txt
+Applies to: Microsoft.NETCore.App 11.0.0; Microsoft.AspNetCore.App 11.0.0; Microsoft.AspNetCore.Identity.EntityFrameworkCore 11.0.0; Microsoft.AspNetCore.OpenApi 11.0.0; Microsoft.Extensions.DependencyModel 11.0.0
+Source: https://raw.githubusercontent.com/dotnet/runtime/v11.0.0/LICENSE.TXT
+Revision: dotnet/runtime v11.0.0 LICENSE.TXT; byte-identical to the previously captured .NET 10 license
 SHA-256: cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310
 
 The MIT License (MIT)
@@ -299,10 +303,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 === dotnet-third-party-notices (notice) ===
-Applies to: Microsoft.NETCore.App 10.0.14
-Source: https://mcr.microsoft.com/v2/dotnet/aspnet/manifests/sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac
-Revision: mcr.microsoft.com/dotnet/aspnet:10.0.13-noble@sha256:d5633778c754e89a386882eddf8dbee6942447a8a4b8267c19cf1e1158d0b0ac: /usr/share/dotnet/ThirdPartyNotices.txt, copied unchanged from the built Linux image
-SHA-256: 2dc8f8c5a39401e928b5784ab564eb8b3ceb99ead3df8f260e0cab7e0bbecc7a
+Applies to: Microsoft.NETCore.App 11.0.0
+Source: https://mcr.microsoft.com/v2/dotnet/aspnet/manifests/sha256:ca396ece3f2a2e62c7a03f1d7d710b8bc7e8c9dea5597d091178d9f5bfca13f0
+Revision: mcr.microsoft.com/dotnet/aspnet:11.0.0-resolute@sha256:ca396ece3f2a2e62c7a03f1d7d710b8bc7e8c9dea5597d091178d9f5bfca13f0: /usr/share/dotnet/ThirdPartyNotices.txt, copied unchanged from the Linux runtime image
+SHA-256: d30078edf6426ec7ef9427b3048b407fee214d1eb7834a681a3a09290387d591
 
 .NET Runtime uses third-party libraries or other resources that may be
 distributed under licenses different than the .NET Runtime software.
@@ -318,7 +322,7 @@ License notice for ASP.NET
 -------------------------------
 
 Copyright (c) .NET Foundation. All rights reserved.
-Licensed under the Apache License, Version 2.0.
+Licensed under the MIT License (MIT)
 
 Available at
 https://github.com/dotnet/aspnetcore/blob/main/LICENSE.txt
@@ -1756,11 +1760,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+License for opentelemetry-dotnet (https://github.com/open-telemetry/opentelemetry-dotnet)
+--------------------------------------
+
+   Copyright (c) The OpenTelemetry Authors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
 === aspnet-core-third-party-notices (notice) ===
-Applies to: Microsoft.AspNetCore.App 10.0.14; Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.14; Microsoft.AspNetCore.OpenApi 10.0.14
-Source: https://raw.githubusercontent.com/dotnet/aspnetcore/v10.0.13/THIRD-PARTY-NOTICES.txt
-Revision: dotnet/aspnetcore v10.0.13: THIRD-PARTY-NOTICES.txt, retained in full without inferring a Linux shipped-component inventory; also the full text supplied by Microsoft.AspNetCore.Identity.EntityFrameworkCore and Microsoft.AspNetCore.OpenApi 10.0.13, differing only by CRLF in those NuGet archives
-SHA-256: 52af3d603b6d069e635f8afd08ec44ec01559255b5f3afd161ae9e6fe7e7aa54
+Applies to: Microsoft.AspNetCore.App 11.0.0; Microsoft.AspNetCore.Identity.EntityFrameworkCore 11.0.0; Microsoft.AspNetCore.OpenApi 11.0.0
+Source: https://raw.githubusercontent.com/dotnet/aspnetcore/v11.0.0/THIRD-PARTY-NOTICES.txt
+Revision: dotnet/aspnetcore v11.0.0: THIRD-PARTY-NOTICES.txt; the OpenApi 11.0.0 package supplies the same text with CRLF line endings
+SHA-256: fe970484b338399def0b81b24d8a6005122d5c9f559a257c2ad22cbb83644cab
 
 .NET Core uses third-party libraries or other resources that may be
 distributed under licenses different than the .NET Core software.
@@ -2872,11 +2893,43 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+=========================================
+
+License notice for SharpFuzz
+=========================================
+
+https://github.com/Metalnem/sharpfuzz
+https://github.com/Metalnem/dotnet-fuzzers
+https://github.com/Metalnem/libfuzzer-dotnet
+
+MIT License
+
+Copyright (c) 2018 Nemanja Mijailovic
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+=========================================
+
 
 === ef-core-license (license) ===
-Applies to: Microsoft.EntityFrameworkCore 10.0.14; Microsoft.EntityFrameworkCore.Sqlite 10.0.14; Microsoft.EntityFrameworkCore.Sqlite.Core 10.0.14; Microsoft.Data.Sqlite.Core 10.0.14; Microsoft.EntityFrameworkCore.Abstractions 10.0.14; Microsoft.EntityFrameworkCore.Relational 10.0.14
-Source: https://raw.githubusercontent.com/dotnet/efcore/v10.0.13/LICENSE.txt
-Revision: v10.0.13
+Applies to: Microsoft.EntityFrameworkCore 11.0.0; Microsoft.EntityFrameworkCore.Sqlite 11.0.0; Microsoft.EntityFrameworkCore.Sqlite.Core 11.0.0; Microsoft.Data.Sqlite.Core 11.0.0; Microsoft.EntityFrameworkCore.Abstractions 11.0.0; Microsoft.EntityFrameworkCore.Relational 11.0.0
+Source: https://raw.githubusercontent.com/dotnet/efcore/v11.0.0/LICENSE.txt
+Revision: v11.0.0; byte-identical to the previously captured EF Core 10 license
 SHA-256: ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b
 
 The MIT License (MIT)
@@ -2904,9 +2957,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 === sqlitepclraw-license (license) ===
-Applies to: SQLitePCLRaw.core 2.1.13; SQLitePCLRaw.bundle_e_sqlite3 2.1.13; SQLitePCLRaw.provider.e_sqlite3 2.1.13; SQLitePCLRaw.lib.e_sqlite3 2.1.13
-Source: https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/ca835d21508bff43121c65081035840ac5006c4c/LICENSE.TXT
-Revision: v2.1.12, commit ca835d21508bff43121c65081035840ac5006c4c: LICENSE.TXT; same-major original reused for 2.1.13, whose four mapped NuGet packages declare Apache-2.0; no v2.1.13 Git tag was found at collection
+Applies to: SQLitePCLRaw.core 3.0.5; SQLitePCLRaw.bundle_e_sqlite3 3.0.5; SQLitePCLRaw.provider.e_sqlite3 3.0.5; SQLitePCLRaw.config.e_sqlite3 3.0.5
+Source: https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/96043b8cff323f21919df86a431c136655d81b4a/LICENSE.TXT
+Revision: SQLitePCLRaw.config.e_sqlite3 3.0.5 nuspec repository commit 96043b8cff323f21919df86a431c136655d81b4a: LICENSE.TXT; all four mapped packages declare Apache-2.0
 SHA-256: cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30
 
 
@@ -3113,14 +3166,14 @@ SHA-256: cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30
    limitations under the License.
 
 === sqlitepclraw-notice (notice) ===
-Applies to: SQLitePCLRaw.core 2.1.13; SQLitePCLRaw.bundle_e_sqlite3 2.1.13; SQLitePCLRaw.provider.e_sqlite3 2.1.13; SQLitePCLRaw.lib.e_sqlite3 2.1.13
-Source: https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/ca835d21508bff43121c65081035840ac5006c4c/NOTICE.TXT
-Revision: v2.1.12, commit ca835d21508bff43121c65081035840ac5006c4c: NOTICE.TXT; retained unchanged under same-major reuse, including broader upstream material without asserting SQLCipher/OpenSSL are shipped
-SHA-256: 485b276b3d2bfaa26df348e1e5c84df3648981e09b88531a6a53006f0705c24b
+Applies to: SQLitePCLRaw.core 3.0.5; SQLitePCLRaw.bundle_e_sqlite3 3.0.5; SQLitePCLRaw.provider.e_sqlite3 3.0.5; SQLitePCLRaw.config.e_sqlite3 3.0.5
+Source: https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/96043b8cff323f21919df86a431c136655d81b4a/NOTICE.TXT
+Revision: SQLitePCLRaw.config.e_sqlite3 3.0.5 nuspec repository commit 96043b8cff323f21919df86a431c136655d81b4a: NOTICE.TXT; identical at the core/provider repository commit
+SHA-256: 5a1ab2f670f86dd2f8d42e40a8459cc278ca6d5225a7e2a5fa3ea0184396a6d9
 
 
 ----------------------------------------------------------------
-Copyright on SQLitePCL.raw
+Copyright on SQLitePCLRaw
 ----------------------------------------------------------------
 
 Version prior to 2.0 were labeled with the copyright owned by
@@ -3163,180 +3216,47 @@ License for MS Open Tech
 // limitations under the License.
 
 
-----------------------------------------------------------------
-License for SQLCipher
-----------------------------------------------------------------
-
-Copyright (c) 2008, ZETETIC LLC
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the ZETETIC LLC nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY ZETETIC LLC ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL ZETETIC LLC BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-----------------------------------------------------------------
-License for OpenSSL libcrypto
-----------------------------------------------------------------
-
-  LICENSE ISSUES
-  ==============
-
-  The OpenSSL toolkit stays under a dual license, i.e. both the conditions of
-  the OpenSSL License and the original SSLeay license apply to the toolkit.
-  See below for the actual license texts. Actually both licenses are BSD-style
-  Open Source licenses. In case of any license issues related to OpenSSL
-  please contact openssl-core@openssl.org.
-
-  OpenSSL License
-  ---------------
-
-/* ====================================================================
- * Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
- */
-
- Original SSLeay License
- -----------------------
-
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- * 
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * 
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-
-
 
 === sqlitepclraw-copyright (copyright) ===
-Applies to: SQLitePCLRaw.core 2.1.13; SQLitePCLRaw.bundle_e_sqlite3 2.1.13; SQLitePCLRaw.provider.e_sqlite3 2.1.13; SQLitePCLRaw.lib.e_sqlite3 2.1.13
-Source: https://api.nuget.org/v3-flatcontainer/sqlitepclraw.core/2.1.13/sqlitepclraw.core.2.1.13.nupkg
-Revision: SQLitePCLRaw.core 2.1.13: sqlitepclraw.core.nuspec metadata/copyright value, unchanged text with a terminating LF; identical value verified in bundle_e_sqlite3, provider.e_sqlite3 and lib.e_sqlite3 2.1.13 nuspecs
-SHA-256: 2143a674c10f50e1efa6e7b8ed756b374085cf367167005e59c9df2e97de12c6
+Applies to: SQLitePCLRaw.core 3.0.5; SQLitePCLRaw.bundle_e_sqlite3 3.0.5; SQLitePCLRaw.provider.e_sqlite3 3.0.5; SQLitePCLRaw.config.e_sqlite3 3.0.5
+Source: https://api.nuget.org/v3-flatcontainer/sqlitepclraw.core/3.0.5/sqlitepclraw.core.3.0.5.nupkg
+Revision: SQLitePCLRaw.core and provider.e_sqlite3 3.0.5 nuspec copyright value, unchanged text with a terminating LF
+SHA-256: 2041bb1ba3ce6da1dc525f0b52f062de424c1801c041e3fdb63b3103d6cc318e
 
-Copyright 2014-2024 SourceGear, LLC
+Copyright 2014-2025 SourceGear, LLC
+
+=== sqlitepclraw-copyright-2026 (copyright) ===
+Applies to: SQLitePCLRaw.core 3.0.5; SQLitePCLRaw.bundle_e_sqlite3 3.0.5; SQLitePCLRaw.provider.e_sqlite3 3.0.5; SQLitePCLRaw.config.e_sqlite3 3.0.5
+Source: https://api.nuget.org/v3-flatcontainer/sqlitepclraw.config.e_sqlite3/3.0.5/sqlitepclraw.config.e_sqlite3.3.0.5.nupkg
+Revision: SQLitePCLRaw.config.e_sqlite3 and bundle_e_sqlite3 3.0.5 and SQLite 3.53.4 nuspec copyright value, unchanged text with a terminating LF
+SHA-256: 0076b2b51a7ca199888c4fe9ef8fffed86f4a2b9133d9a4ba2b5628604d85edc
+
+Copyright 2014-2026 SourceGear, LLC
+
+=== sqlite-package-license (public-domain-statement) ===
+Applies to: SQLite 3.53.4; SQLite engine (e_sqlite3) 3.53.4
+Source: https://api.nuget.org/v3-flatcontainer/sqlite/3.53.4/sqlite.3.53.4.nupkg
+Revision: SQLite 3.53.4 NuGet package LICENSE.txt
+SHA-256: 99464c3a88df7b708ce59e462cdcb85f72dfc9b1335b4fcc68be56131b634b95
+
+
+SQLite is Public Domain
+
+https://sqlite.org/copyright.html
+
+
+=== sqlite-package-copyright (copyright) ===
+Applies to: SQLite 3.53.4; SQLite engine (e_sqlite3) 3.53.4
+Source: https://api.nuget.org/v3-flatcontainer/sqlite/3.53.4/sqlite.3.53.4.nupkg
+Revision: SQLite 3.53.4 nuspec copyright value, unchanged text with a terminating LF
+SHA-256: 0076b2b51a7ca199888c4fe9ef8fffed86f4a2b9133d9a4ba2b5628604d85edc
+
+Copyright 2014-2026 SourceGear, LLC
 
 === sqlite-public-domain (public-domain-statement) ===
-Applies to: SQLite engine (e_sqlite3) 3.53.3
+Applies to: SQLite 3.53.4; SQLite engine (e_sqlite3) 3.53.4
 Source: https://sqlite.org/src/raw/LICENSE.md?ci=d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62
-Revision: SQLite fossil source identity d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62, reported by the shipped engine: original LICENSE.md; file extension changed only
+Revision: SQLite fossil source identity d4c0e51e4aeb96955b99185ab9cde75c339e2c29c3f3f12428d364a10d782c62: original LICENSE.md; file extension changed only; retained under same-major reuse
 SHA-256: ee6af51062b30d532991face5164136ae6f84e265ecf8abe89dc69dac45ca1e7
 
 License Information
@@ -7120,9 +7040,9 @@ mozzconf.h is distributed under the MPL 1.1/GPL 2.0/LGPL 2.1 tri-license.
 ################################################################################
 
 === openapi-net-license (license) ===
-Applies to: Microsoft.OpenApi 2.12.2
-Source: https://raw.githubusercontent.com/microsoft/OpenAPI.NET/a24aac560adbf013ff5aa63a873e5a7babce38d2/LICENSE
-Revision: Microsoft.OpenApi 2.12.2: unchanged LICENSE from the exact nuspec repository commit a24aac560adbf013ff5aa63a873e5a7babce38d2; no legal file supplied inside the NuGet archive
+Applies to: Microsoft.OpenApi 3.11.0
+Source: https://raw.githubusercontent.com/microsoft/OpenAPI.NET/2fea8ae4ee7ce6b9c313fa0822f5c617da18c351/LICENSE
+Revision: Microsoft.OpenApi 3.11.0: unchanged LICENSE from the exact nuspec repository commit 2fea8ae4ee7ce6b9c313fa0822f5c617da18c351; no legal file supplied inside the NuGet archive
 SHA-256: 5d177f23ecfeb0ea8e050b6a5a16355e1ae9a0b286436ca8f83ed08b3795be6b
 
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7148,10 +7068,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 === dotnet-dependency-model-third-party-notices (notice) ===
-Applies to: Microsoft.Extensions.DependencyModel 10.0.14
-Source: https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencymodel/10.0.13/microsoft.extensions.dependencymodel.10.0.13.nupkg
-Revision: Microsoft.Extensions.DependencyModel 10.0.13: complete unchanged THIRD-PARTY-NOTICES.TXT; distinct from the already captured .NET runtime notice bundle; NuGet signature-aware content hash verified against packages.lock.json
-SHA-256: 6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21
+Applies to: Microsoft.Extensions.DependencyModel 11.0.0
+Source: https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencymodel/11.0.0/microsoft.extensions.dependencymodel.11.0.0.nupkg
+Revision: Microsoft.Extensions.DependencyModel 11.0.0: complete unchanged THIRD-PARTY-NOTICES.TXT from the NuGet archive
+SHA-256: e3a241a6cf35167d82bf7e081de9641c59d10d2dbd8824409817bed31980d407
 
 .NET Runtime uses third-party libraries or other resources that may be
 distributed under licenses different than the .NET Runtime software.
@@ -7167,7 +7087,7 @@ License notice for ASP.NET
 -------------------------------
 
 Copyright (c) .NET Foundation. All rights reserved.
-Licensed under the Apache License, Version 2.0.
+Licensed under the MIT License (MIT)
 
 Available at
 https://github.com/dotnet/aspnetcore/blob/main/LICENSE.txt
@@ -7256,33 +7176,6 @@ http://www.apache.org/licenses/
 
 Copyright The OpenTelemetry Authors
 
-
-License notice for LinuxTracepoints
------------------------------------
-
-https://github.com/microsoft/LinuxTracepoints/blob/main/LICENSE
-
-Copyright (c) Microsoft Corporation.
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE
 
 License notice for Mono
 -------------------------------
@@ -8349,6 +8242,41 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
+License notice for zstd
+-----------------------
+
+https://github.com/facebook/zstd/blob/dev/LICENSE
+
+BSD License
+
+For Zstandard software
+Copyright (c) Meta Platforms, Inc. and affiliates. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Facebook, nor Meta, nor the names of its contributors may
+   be used to endorse or promote products derived from this software without
+   specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 License notice for fmtlib/fmt
 -------------------------------
 
@@ -8571,3 +8499,276 @@ NIST-developed software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF
 
 You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property. The software developed by NIST employees is not subject to copyright protection within the United States.
 
+License notice for ANTLR 4
+-------------------------------
+
+https://github.com/antlr/antlr4
+
+Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. Neither name of copyright holders nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License for Project Wycheproof
+--------------------------------------------------------------------
+Available at https://github.com/C2SP/wycheproof/blob/2fb7240f471b70bb3aa5cc9b0718cdff01632508/LICENSE
+
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+License notice for Intel Decimal Floating-Point Math Library
+-------------------------------
+
+https://www.intel.com/content/www/us/en/developer/articles/tool/intel-decimal-floating-point-math-library.html
+
+Copyright (c) 2007-2025, Intel Corp.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+   * Neither the name of Intel Corporation nor the names of its contributors
+     may be used to endorse or promote products derived from this software
+     without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

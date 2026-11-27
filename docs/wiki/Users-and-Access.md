@@ -8,18 +8,20 @@ access; each user manages their own password and personal preferences.
 
 | Action | Manager | Member |
 | --- | --- | --- |
-| Read every account, image, balance and retained history | Yes | Yes |
+| Read every account, image, balance and retained history | Yes | Assigned active accounts only |
 | Create or rename accounts and change their images | Yes | No |
 | Post openings, deposits and withdrawals | Yes | No |
 | Configure monthly allowances | Yes | No |
-| View allowance configuration and credit status | Yes | Yes |
+| View allowance configuration and credit status | Yes | Assigned active accounts only |
 | View allowance attempt details and failure reasons | Yes | No |
 | Create users, edit access or reset another user's password | Yes | No |
 | Change own password, language and theme | Yes | Yes |
 
-Users are not assigned to individual accounts. An account named after a child is
-still visible to all signed-in Managers and Members. Personal preferences do not
-grant permission to change financial data.
+Accounts are shared resources and can be assigned to multiple Members. Managers
+can read every account; Members can read only assigned active accounts. Existing
+Members start with no assignments after upgrade. The Manager-only assignment API
+is available; an administration UI is still pending prototype approval. Personal
+preferences do not grant permission to change financial data.
 
 The backend enforces permissions, not just the visible controls. A Member cannot
 gain write access by opening a Manager page or sending a request directly.

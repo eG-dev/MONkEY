@@ -23,11 +23,13 @@ import { AuthenticationService } from '../../services/authentication/authenticat
         >
         @if (auth.isManager()) {
           <a id="administration-tab-users" routerLink="/administration/users" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('auth.users') }}</a>
+          <a id="administration-tab-assignments" routerLink="/administration/account-assignments" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('assignments.title') }}</a>
         }
       </nav>
       <router-outlet />
     </ng-container>
   `,
+  styles: `.tabs { flex-wrap: wrap; }`,
 })
 export class Administration {
   protected readonly auth = inject(AuthenticationService);

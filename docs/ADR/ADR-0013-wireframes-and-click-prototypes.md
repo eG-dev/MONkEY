@@ -1,100 +1,86 @@
 # ADR-0013 Wireframes and Click Prototypes
 
 _Creation date_: 2026-10-10
-_Updated_: 2026-10-23
+_Updated_: 2026-10-31
 
 ## Context
 
-POCKET MONkEY needs deliberately designed views before features are implemented
-in the Angular application. Contributors and coding agents need a shared way to
+User interfaces need deliberately designed views before features are implemented.
+Contributors and coding agents need a shared way to
 agree on structure and behavior that is quick to change, reviewable without the
 running application, and does not tie every view to the current application shell.
 
 Static images alone hide behavior such as validation, dialogs, roles, languages,
 and phone layouts; a fully specified wireframe for every state becomes hard to
-maintain. The design must still respect the backend-owned business rules and the
-German/English, accessibility, and local-asset requirements of the product.
+maintain. The workflow must respect authoritative business rules, permissions,
+accessibility and localization requirements without depending on a particular
+product domain or frontend framework.
 
 ## Decision
 
-Design work for a view follows two steps: a rough wireframe, then a detailed
-click prototype. Both live under [docs/design](../design/README.md) and are
-reviewed before the Angular implementation.
+Design work for a view uses a rough wireframe when agreeing on structure,
+navigation, hierarchy or a workflow materially helps review, then a detailed
+click prototype. Small layout adjustments and detail changes may start directly
+with the prototype. Review and explicitly approve each current artifact before
+advancing to its dependent artifact or application implementation. This record
+owns those decisions and their rationale. The [UI/UX skill](../../.github/skills/ui-ux-design/SKILL.md)
+owns the detailed procedure, annotation syntax, drawing/export conventions,
+default approval rules (which this record strengthens) and repository bindings; the [design instructions](../../.github/instructions/design.instructions.md)
+provide concise constraints and routing. The [approval register](../design/approvals.md)
+owns each view's review state; the [design index](../design/README.md) owns
+artifact links, and artifact READMEs own the current design and its review
+evidence. Git history keeps earlier versions, so revisions are not numbered and
+no separate approval log is kept. Do not maintain parallel copies of those
+details here.
 
-```mermaid
-flowchart LR
-    W[Wireframe<br>structure and key behavior] --> A{Approved?}
-    A -- changes --> W
-    A -- yes --> P[Click prototype<br>details and behavior]
-    P --> V[Verify standalone<br>then integrated application]
-    V --> R{Explicitly approved?}
-    R -- structural change --> W
-    R -- detail change --> P
-    R -- yes --> I[Angular implementation<br>verified end to end]
-```
+See the skill's [workflow overview](../../.github/skills/ui-ux-design/SKILL.md#workflow-overview)
+for the design sequence and review checkpoints.
 
 ### Wireframes
 
-- Create one editable draw.io source per view in `docs/design/wireframes/<view>/<view>-wireframe.drawio` with a synchronized `<view>-wireframe.png` preview.
-- Draw one main desktop viewport per view, enclosed by a dashed border. Describe important behavior, states, role differences, dialogs, and phone layout in note shapes outside that border, connected by arrows to the relevant component. Keep annotations off the UI and on the same drawing rather than adding pages per state.
-- Show only the view inside the shell's main content container. The application shell has its own wireframe, so it can change without updating every view.
-- Create a separate source only when a screen has its own substantial layout, such as separate tabs of one view.
-- Keep wireframes rough: they define structure, hierarchy, and key interactions, not colors, typography, or exact spacing.
-- Consolidate annotations for the same area into one note and arrow. After the initial wireframe is created or substantially updated, ask the user to arrange the external notes in draw.io, using any side of the viewport for readable, short connectors. Preserve that arrangement, then export and review the synchronized preview after confirmation.
-
-Annotation format refined with user approval on 2026-10-10: external notes and
-component-directed arrows replace the original in-viewport callouts. The
-wireframe/prototype approval workflow is unchanged.
-
-Annotation workflow refined with user approval on 2026-10-10: the assistant
-prepares consolidated note content; the user arranges notes before final export
-and review. This replaces automatic annotation-layout optimization, not the
-wireframe/prototype approval gates.
-
-Annotation review markers refined with user approval on 2026-10-21: highlight
-changed notes visually instead of adding revision labels to annotation prose.
-Use a temporary light-blue note, optionally with blue text or connector, and keep
-revision/approval history in the design index. After explicit approval, the
-assistant restores normal yellow notes and black text/connectors if needed,
-removes obsolete annotation revision/draft prefixes and re-exports/inspects the
-PNG without waiting for a separate cleanup request. Preserve user layout and
-annotation meaning. This housekeeping does not create another approval gate.
+- Use one editable draw.io source with one main desktop viewport per substantially different view layout, keeping the shared shell separate. This avoids multiplying drawings for every state or shell change.
+- Create or update a wireframe by review value, not merely because one exists. Skipped updates are judged cumulatively: once accumulated differences from the prototype justify it, the wireframe must be updated and approved before further prototype changes. Until then, record the mismatch; an earlier approval stays history and does not describe the changed design.
+- Keep wireframes rough: structure, hierarchy and key behavior, not visual polish or exhaustive specifications. Concise external notes connect to the relevant components and add only behavior or constraints the drawing cannot convey. Detailed interactions belong in the prototype; enduring business/security rules remain in authoritative decisions.
+- Review the editable source, not a stale image. PNG previews represent approved sources only, never drafts. Preserve user edits and annotation arrangement so revisions do not overwrite reviewed work. The skill defines [drawing and review procedures](../../.github/skills/ui-ux-design/SKILL.md#drawing-and-review), including note arrangement, review markers and post-approval cleanup/export.
 
 ### Click prototypes
 
-- Build one offline click prototype per view in `docs/design/prototypes/<view>/index.html`, based on the approved wireframe.
-- Share the application shell, common components, formatting, and fictional data in `docs/design/prototypes/shared/`. Views render only their main content.
-- Use the design-system tokens, bundled fonts, and local images. Prototypes must work from the file system without a server or internet access.
-- Show the details and behavior the wireframe only outlines: validation, loading/empty/error states, submitting and retry, dialogs, confirmations, Manager/Member differences, German and English text, light/dark themes, and phone layouts.
-- Prototypes illustrate behavior; they are not production code, enforce no security, and use only fictional data.
+- Build an offline click prototype per view from requirements and existing design references, using its approved wireframe when one is part of the change, plus shared shell, components, formatting, design tokens and fictional data. Local assets and file-system operation allow review without a running application or internet access.
+- Demonstrate the detailed interactions and relevant permission, localization, theme and responsive states that static drawings hide. Prototypes illustrate behavior; they are not production code, enforce no security and establish no production API contracts.
+- Keep prototype-only controls and sample context in one shared review panel rather than in the reviewed layout, so reviewers see the product surface and screenshots stay clean.
 
 ### Integrated prototype entry
 
-- Maintain `docs/design/prototypes/index.html` as the full-application review
-    entry, composing the maintained views and shared shell without copying markup.
-    Keep every view usable standalone and the directly opened shell neutral.
-- Use real application navigation and owning-view dialogs, not a gallery or
-    invented application links to specimens. Avoid duplicate shell chrome; keep
-    preferences, role and fictional data coherent across navigation. All assets
-    and composition must work offline without a server.
-- Verify a changed view standalone first, then through the integrated entry and
-    actual application navigation, including its dialogs and relevant states.
-    Check desktop and phone layouts, both roles, English/German and light/dark
-    themes. Record standalone and integrated evidence separately; report blocked
-    integration instead of claiming standalone success completes verification.
-- Keep composition wiring in the [prototype notes](../design/prototypes/README.md).
-    It does not establish production routing, messaging or API contracts.
+- Maintain a full-application review entry composed from the standalone views and shared shell, not a specimen gallery or copied markup. Actual navigation must preserve preferences, role and fictional data without duplicate chrome.
+- Require standalone and integrated verification: standalone success cannot expose every shell-context or navigation defect. The skill defines the [verification procedure](../../.github/skills/ui-ux-design/SKILL.md#5-verify), evidence recording and local coverage matrix; composition wiring belongs in the prototype documentation, not production routing contracts.
 
 ### Changes and approval
 
-- Require explicit user approval of the current wireframe revision before advancing to its click prototype, and explicit approval of the current prototype revision before Angular implementation. Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed, and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts. If corrections are requested, verify the revised drafts and wait for review without repeatedly prompting for approval.
-- Change structure in the wireframe first and then the prototype; change details or behavior in the prototype only.
-- Record approval per reference in the design index. Approved references guide the implementation but do not override ADRs, backend authorization, or exact money rules, and do not create business rules on their own.
-- Implement approved views in the Angular application using the design-system tokens and verify them as described in [ADR-0005](ADR-0005-e2e-first-verification.md).
+- New or changed references are drafts until explicit user approval identifies the artifact and its current version. Record the resulting state in the approval register in the same commit as the change or approval. When a wireframe is created or changed, require approval of its current source and completion of its approved PNG preview before its prototype; always require approval of the current prototype before application implementation. Both named current artifacts may be approved together.
+- Feedback, requested corrections, annotation-placement readiness, business-policy acceptance, general instructions to proceed and successful checks are not approval. Earlier approvals remain history and do not approve changed artifacts.
+- Change structure or key behavior needed to review the wireframe there first when the wireframe is updated, and then in the prototype; change other interaction details in the prototype only.
+- Approved references guide implementation but do not override architectural decisions, authorization or domain constraints, and do not create business rules on their own. Approval recording and correction handling follow the skill's [approval procedure](../../.github/skills/ui-ux-design/SKILL.md#explicit-approval-gates) and [completion checklist](../../.github/skills/ui-ux-design/SKILL.md#6-finish).
+- Implement approved views using the shared design-system tokens and the project's verification requirements.
+
+Repository bindings are maintained once in the skill's
+[POCKET MONkEY profile](../../.github/skills/ui-ux-design/references/pocket-monkey.md).
+Implementation verification follows [ADR-0005](ADR-0005-e2e-first-verification.md).
 
 ## Change History
 
+- 2026-10-31: Moved review state into a single approval register with ordered per-view states, relying on Git history instead of numbered revisions and approval logs, and moved prototype-only controls into a shared review panel. Status was scattered across long revision logs and settings dialogs overlapped the reviewed layout; approval gates are unchanged.
+- 2026-10-31: Made wireframes depend on review value, with cumulative mismatch tracking, so small changes can go directly to the prototype without letting drawings drift silently. Prototype approval before implementation is unchanged.
+- 2026-10-30: Split the skill into a reusable core with default approval rules, a project-profile contract, draw.io conventions with a starter template, and a separate POCKET MONkEY profile, so the workflow can be adopted elsewhere while this record continues to define the local policy.
+- 2026-10-30: Consolidated annotation handling, verification/evidence steps, approval administration, the workflow diagram and local bindings in the skill, leaving this ADR responsible for decisions/rationale and instructions for concise constraints/routing. This reduces drift without changing design or approval requirements.
+- 2026-10-30: Defined adjacent scope attributes as a combined condition and separated reusable design/review principles from repository-specific bindings, so the workflow can be adopted in other domains and frameworks.
+- 2026-10-30: Clarified singular role headers and separate sections for differing role behavior, so each detail's audience is clear.
+- 2026-10-30: Made scope headers bold and separated them from preceding note text with a blank line, improving annotation scanability.
+- 2026-10-30: Moved PNG export until after source approval and review-marker cleanup, avoiding repeated exports while the editable wireframe is still changing.
+- 2026-10-30: Clarified that wireframe notes capture only behavior needed to review the view, use a bracketed first-line scope header when details are conditional, and leave detailed interactions and enduring rules to their authoritative records, to keep wireframes readable.
+- 2026-10-30: Excluded notes that merely repeat visible wireframe content, including revision changes, while retaining necessary details not conveyed by the drawing.
 - 2026-10-23: Added a global application composition and standalone-then-integrated
     verification, following the requested prototype review pattern. This exposes
     navigation, dialog and shell-context problems that isolated views cannot show;
     standalone references and explicit design approval gates remain unchanged.
+- 2026-10-21: Adopted temporary visual review markers and automatic post-approval cleanup/export instead of revision labels in annotation prose; user layout and approval gates remain unchanged.
+- 2026-10-10: Adopted external component-directed notes and user-arranged annotation layout instead of in-viewport callouts and automatic layout optimization.

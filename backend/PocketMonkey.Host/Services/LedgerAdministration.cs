@@ -56,16 +56,17 @@ public sealed class LedgerAdministration
         string accountId,
         int pageSize,
         string? cursor,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? memberId = null)
     {
+        if (!await AccountReadAccess.Accounts(database, memberId).AnyAsync(account => account.Id == accountId, cancellationToken))
+        {
+            return (null, LedgerError.NotFound);
+        }
+
         if (pageSize is < 1 or > 100)
         {
             return (null, LedgerError.InvalidPageSize);
-        }
-
-        if (!await database.Accounts.AnyAsync(account => account.Id == accountId, cancellationToken))
-        {
-            return (null, LedgerError.NotFound);
         }
 
         LedgerHistoryCursor? continuation = null;
@@ -118,6 +119,7 @@ public sealed class LedgerAdministration
             .Take(pageSize + 1)
             .ToListAsync(cancellationToken);
         var visible = page.Take(pageSize).ToList();
+        var actorNames = await ResolveActorNamesAsync(database, visible, cancellationToken);
         var nextCursor = page.Count > pageSize
             ? Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(new LedgerHistoryCursor
             {
@@ -133,7 +135,7 @@ public sealed class LedgerAdministration
             Timezone = settings.Timezone,
             RetentionMonths = settings.TransactionRetentionMonths,
             RetentionCutoffUtc = TransactionRetention.Cutoff(time.GetUtcNow(), settings.TransactionRetentionMonths),
-            Entries = visible.Select(entry => Describe(entry, settings.Currency)).ToList(),
+            Entries = visible.Select(entry => Describe(entry, settings.Currency, actorNames)).ToList(),
             NextCursor = nextCursor
         }, null);
     }
@@ -204,10 +206,14 @@ public sealed class LedgerAdministration
 
         if (existing is not null)
         {
-            return existing.AccountId == accountId && existing.ActorId == actor && existing.Source == source &&
-                existing.AmountMinorUnits == delta && existing.Comment == comment
-                ? (Describe(existing, settings.Currency), null)
-                : (null, LedgerError.IdempotencyConflict);
+            if (existing.AccountId != accountId || existing.ActorId != actor || existing.Source != source ||
+                existing.AmountMinorUnits != delta || existing.Comment != comment)
+            {
+                return (null, LedgerError.IdempotencyConflict);
+            }
+
+            var actorNames = await ResolveActorNamesAsync(database, [existing], cancellationToken);
+            return (Describe(existing, settings.Currency, actorNames), null);
         }
 
         if (source == LedgerEntrySource.Opening && account.BalanceMinorUnits.HasValue)
@@ -275,14 +281,35 @@ public sealed class LedgerAdministration
         return (Describe(entry, settings.Currency), null);
     }
 
-    public static LedgerEntryResponse Describe(LedgerEntry entry, string currency) => new()
+    public static async Task<Dictionary<string, string>> ResolveActorNamesAsync(
+        PocketMonkeyDbContext database, IEnumerable<LedgerEntry> entries, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(database);
+        ArgumentNullException.ThrowIfNull(entries);
+
+        var actorIds = entries
+            .Where(entry => entry.Source != LedgerEntrySource.Allowance)
+            .Select(entry => entry.ActorId)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        return actorIds.Length == 0
+            ? []
+            : await database.Users.AsNoTracking()
+                .Where(user => actorIds.Contains(user.Id))
+                .ToDictionaryAsync(user => user.Id, user => user.DisplayName, cancellationToken);
+    }
+
+    public static LedgerEntryResponse Describe(
+        LedgerEntry entry, string currency, IReadOnlyDictionary<string, string>? actorNames = null) => new()
     {
         Id = entry.Id,
         AccountId = entry.AccountId,
         Amount = CurrencyAmount.Format(entry.AmountMinorUnits),
         Currency = currency,
         ActorId = entry.ActorId,
-        ActorDisplayName = entry.ActorDisplayName,
+        ActorDisplayName = entry.Source != LedgerEntrySource.Allowance && actorNames is not null &&
+            actorNames.TryGetValue(entry.ActorId, out var actorName) ? actorName : entry.ActorDisplayName,
         OccurredAtUtc = entry.OccurredAtUtc,
         Source = entry.Source,
         Comment = entry.Comment,

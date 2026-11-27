@@ -17,9 +17,10 @@ public static class AccountEndpoints
             .WithTags("Accounts");
 
         accounts.MapGet("", async (
+            ClaimsPrincipal principal,
             AccountAdministration administration,
             CancellationToken cancellationToken) =>
-            TypedResults.Ok(await administration.ListAsync(cancellationToken)))
+            TypedResults.Ok(await administration.ListAsync(cancellationToken, AccountReadAccess.MemberId(principal))))
             .WithName("ListAccounts");
 
         accounts.MapGet("/archived", async (
@@ -32,10 +33,11 @@ public static class AccountEndpoints
 
         accounts.MapGet("/{id}", async Task<IResult> (
             string id,
+            ClaimsPrincipal principal,
             AccountAdministration administration,
             CancellationToken cancellationToken) =>
             {
-                var account = await administration.FindAsync(id, cancellationToken);
+                var account = await administration.FindAsync(id, cancellationToken, AccountReadAccess.MemberId(principal));
 
                 return account is null
                     ? ToResult(AccountError.NotFound)

@@ -1,7 +1,7 @@
 # ADR-0007 Application Runtime
 
 _Creation date_: 2026-10-04
-_Updated_: 2026-10-28
+_Updated_: 2026-11-26
 
 ## Context
 
@@ -12,7 +12,7 @@ compatibility and process/storage failures must be verified against the real ima
 
 ## Decision
 
-- Use the latest available release lines officially designated long-term support (LTS) by Angular, Node.js, and .NET, with their latest servicing releases. Angular's active-support phase is distinct from its LTS phase; a newer active-support or Current release does not qualify solely because it is newer. Use Taiga UI 5.
+- Use the latest available release lines officially designated long-term support (LTS) by Angular and Node.js, and the latest supported stable .NET release, including Standard Term Support (STS), with their latest servicing releases. Angular's active-support phase is distinct from its LTS phase; a newer active-support or Current release does not qualify solely because it is newer. Use Taiga UI 5.
 - Keep exact toolchain versions, SDKs, container base digests, and dependency lockfiles pinned; do not use floating `latest` or `lts` selectors. Evaluate compatibility and verify upgrades against the real production image before adopting new pins. Record selected versions, reproducible commands, and any compatibility blockers in the [development guide](../development.md).
 - Use EF Core SQLite for backend-only structured storage, with foreign keys, bounded busy handling, short transactions, and migrations before readiness. Use local disk, not a network share. Monetary representation remains a separate business decision.
 - Do not automatically delete or reset the database on startup, including for prerelease schema changes. Ordinary restarts and compatible migrations preserve data; an operator must manage an incompatible database explicitly.
@@ -29,6 +29,7 @@ verification strategy in [ADR-0005](ADR-0005-e2e-first-verification.md).
 
 ## Change History
 
+- 2026-11-26: Adopted the latest supported stable .NET release, including STS, to allow timely adoption of supported .NET updates while retaining pinned and verified releases.
 - 2026-10-28: Withdrew the unimplemented prerelease automatic-reset decision; database deletion remains an explicit operator action.
 - 2026-10-28: Approved a narrowly guarded automatic reset for explicitly incompatible prerelease schema changes, preserving ordinary restart persistence and requiring fail-closed behavior.
 - 2026-10-26: Replaced fixed Angular, Node.js, and .NET major versions with the latest available official LTS release policy, retaining exact pins and compatibility verification for reproducible upgrades.

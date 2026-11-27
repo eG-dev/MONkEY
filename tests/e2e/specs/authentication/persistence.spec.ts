@@ -6,7 +6,7 @@ import { test, expect, image } from '../../fixtures';
 test.use({ ignoreHTTPSErrors: true });
 
 test('existing initial database upgrades to Identity without data loss @api', async () => {
-  const probePath = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0');
+  const probePath = resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0');
 
   const result = spawnSync(
     'docker',

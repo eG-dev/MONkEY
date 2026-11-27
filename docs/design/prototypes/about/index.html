@@ -11,7 +11,6 @@
     .review-host { display: grid; gap: var(--space-7); max-width: var(--content-max-width); margin-inline: auto; padding: var(--space-7); }
     .review-host img { width: auto; height: var(--control-lg); max-width: 100%; object-fit: contain; object-position: left; }
     .review-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); }
-    .review-controls .switch-row { gap: var(--space-3); }
   </style>
 </head>
 <body>
@@ -22,21 +21,11 @@
     function render() {
       document.getElementById('view').innerHTML = `<div class="review-host"><img src="../../assets/images/monkey.png" alt="POCKET MONkEY"><div class="review-controls">
         <button class="button button-secondary" type="button" data-about aria-haspopup="dialog">${PM.icon('info')}${PM.esc(PM.t('about'))}</button>
-        <div class="field"><label for="language">${PM.esc(PM.t('language'))}</label><select class="select" id="language"><option value="en" ${PM.prefs.language === 'en' ? 'selected' : ''}>English</option><option value="de" ${PM.prefs.language === 'de' ? 'selected' : ''}>Deutsch</option></select></div>
-        <div class="switch-row"><span id="theme-label">${PM.esc(PM.t('darkMode'))}</span><button class="switch" type="button" role="switch" aria-labelledby="theme-label" aria-checked="${PM.prefs.dark}" id="theme"></button></div>
         <a href="../login/index.html">${PM.esc(PM.t('signIn'))}</a>
       </div></div>`;
-      document.getElementById('language').addEventListener('change', event => {
-        PM.savePrefs({ language: event.target.value });
-        document.getElementById('language').focus();
-      });
-      document.getElementById('theme').addEventListener('click', () => {
-        PM.savePrefs({ dark: !PM.prefs.dark });
-        document.getElementById('theme').focus();
-      });
     }
 
-    PM.init({ shell: false, title: 'about', render, strings: { en: { language: 'Language', signIn: 'Sign in' }, de: { language: 'Sprache', signIn: 'Anmelden' } } });
+    PM.init({ shell: false, title: 'about', render, strings: { en: { signIn: 'Sign in' }, de: { signIn: 'Anmelden' } } });
     document.querySelector('[data-about]').focus();
     PM.openAbout();
   </script>

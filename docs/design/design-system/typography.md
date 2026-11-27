@@ -1,6 +1,6 @@
 # Typography
 
-Status: Approved by the user on 2026-10-10. Role sizes and weights are defined in
+Role sizes and weights are defined in
 [typography.css](styles/typography.css); fonts are declared in
 [fonts.css](styles/fonts.css).
 
@@ -26,10 +26,10 @@ font-family: "Roboto", Arial, sans-serif;
 No monospaced font is bundled. `--font-mono` uses the system monospace stack and
 is only meant for rare technical text; amounts use Roboto's tabular figures.
 
-## Currency Formatting R1
+## Currency Formatting
 
-This presentation revision was explicitly approved on 2026-10-24 for the shared
-click prototype and Angular implementation. Hide the fractional part only for zero
+The shared click prototype and Angular apply the same rule. Hide the fractional
+part only for zero
 cents; otherwise retain exactly two fractional digits. Examples below omit
 unchanged signs and currency labels for clarity.
 

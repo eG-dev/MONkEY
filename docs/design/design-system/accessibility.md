@@ -1,7 +1,7 @@
 # Accessibility
 
-Status: Design baseline approved by the user on 2026-10-10; this is not a compliance certification. Carry forward WCAG 2.2 Level AA as the accessibility target
-for the POCKET MONkEY browser UI. This is a target, not a claim of conformance.
+WCAG 2.2 Level AA is the accessibility target for the POCKET MONkEY browser UI.
+This is a target, not a claim of conformance or a compliance certification.
 
 ## Baseline
 

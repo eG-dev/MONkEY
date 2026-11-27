@@ -122,9 +122,10 @@ the [interactive operator recovery procedure](Backup-Restore-and-Upgrades.md#rec
 for an existing Manager. Verify the command's reported data directory before
 entering credentials. Recovery against another volume cannot repair this instance.
 
-Members can read every account but cannot perform business writes. A missing
-write control or a rejected business write may be correct authorization, not a
-deployment failure. Never change roles directly in SQLite to bypass it.
+Members can read only assigned active accounts and cannot perform business writes.
+A missing account, write control or rejected business write may be correct
+authorization, not a deployment failure. Never change roles directly in SQLite
+to bypass it.
 
 ## Accounts or Images Appear Missing
 

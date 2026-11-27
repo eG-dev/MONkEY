@@ -129,7 +129,7 @@ standalone(
   async () => {
     const probe = resolve(
       __dirname,
-      "../../../integration/RuntimeChecks/bin/Release/net10.0",
+      "../../../integration/RuntimeChecks/bin/Release/net11.0",
     );
 
     const result = JSON.parse(

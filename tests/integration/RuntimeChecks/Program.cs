@@ -1,5 +1,12 @@
 using RuntimeChecks.Tests;
 
+if (args is ["member-account-assignments"])
+{
+    await MemberAccountAssignmentsCheck.RunAsync();
+
+    return;
+}
+
 if (args is ["account-lifecycle"])
 {
     await AccountPersistenceCheck.RunLifecycleAsync();

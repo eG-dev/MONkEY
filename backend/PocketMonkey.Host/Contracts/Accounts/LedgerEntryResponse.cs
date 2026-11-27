@@ -2,7 +2,7 @@ using PocketMonkey.Storage.Entities;
 
 namespace PocketMonkey.Host.Contracts.Accounts;
 
-/// <summary>Exact signed ledger delta and immutable posting provenance.</summary>
+/// <summary>Exact signed ledger delta and posting provenance with a resolved actor name.</summary>
 public sealed record LedgerEntryResponse
 {
     public required string Id { get; init; }

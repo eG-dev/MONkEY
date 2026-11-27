@@ -67,7 +67,7 @@ test('manager can confirm immediate deletion and retry a failed request', async 
   expect((await request.get(path)).status()).toBe(404);
 });
 
-test('manager retires and reactivates an account while members retain read-only access', async ({ page, request, browser, instance }) => {
+test('manager retires and reactivates an account while Member access is removed', async ({ page, request, browser, instance }) => {
   const manager = bootstrapManager(instance);
 
   await login(request, manager);
@@ -116,11 +116,11 @@ test('manager retires and reactivates an account while members retain read-only 
 
     await signIn(memberPage, reader, `/accounts/${account.id}`);
 
-    await expect(memberPage.locator('#account-details-retired')).toBeVisible();
+    await expect(memberPage.locator('#account-details-error')).toContainText('This account does not exist.');
     await expect(memberPage.locator('#account-details-delete')).toHaveCount(0);
     await expect(memberPage.locator('#account-details-reactivate')).toHaveCount(0);
-    await expect(memberPage.locator('#account-details-balance')).toHaveText('+11 €');
-    await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(2);
+    await expect(memberPage.locator('#account-details-balance')).toHaveCount(0);
+    await expect(memberPage.getByTestId('ledger-entry')).toHaveCount(0);
 
     await memberPage.goto('/accounts');
 

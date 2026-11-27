@@ -1,7 +1,5 @@
 # Logo
 
-Status: Approved by the user on 2026-10-10.
-
 ## Assets
 
 | Asset | Use |

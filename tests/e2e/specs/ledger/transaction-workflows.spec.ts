@@ -320,7 +320,7 @@ test('history restarts once after startup retention invalidates cached pages', a
       '--entrypoint',
       'dotnet',
       '--mount',
-      `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net10.0')},target=/checks,readonly`,
+      `type=bind,source=${resolve(__dirname, '../../../integration/RuntimeChecks/bin/Release/net11.0')},target=/checks,readonly`,
       '--mount',
       `type=volume,source=${instance.volume},target=/data`,
       image,

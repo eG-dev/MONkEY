@@ -16,7 +16,7 @@ public static class AllowanceEndpoints
             string id, ClaimsPrincipal principal, AllowanceAdministration administration, CancellationToken cancellationToken) =>
             {
                 var response = await administration.FindAsync(id, cancellationToken,
-                    principal.IsInRole(UserRole.Manager.ToIdentityName()));
+                    principal.IsInRole(UserRole.Manager.ToIdentityName()), AccountReadAccess.MemberId(principal));
                 return response is null ? TypedResults.NotFound(new { code = "not_found" }) : TypedResults.Ok(response);
             })
             .RequireAuthorization("ReadyUser")

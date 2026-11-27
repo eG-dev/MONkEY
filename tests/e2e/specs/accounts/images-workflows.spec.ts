@@ -141,6 +141,7 @@ test('account image upload, replacement, removal and fallback', async ({ page, i
   await expect.poll(async () => avatar.locator('img').evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBe(80);
 
   const member = await createUser(request, 'image-member', 'Image Member', 'Member');
+  expect((await csrfWrite(request, 'PUT', `/api/users/${member.profile.id}/account-assignments`, { accountIds: [account.id] })).status()).toBe(200);
 
   await login(request, member.account);
 

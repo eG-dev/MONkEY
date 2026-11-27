@@ -1,0 +1,93 @@
+/* Starter tokens: replace the placeholder values; keep the layering.
+   Primitives -> semantic aliases (used by components) -> optional component tokens.
+   Themes override only semantic aliases. */
+:root {
+  /* ---- Primitives ---- */
+  --brand-primary: #1f4e9e;
+  --brand-primary-hover: #183e7e;
+  --brand-primary-active: #12305f;
+  --brand-secondary: #9cc3ff;
+  --grey-0: #ffffff;
+  --grey-50: #f5f5f5;
+  --grey-100: #ebebeb;
+  --grey-200: #d6d6d6;
+  --grey-500: #6e6e6e;
+  --grey-600: #545454;
+  --grey-800: #2e2e2e;
+  --grey-900: #1f1f1f;
+  --grey-950: #121212;
+  --green-700: #00732f;
+  --red-700: #c62828;
+  --amber-800: #8a4b00;
+  --blue-700: #0b5fae;
+
+  --font-sans: system-ui, sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --type-h1: var(--weight-bold) 24px/1.25 var(--font-sans);
+  --type-body: var(--weight-regular) 14px/1.5 var(--font-sans);
+  --type-label: var(--weight-medium) 13px/1.35 var(--font-sans);
+  --type-caption: var(--weight-regular) 12px/1.4 var(--font-sans);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+  /* ---- Semantic aliases (light theme) ---- */
+  --text-primary: var(--grey-800);
+  --text-secondary: var(--grey-600);
+  --text-inverse: var(--grey-0);
+  --text-link: var(--brand-primary);
+  --surface-app: var(--grey-0);
+  --surface-panel: var(--grey-50);
+  --surface-raised: var(--grey-0);
+  --surface-hover: var(--grey-100);
+  --border-default: var(--grey-200);
+  --control-border: var(--grey-500);
+  --border-focus: var(--brand-primary);
+  --focus-ring: 0 0 0 2px var(--surface-app), 0 0 0 4px var(--border-focus);
+  --action-primary: var(--brand-primary);
+  --action-primary-hover: var(--brand-primary-hover);
+  --action-primary-active: var(--brand-primary-active);
+  --action-primary-text: var(--grey-0);
+  --action-danger: var(--red-700);
+  --action-danger-text: var(--grey-0);
+  --status-success-fg: var(--green-700);
+  --status-warning-fg: var(--amber-800);
+  --status-error-fg: var(--red-700);
+  --status-info-fg: var(--blue-700);
+}
+
+/* Dark theme: opt in with data-theme="dark" on a container. */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b3b3b3;
+  --text-inverse: var(--grey-950);
+  --text-link: var(--brand-secondary);
+  --surface-app: var(--grey-950);
+  --surface-panel: #1e1e1e;
+  --surface-raised: #262626;
+  --surface-hover: #2c2c2c;
+  --border-default: #3c3c3c;
+  --control-border: #858585;
+  --border-focus: var(--brand-secondary);
+  --action-primary: var(--brand-secondary);
+  --action-primary-hover: #b5d3ff;
+  --action-primary-active: #82b2f5;
+  --action-primary-text: var(--grey-950);
+  --action-danger: #ff8a80;
+  --action-danger-text: var(--grey-950);
+  --status-success-fg: #5fd38d;
+  --status-warning-fg: #ffb65c;
+  --status-error-fg: #ff8a80;
+  --status-info-fg: #7cbdf5;
+}

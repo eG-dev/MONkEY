@@ -1,6 +1,7 @@
 import { APIRequestContext, Page } from '@playwright/test';
 
-import { expect, credentials, createUser, csrfWrite, login } from '../fixtures';
+import { expect, csrfWrite } from '../fixtures';
+import { createMember } from './accounts';
 
 export async function createAccount(request: APIRequestContext, name: string) {
   const response = await csrfWrite(request, 'POST', '/api/accounts', { name });
@@ -11,22 +12,11 @@ export async function createAccount(request: APIRequestContext, name: string) {
 }
 
 export async function createReader(request: APIRequestContext) {
-  const { account: temporary } = await createUser(request, 'reader', 'Reader', 'Member');
-  const permanent = credentials('reader');
+  const response = await request.get('/api/accounts');
+  expect(response.status()).toBe(200);
+  const accounts: { id: string }[] = await response.json();
 
-  await csrfWrite(request, 'POST', '/api/auth/logout', {});
-  await login(request, temporary);
-
-  const changed = await csrfWrite(request, 'POST', '/api/auth/password', {
-    currentPassword: temporary.password,
-    newPassword: permanent.password,
-  });
-
-  expect(changed.status()).toBe(204);
-
-  await login(request, permanent);
-
-  return permanent;
+  return createMember(request, accounts.map(account => account.id));
 }
 
 export async function openTransactionForm(page: Page, record: string) {

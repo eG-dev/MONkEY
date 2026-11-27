@@ -4,6 +4,10 @@
 
 - The application is named **POCKET MONkEY**, with a lowercase `k`, a pun on managing pocket money. Use that spelling in product-facing text and documentation; do not rename existing technical identifiers or paths merely to match the display name.
 
+## Product Context
+
+- POCKET MONkEY is a pocket-money application for small households or groups. Avoid raising speculative privacy concerns or adding privacy requirements without a concrete connection to the task. Continue to follow agreed access controls, security requirements and applicable ADRs.
+
 ## Architecture Decisions
 
 - Read and follow applicable ADRs in `docs/ADR/` before changing code, plans, or instructions. ADRs are the authoritative record of agreed architectural decisions; do not silently depart from them.
@@ -29,7 +33,7 @@
 ## Replacement Invariants
 
 - The backend owns authorization, business rules, persistence, and jobs; Angular/Web-BFF owns rendering and transport. UI guards are not security enforcement.
-- Use a shared instance with Manager and Member roles, not tenancy. Members read all accounts; managers perform business writes. Personal preferences do not grant business-write access. Do not add email or Azure data import.
+- Use a shared instance with Manager and Member roles, not tenancy. Members read only assigned active accounts; Managers read all accounts and perform business writes. Personal preferences do not grant business-write access. Do not add email or Azure data import.
 - Financial writes must be atomic, use exact monetary arithmetic, and be safe under retries/concurrency. Jobs must be idempotent. Do not silently rewrite financial history.
 - Keep SSR identity and language request-scoped. Never expose server secrets or privately cache one user's response for another user.
 - Deliver German and English with every UI feature and bundle runtime assets locally. Keep language, currency, UTC timestamps, and the business timezone configured by `TZ` separate.

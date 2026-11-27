@@ -177,9 +177,9 @@ public sealed class AccountImages
         return null;
     }
 
-    public async Task<Stream?> OpenAsync(string id, CancellationToken cancellationToken)
+    public async Task<Stream?> OpenAsync(string id, CancellationToken cancellationToken, string? memberId = null)
     {
-        var key = await database.Accounts
+        var key = await AccountReadAccess.Accounts(database, memberId)
             .Where(account => account.Id == id)
             .Select(account => account.ImageKey)
             .SingleOrDefaultAsync(cancellationToken);

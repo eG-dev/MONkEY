@@ -2,8 +2,8 @@
 
 A monthly allowance automatically credits an account according to its saved
 configuration. It records money in POCKET MONkEY; it does not transfer funds.
-Managers configure allowances. Managers and Members can read every account's
-settings and credit status.
+Managers configure allowances and can read all accounts' settings and credit status.
+Members can read these details for their assigned active accounts.
 
 ## Configure an Allowance
 
