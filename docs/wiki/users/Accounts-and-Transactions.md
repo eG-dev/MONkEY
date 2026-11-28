@@ -18,8 +18,8 @@ does not make it private or give that person write access.
 | Upload, replace or remove an account image | Yes | No |
 
 Sign in and complete any required password change before using accounts. See
-[Getting Started](Getting-Started.md) for the first Manager and
-[Troubleshooting](Troubleshooting.md#access-is-locked-or-a-password-must-change)
+[Getting Started](../operators/Getting-Started.md) for the first Manager and
+[Troubleshooting](../operators/Troubleshooting.md#access-is-locked-or-a-password-must-change)
 for access problems.
 
 ## Create or Rename an Account
@@ -113,7 +113,7 @@ timezone. Changing UI language changes formatting, not posting times or amounts.
 
 Transaction-detail retention defaults to 24 months. The operator can configure
 1-120 months or `0` for unlimited history using
-`MONKEY_TRANSACTION_RETENTION_MONTHS`; see [Configuration](Configuration.md).
+`MONKEY_TRANSACTION_RETENTION_MONTHS`; see [Configuration](../operators/Configuration.md).
 
 Automatic cleanup runs at startup and daily. Its boundary is the first day of the
 current UTC month minus the configured number of calendar months. Only strictly
@@ -128,7 +128,7 @@ does not restore details already removed.
 
 Retention is not a backup and does not promise erasure of audits or historical
 backups. An expired transaction's retry identity cannot be reused to post again.
-For recovery options, see [Backup, Restore and Upgrades](Backup-Restore-and-Upgrades.md).
+For recovery options, see [Backup, Restore and Upgrades](../operators/Backup-Restore-and-Upgrades.md).
 
 ## Change an Account Image
 
@@ -160,9 +160,9 @@ Changing the configured currency only relabels existing values; it does not
 perform an exchange-rate conversion. Ask the operator before changing that
 setting on an instance with recorded money.
 
-For deployment or access errors, use [Troubleshooting](Troubleshooting.md). The
+For deployment or access errors, use [Troubleshooting](../operators/Troubleshooting.md). The
 authoritative technical rules are recorded in the
-[account](../ADR/ADR-0009-shared-accounts.md),
-[money and history](../ADR/ADR-0012-manual-transactions-and-signed-balances.md),
-[currency](../ADR/ADR-0011-currency-display-unit.md) and
-[image](../ADR/ADR-0014-private-account-images.md) decisions.
+[account](../../ADR/ADR-0009-shared-accounts.md),
+[money and history](../../ADR/ADR-0012-manual-transactions-and-signed-balances.md),
+[currency](../../ADR/ADR-0011-currency-display-unit.md) and
+[image](../../ADR/ADR-0014-private-account-images.md) decisions.

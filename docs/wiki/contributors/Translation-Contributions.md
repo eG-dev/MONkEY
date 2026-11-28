@@ -10,11 +10,11 @@ the repository root after restoring the locked dependencies.
 
 ## Find the Maintained Text
 
-- [English catalogs](../../web/public/i18n/en/shell.json) are the source and
+- [English catalogs](../../../web/public/i18n/en/shell.json) are the source and
   missing-key fallback.
-- [German catalogs](../../web/public/i18n/de/shell.json) must be complete too;
+- [German catalogs](../../../web/public/i18n/de/shell.json) must be complete too;
   fallback is not a substitute for delivering a translation.
-- The [language registry](../../web/src/app/i18n/languages.ts) maps each supported
+- The [language registry](../../../web/src/app/i18n/languages.ts) maps each supported
   ID to its display name, formatting locale, text direction, bundled catalog and
   Taiga UI language resources.
 
@@ -63,7 +63,7 @@ npm --prefix web run check:catalogs
 npm --prefix web run build
 ```
 
-The [catalog checker](../../web/scripts/check-catalogs.mjs) compares each language
+The [catalog checker](../../../web/scripts/check-catalogs.mjs) compares each language
 directory with English. It rejects mismatched files or flattened keys, empty
 messages, invalid ICU syntax and incompatible argument signatures. A successful
 check does not prove that wording is accurate, that every message is used, or
@@ -91,17 +91,17 @@ complete English catalog structure into a new language directory, translate all
 messages and retain complete German and English delivery.
 
 The frontend starting points are the
-[registry](../../web/src/app/i18n/languages.ts) and
-[application configuration](../../web/src/app/app.config.ts): import the local
+[registry](../../../web/src/app/i18n/languages.ts) and
+[application configuration](../../../web/src/app/app.config.ts): import the local
 catalog, register the required Angular locale data, and supply matching local
 Taiga resources, a native display name and text direction. Selectors and the
 bundled loader use the registry; do not scatter language-specific branches
 through components.
 
 A registry entry alone is **not** complete language support. The backend
-[preference endpoint](../../backend/PocketMonkey.Host/Endpoints/AuthenticationEndpoints.cs)
+[preference endpoint](../../../backend/PocketMonkey.Host/Endpoints/AuthenticationEndpoints.cs)
 currently accepts only `de` and `en`, while
-[instance configuration](../../backend/PocketMonkey.Host/Configuration/InstanceSettings.cs)
+[instance configuration](../../../backend/PocketMonkey.Host/Configuration/InstanceSettings.cs)
 accepts only `de-DE` and `en-US`. Coordinate those validation contracts, SSR
 negotiation, session/preference handling, configuration documentation and tests
 with the maintainer. Do not advertise saved preferences or an instance default
@@ -121,8 +121,8 @@ and `de`. English fallback is separate from the instance's German default.
 Language does not change currency, exact stored money, UTC timestamps or business
 month boundaries configured by `TZ`.
 
-See [Users and Access](Users-and-Access.md#personal-preferences) for personal
-settings, [Configuration](Configuration.md) for instance defaults, and the
-[language and timezone decision](../ADR/ADR-0004-language-and-timezone.md) for the
+See [Users and Access](../users/Users-and-Access.md#personal-preferences) for personal
+settings, [Configuration](../operators/Configuration.md) for instance defaults, and the
+[language and timezone decision](../../ADR/ADR-0004-language-and-timezone.md) for the
 architectural contract. In your pull request, describe the wording or support
 change, checks actually run, layout review and any remaining limitations.

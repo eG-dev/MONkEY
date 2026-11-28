@@ -10,20 +10,32 @@ Managers manage users and financial data. Members can read assigned active accou
 accounts are shared resources, not private to individual members. Amounts use exact two-decimal arithmetic.
 Currency is a display unit, not a currency-conversion service.
 
-## Start Here
+## For Users
 
-- [Getting Started](Getting-Started.md): install a published image and create the first Manager.
-- [Accounts and Transactions](Accounts-and-Transactions.md): shared accounts, opening balances, deposits, withdrawals, images and history.
-- [Monthly Allowances](Monthly-Allowances.md): next-month settings, automatic credits, catch-up and failure status.
-- [Users and Access](Users-and-Access.md): roles, user administration, passwords, sessions and personal preferences.
-- [Configuration](Configuration.md): environment variables, persistent storage and HTTPS.
-- [Backup, Restore and Upgrades](Backup-Restore-and-Upgrades.md): complete backups, financial snapshots, upgrades and recovery.
-- [Troubleshooting](Troubleshooting.md): logs, readiness, HTTPS, access and storage diagnostics.
-- [Technical guide](../development.md): existing detailed development, recovery and operational procedures.
-- [Development and Testing](Development-and-Testing.md): local setup, locked builds, real-image tests and failure diagnostics.
-- [Translation Contributions](Translation-Contributions.md): catalog changes, language registration, completeness and layout review.
-- [Builds and Releases](Builds-and-Releases.md): protected tags, candidate review, approval, same-artifact publication and failure handling.
+- [Accounts and Transactions](users/Accounts-and-Transactions.md): shared accounts, opening balances, deposits, withdrawals, images and history.
+- [Monthly Allowances](users/Monthly-Allowances.md): next-month settings, automatic credits, catch-up and failure status.
+- [Users and Access](users/Users-and-Access.md): roles, user administration, passwords, sessions and personal preferences.
+
+## For Operators
+
+Install and look after a POCKET MONkEY instance:
+
+- [Getting Started](operators/Getting-Started.md): install a published image and create the first Manager.
+- [Configuration](operators/Configuration.md): environment variables, persistent storage and HTTPS.
+- [Release Deployment Quick Reference](operators/Release-Deployment.md): short instructions for an extracted release bundle.
+- [Backup, Restore and Upgrades](operators/Backup-Restore-and-Upgrades.md): complete backups, financial snapshots, upgrades and recovery.
+- [Troubleshooting](operators/Troubleshooting.md): logs, readiness, HTTPS, access and storage diagnostics.
 - [Release notes and deployment assets](https://github.com/eG-dev/MONkEY/releases): choose an exact published version.
+
+## For Contributors
+
+- [Development and Testing](contributors/Development-and-Testing.md): local setup, locked builds, real-image tests and failure diagnostics.
+- [Translation Contributions](contributors/Translation-Contributions.md): catalog changes, language registration, completeness and layout review.
+- [Technical guide](../development.md): detailed development, recovery and operational procedures.
+
+## For Maintainers
+
+- [Builds and Releases](maintainers/Builds-and-Releases.md): protected tags, candidate review, approval, same-artifact publication and failure handling.
 
 ## Scope and Limits
 

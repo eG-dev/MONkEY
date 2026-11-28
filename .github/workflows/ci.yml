@@ -170,7 +170,7 @@ jobs:
           docker image inspect pocket-monkey:local > .local/rehearsal/image.json
           cp deploy/compose.yaml .local/rehearsal/compose.yaml
           cp deploy/compose.exports.yaml .local/rehearsal/
-          cp docs/wiki/Release-Deployment.md .local/rehearsal/DEPLOYMENT.md
+          cp docs/wiki/operators/Release-Deployment.md .local/rehearsal/DEPLOYMENT.md
           cp .build/about/build-info.json .local/rehearsal/
           node <<'NODE'
           const fs = require('node:fs');

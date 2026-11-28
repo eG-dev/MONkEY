@@ -111,7 +111,7 @@ services:
 
 Recreate the application with `docker compose -f compose.yaml up -d --no-build`.
 The export directory must be outside `MONKEY_DATA_PATH`. With a repository
-deployment, the checked-in [export override](../../deploy/compose.exports.yaml)
+deployment, the checked-in [export override](../../../deploy/compose.exports.yaml)
 provides these settings instead; use it together with the base Compose file.
 
 An initial snapshot is created on first enabled startup. Subsequent checks run at
@@ -219,6 +219,6 @@ does not create a new first Manager. Enter credentials directly into the termina
 never into chat or command arguments. Host access is privileged operator access;
 there is no email recovery.
 
-See the [detailed financial recovery contract](../development.md#portable-financial-recovery)
-and [recovery decision](../ADR/ADR-0021-portable-financial-recovery.md) for format
+See the [detailed financial recovery contract](../../development.md#portable-financial-recovery)
+and [recovery decision](../../ADR/ADR-0021-portable-financial-recovery.md) for format
 and safety details.

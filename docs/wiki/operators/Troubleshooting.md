@@ -94,7 +94,7 @@ off Secure cookies, bypass certificate checks or weaken origin/CSRF validation.
 Check that the proxy forwards to the web service's container port `8080` using the
 deployment's actual network. A containerized proxy's `127.0.0.1` is its own
 container, not the application or Docker host. The host-loopback proxy example in
-the [technical guide](../development.md#host-https-reverse-proxy) is specifically
+the [technical guide](../../development.md#host-https-reverse-proxy) is specifically
 for a proxy on the same host.
 
 Trust forwarded headers only from the proxy IP addresses or CIDRs actually seen
@@ -188,5 +188,5 @@ route, sign-in or one operation. Include only a short redacted log excerpt and
 use synthetic records for screenshots and reproduction.
 
 Report through [GitHub Issues](https://github.com/eG-dev/MONkEY/issues) following
-the [contribution guide](../../CONTRIBUTING.md). Do not publish credentials or
+the [contribution guide](../../../CONTRIBUTING.md). Do not publish credentials or
 private financial data to make a report easier to reproduce.

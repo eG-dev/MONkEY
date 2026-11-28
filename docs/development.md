@@ -1476,7 +1476,7 @@ New bundles contain direct environment values and a stable top-level Compose
 silently creating an empty volume. The bundled guide covers first Manager setup,
 HTTPS, backups and upgrades; production/real-host acceptance is still separate.
 Published beta.2 assets retain their original interpolation-based format; the
-[Getting Started guide](wiki/Getting-Started.md#configure-the-instance) explains
+[Getting Started guide](wiki/operators/Getting-Started.md#configure-the-instance) explains
 how to adapt a local copy without changing published release assets.
 The JSON build records are not an SBOM or cryptographic attestation.
 
@@ -1925,7 +1925,7 @@ container data-path variable does not relocate a Docker volume automatically.
 Optional environment-file interpolation is still supported when you explicitly
 replace a literal with `${VARIABLE:-default}` and pass `--env-file`. An environment
 file cannot override an existing literal value by itself. See
-[Configuration](wiki/Configuration.md) for the distinction from service `env_file`.
+[Configuration](wiki/operators/Configuration.md) for the distinction from service `env_file`.
 
 Inspect or validate without starting anything:
 
