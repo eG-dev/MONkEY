@@ -1,6 +1,6 @@
 # Wiki Documentation Proposal
 
-Date: 2026-10-26. Revision: R7. Status: first batch published and independently verified; experimental Codespaces profiles/guides implemented locally, browser installation and hosted checks open.
+Date: 2026-10-26. Revision: R7. Status: first batch published and independently verified. Windows-host development guidance is maintained in the Wiki source.
 
 Approved direction: application-repository Markdown is authoritative; the GitHub
 Wiki is a published view, not a separately maintained copy. The owner approved
@@ -33,15 +33,12 @@ and [Wiki links and images](https://docs.github.com/en/communities/documenting-y
 - Keep the root README as the short introduction and entry point. Release
   bundles retain instructions matching their exact image; a changing Wiki page
   does not replace those assets or certify production readiness.
-- Only publish pages that describe implemented and checked behavior. The
-  Codespaces pages depend on their configurations being implemented and tested.
+- Only publish pages that describe implemented and checked behavior.
 
 ## Approved Page Index
 
 The page names below are approved Wiki slugs, not necessarily existing files or
-published links. Home, Getting-Started and Configuration are published. The two
-experimental Codespaces guides and profiles are local follow-up work, not yet
-published or validated in an actual GitHub Codespace.
+published links. Home, Getting-Started and Configuration are published.
 Group them in a generated sidebar rather than introducing nested Wiki directories.
 
 | Group | Page | Contents |
@@ -54,8 +51,6 @@ Group them in a generated sidebar rather than introducing nested Wiki directorie
 | Operate | Configuration | ENV reference, validation, timezone/language/currency separation and trusted proxies |
 | Operate | Backup-Restore-and-Upgrades | Full-volume backup/restore, upgrade precautions and the separate financial export/import workflow |
 | Operate | Troubleshooting | Logs, readiness, HTTPS/cookies, permissions, mounts and safe diagnostics |
-| Test | Codespaces-Image-Testing | Explicit release/digest selection, manual startup, private HTTPS, Manager setup, retained data and explicit reset |
-| Develop | Codespaces-Development | Full toolchain, dependency restore, manual startup, private HTTPS, browser E2E and separate development data |
 | Develop | Development-and-Testing | Local setup, runtime boundaries, locked builds, focused checks, smoke/full E2E and failure diagnostics |
 | Develop | Translation-Contributions | Language registration, catalogs, placeholders, completeness and verification |
 | Maintain | Builds-and-Releases | Protected tags, draft review, same-artifact publishing, approval and immutable version recovery |
@@ -86,7 +81,6 @@ authoritative contract. It does not mean copying plan prose and completion boxes
 | [Configuration](configuration.md) | Move the maintained ENV contract and rules to Configuration after approval; leave a concise plan pointer until all references are updated |
 | [Localization](localization.md) | Explain user selection in Users-and-Access and instance defaults in Configuration; extract contributor steps into Translation-Contributions |
 | [Testing](testing.md) | Extract reproducible strategy/commands into Development-and-Testing; retain current evidence and open acceptance gates in the plan |
-| Codespaces discussion | Add the two new guides only alongside validated configurations; there is no existing implementation to document as complete |
 
 Before extraction, reconcile stale statements against actual release evidence.
 The README now links the published beta images and the new Getting Started guide;
@@ -219,41 +213,10 @@ no broader credential or alternative authentication mechanism is approved.
   bootstrap adoption, automatic workflow and commit/push on 2026-10-26.
   The resulting first actual publication succeeded and an independent clone
   matched its source revision and every generated-file hash.
-6. Add the remaining pages incrementally. Add Codespaces guides with their tested
-   configurations, and shorten the old guide/plans only after coverage is checked.
-
-The agreed Codespaces direction is two separate selectable profiles: published
-image testing and full-stack development with browser E2E tools. Both use manual
-application startup, separate retained data, interactive Manager setup, private
-HTTPS and defaults of German, `EUR` and `Europe/Berlin`. The image profile selects a release
-explicitly and pins its digest; development restores dependencies on creation.
-No billable Codespaces, application environments or publishing credentials are
-created by this documentation proposal.
-
-### Codespaces Local Follow-up
-
-- Added selectable [image-testing](../../.devcontainer/image-testing/devcontainer.json)
-  and [development](../../.devcontainer/development/devcontainer.json) profiles,
-  with a digest-pinned official Ubuntu base and resolved feature lockfiles.
-- Both tool images built locally with Dev Containers CLI `0.89.0`. The development
-  toolchain reports Node `24.22.1`, npm `12.2.1` and .NET SDK `10.0.403`.
-  Eight focused profile/environment/actual-script fixture checks pass and are
-  wired into secret-free CI. Application startup is manual; data is isolated.
-- In a disposable local development container, locked web/test dependency,
-  EF-tool and .NET solution restores passed. Playwright's Linux prerequisites
-  installed, but its Chromium download failed certificate trust validation even
-  with Node's system CA store. TLS verification was not disabled. Complete
-  post-create/browser acceptance remains open; do not claim it passed.
-- The [image-testing guide](../../docs/wiki/Codespaces-Image-Testing.md) and
-  [development guide](../../docs/wiki/Codespaces-Development.md) describe the
-  implemented commands and explicitly identify experimental/unverified behavior.
-  A real Codespaces session, private forwarded HTTPS/sign-in, cloud persistence
-  and reset still need acceptance. No billable Codespace was created.
+6. Add the remaining pages incrementally, and shorten the old guide/plans only
+   after coverage is checked.
 
 ## Decisions Still Needed
 
-- Review the local Codespaces follow-up and authorize its commit/push separately.
-- Resolve the local browser-download trust prerequisite without weakening TLS,
-  then obtain authorization for any billable hosted Codespaces acceptance session.
 - Continue the remaining approved pages incrementally; keep incomplete acceptance
-  explicit rather than advertising production-ready or fully verified profiles.
+  explicit rather than advertising production readiness.

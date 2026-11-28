@@ -337,10 +337,7 @@ The English [reader guides](wiki/Home.md) are authoritative in `docs/wiki/`.
 The [navigation manifest](wiki/navigation.json) explicitly selects pages and image
 assets. The Wiki is generated; edit source Markdown rather than published pages.
 The first published batch covers Home, Getting Started and Configuration.
-The experimental [image-testing](wiki/Codespaces-Image-Testing.md) and
-[development](wiki/Codespaces-Development.md) profiles have local validation;
-complete browser installation and hosted checks remain open. Further pages
-remain in the [documentation plan](../plans/migration/wiki-documentation.md).
+Further pages remain in the [documentation plan](../plans/migration/wiki-documentation.md).
 
 ```text
 npm --prefix tests/e2e ci --ignore-scripts
@@ -1666,9 +1663,9 @@ manager's password, clears lockout, reactivates that manager, and requires a
 password change after login. Both operations create database audit events.
 Host access is a privileged operator capability, not an in-app Manager permission.
 
-For the development launcher, run from the repository root in another PowerShell
-terminal after the Release build. Resolve the repository directory explicitly
-so the operator command uses the launcher's data folder.
+For the development launcher, stop the launcher first to avoid Windows build
+locks, and run from the repository root in PowerShell. Resolve the repository
+directory explicitly so the operator command uses the launcher's data folder.
 Use the same public origin as the launcher (change the port below if necessary):
 
 ```powershell
@@ -1676,10 +1673,11 @@ $repoPath = (Resolve-Path '.').Path
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
 $env:MONKEY_DATA_PATH = Join-Path $repoPath '.local/dev'
 $env:MONKEY_PUBLIC_URL = 'http://127.0.0.1:4180'
-dotnet (Join-Path $repoPath 'backend/PocketMonkey.Host/bin/Release/net11.0/PocketMonkey.Host.dll') bootstrap-manager
+dotnet run --project backend/PocketMonkey.Host --no-launch-profile -- bootstrap-manager
 ```
 
-Use `recover-manager` in place of `bootstrap-manager` for recovery. Development
+Restart the launcher after a successful command. Use `recover-manager` in place
+of `bootstrap-manager` for recovery. Development
 HTTP cookies are local-only; production requires HTTPS and Secure cookies.
 
 Operator commands print their resolved `Data directory` before prompting. Check

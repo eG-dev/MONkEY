@@ -99,29 +99,31 @@ in this order:
 2. Reuse full CI to build once, test the actual image and export `verified-image`.
    Verification has no package/release-write permissions.
 3. Prepare generated draft release notes, preserving an existing reviewed draft.
-   Show the **Candidate Image Review** summary with version, run, attempt, source,
-   exact candidate command and release-tag-specific Image Testing creation link.
+   Show the **Candidate Image Review** summary with version, run, attempt, source
+   and a link to this review guidance.
 4. Wait for approval on the protected `release` environment before publishing.
 
 Review and edit the draft while publication waits. Include highlights,
 limitations, breaking changes, deployment/upgrade instructions and recovery
 precautions; generated pull-request summaries alone are not enough.
 
-For manual candidate acceptance, follow
-[Codespaces Image Testing](Codespaces-Image-Testing.md#review-a-pending-release)
-using the command from that run's summary. Reuse an existing review Codespace or
-follow the creation link, confirm its configuration and choose the machine size
-yourself. The workflow does not create, start or delete a personal workspace.
-Keep forwarded port 8080 private and use synthetic data. Codespaces usage may
-incur charges; stopping a workspace does not remove its stored data.
+For manual candidate acceptance, use the run and full source revision in the
+summary. Confirm that the current attempt's `verify / verify` job succeeded,
+and download its unexpired, unambiguous `verified-image` artifact from that run.
+Check every entry in `SHA256SUMS`, and compare `build-info.json` and `image.json`
+with the summary: clean release build, matching version, repository and revision,
+and Linux amd64 image labels. Load `verified-image.tar.gz` with `docker load`,
+then inspect the loaded image ID and labels against `image.json`. Stop if any
+check fails or the artifact cannot be tied to the current attempt.
 
-The candidate helper verifies the current successful verification attempt,
-artifact identity, checksums and clean build/source metadata, then loads the
-saved image with registry pulls disabled. It does not rebuild or publish.
-Check readiness, authentication and intended changes against that image before
-approving the same run. A rerun or changed artifact requires fresh review.
-Codespaces cloud forwarding/sign-in/persistence acceptance remains separate from
-the local script checks; the profiles are still experimental.
+Run the loaded image by its exact local image ID with registry pulls and builds
+disabled, in a separate Docker instance and data volume. Configure a private
+HTTPS origin and trusted proxy as described in [Getting Started](Getting-Started.md);
+use synthetic data. Check readiness, authentication and intended changes against
+that image and record the run, attempt, artifact, revision, image ID and results.
+Do not substitute a source rebuild or registry tag. A rerun or changed artifact
+requires fresh review before approving the same run. This is a manual procedure,
+not an automated candidate verifier; local review of this procedure remains open.
 
 The `verified-image` Actions artifact contains `verified-image.tar.gz`,
 `image.json`, `build-info.json`, `compose.yaml`, `compose.exports.yaml`,

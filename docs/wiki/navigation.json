@@ -10,8 +10,6 @@
     { "slug": "Configuration", "title": "Configuration", "group": "Operate" },
     { "slug": "Backup-Restore-and-Upgrades", "title": "Backup, Restore and Upgrades", "group": "Operate" },
     { "slug": "Troubleshooting", "title": "Troubleshooting", "group": "Operate" },
-    { "slug": "Codespaces-Image-Testing", "title": "Codespaces Image Testing", "group": "Test" },
-    { "slug": "Codespaces-Development", "title": "Codespaces Development", "group": "Develop" },
     { "slug": "Development-and-Testing", "title": "Development and Testing", "group": "Develop" },
     { "slug": "Translation-Contributions", "title": "Translation Contributions", "group": "Develop" },
     { "slug": "Builds-and-Releases", "title": "Builds and Releases", "group": "Maintain" }

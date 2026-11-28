@@ -173,22 +173,16 @@ try {
   });
   assert.equal(result.status, 0, result.error?.message ?? result.stderr);
   const summary = fs.readFileSync(summaryPath, 'utf8');
-  assert(summary.includes(`bash .devcontainer/image-testing/manage.sh candidate 123456 ${revision}`));
   assert(summary.includes('https://github.com/eG-dev/MONkEY/actions/runs/123456'));
   assert(summary.includes('(attempt 2)'));
   assert(summary.includes('Version: 0.1.0-beta.3'));
-  assert(summary.includes('No Codespace is created, started or deleted'));
-  const match = summary.match(/\[Create an Image Testing Codespace\]\((https:[^)]+)\)/);
-  assert(match, 'Missing Image Testing creation link');
-  const creation = new URL(match[1]);
-  assert.equal(creation.origin, 'https://codespaces.new');
-  assert.equal(creation.pathname, '/eG-dev/MONkEY/tree/v0.1.0-beta.3');
-  assert.equal(creation.searchParams.get('devcontainer_path'), '.devcontainer/image-testing/devcontainer.json');
-  assert.deepEqual([...creation.searchParams.keys()], ['devcontainer_path'], 'Leave machine choice and creation confirmation to the user');
+  assert(summary.includes(`Source: \`${revision}\``));
+  assert(summary.includes(`https://github.com/eG-dev/MONkEY/blob/${revision}/docs/wiki/Builds-and-Releases.md#review-before-approval`));
+  assert(summary.includes('verified-image') && summary.includes('A rerun or changed artifact requires fresh review.'));
 } finally {
   fs.rmSync(reviewFixture, { recursive: true, force: true });
 }
-console.log('PASS: actual pre-approval summary renders the exact candidate command, run/attempt and release-specific Image Testing creation link without lifecycle calls');
+console.log('PASS: actual pre-approval summary identifies the candidate run, attempt, source and review guidance without lifecycle calls');
 
 for (const [event, full, exported, tag, command] of [
   ['pull_request', 'false', 'false', '', 'run test:smoke'],
