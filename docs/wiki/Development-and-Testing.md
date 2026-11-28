@@ -196,7 +196,7 @@ and image-export runs use the full suite. See the
 
 Repository administrators must update branch protection or rulesets to require
 all three new CI checks: **Repository checks**, **Application builds**, and
-**Production image verification**. Requiring only the image check is insufficient:
+**Build and verify app image**. Requiring only the image check is insufficient:
 GitHub can mark it skipped when a prerequisite fails. Update the old required
 check after the new checks are available; this repository cannot change the
 ruleset through the workflow.
