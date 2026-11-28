@@ -21,9 +21,10 @@ and [Wiki links and images](https://docs.github.com/en/communities/documenting-y
 
 ## Ownership and Layout
 
-- Use `docs/wiki/` for canonical reader-facing English Markdown, with flat filenames
-  matching stable Wiki page names. Use ordinary relative Markdown links so the
-  source is readable in the application repository too.
+- Use `docs/wiki/` for canonical reader-facing English Markdown, organized by
+  audience. The navigation manifest maps source paths to stable, flat Wiki page
+  names. Use ordinary relative Markdown links so source remains readable in the
+  application repository too.
 - Keep ADRs, design sources, legal originals, implementation scripts and test
   fixtures in their existing repository locations. Link to them instead of
   creating another authoritative copy in the Wiki.
@@ -39,22 +40,22 @@ and [Wiki links and images](https://docs.github.com/en/communities/documenting-y
 
 The page names below are approved Wiki slugs, not necessarily existing files or
 published links. Home, Getting-Started and Configuration are published.
-Group them in a generated sidebar rather than introducing nested Wiki directories.
+Group them in a generated sidebar; source folders do not change published Wiki URLs.
 
 | Group | Page | Contents |
 | --- | --- | --- |
-| Start | Home | Product purpose, supported scope, beta limitations and navigation |
-| Start | Getting-Started | Select a released image, persistent storage, HTTPS, first Manager and first sign-in |
-| Use | Accounts-and-Transactions | Shared accounts, signed opening balances, images, deposits, withdrawals, history and retention |
-| Use | Monthly-Allowances | Configuration, effective months, catch-up, execution status and retry behavior |
-| Use | Users-and-Access | Manager/Member permissions, user administration, password changes and operator recovery |
-| Operate | Configuration | ENV reference, validation, timezone/language/currency separation and trusted proxies |
-| Operate | Release-Deployment | Short release-bundle deployment reference, copied into the verified artifact |
-| Operate | Backup-Restore-and-Upgrades | Full-volume backup/restore, upgrade precautions and the separate financial export/import workflow |
-| Operate | Troubleshooting | Logs, readiness, HTTPS/cookies, permissions, mounts and safe diagnostics |
-| Develop | Development-and-Testing | Local setup, runtime boundaries, locked builds, focused checks, smoke/full E2E and failure diagnostics |
-| Develop | Translation-Contributions | Language registration, catalogs, placeholders, completeness and verification |
-| Maintain | Builds-and-Releases | Protected tags, draft review, same-artifact publishing, approval and immutable version recovery |
+| Overview | Home | Product purpose, supported scope, beta limitations and navigation |
+| For Users | Accounts-and-Transactions | Shared accounts, signed opening balances, images, deposits, withdrawals, history and retention |
+| For Users | Monthly-Allowances | Configuration, effective months, catch-up, execution status and retry behavior |
+| For Users | Users-and-Access | Manager/Member permissions, user administration, password changes and operator recovery |
+| For Operators | Getting-Started | Select a released image, persistent storage, HTTPS, first Manager and first sign-in |
+| For Operators | Configuration | ENV reference, validation, timezone/language/currency separation and trusted proxies |
+| For Operators | Release-Deployment | Short release-bundle deployment reference, copied into the verified artifact |
+| For Operators | Backup-Restore-and-Upgrades | Full-volume backup/restore, upgrade precautions and the separate financial export/import workflow |
+| For Operators | Troubleshooting | Logs, readiness, HTTPS/cookies, permissions, mounts and safe diagnostics |
+| For Contributors | Development-and-Testing | Local setup, runtime boundaries, locked builds, focused checks, smoke/full E2E and failure diagnostics |
+| For Contributors | Translation-Contributions | Language registration, catalogs, placeholders, completeness and verification |
+| For Maintainers | Builds-and-Releases | Protected tags, draft review, same-artifact publishing, approval and immutable version recovery |
 
 Start with cohesive pages; split a page later only when its actual content warrants
 it. Do not reproduce the development guide's dated headings as Wiki pages.
@@ -194,8 +195,8 @@ no broader credential or alternative authentication mechanism is approved.
 2. Completed: initialization, dedicated secret and the approved hosted credential
   dry-run, with no remote changes.
 3. Published and independently verified: [Home](../../docs/wiki/Home.md),
-  [Getting Started](../../docs/wiki/Getting-Started.md) and
-  [Configuration](../../docs/wiki/Configuration.md). The beta.2 deployment bundle's
+  [Getting Started](../../docs/wiki/operators/Getting-Started.md) and
+  [Configuration](../../docs/wiki/operators/Configuration.md). The beta.2 deployment bundle's
   checksum, file layout and Compose configuration were checked. The ENV plan now
   points to the canonical guide while retaining acceptance ownership and anchors.
   The owner subsequently approved direct Compose settings as the default, with

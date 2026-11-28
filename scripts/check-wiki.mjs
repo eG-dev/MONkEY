@@ -18,15 +18,17 @@ let cases = 0;
 const check = (label, run) => { run(); cases++; console.log(`PASS: ${label}`); };
 const json = (filename, value) => fs.writeFileSync(filename, JSON.stringify(value, null, 2) + '\n');
 const home = [
-  '# Home', '', '[Guide](Guide.md#section)', '[Second section](Guide.md#section-1)',
+  '# Home', '', '[Guide](users/Guide.md#section)', '[Second section](users/Guide.md#section-1)',
   '[Same page](#home)', '[Repository](../../README.md#help)', '![Logo](../test.png)',
-  '[Reference][guide]', '![Image reference][logo]', '', '[guide]: Guide.md#section', '[logo]: ../test.png',
-  '', '| Item | Link |', '| --- | --- |', '| Guide | [Open](Guide.md) |',
+  '[Reference][guide]', '![Image reference][logo]', '', '[guide]: users/Guide.md#section', '[logo]: ../test.png',
+  '', '| Item | Link |', '| --- | --- |', '| Guide | [Open](users/Guide.md) |',
   '', '```text', '[Example](missing-example.md)', '```', '',
 ].join('\n');
 const navigation = {
   schemaVersion: 1, repository: 'eG-dev/MONkEY',
-  pages: [{ slug: 'Home', title: 'Home', group: 'Start' }, { slug: 'Guide', title: 'Guide', group: 'Start' }],
+  pages: [{ slug: 'Home', title: 'Home', group: 'Start' },
+    { slug: 'Guide', source: 'users/Guide.md', title: 'Guide', group: 'Start' },
+    { slug: 'Operations', source: 'operators/Operations.md', title: 'Operations', group: 'Operate' }],
   assets: [{ source: 'docs/test.png', destination: 'assets/test.png' }], bootstrap: { 'Home.md': hash('Bootstrap\n') },
 };
 const withHome = (text, run) => {
@@ -38,7 +40,10 @@ try {
   fs.writeFileSync(path.join(root, 'README.md'), '# Repository\n\n## Help\n');
   fs.writeFileSync(path.join(root, 'docs/test.png'), Buffer.from([137, 80, 78, 71, 0, 255]));
   fs.writeFileSync(path.join(source, 'Home.md'), home);
-  fs.writeFileSync(path.join(source, 'Guide.md'), '# Guide\n\n## Section\n\nFirst\n\n## Section\n\nSecond\n');
+  fs.mkdirSync(path.join(source, 'users'));
+  fs.mkdirSync(path.join(source, 'operators'));
+  fs.writeFileSync(path.join(source, 'users/Guide.md'), '# Guide\n\n[Home](../Home.md)\n\n[Operations](../operators/Operations.md)\n\n## Section\n\nFirst\n\n## Section\n\nSecond\n');
+  fs.writeFileSync(path.join(source, 'operators/Operations.md'), '# Operations\n');
   json(path.join(source, 'navigation.json'), navigation);
   git(['init', '--initial-branch=main']);
   git(['add', '.']);
@@ -56,11 +61,17 @@ try {
     assert(rendered.includes('| Item'));
     assert(first.files.get('assets/test.png').equals(fs.readFileSync(path.join(root, 'docs/test.png'))));
     assert(first.files.get('_Sidebar.md').toString().includes('/wiki/Guide'));
+    const guide = first.files.get('Guide.md').toString();
+    assert(guide.includes('/wiki/Home'));
+    assert(guide.includes('/wiki/Operations'));
+    assert(first.files.has('Operations.md'));
+    assert(guide.includes('/edit/main/docs/wiki/users/Guide.md'));
+    assert(guide.includes(`/blob/${firstRevision}/docs/wiki/users/Guide.md`));
   });
   check('deterministic rendering', () => assert.deepEqual([...generateWiki({ root, revision: firstRevision }).files], [...first.files]));
   for (const [label, text, error] of [
     ['missing page', '# Home\n\n[Bad](missing.md)', /Missing Wiki link/],
-    ['missing anchor', '# Home\n\n[Bad](Guide.md#absent)', /Missing Wiki anchor/],
+    ['missing anchor', '# Home\n\n[Bad](users/Guide.md#absent)', /Missing Wiki anchor/],
     ['path traversal', '# Home\n\n[Bad](../../../outside.md)', /Unsafe path/],
     ['unsafe scheme', '# Home\n\n[Bad](javascript:alert)', /Unsupported URL scheme/],
     ['raw HTML', '# Home\n\n<img src="test.png">', /raw HTML/],
@@ -75,6 +86,18 @@ try {
     json(path.join(source, 'navigation.json'), { ...navigation, pages: [...navigation.pages, { slug: 'HOME', title: 'Collision', group: 'Start' }] });
     try { assert.throws(() => generateWiki({ root, revision: firstRevision }), /Duplicate Wiki page/); }
     finally { json(path.join(source, 'navigation.json'), navigation); }
+  });
+  check('unsafe or duplicate nested sources rejected', () => {
+    for (const [sourcePath, error] of [
+      ['../outside.md', /Unsafe path/],
+      ['users/Guide.md', /Duplicate Wiki page/],
+      ['USERS/guide.md', /Duplicate Wiki page/],
+    ]) {
+      const page = { slug: 'Other', source: sourcePath, title: 'Other', group: 'Start' };
+      json(path.join(source, 'navigation.json'), { ...navigation, pages: [...navigation.pages, page] });
+      try { assert.throws(() => generateWiki({ root, revision: firstRevision }), error); }
+      finally { json(path.join(source, 'navigation.json'), navigation); }
+    }
   });
   const preview = path.join(work, 'preview');
   writePreview(preview, first);

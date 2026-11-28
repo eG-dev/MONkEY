@@ -7,17 +7,17 @@ Real host HTTPS/mount configuration remains an operational gate; see the
 ## Environment contract
 
 The maintained contract now lives in the canonical
-[Configuration guide](../../docs/wiki/Configuration.md#environment-variables).
+[Configuration guide](../../docs/wiki/operators/Configuration.md#environment-variables).
 This plan retains acceptance ownership and compatibility anchors, not a second
 independently maintained variable table. Read and validate configuration at
 startup, before readiness succeeds.
 
 ## Configuration rules
 
-Follow the guide's [language, currency and time rules](../../docs/wiki/Configuration.md#language-currency-and-time),
-[storage requirements](../../docs/wiki/Configuration.md#storage-and-permissions),
-[HTTPS/proxy restrictions](../../docs/wiki/Configuration.md#https-and-proxy-trust)
-and [export rules](../../docs/wiki/Configuration.md#optional-financial-exports).
+Follow the guide's [language, currency and time rules](../../docs/wiki/operators/Configuration.md#language-currency-and-time),
+[storage requirements](../../docs/wiki/operators/Configuration.md#storage-and-permissions),
+[HTTPS/proxy restrictions](../../docs/wiki/operators/Configuration.md#https-and-proxy-trust)
+and [export rules](../../docs/wiki/operators/Configuration.md#optional-financial-exports).
 Keep timezone data and globalization support in the image and validate the IANA ID
 in both runtimes. No independently configurable database, image or key paths are
 introduced. Language contribution work remains in the [localization plan](localization.md).

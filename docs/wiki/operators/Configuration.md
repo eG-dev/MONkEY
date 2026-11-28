@@ -43,7 +43,7 @@ without gaining financial-write permissions.
 
 Currency is an instance-wide display unit. Changing EUR to USD relabels values;
 it never performs conversion or silently rewrites financial history. Follow the
-[currency decision](../ADR/ADR-0011-currency-display-unit.md).
+[currency decision](../../ADR/ADR-0011-currency-display-unit.md).
 
 Timestamps remain UTC. Allowance periods and the daily export slot use `TZ`,
 independently of browser timezone. The backend reads `TZ` explicitly; changing
@@ -55,7 +55,7 @@ Retention uses UTC calendar months, independently of `TZ`. Cleanup runs at start
 and daily, preserving balances, openings, audit and durable financial safety
 records. Increasing retention cannot recover deleted transaction details. Set it
 to `0` before starting a restored database if automatic pruning must stay disabled.
-See the [retention decision](../ADR/ADR-0012-manual-transactions-and-signed-balances.md).
+See the [retention decision](../../ADR/ADR-0012-manual-transactions-and-signed-balances.md).
 
 ## Storage and Permissions
 
@@ -92,4 +92,4 @@ does not by itself create another export.
 
 Financial exports omit Identity users, passwords, authentication keys and images.
 Copy them off-host, but also maintain full-volume backups. See the
-[export and import procedures](../development.md#portable-financial-recovery).
+[export and import procedures](../../development.md#portable-financial-recovery).

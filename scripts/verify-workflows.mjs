@@ -230,7 +230,7 @@ try {
   assert(summary.includes('(attempt 2)'));
   assert(summary.includes('Version: 0.1.0-beta.3'));
   assert(summary.includes(`Source: \`${revision}\``));
-  assert(summary.includes(`https://github.com/eG-dev/MONkEY/blob/${revision}/docs/wiki/Builds-and-Releases.md#review-before-approval`));
+  assert(summary.includes(`https://github.com/eG-dev/MONkEY/blob/${revision}/docs/wiki/maintainers/Builds-and-Releases.md#review-before-approval`));
   assert(summary.includes('verified-image') && summary.includes('A rerun or changed artifact requires fresh review.'));
 } finally {
   fs.rmSync(reviewFixture, { recursive: true, force: true });
@@ -342,7 +342,7 @@ try {
   fs.mkdirSync(path.join(deploymentFixture, 'verified'));
   fs.writeFileSync(path.join(deploymentFixture, 'verified/deployment.json'), JSON.stringify(compose));
   fs.copyFileSync(path.join(root, 'deploy/compose.exports.yaml'), path.join(deploymentFixture, 'verified/compose.exports.yaml'));
-  fs.copyFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), path.join(deploymentFixture, 'verified/DEPLOYMENT.md'));
+  fs.copyFileSync(path.join(root, 'docs/wiki/operators/Release-Deployment.md'), path.join(deploymentFixture, 'verified/DEPLOYMENT.md'));
   const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c',
     'function jq() { command "$JQ_EXECUTABLE" "$@"; }\n' + assets.slice(0, boundary)], {
     cwd: deploymentFixture, encoding: 'utf8', env: { ...process.env, IMAGE: 'ghcr.io/eg-dev/monkey',
@@ -363,9 +363,9 @@ try {
   assert.equal(exports.services.app.volumes[0].bind.create_host_path, false);
   assert(!fs.existsSync(path.join(deploymentFixture, 'bundle/compose.env.example')));
   const guide = fs.readFileSync(path.join(deploymentFixture, 'bundle/DEPLOYMENT.md'), 'utf8');
-  assert(guide.startsWith(fs.readFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), 'utf8')));
+  assert(guide.startsWith(fs.readFileSync(path.join(root, 'docs/wiki/operators/Release-Deployment.md'), 'utf8')));
   for (const page of ['Getting-Started.md', 'Backup-Restore-and-Upgrades.md']) {
-    assert(guide.includes(`https://github.com/eG-dev/MONkEY/blob/${'a'.repeat(40)}/docs/wiki/${page}`));
+    assert(guide.includes(`https://github.com/eG-dev/MONkEY/blob/${'a'.repeat(40)}/docs/wiki/operators/${page}`));
   }
 } finally {
   fs.rmSync(deploymentFixture, { recursive: true, force: true });
@@ -377,8 +377,8 @@ try {
   fs.mkdirSync(path.join(exportFixture, 'deploy'));
   fs.mkdirSync(path.join(exportFixture, '.build/about'), { recursive: true });
   fs.mkdirSync(path.join(exportFixture, 'tests/e2e'), { recursive: true });
-  fs.mkdirSync(path.join(exportFixture, 'docs/wiki'), { recursive: true });
-  fs.copyFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), path.join(exportFixture, 'docs/wiki/Release-Deployment.md'));
+  fs.mkdirSync(path.join(exportFixture, 'docs/wiki/operators'), { recursive: true });
+  fs.copyFileSync(path.join(root, 'docs/wiki/operators/Release-Deployment.md'), path.join(exportFixture, 'docs/wiki/operators/Release-Deployment.md'));
   fs.symlinkSync(path.join(root, 'tests/e2e/node_modules'), path.join(exportFixture, 'tests/e2e/node_modules'),
     process.platform === 'win32' ? 'junction' : 'dir');
   for (const filename of ['compose.yaml', 'compose.exports.yaml']) {
@@ -398,7 +398,7 @@ try {
   const verified = path.join(exportFixture, 'verified');
   fs.cpSync(path.join(exportFixture, '.local/rehearsal'), verified, { recursive: true });
   const guide = path.join(verified, 'DEPLOYMENT.md');
-  assert.equal(fs.readFileSync(guide, 'utf8'), fs.readFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), 'utf8'));
+  assert.equal(fs.readFileSync(guide, 'utf8'), fs.readFileSync(path.join(root, 'docs/wiki/operators/Release-Deployment.md'), 'utf8'));
   const sumsPath = path.join(verified, 'SHA256SUMS');
   const sums = fs.readFileSync(sumsPath, 'utf8');
   const download = release.jobs.publish.steps.find(step => step.id === 'download').run;

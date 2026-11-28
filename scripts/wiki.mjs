@@ -70,12 +70,17 @@ export function generateWiki({ root = repositoryRoot, revision }) {
   const files = new Map();
   const destinations = new Set();
   const pages = new Map();
+  const slugs = new Set();
   const assets = new Map();
   for (const page of navigation.pages) {
     assert(/^[A-Z][A-Za-z0-9-]*$/.test(page.slug), 'Invalid Wiki page slug');
     assert.equal(typeof page.title, 'string');
     assert.equal(typeof page.group, 'string');
-    const filename = safePath(sourceRoot, `${page.slug}.md`);
+    assert(!slugs.has(page.slug.toLowerCase()), 'Duplicate Wiki page slug');
+    slugs.add(page.slug.toLowerCase());
+    const source = page.source ?? `${page.slug}.md`;
+    assert(typeof source === 'string' && source.endsWith('.md'), 'Invalid Wiki page source');
+    const filename = safePath(sourceRoot, source);
     assert(![...pages.keys()].some(existing => existing.toLowerCase() === filename.toLowerCase()), 'Duplicate Wiki page');
     pages.set(filename, page);
   }
@@ -128,7 +133,7 @@ export function generateWiki({ root = repositoryRoot, revision }) {
         node.url = `${repoUrl}/blob/${revision}/${relative.split('/').map(encodeURIComponent).join('/')}${fragment}`;
       }
     });
-    const source = `docs/wiki/${page.slug}.md`;
+    const source = `docs/wiki/${page.source ?? `${page.slug}.md`}`;
     add(`${page.slug}.md`, markdown.stringify(tree) + '\n---\n\n'
       + `[Edit source](${repoUrl}/edit/main/${source}) | [Source snapshot](${repoUrl}/blob/${revision}/${source})\n`);
   }

@@ -16,9 +16,9 @@ and keep development, automated-test and image-review storage separate.
 
 ## Prerequisites and Locked Restore
 
-Install Git for Windows, the .NET SDK selected by [global.json](../../global.json),
-and the Node/npm versions pinned in [CI](../../.github/workflows/ci.yml) and
-[web/package.json](../../web/package.json). Open a new PowerShell terminal after
+Install Git for Windows, the .NET SDK selected by [global.json](../../../global.json),
+and the Node/npm versions pinned in [CI](../../../.github/workflows/ci.yml) and
+[web/package.json](../../../web/package.json). Open a new PowerShell terminal after
 installation, clone the repository, and change to its root. Check the tools:
 
 ```powershell
@@ -194,7 +194,7 @@ validation. Repository checks and application builds run in parallel; production
 image verification follows only when both succeed. The `full-e2e` PR label
 requests full coverage. Pushes to `main`, manual verification, release verification
 and image-export runs use the full suite. See the
-[E2E-first decision](../ADR/ADR-0005-e2e-first-verification.md).
+[E2E-first decision](../../ADR/ADR-0005-e2e-first-verification.md).
 
 Repository administrators must update branch protection or rulesets to require
 all three new CI checks: **Repository checks**, **Application builds**, and
@@ -219,7 +219,7 @@ On native Linux, concurrent fixture networking can cause a host browser's
 `ERR_NETWORK_CHANGED`. CI isolates Chromium in a pinned Playwright browser-server
 container and connects through `PW_TEST_CONNECT_WS_ENDPOINT` with
 `PW_TEST_CONNECT_EXPOSE_NETWORK=<loopback>`. Follow the
-[isolated-browser procedure](../development.md#build-and-verify) when reproducing
+[isolated-browser procedure](../../development.md#build-and-verify) when reproducing
 that setup; keep the server version equal to the locked Playwright version.
 
 Use fixture-scoped cleanup. Do not run broad Docker pruning or remove development
@@ -228,7 +228,7 @@ screenshots and public issues.
 
 ## Review a Pending Release
 
-The [prerelease workflow](../../.github/workflows/ghcr-prerelease.yml) runs full
+The [prerelease workflow](../../../.github/workflows/ghcr-prerelease.yml) runs full
 verification and exports a `verified-image` Actions artifact before its protected
 `release` environment approval. That artifact contains `verified-image.tar.gz`,
 image inspection, build metadata, Compose/deployment records, deployment guidance
@@ -242,7 +242,7 @@ substitute a source rebuild or a floating registry tag. Export artifacts expire
 after seven days and are accessible to users with repository Actions-artifact
 access; unpublished does not mean private.
 
-Follow the [candidate review guidance](Builds-and-Releases.md#review-before-approval)
+Follow the [candidate review guidance](../maintainers/Builds-and-Releases.md#review-before-approval)
 for the exact run and attempt. Review the image and draft notes before approving
 that same run's protected publishing job. Neither replaces automated verification
 or proves real-host production readiness.

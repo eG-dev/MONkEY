@@ -114,7 +114,7 @@ jobs:
             '',
             `Source: \`${REVISION}\``,
             '',
-            `Review this run's \`verified-image\` artifact using the [candidate review guidance](https://github.com/${GH_REPO}/blob/${REVISION}/docs/wiki/Builds-and-Releases.md#review-before-approval).`,
+            `Review this run's \`verified-image\` artifact using the [candidate review guidance](https://github.com/${GH_REPO}/blob/${REVISION}/docs/wiki/maintainers/Builds-and-Releases.md#review-before-approval).`,
             '',
             'A rerun or changed artifact requires fresh review.',
             '',
@@ -253,7 +253,7 @@ jobs:
             .services.app.image = (env.IMAGE + "@" + env.DIGEST)' verified/deployment.json > bundle/compose.yaml
           cp verified/compose.exports.yaml bundle/
           cp verified/DEPLOYMENT.md bundle/DEPLOYMENT.md
-          printf '\nFull setup: https://github.com/%s/blob/%s/docs/wiki/Getting-Started.md\nBackup and recovery: https://github.com/%s/blob/%s/docs/wiki/Backup-Restore-and-Upgrades.md\n' \
+          printf '\nFull setup: https://github.com/%s/blob/%s/docs/wiki/operators/Getting-Started.md\nBackup and recovery: https://github.com/%s/blob/%s/docs/wiki/operators/Backup-Restore-and-Upgrades.md\n' \
             "$GH_REPO" "$REVISION" "$GH_REPO" "$REVISION" >> bundle/DEPLOYMENT.md
           cp verified/image.json verified/build-info.json ./
           jq -n --arg version "$VERSION" --arg revision "$REVISION" --arg image "$IMAGE@$DIGEST" \

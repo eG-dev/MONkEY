@@ -7,14 +7,14 @@ not enabled. A published beta is for acceptance testing, not a claim of
 production readiness.
 
 Operators installing an existing version should use
-[Getting Started](Getting-Started.md) and that version's deployment bundle.
-Contributors should use [Development and Testing](Development-and-Testing.md).
+[Getting Started](../operators/Getting-Started.md) and that version's deployment bundle.
+Contributors should use [Development and Testing](../contributors/Development-and-Testing.md).
 Commands here are maintainer procedures, not instructions to create a release
 as part of an ordinary contribution.
 
 ## Verification and Build Identity
 
-[CI](../../.github/workflows/ci.yml) runs repository checks and application builds
+[CI](../../../.github/workflows/ci.yml) runs repository checks and application builds
 in parallel, then verifies the production image after both succeed. It includes
 locked builds, dependency audits, catalog/type/About-input checks and
 workflow/migration safeguards. PRs use the
@@ -24,8 +24,8 @@ the full suite. Ordinary verification is read-only and does not need publishing
 secrets. Test diagnostics are uploaded as `test-results` with seven-day retention.
 
 The application version comes from
-[web/package.json](../../web/package.json); both version fields in its
-[lockfile](../../web/package-lock.json) must agree. Framework/runtime versions are
+[web/package.json](../../../web/package.json); both version fields in its
+[lockfile](../../../web/package-lock.json) must agree. Framework/runtime versions are
 separate identities. Use the exact toolchain and container pins maintained in the
 repository, not floating `latest` or `lts` selectors.
 
@@ -46,9 +46,9 @@ License/notice and source-delivery review remain independent gates. Changed
 shipped packages, assets, native components, runtimes or operating-system inputs
 require applicable review. The curated About list, dependency graph and a passing
 audit do not establish complete distribution rights. Follow the
-[notice maintenance guide](../../notices/README.md),
-[build identity decision](../ADR/ADR-0019-build-identity-and-about-assets.md) and
-[notice decision](../ADR/ADR-0020-shipped-component-inventory.md). Release builds
+[notice maintenance guide](../../../notices/README.md),
+[build identity decision](../../ADR/ADR-0019-build-identity-and-about-assets.md) and
+[notice decision](../../ADR/ADR-0020-shipped-component-inventory.md). Release builds
 enforce reviewed status and input consistency; do not edit approval fields merely
 to make a build pass.
 
@@ -93,7 +93,7 @@ older lines, not an alternative to the current workflow's `main` ancestry check.
 
 ## Review Before Approval
 
-The [GHCR Pre-release workflow](../../.github/workflows/ghcr-prerelease.yml) runs
+The [GHCR Pre-release workflow](../../../.github/workflows/ghcr-prerelease.yml) runs
 in this order:
 
 1. Validate the protected prerelease tag, package version, selected revision and
@@ -121,7 +121,7 @@ check fails or the artifact cannot be tied to the current attempt.
 
 Run the loaded image by its exact local image ID with registry pulls and builds
 disabled, in a separate Docker instance and data volume. Configure a private
-HTTPS origin and trusted proxy as described in [Getting Started](Getting-Started.md);
+HTTPS origin and trusted proxy as described in [Getting Started](../operators/Getting-Started.md);
 use synthetic data. Check readiness, authentication and intended changes against
 that image and record the run, attempt, artifact, revision, image ID and results.
 Do not substitute a source rebuild or registry tag. A rerun or changed artifact
@@ -131,7 +131,7 @@ not an automated candidate verifier; local review of this procedure remains open
 The `verified-image` Actions artifact contains `verified-image.tar.gz`,
 `image.json`, `build-info.json`, `compose.yaml`, `compose.exports.yaml`,
 `deployment.json`, `DEPLOYMENT.md` and `SHA256SUMS`. The deployment note is
-maintained in [Release Deployment](Release-Deployment.md). Retention is
+maintained in [Release Deployment](../operators/Release-Deployment.md). Retention is
 seven days. Actions artifacts are
 **not private escrow**: people with the repository's Actions-artifact access can
 download the candidate before publication approval. Distribution obligations
@@ -160,7 +160,7 @@ The [published release](https://github.com/eG-dev/MONkEY/releases) provides:
 Verify checksums before unpacking and retain the installation's exact Compose
 project name, data volume and operator settings when upgrading. New bundles use
 direct environment settings; already published assets retain their original
-format. See [Backup, Restore and Upgrades](Backup-Restore-and-Upgrades.md).
+format. See [Backup, Restore and Upgrades](../operators/Backup-Restore-and-Upgrades.md).
 These JSON records and checksums are not an SBOM or a cryptographic attestation.
 Only Linux amd64 is advertised; an exported candidate archive is not an extra
 published offline-distribution offering.
@@ -185,10 +185,10 @@ explicitly owner-authorized operation only after confirming that no versioned
 image, public release or distributed release assets exist. Reconcile stale draft
 assets/metadata, retain run history and repeat verification using the approved
 tag-protection mechanism; never weaken the ruleset. Follow the exact conditions
-in [GitHub delivery](../ADR/ADR-0006-github-delivery.md#release-identity-and-maintenance).
+in [GitHub delivery](../../ADR/ADR-0006-github-delivery.md#release-identity-and-maintenance).
 
 After beta publication, verify the digest-pinned bundle on the intended HTTPS
 host, including storage, restarts, jobs and a complete backup/restore rehearsal.
 Successful publishing and anonymous pulls do not prove production acceptance.
 Remaining acceptance work belongs in the
-[finish-line plan](../../plans/migration/README.md), not in release-success claims.
+[finish-line plan](../../../plans/migration/README.md), not in release-success claims.

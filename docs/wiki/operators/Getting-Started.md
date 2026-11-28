@@ -12,7 +12,7 @@ records. Start with synthetic data while the application is in pre-release.
 - `curl`, `sha256sum` and `tar` for the POSIX-shell download commands below.
 
 The current
-[technical guide](../development.md#docker-compose-configuration) describes host
+[technical guide](../../development.md#docker-compose-configuration) describes host
 networking, mounts and an existing Traefik reverse proxy.
 
 ## Download a Release
@@ -68,7 +68,7 @@ the existing instance. Preserve your settings when adopting a new release bundle
 do not blindly overwrite your configured Compose file.
 
 Arrange HTTPS termination and Docker networking using the
-[reverse-proxy guide](../development.md#host-https-reverse-proxy).
+[reverse-proxy guide](../../development.md#host-https-reverse-proxy).
 Trust only the actual proxy addresses when forwarded headers are needed. Do not
 disable Secure cookies or trust every network to make authentication work.
 
@@ -94,7 +94,7 @@ user administration; Members can read assigned active accounts but cannot perfor
 
 For an existing Manager who cannot sign in, use `recover-manager` instead of
 trying to bootstrap another first Manager. See the
-[Manager recovery procedure](../../README.md#first-manager-and-password-reset).
+[Manager recovery procedure](../../../README.md#first-manager-and-password-reset).
 
 ## Stop, Restart and Preserve Data
 
@@ -110,5 +110,5 @@ not a recovery method.
 Before an upgrade, stop the application and back up the complete data volume and
 private configuration. Financial JSON exports are useful but exclude users,
 credentials, keys and images; they are not full-installation backups. Follow the
-[financial recovery guide](../development.md#portable-financial-recovery) and
+[financial recovery guide](../../development.md#portable-financial-recovery) and
 the release's upgrade instructions. Reverting an image does not undo migrations.

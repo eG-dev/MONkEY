@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "repository": "eG-dev/MONkEY",
   "pages": [
-    { "slug": "Home", "title": "Home", "group": "Start" },
-    { "slug": "Getting-Started", "title": "Getting Started", "group": "Start" },
-    { "slug": "Accounts-and-Transactions", "title": "Accounts and Transactions", "group": "Use" },
-    { "slug": "Monthly-Allowances", "title": "Monthly Allowances", "group": "Use" },
-    { "slug": "Users-and-Access", "title": "Users and Access", "group": "Use" },
-    { "slug": "Configuration", "title": "Configuration", "group": "Operate" },
-    { "slug": "Release-Deployment", "title": "Release Deployment Quick Reference", "group": "Operate" },
-    { "slug": "Backup-Restore-and-Upgrades", "title": "Backup, Restore and Upgrades", "group": "Operate" },
-    { "slug": "Troubleshooting", "title": "Troubleshooting", "group": "Operate" },
-    { "slug": "Development-and-Testing", "title": "Development and Testing", "group": "Develop" },
-    { "slug": "Translation-Contributions", "title": "Translation Contributions", "group": "Develop" },
-    { "slug": "Builds-and-Releases", "title": "Builds and Releases", "group": "Maintain" }
+    { "slug": "Home", "title": "Home", "group": "Overview" },
+    { "slug": "Accounts-and-Transactions", "source": "users/Accounts-and-Transactions.md", "title": "Accounts and Transactions", "group": "For Users" },
+    { "slug": "Monthly-Allowances", "source": "users/Monthly-Allowances.md", "title": "Monthly Allowances", "group": "For Users" },
+    { "slug": "Users-and-Access", "source": "users/Users-and-Access.md", "title": "Users and Access", "group": "For Users" },
+    { "slug": "Getting-Started", "source": "operators/Getting-Started.md", "title": "Getting Started", "group": "For Operators" },
+    { "slug": "Configuration", "source": "operators/Configuration.md", "title": "Configuration", "group": "For Operators" },
+    { "slug": "Release-Deployment", "source": "operators/Release-Deployment.md", "title": "Release Deployment Quick Reference", "group": "For Operators" },
+    { "slug": "Backup-Restore-and-Upgrades", "source": "operators/Backup-Restore-and-Upgrades.md", "title": "Backup, Restore and Upgrades", "group": "For Operators" },
+    { "slug": "Troubleshooting", "source": "operators/Troubleshooting.md", "title": "Troubleshooting", "group": "For Operators" },
+    { "slug": "Development-and-Testing", "source": "contributors/Development-and-Testing.md", "title": "Development and Testing", "group": "For Contributors" },
+    { "slug": "Translation-Contributions", "source": "contributors/Translation-Contributions.md", "title": "Translation Contributions", "group": "For Contributors" },
+    { "slug": "Builds-and-Releases", "source": "maintainers/Builds-and-Releases.md", "title": "Builds and Releases", "group": "For Maintainers" }
   ],
   "assets": [
     {

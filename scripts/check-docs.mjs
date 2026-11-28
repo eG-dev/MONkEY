@@ -31,11 +31,19 @@ if (values.base && !/^0+$/.test(values.base)) {
 
 const require = createRequire(path.join(root, 'tests/e2e/package.json'));
 const YAML = require('yaml');
-const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'docs/wiki', 'plans/migration'];
+const directories = ['.github/instructions', 'docs/ADR', 'docs/design', 'plans/migration'];
 const markdown = ['README.md', '.github/copilot-instructions.md', '.github/skills/backend-data-design/SKILL.md', 'docs/development.md'];
 for (const directory of directories) {
   markdown.push(...fs.readdirSync(path.join(root, directory)).filter(name => name.endsWith('.md')).map(name => `${directory}/${name}`));
 }
+function addWikiMarkdown(directory) {
+  for (const entry of fs.readdirSync(path.join(root, directory), { withFileTypes: true })) {
+    const relative = `${directory}/${entry.name}`;
+    if (entry.isDirectory()) addWikiMarkdown(relative);
+    else if (entry.isFile() && entry.name.endsWith('.md')) markdown.push(relative);
+  }
+}
+addWikiMarkdown('docs/wiki');
 const slug = value => value.replace(/<[^>]+>/g, '').replace(/[`*_~]/g, '').toLowerCase()
   .replace(/[^\p{L}\p{N} _-]/gu, '').replace(/ /g, '-');
 let links = 0;

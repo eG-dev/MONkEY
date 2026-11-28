@@ -42,12 +42,12 @@ has an instance-wide rate limit of twenty attempts per minute. Stop repeated
 attempts and allow the relevant limit to clear. Authentication errors are generic
 rather than a way to discover which usernames exist.
 
-For HTTPS, cookie or access problems, see [Troubleshooting](Troubleshooting.md).
+For HTTPS, cookie or access problems, see [Troubleshooting](../operators/Troubleshooting.md).
 
 ## Create a User
 
 The first Manager is created by the operator during
-[Getting Started](Getting-Started.md). After that, a Manager can create users in
+[Getting Started](../operators/Getting-Started.md). After that, a Manager can create users in
 the application:
 
 1. Open user administration and choose the create-user action.
@@ -97,7 +97,7 @@ The temporary password is shown only in the result dialog, not retrievable later
 
 Use your profile's password-change action for your own password when you know it.
 If no Manager can sign in, the operator must use
-[Manager recovery](Backup-Restore-and-Upgrades.md#recover-manager-access).
+[Manager recovery](../operators/Backup-Restore-and-Upgrades.md#recover-manager-access).
 There is no emailed reset link or public recovery bypass.
 
 Operator recovery is different from in-app administration. It targets an existing
@@ -133,10 +133,10 @@ administration, not the profile, to change a display name or role.
 
 Language changes presentation and number formatting, not stored amounts, the
 instance currency or business month boundaries. The operator configures currency
-and business timezone separately through [Configuration](Configuration.md).
+and business timezone separately through [Configuration](../operators/Configuration.md).
 
 See [Accounts and Transactions](Accounts-and-Transactions.md) and
 [Monthly Allowances](Monthly-Allowances.md) for the financial workflows. The
 authoritative access rules are recorded in
-[shared-instance access](../ADR/ADR-0003-shared-instance-access.md) and
-[local authentication](../ADR/ADR-0008-local-authentication.md).
+[shared-instance access](../../ADR/ADR-0003-shared-instance-access.md) and
+[local authentication](../../ADR/ADR-0008-local-authentication.md).

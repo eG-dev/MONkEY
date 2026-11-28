@@ -25,7 +25,7 @@ records it without holding or transferring funds.
 
 Linux amd64 pre-release images are available from
 [Releases](https://github.com/eG-dev/MONkEY/releases). Start with the matching,
-digest-pinned deployment bundle and [Getting Started](docs/wiki/Getting-Started.md).
+digest-pinned deployment bundle and [Getting Started](docs/wiki/operators/Getting-Started.md).
 These beta releases are for acceptance testing, not a production-readiness claim.
 
 The standalone template below is an alternative for an existing Traefik setup.
@@ -79,7 +79,7 @@ Set these under `app.environment`; apply changes with `docker compose up -d`.
 
 Set the public HTTPS origin and business timezone, preserve the data volume and
 trust only your actual reverse proxies. Language and display currency are
-independent settings. See the maintained [configuration reference](docs/wiki/Configuration.md)
+independent settings. See the maintained [configuration reference](docs/wiki/operators/Configuration.md)
 for defaults, validation, retention and optional financial exports.
 
 ## First Manager and Password Reset

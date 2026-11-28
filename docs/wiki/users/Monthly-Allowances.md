@@ -113,7 +113,7 @@ panel; it does not manually post an allowance.
 A balance-range failure means the credit would exceed the supported exact-money
 range. Retrying without resolving the underlying condition will not make it fit.
 A storage failure needs operator investigation of logs, disk availability and
-permissions. Follow [Troubleshooting](Troubleshooting.md), preserving data and
+permissions. Follow [Troubleshooting](../operators/Troubleshooting.md), preserving data and
 keeping private records out of public reports.
 
 Changing next month's settings does not rewrite a failed historical month's
@@ -130,16 +130,16 @@ unchanged: shifting a UTC month boundary does not authorize another credit.
 
 The allowance uses the same exact two-decimal money and instance-wide `EUR` or
 `USD` display unit as manual transactions. Changing the currency setting relabels
-amounts; it does not convert them. See [Configuration](Configuration.md) before
+amounts; it does not convert them. See [Configuration](../operators/Configuration.md) before
 making operator-level changes.
 
 Transaction retention can remove an old allowance's ledger details, but its
 credited month and configuration records remain. An expired history entry is not
 a missing credit and will not be posted again. See
 [history retention](Accounts-and-Transactions.md#why-older-entries-may-be-missing)
-and [Backup, Restore and Upgrades](Backup-Restore-and-Upgrades.md) for the separate
+and [Backup, Restore and Upgrades](../operators/Backup-Restore-and-Upgrades.md) for the separate
 retention and recovery rules.
 
 The authoritative technical decisions are
-[allowance configuration](../ADR/ADR-0015-monthly-allowance-configuration.md) and
-[allowance execution](../ADR/ADR-0016-monthly-allowance-execution.md).
+[allowance configuration](../../ADR/ADR-0015-monthly-allowance-configuration.md) and
+[allowance execution](../../ADR/ADR-0016-monthly-allowance-execution.md).
