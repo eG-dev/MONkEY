@@ -140,7 +140,9 @@ node scripts/check-wiki.mjs
 
 The solution build includes the test-only RuntimeChecks executable used by
 integration scenarios. It is not a production HTTP testing interface. Runtime
-checks and browser tooling remain outside the shipped application image.
+checks and browser tooling remain outside the shipped application image. CI
+builds RuntimeChecks again on the image job's separate runner before browser
+tests, rather than relying on another job's local build output.
 
 ## Test the Actual Image
 
@@ -229,7 +231,8 @@ screenshots and public issues.
 The [prerelease workflow](../../.github/workflows/ghcr-prerelease.yml) runs full
 verification and exports a `verified-image` Actions artifact before its protected
 `release` environment approval. That artifact contains `verified-image.tar.gz`,
-image inspection, build metadata, Compose/deployment records and `SHA256SUMS`.
+image inspection, build metadata, Compose/deployment records, deployment guidance
+and `SHA256SUMS`.
 The publisher later loads that same image instead of rebuilding it.
 
 This is the appropriate artifact for manual candidate acceptance. Select the

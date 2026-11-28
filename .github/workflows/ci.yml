@@ -118,10 +118,15 @@ jobs:
           cache-dependency-path: |
             web/package-lock.json
             tests/e2e/package-lock.json
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
       - name: Restore locked web dependencies
         run: npm --prefix web ci --ignore-scripts
       - name: Restore locked test tooling
         run: npm --prefix tests/e2e ci --ignore-scripts
+      - name: Build runtime checks for image tests
+        run: dotnet build tests/integration/RuntimeChecks/RuntimeChecks.csproj --configuration Release -p:RestoreLockedMode=true
       # The browser runs in its own network namespace so fixture container veth churn cannot cause ERR_NETWORK_CHANGED.
       - name: Start isolated Playwright browser server
         run: |
@@ -165,6 +170,7 @@ jobs:
           docker image inspect pocket-monkey:local > .local/rehearsal/image.json
           cp deploy/compose.yaml .local/rehearsal/compose.yaml
           cp deploy/compose.exports.yaml .local/rehearsal/
+          cp docs/wiki/Release-Deployment.md .local/rehearsal/DEPLOYMENT.md
           cp .build/about/build-info.json .local/rehearsal/
           node <<'NODE'
           const fs = require('node:fs');
@@ -174,7 +180,7 @@ jobs:
           fs.writeFileSync('.local/rehearsal/deployment.json', JSON.stringify(compose, null, 2) + '\n');
           NODE
           cd .local/rehearsal
-          sha256sum verified-image.tar.gz image.json compose.yaml compose.exports.yaml build-info.json deployment.json > SHA256SUMS
+          sha256sum verified-image.tar.gz image.json compose.yaml compose.exports.yaml build-info.json deployment.json DEPLOYMENT.md > SHA256SUMS
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f

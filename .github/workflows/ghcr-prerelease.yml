@@ -114,11 +114,8 @@ jobs:
             '',
             `Source: \`${REVISION}\``,
             '',
-            `Review the \`verified-image\` artifact from this run and attempt, without rebuilding or substituting a registry image.`,
+            `Review this run's \`verified-image\` artifact using the [candidate review guidance](https://github.com/${GH_REPO}/blob/${REVISION}/docs/wiki/Builds-and-Releases.md#review-before-approval).`,
             '',
-            `Follow the [candidate review guidance](https://github.com/${GH_REPO}/blob/${REVISION}/docs/wiki/Builds-and-Releases.md#review-before-approval).`,
-            '',
-            'Check readiness, sign in, test the intended changes and review the draft release notes before approving this run.',
             'A rerun or changed artifact requires fresh review.',
             '',
           ].join('\n'));
@@ -160,6 +157,7 @@ jobs:
         run: |
           gh run download "$GITHUB_RUN_ID" --repo "$GH_REPO" --name verified-image --dir verified
           cd verified
+          test "$(grep -Ec '^[0-9a-f]{64} [ *]DEPLOYMENT[.]md$' SHA256SUMS)" = 1
           sha256sum --check SHA256SUMS
       - name: Verify the loaded artifact and release identity
         id: image
@@ -254,31 +252,9 @@ jobs:
           jq '.name = "pocket-monkey" |
             .services.app.image = (env.IMAGE + "@" + env.DIGEST)' verified/deployment.json > bundle/compose.yaml
           cp verified/compose.exports.yaml bundle/
-          cat > bundle/DEPLOYMENT.md <<'GUIDE'
-          # POCKET MONkEY Pre-release
-
-          This Linux amd64 pre-release is for acceptance testing, not production readiness.
-          Edit services.app.environment directly in compose.yaml: configure your HTTPS origin,
-          reverse proxy, timezone and settings. For an existing installation, set the top-level
-          name to its exact existing Compose project name and retain its data volume; do not
-          accept a new name that creates empty storage. Preserve your configuration on upgrades.
-
-          Validate: docker compose -f compose.yaml config --quiet
-          Run: docker compose -f compose.yaml pull
-          Then: docker compose -f compose.yaml up -d --no-build
-
-          Bootstrap a new instance with:
-          docker compose -f compose.yaml exec app dotnet /app/backend/PocketMonkey.Host.dll bootstrap-manager
-
-          Before upgrades, stop the instance and back up the complete data volume and private
-          configuration. Rehearse restoration separately. Image rollback does not roll back
-          database migrations. Never use down --volumes on data you intend to retain.
-          Optional exports require editing the bind source and environment in compose.exports.yaml,
-          then using both Compose files and a pre-created private host directory owned by UID 10001.
-          Financial JSON exports do not replace full-volume backups. Keep passwords out of Compose.
-          GUIDE
-          printf '\nFull setup, HTTPS, backup and recovery guide: https://github.com/%s/blob/%s/docs/development.md\n' \
-            "$GH_REPO" "$REVISION" >> bundle/DEPLOYMENT.md
+          cp verified/DEPLOYMENT.md bundle/DEPLOYMENT.md
+          printf '\nFull setup: https://github.com/%s/blob/%s/docs/wiki/Getting-Started.md\nBackup and recovery: https://github.com/%s/blob/%s/docs/wiki/Backup-Restore-and-Upgrades.md\n' \
+            "$GH_REPO" "$REVISION" "$GH_REPO" "$REVISION" >> bundle/DEPLOYMENT.md
           cp verified/image.json verified/build-info.json ./
           jq -n --arg version "$VERSION" --arg revision "$REVISION" --arg image "$IMAGE@$DIGEST" \
             --arg config "$CONFIG_DIGEST" \

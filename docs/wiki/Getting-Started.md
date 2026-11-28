@@ -34,6 +34,8 @@ tar -xzf deployment.tar.gz
 Stop if a download or checksum fails. Checksums detect corruption or inconsistent
 downloads; they are not a separate cryptographic signature. Keep the bundle and
 build records together. The bundled Compose file already pins the image by digest.
+The [release deployment quick reference](Release-Deployment.md) is also included
+in the bundle with links to the matching source revision.
 
 ## Configure the Instance
 
@@ -65,8 +67,8 @@ name and data volume: changing `name` can select empty storage instead of upgrad
 the existing instance. Preserve your settings when adopting a new release bundle;
 do not blindly overwrite your configured Compose file.
 
-Arrange HTTPS termination and Docker networking using the bundled `DEPLOYMENT.md`
-and the [reverse-proxy guide](../development.md#host-https-reverse-proxy).
+Arrange HTTPS termination and Docker networking using the
+[reverse-proxy guide](../development.md#host-https-reverse-proxy).
 Trust only the actual proxy addresses when forwarded headers are needed. Do not
 disable Secure cookies or trust every network to make authentication work.
 

@@ -49,6 +49,7 @@ Group them in a generated sidebar rather than introducing nested Wiki directorie
 | Use | Monthly-Allowances | Configuration, effective months, catch-up, execution status and retry behavior |
 | Use | Users-and-Access | Manager/Member permissions, user administration, password changes and operator recovery |
 | Operate | Configuration | ENV reference, validation, timezone/language/currency separation and trusted proxies |
+| Operate | Release-Deployment | Short release-bundle deployment reference, copied into the verified artifact |
 | Operate | Backup-Restore-and-Upgrades | Full-volume backup/restore, upgrade precautions and the separate financial export/import workflow |
 | Operate | Troubleshooting | Logs, readiness, HTTPS/cookies, permissions, mounts and safe diagnostics |
 | Develop | Development-and-Testing | Local setup, runtime boundaries, locked builds, focused checks, smoke/full E2E and failure diagnostics |
