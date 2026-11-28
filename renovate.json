@@ -4,7 +4,9 @@
     "config:recommended"
   ],
   "dependencyDashboardApproval": true,
-  "dependencyDashboardHeader": "Update notifications only: dependency updates are applied and verified with Copilot. Leave approval checkboxes unchecked; selecting one explicitly requests a Renovate branch and PR.",
+  "dependencyDashboard": {
+    "header": "Update notifications only: dependency updates are applied and verified with Copilot. Leave approval checkboxes unchecked; selecting one explicitly requests a Renovate branch and PR."
+  },
   "vulnerabilityAlerts": {
     "dependencyDashboardApproval": true
   },
