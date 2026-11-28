@@ -64,7 +64,7 @@ for (const mutate of [
   mutate(changed);
   assert.throws(() => validateWikiWorkflow(changed), 'Unsafe Wiki publication change was accepted');
 }
-assert(ci.jobs.verify.steps.some(step => step.run === 'node scripts/check-wiki.mjs'));
+assert(ci.jobs.repository.steps.some(step => step.run === 'node scripts/check-wiki.mjs'));
 console.log('PASS: validated main-only Wiki publication, isolated credential step and read-only PR checks; 5 unsafe changes rejected');
 
 function validateWorkflows(verification, publication) {
@@ -78,7 +78,40 @@ function validateWorkflows(verification, publication) {
   }
   for (const job of Object.values(verification.jobs)) {
     assert.deepEqual(job.permissions ?? verification.permissions, { contents: 'read' });
+    assert(!job.if && !job['continue-on-error'], 'Verification jobs must not bypass failures');
   }
+  assert.deepEqual(Object.keys(verification.jobs).sort(), ['builds', 'image', 'repository']);
+  const repository = verification.jobs.repository;
+  const builds = verification.jobs.builds;
+  const image = verification.jobs.image;
+  assert(!repository.needs && !builds.needs, 'Repository checks and application builds must run independently');
+  assert.deepEqual([...image.needs].sort(), ['builds', 'repository'], 'Image verification must wait for both checks');
+  for (const [job, commands] of [
+    [repository, ['npm --prefix web run check:about', 'node scripts/verify-workflows.mjs',
+      'node scripts/verify-migrations.mjs', 'node scripts/check-wiki.mjs', 'node scripts/check-docs.mjs',
+      'npm --prefix web run check:catalogs', 'npm --prefix web audit --audit-level=high',
+      'npm --prefix tests/e2e audit --audit-level=high']],
+    [builds, ['dotnet build PocketMonkey.slnx --configuration Release -p:RestoreLockedMode=true',
+      'npm --prefix web run build', 'npm --prefix tests/e2e run check']],
+  ]) {
+    for (const command of commands) {
+      const step = job.steps.find(item => item.run?.includes(command));
+      assert(step && !step.if && !step['continue-on-error'], `Missing required check: ${command}`);
+    }
+  }
+  const imageBuild = image.steps.findIndex(step => step.run?.includes('npm --prefix web run build:image'));
+  const imageTest = image.steps.findIndex(step => Object.hasOwn(step.env ?? {}, 'FULL_E2E'));
+  const imageExport = image.steps.findIndex(step => step.run?.includes('docker save'));
+  const artifactIndex = image.steps.findIndex(step => step.with?.name === 'verified-image');
+  const artifact = image.steps[artifactIndex];
+  assert(imageBuild >= 0 && imageTest > imageBuild && imageExport > imageTest, 'Build and test the image before exporting it');
+  assert(artifactIndex > imageExport, 'Upload the artifact only after exporting it');
+  assert(!image.steps[imageBuild].if && !image.steps[imageBuild]['continue-on-error']);
+  assert(!image.steps[imageTest].if && !image.steps[imageTest]['continue-on-error']);
+  assert.equal(image.steps[imageExport].if, '${{ inputs.export_image }}');
+  assert(!image.steps[imageExport]['continue-on-error']);
+  assert.equal(artifact?.if, '${{ success() && inputs.export_image }}');
+  assert.equal(artifact.with['if-no-files-found'], 'error');
   for (const workflow of [verification, publication]) {
     for (const job of Object.values(workflow.jobs)) {
       for (const step of job.steps ?? []) {
@@ -141,9 +174,20 @@ for (const mutate of [
   mutate(changed);
   assert.throws(() => validateWorkflows(ci, changed), 'Unsafe publication change was accepted');
 }
+for (const mutate of [
+  workflow => { workflow.jobs.image.needs = ['builds']; },
+  workflow => { workflow.jobs.builds.if = '${{ false }}'; },
+  workflow => { workflow.jobs.repository.steps.find(step => step.run?.includes('check:catalogs'))['continue-on-error'] = true; },
+  workflow => { workflow.jobs.image.steps.find(step => step.run?.includes('docker save')).if = '${{ always() }}'; },
+]) {
+  const changed = structuredClone(ci);
+  mutate(changed);
+  assert.throws(() => validateWorkflows(changed, release), 'Unsafe CI split was accepted');
+}
 console.log('PASS: read-only verification, pinned actions and protected same-artifact version-only publishing; 5 unsafe changes rejected');
+console.log('PASS: parallel checks and builds gate image testing and export; 4 unsafe CI changes rejected');
 
-const selector = ci.jobs.verify.steps.find(step => Object.hasOwn(step.env ?? {}, 'FULL_E2E'));
+const selector = ci.jobs.image.steps.find(step => Object.hasOwn(step.env ?? {}, 'FULL_E2E'));
 assert(selector && selector.if === undefined, 'Production-image verification must always run');
 assert(!selector['continue-on-error'], 'Production-image verification failures must fail the job');
 assert.equal(selector.env.FULL_E2E, "${{ contains(github.event.pull_request.labels.*.name, 'full-e2e') }}");
@@ -323,7 +367,7 @@ try {
     fs.copyFileSync(path.join(root, 'deploy', filename), path.join(exportFixture, 'deploy', filename));
   }
   fs.writeFileSync(path.join(exportFixture, '.build/about/build-info.json'), '{}\n');
-  const exporter = ci.jobs.verify.steps.find(step => step.run?.includes('docker save'));
+  const exporter = ci.jobs.image.steps.find(step => step.run?.includes('docker save'));
   assert(exporter, 'Missing verified image exporter');
   const dockerStub = 'function docker() { case "$1" in save) printf fixture-image ;; image) printf \'[{"Id":"fixture-image"}]\\n\' ;; *) return 1 ;; esac; }\n';
   const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c', dockerStub + exporter.run + '\nsha256sum --check SHA256SUMS'], {

@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   identity:
+    name: Validate release identity
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
@@ -55,6 +56,7 @@ jobs:
             "$version" "$GITHUB_SHA" "${GITHUB_REPOSITORY,,}" "$previous_tag" >> "$GITHUB_OUTPUT"
 
   verify:
+    name: Verify release candidate
     needs: identity
     permissions:
       contents: read
@@ -65,6 +67,7 @@ jobs:
       export_image: true
 
   draft:
+    name: Prepare release draft
     needs: [identity, verify]
     runs-on: ubuntu-26.04
     timeout-minutes: 5
@@ -122,6 +125,7 @@ jobs:
           NODE
 
   publish:
+    name: Publish verified pre-release
     needs: [identity, verify, draft]
     runs-on: ubuntu-26.04
     timeout-minutes: 15

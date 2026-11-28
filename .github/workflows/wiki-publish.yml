@@ -24,6 +24,7 @@ concurrency:
 
 jobs:
   publish:
+    name: Validate and publish Wiki
     if: github.ref == 'refs/heads/main' && github.repository == 'eG-dev/MONkEY'
     runs-on: ubuntu-26.04
     timeout-minutes: 10

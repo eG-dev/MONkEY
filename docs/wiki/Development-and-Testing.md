@@ -188,9 +188,18 @@ for each language or currency. Catalog checks and focused localization/layout
 review remain necessary.
 
 PRs run the bounded smoke suite plus builds, audits, type checks and catalog
-validation. The `full-e2e` PR label requests full coverage. Pushes to `main`,
-manual verification, release verification and image-export runs use the full
-suite. See the [E2E-first decision](../ADR/ADR-0005-e2e-first-verification.md).
+validation. Repository checks and application builds run in parallel; production
+image verification follows only when both succeed. The `full-e2e` PR label
+requests full coverage. Pushes to `main`, manual verification, release verification
+and image-export runs use the full suite. See the
+[E2E-first decision](../ADR/ADR-0005-e2e-first-verification.md).
+
+Repository administrators must update branch protection or rulesets to require
+all three new CI checks: **Repository checks**, **Application builds**, and
+**Production image verification**. Requiring only the image check is insufficient:
+GitHub can mark it skipped when a prerequisite fails. Update the old required
+check after the new checks are available; this repository cannot change the
+ruleset through the workflow.
 
 ## Investigate Failures
 
