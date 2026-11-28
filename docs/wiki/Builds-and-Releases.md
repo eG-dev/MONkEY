@@ -14,8 +14,10 @@ as part of an ordinary contribution.
 
 ## Verification and Build Identity
 
-[CI](../../.github/workflows/ci.yml) runs locked builds, dependency audits,
-catalog/type/About-input checks and workflow/migration safeguards. PRs use the
+[CI](../../.github/workflows/ci.yml) runs repository checks and application builds
+in parallel, then verifies the production image after both succeed. It includes
+locked builds, dependency audits, catalog/type/About-input checks and
+workflow/migration safeguards. PRs use the
 bounded real-image smoke suite; the `full-e2e` label requests full coverage.
 Pushes to `main`, manual verification, release verification and image export use
 the full suite. Ordinary verification is read-only and does not need publishing
@@ -108,7 +110,8 @@ limitations, breaking changes, deployment/upgrade instructions and recovery
 precautions; generated pull-request summaries alone are not enough.
 
 For manual candidate acceptance, use the run and full source revision in the
-summary. Confirm that the current attempt's `verify / verify` job succeeded,
+summary. Confirm that all jobs in the current attempt's **Verify release
+candidate** reusable workflow, including **Production image verification**, succeeded,
 and download its unexpired, unambiguous `verified-image` artifact from that run.
 Check every entry in `SHA256SUMS`, and compare `build-info.json` and `image.json`
 with the summary: clean release build, matching version, repository and revision,

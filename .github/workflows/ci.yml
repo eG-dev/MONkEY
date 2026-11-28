@@ -31,11 +31,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
+  repository:
+    name: Repository checks
     runs-on: ubuntu-26.04
     timeout-minutes: 25
-    env:
-      MONKEY_TEST_IMAGE: pocket-monkey:local
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -48,9 +47,6 @@ jobs:
           cache-dependency-path: |
             web/package-lock.json
             tests/e2e/package-lock.json
-      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
-        with:
-          global-json-file: global.json
       - name: Restore locked web dependencies
         run: npm --prefix web ci --ignore-scripts
       - name: Restore locked test tooling
@@ -73,12 +69,59 @@ jobs:
         run: npm --prefix web audit --audit-level=high
       - name: Audit test tooling
         run: npm --prefix tests/e2e audit --audit-level=high
+
+  builds:
+    name: Application builds
+    runs-on: ubuntu-26.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "26.13.1"
+          cache: npm
+          cache-dependency-path: |
+            web/package-lock.json
+            tests/e2e/package-lock.json
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
+      - name: Restore locked web dependencies
+        run: npm --prefix web ci --ignore-scripts
+      - name: Restore locked test tooling
+        run: npm --prefix tests/e2e ci --ignore-scripts
       - name: Build backend independently
         run: dotnet build PocketMonkey.slnx --configuration Release -p:RestoreLockedMode=true
       - name: Build Angular SSR independently
         run: npm --prefix web run build
       - name: Typecheck E2E fixtures
         run: npm --prefix tests/e2e run check
+
+  image:
+    name: Production image verification
+    needs: [repository, builds]
+    runs-on: ubuntu-26.04
+    timeout-minutes: 25
+    env:
+      MONKEY_TEST_IMAGE: pocket-monkey:local
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "26.13.1"
+          cache: npm
+          cache-dependency-path: |
+            web/package-lock.json
+            tests/e2e/package-lock.json
+      - name: Restore locked web dependencies
+        run: npm --prefix web ci --ignore-scripts
+      - name: Restore locked test tooling
+        run: npm --prefix tests/e2e ci --ignore-scripts
       # The browser runs in its own network namespace so fixture container veth churn cannot cause ERR_NETWORK_CHANGED.
       - name: Start isolated Playwright browser server
         run: |
