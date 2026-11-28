@@ -111,7 +111,7 @@ precautions; generated pull-request summaries alone are not enough.
 
 For manual candidate acceptance, use the run and full source revision in the
 summary. Confirm that all jobs in the current attempt's **Verify release
-candidate** reusable workflow, including **Production image verification**, succeeded,
+candidate** reusable workflow, including **Build and verify app image**, succeeded,
 and download its unexpired, unambiguous `verified-image` artifact from that run.
 Check every entry in `SHA256SUMS`, and compare `build-info.json` and `image.json`
 with the summary: clean release build, matching version, repository and revision,

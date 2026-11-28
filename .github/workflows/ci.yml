@@ -100,7 +100,7 @@ jobs:
         run: npm --prefix tests/e2e run check
 
   image:
-    name: Production image verification
+    name: Build and verify app image
     needs: [repository, builds]
     runs-on: ubuntu-26.04
     timeout-minutes: 25
