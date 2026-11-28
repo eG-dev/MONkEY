@@ -130,7 +130,9 @@ not an automated candidate verifier; local review of this procedure remains open
 
 The `verified-image` Actions artifact contains `verified-image.tar.gz`,
 `image.json`, `build-info.json`, `compose.yaml`, `compose.exports.yaml`,
-`deployment.json` and `SHA256SUMS`. Retention is seven days. Actions artifacts are
+`deployment.json`, `DEPLOYMENT.md` and `SHA256SUMS`. The deployment note is
+maintained in [Release Deployment](Release-Deployment.md). Retention is
+seven days. Actions artifacts are
 **not private escrow**: people with the repository's Actions-artifact access can
 download the candidate before publication approval. Distribution obligations
 therefore apply before export, not only after approving GHCR publication.

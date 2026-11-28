@@ -8,6 +8,7 @@
     { "slug": "Monthly-Allowances", "title": "Monthly Allowances", "group": "Use" },
     { "slug": "Users-and-Access", "title": "Users and Access", "group": "Use" },
     { "slug": "Configuration", "title": "Configuration", "group": "Operate" },
+    { "slug": "Release-Deployment", "title": "Release Deployment Quick Reference", "group": "Operate" },
     { "slug": "Backup-Restore-and-Upgrades", "title": "Backup, Restore and Upgrades", "group": "Operate" },
     { "slug": "Troubleshooting", "title": "Troubleshooting", "group": "Operate" },
     { "slug": "Development-and-Testing", "title": "Development and Testing", "group": "Develop" },

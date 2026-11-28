@@ -99,11 +99,19 @@ function validateWorkflows(verification, publication) {
       assert(step && !step.if && !step['continue-on-error'], `Missing required check: ${command}`);
     }
   }
+  const imageSdk = image.steps.findIndex(step => step.uses?.startsWith('actions/setup-dotnet@'));
+  const runtimeChecks = image.steps.findIndex(step =>
+    step.run === 'dotnet build tests/integration/RuntimeChecks/RuntimeChecks.csproj --configuration Release -p:RestoreLockedMode=true');
   const imageBuild = image.steps.findIndex(step => step.run?.includes('npm --prefix web run build:image'));
   const imageTest = image.steps.findIndex(step => Object.hasOwn(step.env ?? {}, 'FULL_E2E'));
   const imageExport = image.steps.findIndex(step => step.run?.includes('docker save'));
   const artifactIndex = image.steps.findIndex(step => step.with?.name === 'verified-image');
   const artifact = image.steps[artifactIndex];
+  assert(imageSdk >= 0 && runtimeChecks > imageSdk && runtimeChecks < imageTest,
+    'Build the runtime checks on the image runner before testing');
+  assert.equal(image.steps[imageSdk].with?.['global-json-file'], 'global.json');
+  assert(!image.steps[imageSdk].if && !image.steps[imageSdk]['continue-on-error']);
+  assert(!image.steps[runtimeChecks].if && !image.steps[runtimeChecks]['continue-on-error']);
   assert(imageBuild >= 0 && imageTest > imageBuild && imageExport > imageTest, 'Build and test the image before exporting it');
   assert(artifactIndex > imageExport, 'Upload the artifact only after exporting it');
   assert(!image.steps[imageBuild].if && !image.steps[imageBuild]['continue-on-error']);
@@ -179,13 +187,14 @@ for (const mutate of [
   workflow => { workflow.jobs.builds.if = '${{ false }}'; },
   workflow => { workflow.jobs.repository.steps.find(step => step.run?.includes('check:catalogs'))['continue-on-error'] = true; },
   workflow => { workflow.jobs.image.steps.find(step => step.run?.includes('docker save')).if = '${{ always() }}'; },
+  workflow => { workflow.jobs.image.steps = workflow.jobs.image.steps.filter(step => !step.run?.includes('RuntimeChecks.csproj')); },
 ]) {
   const changed = structuredClone(ci);
   mutate(changed);
   assert.throws(() => validateWorkflows(changed, release), 'Unsafe CI split was accepted');
 }
 console.log('PASS: read-only verification, pinned actions and protected same-artifact version-only publishing; 5 unsafe changes rejected');
-console.log('PASS: parallel checks and builds gate image testing and export; 4 unsafe CI changes rejected');
+console.log('PASS: parallel checks and builds gate image testing and export; 5 unsafe CI changes rejected');
 
 const selector = ci.jobs.image.steps.find(step => Object.hasOwn(step.env ?? {}, 'FULL_E2E'));
 assert(selector && selector.if === undefined, 'Production-image verification must always run');
@@ -327,16 +336,18 @@ try {
     assert(!value.includes('${'), 'Default deployment settings must be directly editable');
   }
   const assets = release.jobs.publish.steps.find(step => step.id === 'assets').run;
-  const boundary = assets.indexOf("cat > bundle/DEPLOYMENT.md <<'GUIDE'");
+  const boundary = assets.indexOf('cp verified/image.json verified/build-info.json ./');
   assert(boundary > 0, 'Missing release deployment guide');
   assert(!assets.includes('compose.env'), 'Release bundles must not require an environment file');
   fs.mkdirSync(path.join(deploymentFixture, 'verified'));
   fs.writeFileSync(path.join(deploymentFixture, 'verified/deployment.json'), JSON.stringify(compose));
   fs.copyFileSync(path.join(root, 'deploy/compose.exports.yaml'), path.join(deploymentFixture, 'verified/compose.exports.yaml'));
+  fs.copyFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), path.join(deploymentFixture, 'verified/DEPLOYMENT.md'));
   const result = spawnSync(bash, ['-e', '-o', 'pipefail', '-c',
     'function jq() { command "$JQ_EXECUTABLE" "$@"; }\n' + assets.slice(0, boundary)], {
     cwd: deploymentFixture, encoding: 'utf8', env: { ...process.env, IMAGE: 'ghcr.io/eg-dev/monkey',
-      DIGEST: indexDigest, JQ_EXECUTABLE: process.env.JQ_EXECUTABLE ?? 'jq' },
+      DIGEST: indexDigest, GH_REPO: 'eG-dev/MONkEY', REVISION: 'a'.repeat(40),
+      JQ_EXECUTABLE: process.env.JQ_EXECUTABLE ?? 'jq' },
   });
   assert.equal(result.status, 0, result.error?.message ?? result.stderr);
   const generated = YAML.parse(fs.readFileSync(path.join(deploymentFixture, 'bundle/compose.yaml'), 'utf8'));
@@ -351,6 +362,11 @@ try {
   assert.equal(exports.services.app.volumes[0].source, '/srv/pocket-monkey/exports');
   assert.equal(exports.services.app.volumes[0].bind.create_host_path, false);
   assert(!fs.existsSync(path.join(deploymentFixture, 'bundle/compose.env.example')));
+  const guide = fs.readFileSync(path.join(deploymentFixture, 'bundle/DEPLOYMENT.md'), 'utf8');
+  assert(guide.startsWith(fs.readFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), 'utf8')));
+  for (const page of ['Getting-Started.md', 'Backup-Restore-and-Upgrades.md']) {
+    assert(guide.includes(`https://github.com/eG-dev/MONkEY/blob/${'a'.repeat(40)}/docs/wiki/${page}`));
+  }
 } finally {
   fs.rmSync(deploymentFixture, { recursive: true, force: true });
 }
@@ -361,6 +377,8 @@ try {
   fs.mkdirSync(path.join(exportFixture, 'deploy'));
   fs.mkdirSync(path.join(exportFixture, '.build/about'), { recursive: true });
   fs.mkdirSync(path.join(exportFixture, 'tests/e2e'), { recursive: true });
+  fs.mkdirSync(path.join(exportFixture, 'docs/wiki'), { recursive: true });
+  fs.copyFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), path.join(exportFixture, 'docs/wiki/Release-Deployment.md'));
   fs.symlinkSync(path.join(root, 'tests/e2e/node_modules'), path.join(exportFixture, 'tests/e2e/node_modules'),
     process.platform === 'win32' ? 'junction' : 'dir');
   for (const filename of ['compose.yaml', 'compose.exports.yaml']) {
@@ -377,7 +395,25 @@ try {
   const exported = JSON.parse(fs.readFileSync(path.join(exportFixture, '.local/rehearsal/deployment.json'), 'utf8'));
   assert(!exported.services.app.build);
   assert.equal(exported.services.app.environment.TZ, 'Europe/Berlin');
+  const verified = path.join(exportFixture, 'verified');
+  fs.cpSync(path.join(exportFixture, '.local/rehearsal'), verified, { recursive: true });
+  const guide = path.join(verified, 'DEPLOYMENT.md');
+  assert.equal(fs.readFileSync(guide, 'utf8'), fs.readFileSync(path.join(root, 'docs/wiki/Release-Deployment.md'), 'utf8'));
+  const sumsPath = path.join(verified, 'SHA256SUMS');
+  const sums = fs.readFileSync(sumsPath, 'utf8');
+  const download = release.jobs.publish.steps.find(step => step.id === 'download').run;
+  const checkDownload = () => spawnSync(bash, ['-e', '-o', 'pipefail', '-c', 'function gh() { :; }\n' + download], {
+    cwd: exportFixture, encoding: 'utf8', env: { ...process.env, GITHUB_RUN_ID: '123', GH_REPO: 'eG-dev/MONkEY' },
+  });
+  assert.equal(checkDownload().status, 0, 'Publisher rejected the verified deployment guidance');
+  const withoutGuide = sums.split('\n').filter(line => !/\s+[* ]?DEPLOYMENT\.md\s*$/.test(line)).join('\n');
+  assert.notEqual(withoutGuide, sums, 'Missing deployment guide checksum in exported artifact');
+  fs.writeFileSync(sumsPath, withoutGuide);
+  assert.notEqual(checkDownload().status, 0, 'Publisher accepted an unlisted deployment guide');
+  fs.writeFileSync(sumsPath, sums);
+  fs.appendFileSync(guide, 'Modified guide\n');
+  assert.notEqual(checkDownload().status, 0, 'Publisher accepted modified deployment guidance');
 } finally {
   fs.rmSync(exportFixture, { recursive: true, force: true });
 }
-console.log('PASS: actual CI artifact-export shell and checksum verification with stubbed Docker output and real deployment files');
+console.log('PASS: actual artifact export and publisher checks reject missing or modified deployment guidance');
