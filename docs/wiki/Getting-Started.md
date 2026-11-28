@@ -11,9 +11,7 @@ records. Start with synthetic data while the application is in pre-release.
 - Persistent private local-disk storage for the database, images and authentication keys.
 - `curl`, `sha256sum` and `tar` for the POSIX-shell download commands below.
 
-For an experimental private cloud workspace, see
-[Codespaces Image Testing](Codespaces-Image-Testing.md). Its hosted forwarding
-and sign-in checks remain open. The current
+The current
 [technical guide](../development.md#docker-compose-configuration) describes host
 networking, mounts and an existing Traefik reverse proxy.
 

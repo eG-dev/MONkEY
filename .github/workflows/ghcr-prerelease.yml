@@ -101,9 +101,7 @@ jobs:
         run: |
           node <<'NODE'
           const fs = require('node:fs');
-          const { GH_REPO, RELEASE_TAG, VERSION, REVISION, GITHUB_RUN_ID, GITHUB_RUN_ATTEMPT, GITHUB_STEP_SUMMARY } = process.env;
-          const creation = new URL(`https://codespaces.new/${GH_REPO}/tree/${encodeURIComponent(RELEASE_TAG)}`);
-          creation.searchParams.set('devcontainer_path', '.devcontainer/image-testing/devcontainer.json');
+          const { GH_REPO, VERSION, REVISION, GITHUB_RUN_ID, GITHUB_RUN_ATTEMPT, GITHUB_STEP_SUMMARY } = process.env;
           fs.appendFileSync(GITHUB_STEP_SUMMARY, [
             '## Candidate Image Review',
             '',
@@ -113,19 +111,12 @@ jobs:
             '',
             `Source: \`${REVISION}\``,
             '',
-            `Reuse an existing Image Testing Codespace, or [Create an Image Testing Codespace](${creation.href}).`,
+            `Review the \`verified-image\` artifact from this run and attempt, without rebuilding or substituting a registry image.`,
             '',
-            'Creation is manual: confirm the Image Testing configuration and choose your machine size. Codespaces usage may incur charges.',
+            `Follow the [candidate review guidance](https://github.com/${GH_REPO}/blob/${REVISION}/docs/wiki/Builds-and-Releases.md#review-before-approval).`,
             '',
-            'Run from the repository root inside that Codespace:',
-            '',
-            '```sh',
-            `bash .devcontainer/image-testing/manage.sh candidate ${GITHUB_RUN_ID} ${REVISION}`,
-            '```',
-            '',
-            'Keep forwarded port 8080 private. Check readiness, sign in, test the intended changes and review the draft release notes before approving this run.',
-            'A rerun or changed artifact requires fresh review. The candidate command loads the verified image without rebuilding or publishing it.',
-            'No Codespace is created, started or deleted by this workflow. Stop your review Codespace when finished; stopped Codespaces still use storage.',
+            'Check readiness, sign in, test the intended changes and review the draft release notes before approving this run.',
+            'A rerun or changed artifact requires fresh review.',
             '',
           ].join('\n'));
           NODE

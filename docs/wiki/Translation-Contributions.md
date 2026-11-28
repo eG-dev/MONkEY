@@ -5,8 +5,7 @@ the application repository, reviewed through pull requests and bundled with the
 application. No external translation service or runtime CDN is required.
 
 For toolchain setup and local startup, follow
-[Development and Testing](Development-and-Testing.md) or
-[Codespaces Development](Codespaces-Development.md). Run the commands below from
+[Development and Testing](Development-and-Testing.md). Run the commands below from
 the repository root after restoring the locked dependencies.
 
 ## Find the Maintained Text
